@@ -13,9 +13,7 @@ export default function Dashboard({ onLogout }) {
     price: '',
     price_suffix: '',
     status: 'Disponible',
-    type: 'Lote',
-    size_m2: '',
-    bedrooms: 0,
+    type: 'Casa',
     size_m2: '',
     bedrooms: 0,
     bathrooms: 0,
@@ -23,13 +21,22 @@ export default function Dashboard({ onLogout }) {
     municipality: '',
     colony: '',
     postal_code: '',
-    featured_image_url: ''
+    featured_image_url: '',
+    amenities: []
   });
+
+  const [imagePreview, setImagePreview] = useState(null);
 
   const propertyTypes = [
     'Casa', 'Departamento', 'Lote Residencial', 'Terreno Comercial', 
     'Terreno Agrícola/Ejidal', 'Bodega', 'Local Comercial', 'Oficina', 
     'Edificio', 'Rancho', 'Quinta', 'Nave Industrial', 'Desarrollo en Preventa'
+  ];
+
+  const amenitiesList = [
+    'Alberca', 'Seguridad 24/7', 'Jardín', 'Cocina Integral', 'Terraza', 
+    'Aire Acondicionado', 'Gimnasio', 'Elevador', 'Cisterna', 'Gas Estacionario', 
+    'Cuarto de Servicio', 'Mascotas Permitidas', 'Bodega Privada', 'Estacionamiento Visitas'
   ];
 
 
@@ -38,7 +45,6 @@ export default function Dashboard({ onLogout }) {
     const { name, value } = e.target;
     setProperty(prev => {
       const newState = { ...prev, [name]: value };
-      // Reset dependent fields if municipality changes
       if (name === 'municipality') {
         newState.postal_code = '';
         newState.colony = '';
@@ -50,6 +56,32 @@ export default function Dashboard({ onLogout }) {
     });
   };
 
+  const handleAmenityToggle = (amenity) => {
+    setProperty(prev => {
+      const alreadySelected = prev.amenities.includes(amenity);
+      return {
+        ...prev,
+        amenities: alreadySelected 
+          ? prev.amenities.filter(a => a !== amenity)
+          : [...prev.amenities, amenity]
+      };
+    });
+  };
+
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
+        // Emulate an upload by saving the base64 to featured_image_url
+        setProperty(prev => ({ ...prev, featured_image_url: event.target.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const saveProperty = async () => {
     if (!property.title || !property.price) {
       alert("Por favor llena al menos el Título y el Precio.");
@@ -58,11 +90,17 @@ export default function Dashboard({ onLogout }) {
     
     setIsSaving(true);
     try {
+      // Append amenities checklist cleanly to the description
+      let finalDescription = property.description;
+      if (property.amenities.length > 0) {
+        finalDescription += `\n\nCaracterísticas y Amenidades:\n- ${property.amenities.join('\n- ')}`;
+      }
+
       const { data, error } = await supabase
         .from('properties')
         .insert([{
           title: property.title,
-          description: property.description,
+          description: finalDescription,
           price: parseFloat(property.price),
           price_suffix: property.price_suffix,
           status: property.status,
@@ -71,16 +109,18 @@ export default function Dashboard({ onLogout }) {
           bedrooms: parseInt(property.bedrooms),
           bathrooms: parseInt(property.bathrooms),
           garages: parseInt(property.garages),
-          city: property.municipality, // mapped back to city for backwards compatibility in DB
-          featured_image_url: property.featured_image_url
+          city: property.municipality, 
+          featured_image_url: property.featured_image_url || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600'
         }]);
 
       if (error) throw error;
       alert("¡Propiedad guardada exitosamente en la Base de Datos!");
+      
       // Reset form
       setProperty({
-        title: '', description: '', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: ''
+        title: '', description: '', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: '', amenities: []
       });
+      setImagePreview(null);
       setActiveTab('description');
     } catch (error) {
       console.error('Error saving property:', error.message);
@@ -190,7 +230,7 @@ export default function Dashboard({ onLogout }) {
                   </div>
                   <div>
                     <label className="form-label">Sufijo (Opcional)</label>
-                    <input type="text" name="price_suffix" value={property.price_suffix} onChange={handleInputChange} placeholder="Ej. / mes, / noche" className="form-input" />
+                    <input type="text" name="price_suffix" value={property.price_suffix} onChange={handleInputChange} placeholder="Ej. / mes" className="form-input" />
                   </div>
                   <div>
                     <label className="form-label">Estado actual</label>
@@ -212,16 +252,67 @@ export default function Dashboard({ onLogout }) {
 
               {activeTab === 'media' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  <div>
-                    <label className="form-label">URL de Imagen Principal</label>
+                  <label className="form-label">Cargar Fotografía Principal</label>
+                  
+                  {/* Drag and Drop Zone */}
+                  <div 
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={handleFileDrop}
+                    style={{
+                      border: '2px dashed #cbd5e1',
+                      borderRadius: '12px',
+                      padding: '3rem 2rem',
+                      textAlign: 'center',
+                      background: '#f8fafc',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onClick={() => document.getElementById('file-upload').click()}
+                  >
+                    <input 
+                      type="file" 
+                      id="file-upload" 
+                      accept="image/*" 
+                      onChange={handleFileDrop} 
+                      style={{ display: 'none' }} 
+                    />
+                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📸</div>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>Arrastra y suelta tu imagen aquí</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.25rem' }}>O haz clic para explorar tus archivos locales.</p>
+                  </div>
+
+                  {/* Dynamic Frontend Uniform Crop Preview */}
+                  {imagePreview && (
+                    <div style={{ marginTop: '1.5rem' }}>
+                      <label className="form-label">Previsualización (Ajuste Uniforme / Recorte Responsivo)</label>
+                      <div style={{ 
+                        width: '100%', 
+                        maxWidth: '400px',
+                        aspectRatio: '4 / 3', 
+                        overflow: 'hidden', 
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+                        border: '1px solid #e2e8f0'
+                      }}>
+                        <img 
+                          src={imagePreview} 
+                          alt="Previsualización" 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        />
+                      </div>
+                      <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.5rem' }}>* Así se recortará y mostrará la foto en el catálogo del portal.</p>
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: '1rem' }}>
+                    <label className="form-label">O usa un link directo (URL)</label>
                     <input type="text" name="featured_image_url" value={property.featured_image_url} onChange={handleInputChange} placeholder="https://images.unsplash.com/photo-..." className="form-input" />
-                    <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.5rem' }}>Introduce un link válido. Próximamente habilitaremos la carga de archivos directa.</p>
                   </div>
                 </div>
               )}
 
               {activeTab === 'details' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
                   <div>
                     <label className="form-label">Superficie (m2)</label>
                     <input type="number" name="size_m2" value={property.size_m2} onChange={handleInputChange} placeholder="Ej. 250" className="form-input" />
@@ -233,6 +324,10 @@ export default function Dashboard({ onLogout }) {
                   <div>
                     <label className="form-label">Baños</label>
                     <input type="number" name="bathrooms" value={property.bathrooms} onChange={handleInputChange} className="form-input" />
+                  </div>
+                  <div>
+                    <label className="form-label">Garajes</label>
+                    <input type="number" name="garages" value={property.garages} onChange={handleInputChange} className="form-input" />
                   </div>
                 </div>
               )}
@@ -270,9 +365,51 @@ export default function Dashboard({ onLogout }) {
               )}
 
               {activeTab === 'amenities' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <label className="form-label">Garajes / Estacionamientos</label>
-                  <input type="number" name="garages" value={property.garages} onChange={handleInputChange} style={{ maxWidth: '150px' }} className="form-input" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>🎯 Características y Amenidades</h3>
+                  <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1rem' }}>Selecciona todas las ventajas que incluye esta propiedad para sumarlas a la ficha:</p>
+
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+                    gap: '1rem',
+                    background: '#f8fafc',
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    {amenitiesList.map(amenity => (
+                      <label 
+                        key={amenity} 
+                        style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '12px', 
+                          padding: '0.75rem', 
+                          borderRadius: '8px', 
+                          cursor: 'pointer',
+                          background: property.amenities.includes(amenity) ? '#e0f2fe' : '#ffffff',
+                          border: property.amenities.includes(amenity) ? '1px solid #38bdf8' : '1px solid #e2e8f0',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        <input 
+                          type="checkbox" 
+                          checked={property.amenities.includes(amenity)}
+                          onChange={() => handleAmenityToggle(amenity)}
+                          style={{
+                            width: '18px',
+                            height: '18px',
+                            accentColor: '#0284c7',
+                            cursor: 'pointer'
+                          }}
+                        />
+                        <span style={{ fontSize: '0.9rem', fontWeight: property.amenities.includes(amenity) ? '600' : '500', color: '#1e293b' }}>
+                          {amenity}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
               )}
 
