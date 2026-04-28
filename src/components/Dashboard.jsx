@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import chiapasData from '../data/chiapasLocations.json';
+import { SAMPLE_USERS, SAMPLE_PROPERTIES, PLANS, generateAnalytics } from '../data/sampleData';
+import PropertyManager from './PropertyManager';
+import AnalyticsView from './AnalyticsView';
 
 export default function Dashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
   const [isSaving, setIsSaving] = useState(false);
   
+  // Multi-user & Permissions State
+  const [activeUserId, setActiveUserId] = useState('u1');
+  const [allProperties, setAllProperties] = useState(SAMPLE_PROPERTIES);
+
+  const currentUser = SAMPLE_USERS.find(u => u.id === activeUserId) || SAMPLE_USERS[0];
+  const userPlan = PLANS[currentUser.plan];
+  const userProperties = allProperties.filter(p => p.user_id === currentUser.id);
+  const analyticsData = generateAnalytics(currentUser.id);
+
   // Property Form State
   const [property, setProperty] = useState({
     title: '',
@@ -33,20 +45,13 @@ export default function Dashboard({ onLogout }) {
     amenities: []
   });
 
-  const [currentView, setCurrentView] = useState('add-property'); // 'add-property' or 'profile'
+  const [currentView, setCurrentView] = useState('properties'); // 'properties', 'add-property', 'profile', 'analytics'
   
-  const [agentProfile, setAgentProfile] = useState({
-    name: 'Daniel Vázquez',
-    position: 'Asesor Inmobiliario Senior',
-    phone: '961 123 4567',
-    whatsapp: '961 123 4567',
-    email: 'daniel@propiedadesenchiapas.com',
-    company: 'Chiapas Premium Real Estate',
-    license: 'LIC-CH-78291',
-    location: 'TUXTLA GUTIERREZ',
-    bio: 'Especialista en desarrollo inmobiliario premium con más de 8 años de experiencia en el mercado de Chiapas.',
-    avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300'
-  });
+  const [agentProfile, setAgentProfile] = useState(currentUser);
+
+  React.useEffect(() => {
+    setAgentProfile(currentUser);
+  }, [activeUserId]);
 
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -162,55 +167,57 @@ export default function Dashboard({ onLogout }) {
       alert("Es obligatorio incluir al menos una Foto Principal para dar de alta el inmueble.");
       return;
     }
+
+    // Check Plan Limits for adding new properties (if it's a new property, no id)
+    const isEditing = !!property.id;
+    if (!isEditing && userProperties.length >= userPlan.maxProperties) {
+      alert(`Tu plan "${userPlan.name}" permite un máximo de ${userPlan.maxProperties} propiedades. ¡Actualiza tu plan!`);
+      return;
+    }
     
     setIsSaving(true);
     try {
-      // Formatter for extra details
-      let detailsString = '';
-      if (property.operation_type) detailsString += `\n- Operación: ${property.operation_type}`;
-      if (property.size_land_m2) detailsString += `\n- Terreno: ${property.size_land_m2} m²`;
-      if (property.size_construction_m2) detailsString += `\n- Construcción: ${property.size_construction_m2} m²`;
-      if (property.year_built) detailsString += `\n- Año de constr.: ${property.year_built}`;
-      if (property.floors) detailsString += `\n- Niveles: ${property.floors}`;
-      if (property.furnished) detailsString += `\n- Amueblado: Sí`;
-      if (property.maid_room) detailsString += `\n- Cuarto de Servicio: Sí`;
+      const newProp = {
+        id: property.id || `p_local_${Date.now()}`,
+        user_id: currentUser.id,
+        title: property.title,
+        description: property.description,
+        operation_type: property.operation_type,
+        price: parseFloat(property.price),
+        price_suffix: property.price_suffix,
+        status: property.status,
+        type: property.type,
+        size_m2: parseFloat(property.size_m2 || property.size_construction_m2 || 0),
+        bedrooms: parseInt(property.bedrooms) || 0,
+        bathrooms: parseInt(property.bathrooms) || 0,
+        garages: parseInt(property.garages) || 0,
+        municipality: property.municipality,
+        colony: property.colony,
+        postal_code: property.postal_code,
+        featured_image_url: property.featured_image_url || (property.images && property.images[0]) || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600',
+        images: property.images || [],
+        amenities: property.amenities || [],
+        active: true,
+        views: property.views || 0,
+        leads: property.leads || 0
+      };
 
-      let finalDescription = property.description;
-      if (detailsString) {
-        finalDescription += `\n\nFicha Técnica del Inmueble:${detailsString}`;
-      }
-      if (property.amenities.length > 0) {
-        finalDescription += `\n\nCaracterísticas y Amenidades:\n- ${property.amenities.join('\n- ')}`;
-      }
+      setAllProperties(prev => {
+        if (isEditing) {
+          return prev.map(p => p.id === property.id ? newProp : p);
+        } else {
+          return [newProp, ...prev];
+        }
+      });
 
-      // We use size_construction_m2 or land_m2 for size_m2 in core DB depending on what's available
-      const sizeDB = property.size_construction_m2 || property.size_land_m2 || 0;
-
-      const { data, error } = await supabase
-        .from('properties')
-        .insert([{
-          title: property.title,
-          description: finalDescription,
-          price: parseFloat(property.price),
-          price_suffix: property.price_suffix,
-          status: property.status,
-          type: property.type,
-          size_m2: sizeDB ? parseFloat(sizeDB) : null,
-          bedrooms: parseInt(property.bedrooms) || 0,
-          bathrooms: parseInt(property.bathrooms) || 0,
-          garages: parseInt(property.garages) || 0,
-          city: property.municipality, 
-          featured_image_url: property.featured_image_url || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600'
-        }]);
-
-      if (error) throw error;
-      alert("¡Propiedad guardada exitosamente en la Base de Datos!");
+      alert(isEditing ? "¡Propiedad actualizada exitosamente!" : "¡Propiedad creada exitosamente!");
       
       // Reset form
       setProperty({
-        title: '', description: '', operation_type: 'Venta', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', size_land_m2: '', size_construction_m2: '', year_built: '', floors: '', furnished: false, maid_room: false, bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: '', amenities: []
+        title: '', description: '', operation_type: 'Venta', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', size_land_m2: '', size_construction_m2: '', year_built: '', floors: '', furnished: false, maid_room: false, bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: '', images: [], amenities: []
       });
       setImagePreview(null);
+      setCurrentView('properties');
       setActiveTab('description');
     } catch (error) {
       console.error('Error saving property:', error.message);
@@ -218,6 +225,15 @@ export default function Dashboard({ onLogout }) {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleToggleActive = (propId) => {
+    setAllProperties(prev => prev.map(p => p.id === propId ? { ...p, active: !p.active } : p));
+  };
+
+  const handleEditProperty = (prop) => {
+    setProperty({ ...prop });
+    setCurrentView('add-property');
   };
 
   const tabs = [
@@ -233,7 +249,7 @@ export default function Dashboard({ onLogout }) {
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       {/* Sidebar */}
       <aside style={{ width: '280px', background: '#0f172a', padding: '2.5rem 0', display: 'flex', flexDirection: 'column', color: '#f8fafc' }}>
-        <div style={{ padding: '0 2rem', marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+        <div style={{ padding: '0 2rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '32px', width: '32px', fill: '#38bdf8' }}>
             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 2.7l7 6.3v9h-4v-6H9v6H5v-9l7-6.3z" />
           </svg>
@@ -242,52 +258,89 @@ export default function Dashboard({ onLogout }) {
             <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '2px' }}>Propiedades en Chiapas</p>
           </div>
         </div>
-        
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '0 1rem' }}>
-          <button 
-            onClick={() => setCurrentView('add-property')}
-            style={{ 
-              textAlign: 'left', 
-              padding: '0.85rem 1.25rem', 
-              borderRadius: '12px', 
-              background: currentView === 'add-property' ? '#1e293b' : 'transparent', 
-              color: currentView === 'add-property' ? '#38bdf8' : '#94a3b8', 
-              fontWeight: '600', 
-              border: 'none', 
-              cursor: 'pointer', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '10px' 
+
+        {/* Demo User Switcher */}
+        <div style={{ padding: '0 1rem', marginBottom: '2rem' }}>
+          <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem' }}>
+            👤 Cambiar de Usuario
+          </label>
+          <select 
+            value={activeUserId} 
+            onChange={(e) => {
+              setActiveUserId(e.target.value);
+              setCurrentView('profile'); // Reset view on user change
+            }}
+            style={{
+              width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#1e293b', 
+              color: '#f8fafc', border: '1px solid #334155', fontWeight: '600', fontSize: '0.85rem'
             }}
           >
-            <span>➕</span> Agregar Propiedad
-          </button>
-          
+            {SAMPLE_USERS.map(u => (
+              <option key={u.id} value={u.id}>
+                {u.name} ({PLANS[u.plan].name})
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>
+          {/* 1. Profile / Tarjeta Digital (All tiers) */}
           <button 
             onClick={() => setCurrentView('profile')}
             style={{ 
-              textAlign: 'left', 
-              padding: '0.85rem 1.25rem', 
-              borderRadius: '12px', 
+              textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
               background: currentView === 'profile' ? '#1e293b' : 'transparent', 
               color: currentView === 'profile' ? '#38bdf8' : '#94a3b8', 
-              fontWeight: '600', 
-              border: 'none', 
-              cursor: 'pointer', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '10px' 
+              fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
             }}
           >
-            <span>👤</span> Mi Perfil
+            <span>💳</span> Mi Tarjeta Digital
           </button>
 
-          <button style={{ textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', color: '#94a3b8', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s' }}>
-            🏠 Mis Propiedades
-          </button>
-          <button style={{ textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', color: '#94a3b8', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s' }}>
-            📩 Mensajes / Leads
-          </button>
+          {/* 2. My Properties (Basic + Premium) */}
+          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas')) && (
+            <button 
+              onClick={() => setCurrentView('properties')}
+              style={{ 
+                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: currentView === 'properties' ? '#1e293b' : 'transparent', 
+                color: currentView === 'properties' ? '#38bdf8' : '#94a3b8', 
+                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
+              }}
+            >
+              <span>🏠</span> Mis Propiedades ({userProperties.length})
+            </button>
+          )}
+
+          {/* 3. Add Property (Basic + Premium) */}
+          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas')) && (
+            <button 
+              onClick={() => setCurrentView('add-property')}
+              style={{ 
+                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: currentView === 'add-property' ? '#1e293b' : 'transparent', 
+                color: currentView === 'add-property' ? '#38bdf8' : '#94a3b8', 
+                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
+              }}
+            >
+              <span>➕</span> Agregar Propiedad
+            </button>
+          )}
+
+          {/* 4. Analytics (Premium only) */}
+          {userPlan.features.includes('analytics') && (
+            <button 
+              onClick={() => setCurrentView('analytics')}
+              style={{ 
+                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: currentView === 'analytics' ? '#1e293b' : 'transparent', 
+                color: currentView === 'analytics' ? '#38bdf8' : '#94a3b8', 
+                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
+              }}
+            >
+              <span>📊</span> Estadísticas
+            </button>
+          )}
         </nav>
 
         <div style={{ marginTop: 'auto', padding: '0 1rem' }}>
@@ -301,10 +354,36 @@ export default function Dashboard({ onLogout }) {
       <main style={{ flex: 1, padding: '3.5rem', overflowY: 'auto' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
           
-          {currentView === 'add-property' ? (
-            <>
+          {currentView === 'properties' && (
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Mis Propiedades</h1>
+                  <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Administra el inventario de inmuebles asignado a tu cuenta.</p>
+                </div>
+                <button 
+                  onClick={() => setCurrentView('add-property')}
+                  className="btn-primary"
+                  style={{ padding: '0.75rem 1.5rem', borderRadius: '10px', fontSize: '0.9rem', display: userPlan.maxProperties > 0 ? 'block' : 'none' }}
+                >
+                  ➕ Nueva Propiedad
+                </button>
+              </div>
+              <PropertyManager 
+                properties={userProperties} 
+                onToggleActive={handleToggleActive} 
+                onEdit={handleEditProperty}
+                plan={userPlan.id}
+              />
+            </div>
+          )}
+
+          {currentView === 'add-property' && (
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
               <div style={{ marginBottom: '2.5rem' }}>
-                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Agregar Nueva Propiedad</h1>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
+                  {property.id ? 'Editar Propiedad' : 'Agregar Nueva Propiedad'}
+                </h1>
                 <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Rellena los campos controlados para dar de alta una propiedad en el portal.</p>
               </div>
 
@@ -649,9 +728,10 @@ export default function Dashboard({ onLogout }) {
               </div>
             </div>
             </div>
-          </>
-          ) : (
-            /* Profile View (WP Residence style Agent Card) */
+            </div>
+          )}
+
+          {currentView === 'profile' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', animation: 'fadeIn 0.3s ease' }}>
               <div style={{ marginBottom: '0.5rem' }}>
                 <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Mi Perfil de Asesor</h1>
@@ -881,6 +961,16 @@ export default function Dashboard({ onLogout }) {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {currentView === 'analytics' && (
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Estadísticas de Rendimiento</h1>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Monitorea el impacto y conversión de tus propiedades publicadas.</p>
+              </div>
+              <AnalyticsView analytics={analyticsData} plan={userPlan} />
             </div>
           )}
         </div>
