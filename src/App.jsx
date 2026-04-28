@@ -3,12 +3,14 @@ import Navbar from './components/Navbar';
 import PropertyCard from './components/PropertyCard';
 import PropertyTable from './components/PropertyTable';
 import Dashboard from './components/Dashboard';
+import Login from './components/Login';
 import { supabase } from './supabaseClient';
 
 export default function App() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDashboard, setIsDashboard] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Todas');
 
   const categories = [
@@ -48,6 +50,10 @@ export default function App() {
     }
   };
 
+  if (isLogin) {
+    return <Login onLoginSuccess={() => { setIsLogin(false); setIsDashboard(true); }} onBack={() => setIsLogin(false)} />;
+  }
+
   if (isDashboard) {
     return <Dashboard onLogout={() => setIsDashboard(false)} />;
   }
@@ -61,7 +67,7 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
-      <Navbar onLogin={() => setIsDashboard(true)} />
+      <Navbar onLogin={() => setIsLogin(true)} />
       
       {/* Categories Bar (Sticky) */}
       <div className="categories-wrapper container">
