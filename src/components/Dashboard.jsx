@@ -42,7 +42,7 @@ export default function Dashboard({ onLogout }) {
     email: 'daniel@propiedadesenchiapas.com',
     company: 'Chiapas Premium Real Estate',
     license: 'LIC-CH-78291',
-    location: 'Tuxtla Gutiérrez, Chiapas',
+    location: 'TUXTLA GUTIERREZ',
     bio: 'Especialista en desarrollo inmobiliario premium con más de 8 años de experiencia en el mercado de Chiapas.',
     avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300'
   });
@@ -716,14 +716,17 @@ export default function Dashboard({ onLogout }) {
                       />
                     </div>
                     <div>
-                      <label className="form-label">Ubicación / Ciudad</label>
-                      <input 
-                        type="text" 
+                      <label className="form-label">Ubicación / Municipio</label>
+                      <select 
                         value={agentProfile.location} 
                         onChange={(e) => setAgentProfile(prev => ({ ...prev, location: e.target.value }))} 
-                        placeholder="Ej. Tuxtla Gutiérrez, Chiapas" 
-                        className="form-input" 
-                      />
+                        className="form-select"
+                      >
+                        <option value="">-- Selecciona Municipio --</option>
+                        {Object.keys(chiapasData).sort().map(m => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
                     </div>
                     <div>
                       <label className="form-label">Licencia / Certificación</label>
