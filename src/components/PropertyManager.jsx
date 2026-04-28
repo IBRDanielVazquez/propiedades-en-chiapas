@@ -1,7 +1,13 @@
 import React from 'react';
+import { SAMPLE_USERS } from '../data/sampleData';
 
 export default function PropertyManager({ properties, onToggleActive, onEdit, onDelete, plan }) {
   const formatPrice = (price) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(price);
+  
+  const getUserName = (userId) => {
+    const u = SAMPLE_USERS.find(user => user.id === userId);
+    return u ? u.name : 'Desconocido';
+  };
 
   if (properties.length === 0) {
     return (
@@ -30,7 +36,7 @@ export default function PropertyManager({ properties, onToggleActive, onEdit, on
 
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
                 <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#1e293b', margin: 0 }}>{prop.title}</h3>
                 <span style={{
                   fontSize: '0.65rem', fontWeight: '700', padding: '2px 8px', borderRadius: '6px',
@@ -46,6 +52,14 @@ export default function PropertyManager({ properties, onToggleActive, onEdit, on
                 }}>
                   {prop.operation_type}
                 </span>
+                {plan === 'admin' && (
+                  <span style={{
+                    fontSize: '0.65rem', fontWeight: '700', padding: '2px 8px', borderRadius: '6px',
+                    background: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1'
+                  }}>
+                    👤 {getUserName(prop.user_id)}
+                  </span>
+                )}
               </div>
               <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0' }}>{prop.type} · {prop.municipality} · {prop.size_m2}m²</p>
               <p style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0284c7', margin: 0 }}>

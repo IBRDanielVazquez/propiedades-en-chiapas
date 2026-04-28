@@ -1,22 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import chiapasData from '../data/chiapasLocations.json';
 import { SAMPLE_USERS, SAMPLE_PROPERTIES, PLANS, generateAnalytics } from '../data/sampleData';
 import PropertyManager from './PropertyManager';
 import AnalyticsView from './AnalyticsView';
+import UserManager from './UserManager';
 
 export default function Dashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Multi-user & Permissions State
-  const [activeUserId, setActiveUserId] = useState('u1');
-  const [allProperties, setAllProperties] = useState(SAMPLE_PROPERTIES);
+  // Multi-user & Permissions State (GoHighLevel Multi-Tenant Architecture)
+  const [activeUserId, setActiveUserId] = useState('u0'); // Master Admin default
+  const [adminUserFilter, setAdminUserFilter] = useState('all');
+  const [allProperties, setAllProperties] = useState([]);
+
+  // ── Cargar propiedades desde Supabase al montar ──────────────────────────
+  const loadProperties = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setAllProperties(data);
+      } else {
+        // Sin datos en Supabase → usar sample data de demostración
+        setAllProperties(SAMPLE_PROPERTIES);
+      }
+    } catch (err) {
+      console.warn('Supabase no disponible, usando sample data:', err.message);
+      setAllProperties(SAMPLE_PROPERTIES);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { loadProperties(); }, [loadProperties]);
 
   const currentUser = SAMPLE_USERS.find(u => u.id === activeUserId) || SAMPLE_USERS[0];
   const userPlan = PLANS[currentUser.plan];
-  const userProperties = allProperties.filter(p => p.user_id === currentUser.id);
-  const analyticsData = generateAnalytics(currentUser.id);
+  
+  // Visibility Scope
+  const userProperties = currentUser.plan === 'admin'
+    ? (adminUserFilter === 'all' ? allProperties : allProperties.filter(p => p.user_id === adminUserFilter))
+    : allProperties.filter(p => p.user_id === currentUser.id);
+
+  const analyticsData = generateAnalytics(currentUser.id, allProperties);
 
   // Property Form State
   const [property, setProperty] = useState({
@@ -45,7 +80,7 @@ export default function Dashboard({ onLogout }) {
     amenities: []
   });
 
-  const [currentView, setCurrentView] = useState('properties'); // 'properties', 'add-property', 'profile', 'analytics'
+  const [currentView, setCurrentView] = useState('properties'); // 'properties', 'add-property', 'profile', 'analytics', 'users'
   
   const [agentProfile, setAgentProfile] = useState(currentUser);
 
@@ -168,7 +203,6 @@ export default function Dashboard({ onLogout }) {
       return;
     }
 
-    // Check Plan Limits for adding new properties (if it's a new property, no id)
     const isEditing = !!property.id;
     if (!isEditing && userProperties.length >= userPlan.maxProperties) {
       alert(`Tu plan "${userPlan.name}" permite un máximo de ${userPlan.maxProperties} propiedades. ¡Actualiza tu plan!`);
@@ -177,9 +211,8 @@ export default function Dashboard({ onLogout }) {
     
     setIsSaving(true);
     try {
-      const newProp = {
-        id: property.id || `p_local_${Date.now()}`,
-        user_id: currentUser.id,
+      const payload = {
+        user_id: (currentUser.plan === 'admin' && adminUserFilter !== 'all') ? adminUserFilter : currentUser.id,
         title: property.title,
         description: property.description,
         operation_type: property.operation_type,
@@ -188,8 +221,14 @@ export default function Dashboard({ onLogout }) {
         status: property.status,
         type: property.type,
         size_m2: parseFloat(property.size_m2 || property.size_construction_m2 || 0),
+        size_land_m2: parseFloat(property.size_land_m2 || 0),
+        size_construction_m2: parseFloat(property.size_construction_m2 || 0),
+        year_built: parseInt(property.year_built) || null,
+        floors: parseInt(property.floors) || null,
+        furnished: property.furnished || false,
+        maid_room: property.maid_room || false,
         bedrooms: parseInt(property.bedrooms) || 0,
-        bathrooms: parseInt(property.bathrooms) || 0,
+        bathrooms: parseFloat(property.bathrooms) || 0,
         garages: parseInt(property.garages) || 0,
         municipality: property.municipality,
         colony: property.colony,
@@ -202,19 +241,50 @@ export default function Dashboard({ onLogout }) {
         leads: property.leads || 0
       };
 
-      setAllProperties(prev => {
+      // ── Intentar guardar en Supabase ─────────────────────────────────────
+      let savedProp = null;
+      try {
         if (isEditing) {
-          return prev.map(p => p.id === property.id ? newProp : p);
+          const { data, error } = await supabase
+            .from('properties')
+            .update(payload)
+            .eq('id', property.id)
+            .select()
+            .single();
+          if (error) throw error;
+          savedProp = data;
         } else {
-          return [newProp, ...prev];
+          const { data, error } = await supabase
+            .from('properties')
+            .insert(payload)
+            .select()
+            .single();
+          if (error) throw error;
+          savedProp = data;
         }
-      });
+      } catch (sbError) {
+        console.warn('Supabase write failed, guardando localmente:', sbError.message);
+        // Fallback local
+        savedProp = { ...payload, id: property.id || `p_local_${Date.now()}` };
+      }
+
+      // ── Actualizar estado local ──────────────────────────────────────────
+      setAllProperties(prev =>
+        isEditing
+          ? prev.map(p => p.id === savedProp.id ? savedProp : p)
+          : [savedProp, ...prev]
+      );
 
       alert(isEditing ? "¡Propiedad actualizada exitosamente!" : "¡Propiedad creada exitosamente!");
       
       // Reset form
       setProperty({
-        title: '', description: '', operation_type: 'Venta', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', size_land_m2: '', size_construction_m2: '', year_built: '', floors: '', furnished: false, maid_room: false, bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: '', images: [], amenities: []
+        title: '', description: '', operation_type: 'Venta', price: '', price_suffix: '',
+        status: 'Disponible', type: 'Casa', size_m2: '', size_land_m2: '', size_construction_m2: '',
+        year_built: '', floors: '', furnished: false, maid_room: false,
+        bedrooms: 0, bathrooms: 0, garages: 0,
+        municipality: '', colony: '', postal_code: '',
+        featured_image_url: '', images: [], amenities: []
       });
       setImagePreview(null);
       setCurrentView('properties');
@@ -227,8 +297,24 @@ export default function Dashboard({ onLogout }) {
     }
   };
 
-  const handleToggleActive = (propId) => {
-    setAllProperties(prev => prev.map(p => p.id === propId ? { ...p, active: !p.active } : p));
+  const handleToggleActive = async (propId) => {
+    const target = allProperties.find(p => p.id === propId);
+    if (!target) return;
+    const newActive = !target.active;
+
+    // Optimistic UI update
+    setAllProperties(prev => prev.map(p => p.id === propId ? { ...p, active: newActive } : p));
+
+    // Persist in Supabase
+    try {
+      const { error } = await supabase
+        .from('properties')
+        .update({ active: newActive })
+        .eq('id', propId);
+      if (error) throw error;
+    } catch (err) {
+      console.warn('Toggle persist failed (local only):', err.message);
+    }
   };
 
   const handleEditProperty = (prop) => {
@@ -259,28 +345,55 @@ export default function Dashboard({ onLogout }) {
           </div>
         </div>
 
-        {/* Demo User Switcher */}
-        <div style={{ padding: '0 1rem', marginBottom: '2rem' }}>
-          <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem' }}>
-            👤 Cambiar de Usuario
-          </label>
-          <select 
-            value={activeUserId} 
-            onChange={(e) => {
-              setActiveUserId(e.target.value);
-              setCurrentView('profile'); // Reset view on user change
-            }}
-            style={{
-              width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#1e293b', 
-              color: '#f8fafc', border: '1px solid #334155', fontWeight: '600', fontSize: '0.85rem'
-            }}
-          >
-            {SAMPLE_USERS.map(u => (
-              <option key={u.id} value={u.id}>
-                {u.name} ({PLANS[u.plan].name})
-              </option>
-            ))}
-          </select>
+        {/* GoHighLevel Style Switchers */}
+        <div style={{ padding: '0 1rem', marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div>
+            <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem' }}>
+              🔑 Rol de Acceso
+            </label>
+            <select 
+              value={activeUserId} 
+              onChange={(e) => {
+                const uid = e.target.value;
+                setActiveUserId(uid);
+                setAdminUserFilter('all');
+                setCurrentView(uid === 'u0' ? 'properties' : 'profile'); 
+              }}
+              style={{
+                width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#1e293b', 
+                color: '#f8fafc', border: '1px solid #334155', fontWeight: '600', fontSize: '0.85rem'
+              }}
+            >
+              {SAMPLE_USERS.map(u => (
+                <option key={u.id} value={u.id}>
+                  {u.name} ({PLANS[u.plan].name})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {currentUser.plan === 'admin' && (
+            <div>
+              <label style={{ fontSize: '0.7rem', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem' }}>
+                🏢 Cuenta / Asesor (Sub-Account)
+              </label>
+              <select 
+                value={adminUserFilter} 
+                onChange={(e) => setAdminUserFilter(e.target.value)}
+                style={{
+                  width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#0f172a', 
+                  color: '#38bdf8', border: '1px solid #38bdf8', fontWeight: '600', fontSize: '0.85rem'
+                }}
+              >
+                <option value="all">Todas las Cuentas</option>
+                {SAMPLE_USERS.filter(u => u.id !== 'u0').map(u => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>
@@ -297,8 +410,8 @@ export default function Dashboard({ onLogout }) {
             <span>💳</span> Mi Tarjeta Digital
           </button>
 
-          {/* 2. My Properties (Basic + Premium) */}
-          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas')) && (
+          {/* 2. My Properties (Basic + Premium + Admin) */}
+          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas') || currentUser.plan === 'admin') && (
             <button 
               onClick={() => setCurrentView('properties')}
               style={{ 
@@ -308,12 +421,12 @@ export default function Dashboard({ onLogout }) {
                 fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
               }}
             >
-              <span>🏠</span> Mis Propiedades ({userProperties.length})
+              <span>🏠</span> {currentUser.plan === 'admin' ? 'Ver Propiedades CRM' : 'Mis Propiedades'} ({userProperties.length})
             </button>
           )}
 
-          {/* 3. Add Property (Basic + Premium) */}
-          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas')) && (
+          {/* 3. Add Property (Basic + Premium + Admin) */}
+          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas') || currentUser.plan === 'admin') && (
             <button 
               onClick={() => setCurrentView('add-property')}
               style={{ 
@@ -327,8 +440,23 @@ export default function Dashboard({ onLogout }) {
             </button>
           )}
 
-          {/* 4. Analytics (Premium only) */}
-          {userPlan.features.includes('analytics') && (
+          {/* 4. Gestión de Asesores (solo Admin) */}
+          {currentUser.plan === 'admin' && (
+            <button 
+              onClick={() => setCurrentView('users')}
+              style={{ 
+                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: currentView === 'users' ? '#1e293b' : 'transparent', 
+                color: currentView === 'users' ? '#38bdf8' : '#94a3b8', 
+                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
+              }}
+            >
+              <span>👥</span> Gestión de Asesores
+            </button>
+          )}
+
+          {/* 5. Analytics (Premium + Admin) */}
+          {(userPlan.features.includes('analytics') || currentUser.plan === 'admin') && (
             <button 
               onClick={() => setCurrentView('analytics')}
               style={{ 
@@ -338,7 +466,7 @@ export default function Dashboard({ onLogout }) {
                 fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
               }}
             >
-              <span>📊</span> Estadísticas
+              <span>📊</span> {currentUser.plan === 'admin' ? 'Estadísticas Globales' : 'Estadísticas'}
             </button>
           )}
         </nav>
@@ -353,13 +481,25 @@ export default function Dashboard({ onLogout }) {
       {/* Main Content */}
       <main style={{ flex: 1, padding: '3.5rem', overflowY: 'auto' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          {isLoading && (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem', gap: '1rem', color: '#64748b' }}>
+              <div style={{ width: '28px', height: '28px', border: '3px solid #e2e8f0', borderTopColor: '#0284c7', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <span style={{ fontSize: '1rem', fontWeight: '600' }}>Cargando propiedades...</span>
+            </div>
+          )}
           
           {currentView === 'properties' && (
             <div style={{ animation: 'fadeIn 0.3s ease' }}>
               <div style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                  <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Mis Propiedades</h1>
-                  <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Administra el inventario de inmuebles asignado a tu cuenta.</p>
+                  <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
+                    {currentUser.plan === 'admin' ? 'Consola Maestra de Propiedades' : 'Mis Propiedades'}
+                  </h1>
+                  <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>
+                    {currentUser.plan === 'admin' 
+                      ? 'Supervisión y control maestro de todos los activos inmobiliarios registrados.' 
+                      : 'Administra el inventario de inmuebles asignado a tu cuenta.'}
+                  </p>
                 </div>
                 <button 
                   onClick={() => setCurrentView('add-property')}
@@ -621,7 +761,7 @@ export default function Dashboard({ onLogout }) {
                       <label className="form-label">Código Postal</label>
                       <select name="postal_code" value={property.postal_code} onChange={handleInputChange} disabled={!property.municipality} className="form-select">
                         <option value="">-- Selecciona CP --</option>
-                        {property.municipality && Object.keys(chiapasData[property.municipality]).map(cp => <option key={cp} value={cp}>{cp}</option>)}
+                        {property.municipality && chiapasData[property.municipality] && Object.keys(chiapasData[property.municipality]).map(cp => <option key={cp} value={cp}>{cp}</option>)}
                       </select>
                     </div>
 
@@ -629,7 +769,7 @@ export default function Dashboard({ onLogout }) {
                       <label className="form-label">Colonia / Fraccionamiento</label>
                       <select name="colony" value={property.colony} onChange={handleInputChange} disabled={!property.postal_code} className="form-select">
                         <option value="">-- Selecciona Colonia --</option>
-                        {property.postal_code && chiapasData[property.municipality][property.postal_code].sort().map(col => <option key={col} value={col}>{col}</option>)}
+                        {property.postal_code && chiapasData[property.municipality] && chiapasData[property.municipality][property.postal_code] && chiapasData[property.municipality][property.postal_code].sort().map(col => <option key={col} value={col}>{col}</option>)}
                       </select>
                     </div>
                   </div>
@@ -758,14 +898,15 @@ export default function Dashboard({ onLogout }) {
                       position: 'absolute', 
                       bottom: '15px', 
                       right: '15px', 
-                      background: '#38bdf8', 
+                      background: userPlan.color, 
                       color: '#ffffff', 
                       padding: '0.35rem 0.75rem', 
                       borderRadius: '30px', 
                       fontSize: '0.75rem', 
-                      fontWeight: '700' 
+                      fontWeight: '700',
+                      boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
                     }}>
-                      ASESOR VERIFICADO
+                      {userPlan.icon} Plan {userPlan.name}
                     </span>
                   </div>
                   
@@ -964,11 +1105,21 @@ export default function Dashboard({ onLogout }) {
             </div>
           )}
 
+          {currentView === 'users' && currentUser.plan === 'admin' && (
+            <UserManager />
+          )}
+
           {currentView === 'analytics' && (
             <div style={{ animation: 'fadeIn 0.3s ease' }}>
               <div style={{ marginBottom: '2.5rem' }}>
-                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Estadísticas de Rendimiento</h1>
-                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Monitorea el impacto y conversión de tus propiedades publicadas.</p>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
+                  {currentUser.plan === 'admin' ? 'Rendimiento Global del CRM' : 'Estadísticas de Rendimiento'}
+                </h1>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>
+                  {currentUser.plan === 'admin' 
+                    ? 'Monitorea el impacto, leads y conversiones del ecosistema completo.' 
+                    : 'Monitorea el impacto y conversión de tus propiedades publicadas.'}
+                </p>
               </div>
               <AnalyticsView analytics={analyticsData} plan={userPlan} />
             </div>

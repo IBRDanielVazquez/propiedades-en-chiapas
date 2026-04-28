@@ -1,11 +1,27 @@
 // Subscription Plans
 export const PLANS = {
+  admin: { id: 'admin', name: 'Administrador CRM', maxProperties: 9999, features: ['all_access', 'manage_users', 'tarjeta_digital', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#ef4444', icon: '⚡' },
+  developer: { id: 'developer', name: 'Desarrollador / Constructor', maxProperties: 999, features: ['tarjeta_digital', 'propiedades_ilimitadas', 'landing', 'analytics', 'developments'], color: '#f59e0b', icon: '🏗️' },
   starter: { id: 'starter', name: 'Starter', maxProperties: 0, features: ['tarjeta_digital'], color: '#64748b', icon: '💳' },
   basic: { id: 'basic', name: 'Básico', maxProperties: 1, features: ['tarjeta_digital', 'una_propiedad', 'landing'], color: '#0284c7', icon: '🏠' },
   premium: { id: 'premium', name: 'Premium', maxProperties: 999, features: ['tarjeta_digital', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#7c3aed', icon: '👑' }
 };
 
 export const SAMPLE_USERS = [
+  {
+    id: 'u0',
+    name: 'Daniel (Project Manager)',
+    email: 'admin@crmestate.com',
+    position: 'Administrador del CRM',
+    phone: '961 000 0000',
+    whatsapp: '961 000 0000',
+    company: 'CRM Estate Global',
+    license: 'MASTER-ADMIN',
+    location: 'TUXTLA GUTIERREZ',
+    bio: 'Administrador general y director de proyectos inmobiliarios en el CRM.',
+    avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+    plan: 'admin'
+  },
   {
     id: 'u1',
     name: 'Daniel Vázquez',
@@ -47,6 +63,20 @@ export const SAMPLE_USERS = [
     bio: 'Nuevo en el ramo inmobiliario, buscando crecer con mi tarjeta digital.',
     avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300',
     plan: 'starter'
+  },
+  {
+    id: 'u4',
+    name: 'Grupo Constructor Alfa',
+    email: 'contacto@constructoraalfa.com',
+    position: 'Desarrollador Inmobiliario',
+    phone: '961 234 5678',
+    whatsapp: '961 234 5678',
+    company: 'Desarrollos Alfa Chiapas',
+    license: 'CONST-CH-992',
+    location: 'TUXTLA GUTIERREZ',
+    bio: 'Construcción y comercialización de macroproyectos habitacionales.',
+    avatar_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=300',
+    plan: 'developer'
   }
 ];
 
@@ -60,10 +90,14 @@ export const SAMPLE_PROPERTIES = [
   // María (u2) - Basic - 1 property
   { id: 'p6', user_id: 'u2', title: 'Cabaña Rústica en San Cristóbal', description: 'Hermosa cabaña de madera con chimenea y vista al bosque.', operation_type: 'Venta', price: 3200000, price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: 180, bedrooms: 3, bathrooms: 2, garages: 1, municipality: 'SAN CRISTOBAL DE LAS CASAS', colony: 'CENTRO', featured_image_url: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&q=80&w=600', active: true, views: 423, leads: 15 },
   // Roberto (u3) - Starter - 0 properties (solo tarjeta)
+  // Grupo Constructor Alfa (u4) - Developer - 2 properties
+  { id: 'p7', user_id: 'u4', title: 'Macroproyecto Residencial "Las Ceibas"', description: 'Venta de casas en preventa en macroproyecto sustentable.', operation_type: 'Venta', price: 2100000, price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: 150, bedrooms: 3, bathrooms: 2.5, garages: 2, municipality: 'TUXTLA GUTIERREZ', colony: 'ZONA NORTE', featured_image_url: 'https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?auto=format&fit=crop&q=80&w=600', active: true, views: 922, leads: 56 },
+  { id: 'p8', user_id: 'u4', title: 'Torre Departamental Alfa Centauro', description: 'Departamentos inteligentes de lujo con amenidades completas.', operation_type: 'Venta', price: 3450000, price_suffix: '', status: 'Disponible', type: 'Departamento', size_m2: 110, bedrooms: 2, bathrooms: 2, garages: 2, municipality: 'TUXTLA GUTIERREZ', colony: 'LOMAS DEL VALLE', featured_image_url: 'https://images.unsplash.com/photo-1545324418-f1a3ac15c974?auto=format&fit=crop&q=80&w=600', active: true, views: 785, leads: 34 }
 ];
 
-export const generateAnalytics = (userId) => {
-  const userProps = SAMPLE_PROPERTIES.filter(p => p.user_id === userId);
+export const generateAnalytics = (userId, allProps = null) => {
+  const propsToUse = allProps || SAMPLE_PROPERTIES;
+  const userProps = propsToUse.filter(p => p.user_id === userId);
   const totalViews = userProps.reduce((sum, p) => sum + (p.views || 0), 0);
   const totalLeads = userProps.reduce((sum, p) => sum + (p.leads || 0), 0);
   const activeCount = userProps.filter(p => p.active).length;

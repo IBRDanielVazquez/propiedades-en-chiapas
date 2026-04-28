@@ -9,10 +9,12 @@ export default function Login({ onLoginSuccess, onBack }) {
 
   const testUsers = [
     { email: 'admin@propiedadesenchiapas.com', pass: 'Chiapas2026!' },
+    { email: 'admin@crmestate.com', pass: '123456' },
     { email: 'vendedor1@propiedadesenchiapas.com', pass: 'Ventas2026!' },
     { email: 'vendedor2@propiedadesenchiapas.com', pass: 'Ventas2026!' },
     { email: 'daniel@propiedadesenchiapas.com', pass: 'Daniel2026!' },
-    { email: 'pruebas@propiedadesenchiapas.com', pass: 'Pruebas2026!' }
+    { email: 'pruebas@propiedadesenchiapas.com', pass: 'Pruebas2026!' },
+    { email: 'test@test.com', pass: '123456' }
   ];
 
   const handleLogin = async (e) => {
