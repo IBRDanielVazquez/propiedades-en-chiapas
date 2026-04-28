@@ -42,6 +42,8 @@ export default function Dashboard({ onLogout }) {
     email: 'daniel@propiedadesenchiapas.com',
     company: 'Chiapas Premium Real Estate',
     license: 'LIC-CH-78291',
+    location: 'Tuxtla Gutiérrez, Chiapas',
+    bio: 'Especialista en desarrollo inmobiliario premium con más de 8 años de experiencia en el mercado de Chiapas.',
     avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300'
   });
 
@@ -104,6 +106,18 @@ export default function Dashboard({ onLogout }) {
         setImagePreview(event.target.result);
         // Emulate an upload by saving the base64 to featured_image_url
         setProperty(prev => ({ ...prev, featured_image_url: event.target.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAvatarDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAgentProfile(prev => ({ ...prev, avatar_url: event.target.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -578,13 +592,25 @@ export default function Dashboard({ onLogout }) {
                       fontSize: '0.75rem', 
                       fontWeight: '700' 
                     }}>
-                      ACTIVO
+                      ASESOR VERIFICADO
                     </span>
                   </div>
                   
                   <div style={{ padding: '1.5rem' }}>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.25rem' }}>{agentProfile.name}</h3>
-                    <p style={{ color: '#0284c7', fontSize: '0.85rem', fontWeight: '600', marginBottom: '1.25rem', letterSpacing: '0.5px', textTransform: 'uppercase' }}>{agentProfile.position}</p>
+                    <p style={{ color: '#0284c7', fontSize: '0.85rem', fontWeight: '600', marginBottom: '0.5rem', letterSpacing: '0.5px', textTransform: 'uppercase' }}>{agentProfile.position}</p>
+                    
+                    {agentProfile.location && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: '#64748b', marginBottom: '1.25rem' }}>
+                        <span>📍</span> {agentProfile.location}
+                      </div>
+                    )}
+
+                    {agentProfile.bio && (
+                      <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: '1.5', background: '#f8fafc', padding: '0.75rem', borderRadius: '10px', marginBottom: '1.25rem', border: '1px solid #f1f5f9' }}>
+                        "{agentProfile.bio}"
+                      </p>
+                    )}
                     
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.25rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
@@ -602,8 +628,8 @@ export default function Dashboard({ onLogout }) {
                     </div>
                     
                     {agentProfile.license && (
-                      <div style={{ marginTop: '1.25rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>
-                        Matrícula / Licencia: {agentProfile.license}
+                      <div style={{ marginTop: '1.25rem', padding: '0.5rem', background: '#f1f5f9', borderRadius: '8px', textAlign: 'center', fontSize: '0.75rem', color: '#64748b', fontWeight: '600', letterSpacing: '0.5px' }}>
+                        REGISTRO: {agentProfile.license}
                       </div>
                     )}
                   </div>
@@ -622,6 +648,36 @@ export default function Dashboard({ onLogout }) {
                 }}>
                   <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>Editar Información</h2>
                   
+                  {/* Drag and Drop Zone for Avatar */}
+                  <div>
+                    <label className="form-label">Subir Foto de Perfil (Arrastra y Suelta)</label>
+                    <div 
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={handleAvatarDrop}
+                      style={{
+                        border: '2px dashed #cbd5e1',
+                        borderRadius: '12px',
+                        padding: '1.5rem',
+                        textAlign: 'center',
+                        background: '#f8fafc',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        marginBottom: '1rem'
+                      }}
+                      onClick={() => document.getElementById('avatar-upload').click()}
+                    >
+                      <input 
+                        type="file" 
+                        id="avatar-upload" 
+                        accept="image/*" 
+                        onChange={handleAvatarDrop} 
+                        style={{ display: 'none' }} 
+                      />
+                      <span style={{ fontSize: '1.5rem' }}>👤</span>
+                      <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.25rem' }}>Arrastra tu foto o haz clic aquí.</p>
+                    </div>
+                  </div>
+
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
                     <div>
                       <label className="form-label">Nombre Completo</label>
@@ -659,21 +715,13 @@ export default function Dashboard({ onLogout }) {
                         className="form-input" 
                       />
                     </div>
-                    <div style={{ gridColumn: '1 / -1' }}>
-                      <label className="form-label">Correo Electrónico</label>
-                      <input 
-                        type="email" 
-                        value={agentProfile.email} 
-                        onChange={(e) => setAgentProfile(prev => ({ ...prev, email: e.target.value }))} 
-                        className="form-input" 
-                      />
-                    </div>
                     <div>
-                      <label className="form-label">Inmobiliaria / Empresa</label>
+                      <label className="form-label">Ubicación / Ciudad</label>
                       <input 
                         type="text" 
-                        value={agentProfile.company} 
-                        onChange={(e) => setAgentProfile(prev => ({ ...prev, company: e.target.value }))} 
+                        value={agentProfile.location} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, location: e.target.value }))} 
+                        placeholder="Ej. Tuxtla Gutiérrez, Chiapas" 
                         className="form-input" 
                       />
                     </div>
@@ -687,7 +735,35 @@ export default function Dashboard({ onLogout }) {
                       />
                     </div>
                     <div style={{ gridColumn: '1 / -1' }}>
-                      <label className="form-label">URL Foto de Perfil (Avatar)</label>
+                      <label className="form-label">Inmobiliaria / Empresa</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.company} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, company: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label className="form-label">Correo Electrónico</label>
+                      <input 
+                        type="email" 
+                        value={agentProfile.email} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, email: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label className="form-label">Descripción Breve / Biografía</label>
+                      <textarea 
+                        value={agentProfile.bio} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, bio: e.target.value }))} 
+                        placeholder="Cuenta brevemente tu trayectoria y especialidad..." 
+                        className="form-textarea" 
+                        style={{ height: '100px', resize: 'vertical' }}
+                      />
+                    </div>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label className="form-label">O usa un link para tu Foto</label>
                       <input 
                         type="text" 
                         value={agentProfile.avatar_url} 
