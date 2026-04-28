@@ -32,6 +32,19 @@ export default function Dashboard({ onLogout }) {
     amenities: []
   });
 
+  const [currentView, setCurrentView] = useState('add-property'); // 'add-property' or 'profile'
+  
+  const [agentProfile, setAgentProfile] = useState({
+    name: 'Daniel Vázquez',
+    position: 'Asesor Inmobiliario Senior',
+    phone: '961 123 4567',
+    whatsapp: '961 123 4567',
+    email: 'daniel@propiedadesenchiapas.com',
+    company: 'Chiapas Premium Real Estate',
+    license: 'LIC-CH-78291',
+    avatar_url: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300'
+  });
+
   const [imagePreview, setImagePreview] = useState(null);
 
   const propertyTypes = [
@@ -183,9 +196,44 @@ export default function Dashboard({ onLogout }) {
         </div>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '0 1rem' }}>
-          <button style={{ textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', background: '#1e293b', color: '#38bdf8', fontWeight: '600', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button 
+            onClick={() => setCurrentView('add-property')}
+            style={{ 
+              textAlign: 'left', 
+              padding: '0.85rem 1.25rem', 
+              borderRadius: '12px', 
+              background: currentView === 'add-property' ? '#1e293b' : 'transparent', 
+              color: currentView === 'add-property' ? '#38bdf8' : '#94a3b8', 
+              fontWeight: '600', 
+              border: 'none', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px' 
+            }}
+          >
             <span>➕</span> Agregar Propiedad
           </button>
+          
+          <button 
+            onClick={() => setCurrentView('profile')}
+            style={{ 
+              textAlign: 'left', 
+              padding: '0.85rem 1.25rem', 
+              borderRadius: '12px', 
+              background: currentView === 'profile' ? '#1e293b' : 'transparent', 
+              color: currentView === 'profile' ? '#38bdf8' : '#94a3b8', 
+              fontWeight: '600', 
+              border: 'none', 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px' 
+            }}
+          >
+            <span>👤</span> Mi Perfil
+          </button>
+
           <button style={{ textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', color: '#94a3b8', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: '500', transition: 'all 0.2s' }}>
             🏠 Mis Propiedades
           </button>
@@ -204,12 +252,15 @@ export default function Dashboard({ onLogout }) {
       {/* Main Content */}
       <main style={{ flex: 1, padding: '3.5rem', overflowY: 'auto' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '2.5rem' }}>
-            <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Agregar Nueva Propiedad</h1>
-            <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Rellena los campos controlados para dar de alta una propiedad en el portal.</p>
-          </div>
+          
+          {currentView === 'add-property' ? (
+            <>
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Agregar Nueva Propiedad</h1>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Rellena los campos controlados para dar de alta una propiedad en el portal.</p>
+              </div>
 
-          <div className="dashboard-card">
+              <div className="dashboard-card">
             {/* Tabs (Horizontal Workflow) */}
             <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '12px', padding: '0.4rem', gap: '0.25rem', marginBottom: '3rem', overflowX: 'auto' }}>
               {tabs.map(tab => (
@@ -489,8 +540,177 @@ export default function Dashboard({ onLogout }) {
                   {isSaving ? 'Guardando...' : 'Guardar y Publicar'}
                 </button>
               </div>
+              </div>
             </div>
-          </div>
+          </>
+          ) : (
+            /* Profile View (WP Residence style Agent Card) */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Mi Perfil de Asesor</h1>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Personaliza tus datos de contacto y branding de inmobiliaria.</p>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2.5rem', alignItems: 'start' }}>
+                
+                {/* 1. WP Residence Style Agent Card Preview */}
+                <div style={{ 
+                  background: '#ffffff', 
+                  borderRadius: '16px', 
+                  overflow: 'hidden', 
+                  boxShadow: '0 15px 30px -10px rgba(0,0,0,0.1)',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <div style={{ position: 'relative', height: '240px', overflow: 'hidden' }}>
+                    <img 
+                      src={agentProfile.avatar_url || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300'} 
+                      alt={agentProfile.name} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
+                    <span style={{ 
+                      position: 'absolute', 
+                      bottom: '15px', 
+                      right: '15px', 
+                      background: '#38bdf8', 
+                      color: '#ffffff', 
+                      padding: '0.35rem 0.75rem', 
+                      borderRadius: '30px', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '700' 
+                    }}>
+                      ACTIVO
+                    </span>
+                  </div>
+                  
+                  <div style={{ padding: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', marginBottom: '0.25rem' }}>{agentProfile.name}</h3>
+                    <p style={{ color: '#0284c7', fontSize: '0.85rem', fontWeight: '600', marginBottom: '1.25rem', letterSpacing: '0.5px', textTransform: 'uppercase' }}>{agentProfile.position}</p>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.25rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
+                        <span>🏢</span> <strong>{agentProfile.company}</strong>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
+                        <span>📞</span> {agentProfile.phone}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
+                        <span>💬</span> WhatsApp: {agentProfile.whatsapp}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.9rem', color: '#475569' }}>
+                        <span>✉️</span> {agentProfile.email}
+                      </div>
+                    </div>
+                    
+                    {agentProfile.license && (
+                      <div style={{ marginTop: '1.25rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '8px', textAlign: 'center', fontSize: '0.8rem', color: '#64748b', fontWeight: '500' }}>
+                        Matrícula / Licencia: {agentProfile.license}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* 2. Customization Form */}
+                <div style={{ 
+                  background: '#ffffff', 
+                  borderRadius: '16px', 
+                  padding: '2rem', 
+                  boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
+                  border: '1px solid #e2e8f0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.5rem'
+                }}>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>Editar Información</h2>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.25rem' }}>
+                    <div>
+                      <label className="form-label">Nombre Completo</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.name} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, name: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label">Cargo / Posición</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.position} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, position: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label">Teléfono Oficina</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.phone} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, phone: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label">WhatsApp Directo</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.whatsapp} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, whatsapp: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label className="form-label">Correo Electrónico</label>
+                      <input 
+                        type="email" 
+                        value={agentProfile.email} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, email: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label">Inmobiliaria / Empresa</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.company} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, company: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div>
+                      <label className="form-label">Licencia / Certificación</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.license} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, license: e.target.value }))} 
+                        className="form-input" 
+                      />
+                    </div>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label className="form-label">URL Foto de Perfil (Avatar)</label>
+                      <input 
+                        type="text" 
+                        value={agentProfile.avatar_url} 
+                        onChange={(e) => setAgentProfile(prev => ({ ...prev, avatar_url: e.target.value }))} 
+                        placeholder="https://images.unsplash.com/photo-..." 
+                        className="form-input" 
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
+                    <button 
+                      onClick={() => alert("¡Perfil de Asesor Actualizado Exitosamente!")} 
+                      className="btn-primary" 
+                      style={{ padding: '0.75rem 2rem', fontSize: '0.95rem', borderRadius: '8px' }}
+                    >
+                      Guardar Cambios
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
