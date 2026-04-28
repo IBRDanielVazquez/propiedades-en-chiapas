@@ -9,9 +9,10 @@ export default function App() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDashboard, setIsDashboard] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('Casas');
+  const [activeCategory, setActiveCategory] = useState('Todas');
 
   const categories = [
+    { name: 'Todas', filter: '', icon: 'M16 2.5L2 12h3v14h7v-8h8v8h7V12h3z' },
     { name: 'Casas', filter: 'casa', icon: 'M16 2.5L2 12h3v14h7v-8h8v8h7V12h3z' },
     { name: 'Departamentos', filter: 'departamento', icon: 'M4 2v28h24V2zm6 24H8v-2h2zm0-4H8v-2h2zm0-4H8v-2h2zm0-4H8v-2h2zm0-4H8V8h2zm6 16h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm0-4h-2V8h2zm6 16h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm0-4h-2v-2h2zm0-4h-2V8h2z' },
     { name: 'Lotes Residenciales', filter: 'lote residencial', icon: 'M2 14v16h28V14z M6 26v-4h4v4z M14 26v-6h4v6z M22 26v-8h4v8z M16 2L2 12h28z' },
@@ -80,12 +81,29 @@ export default function App() {
         </div>
       </div>
 
-      <main className="container">
+      <main className="container" style={{ paddingBottom: '6rem' }}>
         {loading ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
             <h2>Buscando lugares increíbles...</h2>
           </div>
+        ) : activeCategory === 'Todas' ? (
+          /* Render Multiple Horizontal Sliders for "Todas" */
+          categories.slice(1).map(cat => {
+            const catProps = properties.filter(p => p.type.toLowerCase().includes(cat.filter));
+            if (catProps.length === 0) return null;
+            return (
+              <div key={cat.name} className="category-section">
+                <h2>{cat.name}</h2>
+                <div className="properties-slider">
+                  {catProps.map(property => (
+                    <PropertyCard key={property.id} property={property} />
+                  ))}
+                </div>
+              </div>
+            );
+          })
         ) : (
+          /* Render Traditional Grid if a specific category is selected */
           <div className="properties-grid">
             {filteredProperties.length > 0 ? (
               filteredProperties.map(property => (

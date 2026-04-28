@@ -127,12 +127,43 @@ body {
   font-weight: 500;
 }
 
-/* Property Grid */
+/* Property Grid & Slider */
 .properties-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem 1.5rem;
   padding: 2rem 0 6rem 0;
+}
+
+.category-section {
+  margin: 2rem 0 3rem 0;
+}
+
+.category-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.properties-slider {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+}
+.properties-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.properties-slider .property-card {
+  min-width: 280px;
+  max-width: 300px;
+  flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 
 /* Property Card (Airbnb style) */
