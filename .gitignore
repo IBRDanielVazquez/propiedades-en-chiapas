@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.DS_Store
+wpresidence_original/
+wpresidence_child_original/
+landings_originales/
