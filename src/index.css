@@ -278,3 +278,50 @@ body {
 .btn-primary:hover {
   background: var(--primary-hover);
 }
+
+/* RESPONSIVE DESIGN (MOBILE FIRST OVERRIDES) */
+@media (max-width: 768px) {
+  .navbar-content {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.8rem 0;
+  }
+  
+  /* Hide the full logo text on mobile, just keep icon */
+  .logo-text {
+    display: none;
+  }
+  
+  /* Make search pill take full width and center below the logo */
+  .search-pill {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+  }
+  
+  /* Hide extra text in search pill on small screens */
+  .search-pill-text.hide-mobile, 
+  .search-pill-sub {
+    display: none;
+  }
+  
+  /* Hide the 'Pon tu propiedad' button on mobile to save space */
+  .host-btn-text {
+    display: none;
+  }
+
+  .categories-scroll {
+    gap: 1.5rem;
+  }
+  
+  .properties-slider .property-card {
+    min-width: 85vw; /* Almost full width of the screen on mobile */
+  }
+
+  .properties-grid {
+    grid-template-columns: 1fr; /* 1 column on mobile */
+    gap: 1.5rem;
+    padding: 1rem 0 5rem 0;
+  }
+}

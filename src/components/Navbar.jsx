@@ -9,13 +9,13 @@ export default function Navbar({ onLogin }) {
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '32px', width: '32px', fill: 'currentcolor' }}>
             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 2.7l7 6.3v9h-4v-6H9v6H5v-9l7-6.3z" />
           </svg>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: '700', letterSpacing: '-0.5px', textTransform: 'uppercase' }}>Propiedades Chiapas</h2>
+          <h2 className="logo-text" style={{ fontSize: '1.2rem', fontWeight: '700', letterSpacing: '-0.5px', textTransform: 'uppercase' }}>Propiedades Chiapas</h2>
         </div>
         
         {/* Center: Search Pill */}
         <div className="search-pill">
           <div className="search-pill-text">Cualquier lugar</div>
-          <div className="search-pill-text" style={{ paddingLeft: '1rem' }}>Cualquier tipo</div>
+          <div className="search-pill-text hide-mobile" style={{ paddingLeft: '1rem' }}>Cualquier tipo</div>
           <div className="search-pill-sub">Añade filtros</div>
           <button className="search-pill-btn">
             <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'none', height: '12px', width: '12px', stroke: 'currentcolor', strokeWidth: '5.33333', overflow: 'visible' }}><g fill="none"><path d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"></path></g></svg>
@@ -24,7 +24,7 @@ export default function Navbar({ onLogin }) {
 
         {/* Right: User Menu */}
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: '500', padding: '0.5rem 1rem', borderRadius: '20px', cursor: 'pointer' }} className="hover-bg">Pon tu propiedad</span>
+          <span className="host-btn-text" style={{ fontSize: '0.9rem', fontWeight: '500', padding: '0.5rem 1rem', borderRadius: '20px', cursor: 'pointer' }}>Pon tu propiedad</span>
           <button 
             onClick={onLogin}
             style={{ 
