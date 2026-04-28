@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
+import chiapasData from '../data/chiapasLocations.json';
 
 export default function Dashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
@@ -31,22 +32,7 @@ export default function Dashboard({ onLogout }) {
     'Edificio', 'Rancho', 'Quinta', 'Nave Industrial'
   ];
 
-  // Top Municipalities Mock (To be replaced with Supabase DB)
-  const chiapasData = {
-    'Tuxtla Gutiérrez': {
-      '29000': ['Centro', 'San Roque', 'El Calvario'],
-      '29030': ['Moctezuma', 'Mirador', 'Los Laureles'],
-      '29040': ['Terán', 'San José Terán', 'Campestre']
-    },
-    'San Cristóbal de las Casas': {
-      '29200': ['Centro', 'Barrio El Cerrillo', 'Barrio Mexicanos'],
-      '29240': ['San Diego', 'María Auxiliadora']
-    },
-    'Tapachula': {
-      '30700': ['Centro', 'San Juan'],
-      '30740': ['Los Laureles', 'Las Hortensias']
-    }
-  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -234,7 +220,7 @@ export default function Dashboard({ onLogout }) {
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Municipio</label>
                         <select name="municipality" value={property.municipality} onChange={handleInputChange} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'white' }}>
                           <option value="">-- Selecciona Municipio --</option>
-                          {Object.keys(chiapasData).map(m => <option key={m} value={m}>{m}</option>)}
+                          {Object.keys(chiapasData).sort().map(m => <option key={m} value={m}>{m}</option>)}
                         </select>
                       </div>
                       
@@ -250,7 +236,7 @@ export default function Dashboard({ onLogout }) {
                         <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>Colonia / Fraccionamiento</label>
                         <select name="colony" value={property.colony} onChange={handleInputChange} disabled={!property.postal_code} style={{ width: '100%', padding: '0.8rem', borderRadius: '8px', border: '1px solid var(--border-color)', background: property.postal_code ? 'white' : '#f0f0f0' }}>
                           <option value="">-- Selecciona Colonia --</option>
-                          {property.postal_code && chiapasData[property.municipality][property.postal_code].map(col => <option key={col} value={col}>{col}</option>)}
+                          {property.postal_code && chiapasData[property.municipality][property.postal_code].sort().map(col => <option key={col} value={col}>{col}</option>)}
                         </select>
                       </div>
                     </div>
