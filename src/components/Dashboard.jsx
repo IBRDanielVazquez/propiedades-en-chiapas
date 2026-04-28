@@ -29,6 +29,7 @@ export default function Dashboard({ onLogout }) {
     colony: '',
     postal_code: '',
     featured_image_url: '',
+    images: [],
     amenities: []
   });
 
@@ -55,11 +56,13 @@ export default function Dashboard({ onLogout }) {
     'Edificio', 'Rancho', 'Quinta', 'Nave Industrial', 'Desarrollo en Preventa'
   ];
 
-  const amenitiesList = [
+  const [amenities, setAmenities] = useState([
     'Alberca', 'Seguridad 24/7', 'Jardín', 'Cocina Integral', 'Terraza', 
     'Aire Acondicionado', 'Gimnasio', 'Elevador', 'Cisterna', 'Gas Estacionario', 
     'Cuarto de Servicio', 'Mascotas Permitidas', 'Bodega Privada', 'Estacionamiento Visitas'
-  ];
+  ]);
+
+  const [newAmenity, setNewAmenity] = useState('');
 
 
 
@@ -99,15 +102,41 @@ export default function Dashboard({ onLogout }) {
 
   const handleFileDrop = (e) => {
     e.preventDefault();
-    const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImagePreview(event.target.result);
-        // Emulate an upload by saving the base64 to featured_image_url
-        setProperty(prev => ({ ...prev, featured_image_url: event.target.result }));
-      };
-      reader.readAsDataURL(file);
+    const files = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+    if (!files || files.length === 0) return;
+
+    const currentPhotosCount = property.images ? property.images.length : 0;
+    const availableSlots = 15 - currentPhotosCount;
+
+    if (availableSlots <= 0) {
+      alert("Has alcanzado el límite máximo de 15 fotos por propiedad.");
+      return;
+    }
+
+    const filesToProcess = Array.from(files).slice(0, availableSlots);
+
+    filesToProcess.forEach(file => {
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setProperty(prev => {
+            const updatedImages = [...(prev.images || []), event.target.result];
+            // If it's the first image, make it the featured_image
+            const featured = prev.featured_image_url || event.target.result;
+            return { 
+              ...prev, 
+              images: updatedImages,
+              featured_image_url: featured
+            };
+          });
+          setImagePreview(event.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    if (files.length > availableSlots) {
+      alert(`Sólo se agregaron ${availableSlots} fotos. El límite es 15.`);
     }
   };
 
@@ -126,6 +155,11 @@ export default function Dashboard({ onLogout }) {
   const saveProperty = async () => {
     if (!property.title || !property.price) {
       alert("Por favor llena al menos el Título y el Precio.");
+      return;
+    }
+
+    if (!property.featured_image_url && (!property.images || property.images.length === 0)) {
+      alert("Es obligatorio incluir al menos una Foto Principal para dar de alta el inmueble.");
       return;
     }
     
@@ -353,7 +387,7 @@ export default function Dashboard({ onLogout }) {
 
               {activeTab === 'media' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                  <label className="form-label">Cargar Fotografía Principal</label>
+                  <label className="form-label">Cargar Fotografías del Inmueble (Límite: 15)</label>
                   
                   {/* Drag and Drop Zone */}
                   <div 
@@ -374,39 +408,68 @@ export default function Dashboard({ onLogout }) {
                       type="file" 
                       id="file-upload" 
                       accept="image/*" 
+                      multiple
                       onChange={handleFileDrop} 
                       style={{ display: 'none' }} 
                     />
                     <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📸</div>
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>Arrastra y suelta tu imagen aquí</h3>
-                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.25rem' }}>O haz clic para explorar tus archivos locales.</p>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b' }}>Arrastra y suelta tus imágenes aquí</h3>
+                    <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.25rem' }}>Puedes seleccionar varias imágenes a la vez (Máx. 15).</p>
                   </div>
 
-                  {/* Dynamic Frontend Uniform Crop Preview */}
-                  {imagePreview && (
+                  {/* Photo Gallery with selection for Main Photo */}
+                  {property.images && property.images.length > 0 && (
                     <div style={{ marginTop: '1.5rem' }}>
-                      <label className="form-label">Previsualización (Ajuste Uniforme / Recorte Responsivo)</label>
-                      <div style={{ 
-                        width: '100%', 
-                        maxWidth: '400px',
-                        aspectRatio: '4 / 3', 
-                        overflow: 'hidden', 
-                        borderRadius: '16px',
-                        boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
-                        border: '1px solid #e2e8f0'
-                      }}>
-                        <img 
-                          src={imagePreview} 
-                          alt="Previsualización" 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                        />
+                      <label className="form-label" style={{ marginBottom: '1rem', display: 'block' }}>
+                        Galería ({property.images.length}/15 fotos)
+                      </label>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem' }}>
+                        {property.images.map((img, idx) => {
+                          const isFeatured = property.featured_image_url === img;
+                          return (
+                            <div key={idx} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', border: isFeatured ? '3px solid #0284c7' : '1px solid #e2e8f0', aspectRatio: '1/1', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+                              <img src={img} alt={`Foto ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              
+                              {/* Main Badge */}
+                              {isFeatured && (
+                                <span style={{ position: 'absolute', top: '8px', left: '8px', background: '#0284c7', color: '#ffffff', fontSize: '0.65rem', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px' }}>
+                                  Principal
+                                </span>
+                              )}
+
+                              {/* Action Buttons Overlay */}
+                              <div style={{ position: 'absolute', bottom: '0', left: '0', right: '0', background: 'rgba(15, 23, 42, 0.75)', padding: '4px', display: 'flex', justifyContent: 'space-around', opacity: '0.9' }}>
+                                <button 
+                                  onClick={(e) => { e.stopPropagation(); setProperty(prev => ({ ...prev, featured_image_url: img })); }}
+                                  style={{ background: 'none', border: 'none', color: '#38bdf8', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}
+                                  title="Marcar como Principal"
+                                >
+                                  ⭐
+                                </button>
+                                <button 
+                                  onClick={(e) => { 
+                                    e.stopPropagation(); 
+                                    setProperty(prev => {
+                                      const updated = prev.images.filter((_, i) => i !== idx);
+                                      const newFeatured = prev.featured_image_url === img ? (updated[0] || '') : prev.featured_image_url;
+                                      return { ...prev, images: updated, featured_image_url: newFeatured };
+                                    });
+                                  }}
+                                  style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}
+                                  title="Eliminar"
+                                >
+                                  🗑️
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <p style={{ color: '#64748b', fontSize: '0.8rem', marginTop: '0.5rem' }}>* Así se recortará y mostrará la foto en el catálogo del portal.</p>
                     </div>
                   )}
 
                   <div style={{ marginTop: '1rem' }}>
-                    <label className="form-label">O usa un link directo (URL)</label>
+                    <label className="form-label">O usa un link directo para la Foto Principal (URL)</label>
                     <input type="text" name="featured_image_url" value={property.featured_image_url} onChange={handleInputChange} placeholder="https://images.unsplash.com/photo-..." className="form-input" />
                   </div>
                 </div>
@@ -508,7 +571,7 @@ export default function Dashboard({ onLogout }) {
                     borderRadius: '12px',
                     border: '1px solid #e2e8f0'
                   }}>
-                    {amenitiesList.map(amenity => (
+                    {amenities.map(amenity => (
                       <label 
                         key={amenity} 
                         style={{ 
@@ -540,6 +603,36 @@ export default function Dashboard({ onLogout }) {
                       </label>
                     ))}
                   </div>
+
+                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <input 
+                      type="text" 
+                      value={newAmenity} 
+                      onChange={(e) => setNewAmenity(e.target.value)} 
+                      placeholder="Ej. Roof Garden, Vigilancia con Dron, etc." 
+                      className="form-input" 
+                      style={{ flex: 1, margin: 0 }}
+                    />
+                    <button 
+                      onClick={() => {
+                        if (newAmenity.trim()) {
+                          const clean = newAmenity.trim();
+                          if (!amenities.includes(clean)) {
+                            setAmenities(prev => [...prev, clean]);
+                          }
+                          // Automatically toggle it as selected
+                          if (!property.amenities.includes(clean)) {
+                            setProperty(prev => ({ ...prev, amenities: [...prev.amenities, clean] }));
+                          }
+                          setNewAmenity('');
+                        }
+                      }}
+                      className="btn-primary"
+                      style={{ padding: '0.75rem 1.5rem', borderRadius: '8px', fontSize: '0.9rem' }}
+                    >
+                      ➕ Agregar Otro
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -554,7 +647,7 @@ export default function Dashboard({ onLogout }) {
                   {isSaving ? 'Guardando...' : 'Guardar y Publicar'}
                 </button>
               </div>
-              </div>
+            </div>
             </div>
           </>
           ) : (
