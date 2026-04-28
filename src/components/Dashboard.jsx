@@ -10,11 +10,18 @@ export default function Dashboard({ onLogout }) {
   const [property, setProperty] = useState({
     title: '',
     description: '',
+    operation_type: 'Venta', // Venta o Renta
     price: '',
     price_suffix: '',
     status: 'Disponible',
     type: 'Casa',
     size_m2: '',
+    size_land_m2: '',
+    size_construction_m2: '',
+    year_built: '',
+    floors: '',
+    furnished: false,
+    maid_room: false,
     bedrooms: 0,
     bathrooms: 0,
     garages: 0,
@@ -42,9 +49,16 @@ export default function Dashboard({ onLogout }) {
 
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setProperty(prev => {
-      const newState = { ...prev, [name]: value };
+      const newState = { 
+        ...prev, 
+        [name]: type === 'checkbox' ? checked : value 
+      };
+
+      if (name === 'operation_type') {
+        newState.price_suffix = value === 'Renta' ? '/ mes' : '';
+      }
       if (name === 'municipality') {
         newState.postal_code = '';
         newState.colony = '';
@@ -90,11 +104,26 @@ export default function Dashboard({ onLogout }) {
     
     setIsSaving(true);
     try {
-      // Append amenities checklist cleanly to the description
+      // Formatter for extra details
+      let detailsString = '';
+      if (property.operation_type) detailsString += `\n- Operación: ${property.operation_type}`;
+      if (property.size_land_m2) detailsString += `\n- Terreno: ${property.size_land_m2} m²`;
+      if (property.size_construction_m2) detailsString += `\n- Construcción: ${property.size_construction_m2} m²`;
+      if (property.year_built) detailsString += `\n- Año de constr.: ${property.year_built}`;
+      if (property.floors) detailsString += `\n- Niveles: ${property.floors}`;
+      if (property.furnished) detailsString += `\n- Amueblado: Sí`;
+      if (property.maid_room) detailsString += `\n- Cuarto de Servicio: Sí`;
+
       let finalDescription = property.description;
+      if (detailsString) {
+        finalDescription += `\n\nFicha Técnica del Inmueble:${detailsString}`;
+      }
       if (property.amenities.length > 0) {
         finalDescription += `\n\nCaracterísticas y Amenidades:\n- ${property.amenities.join('\n- ')}`;
       }
+
+      // We use size_construction_m2 or land_m2 for size_m2 in core DB depending on what's available
+      const sizeDB = property.size_construction_m2 || property.size_land_m2 || 0;
 
       const { data, error } = await supabase
         .from('properties')
@@ -105,10 +134,10 @@ export default function Dashboard({ onLogout }) {
           price_suffix: property.price_suffix,
           status: property.status,
           type: property.type,
-          size_m2: property.size_m2 ? parseFloat(property.size_m2) : null,
-          bedrooms: parseInt(property.bedrooms),
-          bathrooms: parseInt(property.bathrooms),
-          garages: parseInt(property.garages),
+          size_m2: sizeDB ? parseFloat(sizeDB) : null,
+          bedrooms: parseInt(property.bedrooms) || 0,
+          bathrooms: parseInt(property.bathrooms) || 0,
+          garages: parseInt(property.garages) || 0,
           city: property.municipality, 
           featured_image_url: property.featured_image_url || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600'
         }]);
@@ -118,7 +147,7 @@ export default function Dashboard({ onLogout }) {
       
       // Reset form
       setProperty({
-        title: '', description: '', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: '', amenities: []
+        title: '', description: '', operation_type: 'Venta', price: '', price_suffix: '', status: 'Disponible', type: 'Casa', size_m2: '', size_land_m2: '', size_construction_m2: '', year_built: '', floors: '', furnished: false, maid_room: false, bedrooms: 0, bathrooms: 0, garages: 0, municipality: '', colony: '', postal_code: '', featured_image_url: '', amenities: []
       });
       setImagePreview(null);
       setActiveTab('description');
@@ -225,12 +254,19 @@ export default function Dashboard({ onLogout }) {
               {activeTab === 'price' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                   <div>
+                    <label className="form-label">Tipo de Operación</label>
+                    <select name="operation_type" value={property.operation_type} onChange={handleInputChange} className="form-select">
+                      <option value="Venta">Venta</option>
+                      <option value="Renta">Renta</option>
+                    </select>
+                  </div>
+                  <div>
                     <label className="form-label">Precio (MXN)</label>
                     <input type="number" name="price" value={property.price} onChange={handleInputChange} placeholder="Ej. 1500000" className="form-input" />
                   </div>
                   <div>
-                    <label className="form-label">Sufijo (Opcional)</label>
-                    <input type="text" name="price_suffix" value={property.price_suffix} onChange={handleInputChange} placeholder="Ej. / mes" className="form-input" />
+                    <label className="form-label">Sufijo del Precio</label>
+                    <input type="text" name="price_suffix" value={property.price_suffix} onChange={handleInputChange} placeholder="Ej. / mes" className="form-input" disabled={property.operation_type === 'Venta'} />
                   </div>
                   <div>
                     <label className="form-label">Estado actual</label>
@@ -240,8 +276,8 @@ export default function Dashboard({ onLogout }) {
                       <option>Vendido</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="form-label">Tipo de Propiedad</label>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label className="form-label">Categoría de Propiedad</label>
                     <select name="type" value={property.type} onChange={handleInputChange} className="form-select">
                       <option value="">-- Selecciona el Tipo --</option>
                       {propertyTypes.map(t => <option key={t} value={t}>{t}</option>)}
@@ -312,22 +348,51 @@ export default function Dashboard({ onLogout }) {
               )}
 
               {activeTab === 'details' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
-                  <div>
-                    <label className="form-label">Superficie (m2)</label>
-                    <input type="number" name="size_m2" value={property.size_m2} onChange={handleInputChange} placeholder="Ej. 250" className="form-input" />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+                    <div>
+                      <label className="form-label">Superficie Terreno (m²)</label>
+                      <input type="number" name="size_land_m2" value={property.size_land_m2} onChange={handleInputChange} placeholder="Ej. 300" className="form-input" />
+                    </div>
+                    <div>
+                      <label className="form-label">Superficie Const. (m²)</label>
+                      <input type="number" name="size_construction_m2" value={property.size_construction_m2} onChange={handleInputChange} placeholder="Ej. 250" className="form-input" />
+                    </div>
+                    <div>
+                      <label className="form-label">Año Construcción</label>
+                      <input type="number" name="year_built" value={property.year_built} onChange={handleInputChange} placeholder="Ej. 2024" className="form-input" />
+                    </div>
+                    <div>
+                      <label className="form-label">Niveles / Pisos</label>
+                      <input type="number" name="floors" value={property.floors} onChange={handleInputChange} placeholder="Ej. 2" className="form-input" />
+                    </div>
                   </div>
-                  <div>
-                    <label className="form-label">Habitaciones</label>
-                    <input type="number" name="bedrooms" value={property.bedrooms} onChange={handleInputChange} className="form-input" />
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
+                    <div>
+                      <label className="form-label">Habitaciones</label>
+                      <input type="number" name="bedrooms" value={property.bedrooms} onChange={handleInputChange} className="form-input" />
+                    </div>
+                    <div>
+                      <label className="form-label">Baños completos</label>
+                      <input type="number" name="bathrooms" value={property.bathrooms} onChange={handleInputChange} className="form-input" />
+                    </div>
+                    <div>
+                      <label className="form-label">Estacionamientos</label>
+                      <input type="number" name="garages" value={property.garages} onChange={handleInputChange} className="form-input" />
+                    </div>
                   </div>
-                  <div>
-                    <label className="form-label">Baños</label>
-                    <input type="number" name="bathrooms" value={property.bathrooms} onChange={handleInputChange} className="form-input" />
-                  </div>
-                  <div>
-                    <label className="form-label">Garajes</label>
-                    <input type="number" name="garages" value={property.garages} onChange={handleInputChange} className="form-input" />
+
+                  <div style={{ display: 'flex', gap: '2rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input type="checkbox" name="furnished" checked={property.furnished} onChange={handleInputChange} style={{ width: '18px', height: '18px', accentColor: '#0284c7' }} />
+                      <span style={{ fontSize: '0.95rem', fontWeight: '600', color: '#1e293b' }}>Totalmente Amueblado</span>
+                    </label>
+
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input type="checkbox" name="maid_room" checked={property.maid_room} onChange={handleInputChange} style={{ width: '18px', height: '18px', accentColor: '#0284c7' }} />
+                      <span style={{ fontSize: '0.95rem', fontWeight: '600', color: '#1e293b' }}>Incluye Cuarto de Servicio</span>
+                    </label>
                   </div>
                 </div>
               )}
