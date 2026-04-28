@@ -29,7 +29,7 @@ export default function Dashboard({ onLogout }) {
   const propertyTypes = [
     'Casa', 'Departamento', 'Lote Residencial', 'Terreno Comercial', 
     'Terreno Agrícola/Ejidal', 'Bodega', 'Local Comercial', 'Oficina', 
-    'Edificio', 'Rancho', 'Quinta', 'Nave Industrial'
+    'Edificio', 'Rancho', 'Quinta', 'Nave Industrial', 'Desarrollo en Preventa'
   ];
 
 

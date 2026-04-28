@@ -1,16 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #0066cc;
-  --primary-hover: #0052a3;
-  --bg-color: #f4f7f6;
+  --primary: #1A365D; /* Corporate Real Estate Blue */
+  --primary-hover: #12284C;
+  --bg-color: #ffffff;
   --card-bg: #ffffff;
-  --text-main: #333333;
-  --text-muted: #666666;
-  --border-color: #e5e7eb;
+  --text-main: #222222;
+  --text-muted: #717171;
+  --border-color: #dddddd;
   --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
 }
 
 * {
@@ -23,67 +21,224 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-main);
-  line-height: 1.6;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1440px;
   margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Navbar (Airbnb style) */
+.navbar {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 100;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+/* Pill Search Bar */
+.search-pill {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 40px;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+  background: white;
+}
+.search-pill:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+}
+.search-pill-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding-right: 1rem;
+  border-right: 1px solid var(--border-color);
+}
+.search-pill-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
   padding: 0 1rem;
 }
-
-/* Navbar */
-.nav-link {
-  color: var(--text-main);
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-.nav-link:hover {
-  color: var(--primary);
-}
-
-/* Hero & Search */
-.hero-section {
-  position: relative;
-  height: 500px;
+.search-pill-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 2rem;
-  background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80') center/cover;
 }
 
-.search-bar-container {
-  background: var(--card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 1000px;
+/* Categories Bar */
+.categories-wrapper {
+  position: sticky;
+  top: 75px;
+  background: white;
+  z-index: 99;
+  padding: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+.categories-scroll {
   display: flex;
-  gap: 1rem;
-  z-index: 10;
+  gap: 2.5rem;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  padding-bottom: 0.5rem;
+}
+.categories-scroll::-webkit-scrollbar {
+  display: none; /* Chrome */
 }
 
-.search-input {
-  flex: 1;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  min-width: max-content;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 0.5rem;
+}
+.category-item:hover, .category-item.active {
+  color: var(--text-main);
+  border-bottom: 2px solid var(--text-main);
+}
+.category-item span {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Property Grid */
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem 1.5rem;
+  padding: 2rem 0 6rem 0;
+}
+
+/* Property Card (Airbnb style) */
+.property-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.property-card-img-wrapper {
+  position: relative;
+  aspect-ratio: 20/19;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 0.8rem;
+}
+.property-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.property-card:hover .property-card-img {
+  transform: scale(1.03);
+}
+
+.guest-favorite-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.property-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.property-title {
+  font-weight: 600;
   font-size: 1rem;
-  outline: none;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.search-input:focus {
-  border-color: var(--primary);
+.property-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+.property-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 2px;
+}
+.property-price {
+  margin-top: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+.property-price span {
+  font-weight: 400;
 }
 
-/* Buttons */
+/* Floating Map Button */
+.floating-map-btn {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222222;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+  transition: transform 0.2s;
+}
+.floating-map-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* UI Elements */
 .btn-primary {
   background: var(--primary);
   color: white;
   border: none;
-  padding: 0.8rem 2rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
@@ -91,36 +246,4 @@ body {
 }
 .btn-primary:hover {
   background: var(--primary-hover);
-}
-
-/* Property Card */
-.property-card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  transition: transform 0.3s, box-shadow 0.3s;
-  border: 1px solid var(--border-color);
-}
-.property-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 20px rgba(0,0,0,0.1);
-}
-
-.properties-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem;
-  padding: 2rem 0;
-}
-
-/* Card Icons */
-.card-meta {
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  align-items: center;
 }

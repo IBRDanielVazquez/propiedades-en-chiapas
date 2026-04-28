@@ -4,42 +4,48 @@ export default function PropertyCard({ property }) {
   const formatter = new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: 'MXN',
+    maximumFractionDigits: 0
   });
+
+  // Mocking Airbnb-like metrics
+  const rating = property.rating || "4.92";
+  const isGuestFavorite = property.status === 'Disponible' || Math.random() > 0.5;
 
   return (
     <div className="property-card">
-      <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
-        <img src={property.featured_image_url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80'} alt={property.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        <div style={{ position: 'absolute', top: '10px', left: '10px', display: 'flex', gap: '5px' }}>
-          <span style={{ background: '#10b981', color: 'white', padding: '3px 10px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>Featured</span>
-        </div>
-        <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '5px' }}>
-          <span style={{ background: 'var(--primary)', color: 'white', padding: '3px 10px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>{property.type.toUpperCase()}</span>
-          <span style={{ background: 'rgba(0,0,0,0.7)', color: 'white', padding: '3px 10px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '600' }}>{property.status}</span>
-        </div>
-        <div style={{ position: 'absolute', bottom: '10px', left: '10px', color: 'white', fontWeight: '600', fontSize: '0.85rem', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>
-          📍 {property.city}
+      <div className="property-card-img-wrapper">
+        <img 
+          src={property.featured_image_url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80'} 
+          alt={property.title} 
+          className="property-card-img" 
+        />
+        {isGuestFavorite && (
+          <div className="guest-favorite-badge">
+            Recomendado
+          </div>
+        )}
+        <div style={{ position: 'absolute', top: '12px', right: '12px', cursor: 'pointer' }}>
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', fill: 'rgba(0, 0, 0, 0.5)', height: '24px', width: '24px', stroke: 'white', strokeWidth: 2, overflow: 'visible' }}><path d="m16 28c7-4.733 14-10 14-17 0-1.792-.683-3.583-2.05-4.95-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05l-2.051 2.051-2.05-2.051c-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05-1.367 1.367-2.051 3.158-2.051 4.95 0 7 7 12.267 14 17z"></path></svg>
         </div>
       </div>
 
-      <div style={{ padding: '1.5rem' }}>
-        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-main)' }}>{property.title}</h3>
-        <p style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary)', marginBottom: '1rem' }}>{formatter.format(property.price)} {property.price_suffix || ''}</p>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-          {property.description || 'Increíble propiedad ubicada en la mejor zona de Chiapas. Ideal para vivir o como inversión con alta plusvalía.'}
-        </p>
+      <div className="property-title-row">
+        <div className="property-title">{property.city}, {property.type}</div>
+        <div className="property-rating">
+          <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentcolor' }}><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+          {rating}
+        </div>
       </div>
-
-      <div className="card-meta">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <span>🛏️</span> <span>{property.bedrooms || 0}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <span>🛁</span> <span>{property.bathrooms || 0}</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <span>📐</span> <span>{property.size_m2 || 0} m²</span>
-        </div>
+      
+      <div className="property-subtitle" style={{ marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        {property.title}
+      </div>
+      <div className="property-subtitle">
+        {property.bedrooms} hab · {property.bathrooms} baños · {property.size_m2} m²
+      </div>
+      
+      <div className="property-price">
+        {formatter.format(property.price)} <span>{property.price_suffix || ''}</span>
       </div>
     </div>
   );
