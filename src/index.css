@@ -265,6 +265,10 @@ body {
 }
 
 /* UI Elements */
+.hover-bg:hover {
+  background: #f7f7f7;
+}
+
 .btn-primary {
   background: var(--primary);
   color: white;

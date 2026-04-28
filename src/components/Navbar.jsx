@@ -24,7 +24,7 @@ export default function Navbar({ onLogin }) {
 
         {/* Right: User Menu */}
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <span className="host-btn-text" style={{ fontSize: '0.9rem', fontWeight: '500', padding: '0.5rem 1rem', borderRadius: '20px', cursor: 'pointer' }}>Pon tu propiedad</span>
+          <span onClick={onLogin} className="host-btn-text hover-bg" style={{ fontSize: '0.95rem', fontWeight: '600', padding: '0.5rem 1rem', borderRadius: '20px', cursor: 'pointer', transition: 'background 0.2s' }}>Acceso CRM</span>
           <button 
             onClick={onLogin}
             style={{ 
