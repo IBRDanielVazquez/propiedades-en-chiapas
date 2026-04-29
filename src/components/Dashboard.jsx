@@ -44,8 +44,43 @@ export default function Dashboard({ session, onLogout }) {
 
   useEffect(() => { loadProperties(); }, [loadProperties]);
 
-  const currentUser = SAMPLE_USERS.find(u => u.id === activeUserId) || SAMPLE_USERS[0];
-  const userPlan = PLANS[currentUser.plan];
+  const [currentUserData, setCurrentUserData] = useState(null);
+
+  useEffect(() => {
+    if (!session?.user?.email) return;
+
+    const fetchUserProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', session.user.email.toLowerCase())
+          .single();
+
+        if (data) {
+          setCurrentUserData(data);
+          setAgentProfile({
+            ...data,
+            whatsapp:  data.whatsapp  || '',
+            instagram: data.instagram || '',
+            facebook:  data.facebook  || '',
+            tiktok:    data.tiktok    || '',
+            youtube:   data.youtube   || '',
+            linkedin:  data.linkedin  || '',
+            website:   data.website   || '',
+          });
+        }
+      } catch (err) {
+        console.warn('Error fetching Supabase profile:', err.message);
+      }
+    };
+
+    fetchUserProfile();
+  }, [session]);
+
+  const currentUser = currentUserData || SAMPLE_USERS.find(u => u.id === activeUserId) || SAMPLE_USERS[0];
+  const userPlan = PLANS[currentUser.plan] || PLANS['starter'];
+
   
   // Visibility Scope
   const userProperties = currentUser.plan === 'admin'
@@ -120,9 +155,8 @@ export default function Dashboard({ session, onLogout }) {
     );
   };
 
-  React.useEffect(() => {
-    setAgentProfile(currentUser);
-  }, [activeUserId]);
+
+
 
   const saveProfile = async () => {
     setIsSaving(true);

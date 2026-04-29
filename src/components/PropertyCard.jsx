@@ -43,6 +43,21 @@ export default function PropertyCard({ property }) {
       <div className="property-subtitle">
         {property.bedrooms} hab · {property.bathrooms} baños · {property.size_m2} m²
       </div>
+
+      {property.amenities && property.amenities.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px', marginBottom: '4px' }}>
+          {property.amenities.slice(0, 3).map(amenity => (
+            <span key={amenity} style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#f1f5f9', color: '#475569', borderRadius: '6px', fontWeight: '600', border: '1px solid #e2e8f0' }}>
+              ✨ {amenity}
+            </span>
+          ))}
+          {property.amenities.length > 3 && (
+            <span style={{ fontSize: '0.7rem', padding: '3px 8px', background: '#f1f5f9', color: '#0284c7', borderRadius: '6px', fontWeight: '700', border: '1px solid #cbd5e1' }}>
+              +{property.amenities.length - 3} más
+            </span>
+          )}
+        </div>
+      )}
       
       <div className="property-price">
         {formatter.format(property.price)} <span>{property.price_suffix || ''}</span>
