@@ -8,16 +8,17 @@ import { SAMPLE_PROPERTIES } from './data/sampleData';
 import chiapasData from './data/chiapasLocations.json';
 
 export default function App() {
-  const [properties, setProperties] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isDashboard, setIsDashboard] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('Todas');
+  const [properties, setProperties]   = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [session, setSession]         = useState(null);    // Supabase Auth session
+  const [authLoading, setAuthLoading] = useState(true);    // Verificando sesión al arrancar
+  const [showLogin, setShowLogin]     = useState(false);
 
   // Filters
-  const [filterOp, setFilterOp] = useState('Todas');
-  const [filterMuni, setFilterMuni] = useState('');
+  const [filterOp, setFilterOp]           = useState('Todas');
+  const [filterMuni, setFilterMuni]       = useState('');
   const [filterPriceMax, setFilterPriceMax] = useState('');
+  const [activeCategory, setActiveCategory] = useState('Todas');
 
   const municipalities = Object.keys(chiapasData).sort();
 
@@ -37,6 +38,23 @@ export default function App() {
     { name: 'Naves Industriales',       filter: 'nave industrial',     icon: 'M2 12l6-6v6l6-6v6l6-6v6l6-6v20H2z' },
     { name: 'Desarrollos en Preventa',  filter: 'desarrollo',          icon: 'M16 2l14 10h-4v16H6V12H2L16 2zm-4 16h8v4h-8v-4z' }
   ];
+
+  useEffect(() => {
+    // 1. Verificar sesión existente al cargar
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setAuthLoading(false);
+    });
+
+    // 2. Escuchar cambios de autenticación (login / logout)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setAuthLoading(false);
+      if (!session) setShowLogin(false); // si se cierra sesión, vuelve al portal
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => { fetchProperties(); }, []);
 
@@ -59,12 +77,28 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    if (window.location.pathname.includes('/nuevo')) setIsDashboard(true);
-  }, []);
+  // ── Auth routing ────────────────────────────────────────────────────────
+  // Pantalla de carga mientras verificamos sesión
+  if (authLoading) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.2)', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontWeight: '500' }}>Verificando acceso...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (isLogin) return <Login onLoginSuccess={() => { setIsLogin(false); setIsDashboard(true); }} onBack={() => setIsLogin(false)} />;
-  if (isDashboard) return <Dashboard onLogout={() => setIsDashboard(false)} />;
+  // Dashboard — solo si hay sesión válida
+  if (session) {
+    return <Dashboard session={session} onLogout={async () => { await supabase.auth.signOut(); setSession(null); }} />;
+  }
+
+  // Pantalla de login
+  if (showLogin) {
+    return <Login onLoginSuccess={() => setShowLogin(false)} onBack={() => setShowLogin(false)} />;
+  }
 
   // ── Filtered properties ──────────────────────────────────────────────────
   const applyFilters = (list) => list.filter(p => {
@@ -81,7 +115,7 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
-      <Navbar onLogin={() => setIsLogin(true)} />
+      <Navbar onLogin={() => setShowLogin(true)} />
 
       {/* Categories Bar */}
       <div className="categories-wrapper container">

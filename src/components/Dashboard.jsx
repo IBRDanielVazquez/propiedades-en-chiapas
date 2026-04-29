@@ -6,7 +6,7 @@ import PropertyManager from './PropertyManager';
 import AnalyticsView from './AnalyticsView';
 import UserManager from './UserManager';
 
-export default function Dashboard({ onLogout }) {
+export default function Dashboard({ session, onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -472,6 +472,12 @@ export default function Dashboard({ onLogout }) {
         </nav>
 
         <div style={{ marginTop: 'auto', padding: '0 1rem' }}>
+          {session?.user?.email && (
+            <div style={{ padding: '0.75rem 1.25rem', marginBottom: '0.5rem', background: 'rgba(56,189,248,0.08)', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.2)' }}>
+              <p style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sesión activa</p>
+              <p style={{ fontSize: '0.8rem', color: '#38bdf8', fontWeight: '600', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{session.user.email}</p>
+            </div>
+          )}
           <button onClick={onLogout} style={{ width: '100%', textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', color: '#f87171', background: 'rgba(239, 68, 68, 0.1)', fontWeight: '600', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span>🚪</span> Cerrar Sesión
           </button>
