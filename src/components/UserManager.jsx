@@ -13,8 +13,16 @@ const EMPTY_USER = {
   location: '',
   bio: '',
   avatar_url: '',
+  instagram: '',
+  facebook: '',
+  tiktok: '',
+  youtube: '',
+  linkedin: '',
+  website: '',
+  portfolio_url: '',
   plan: 'basic',
   active: true,
+
 };
 
 export default function UserManager() {
@@ -278,7 +286,6 @@ export default function UserManager() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-              {[
                 { label: 'Nombre Completo *', name: 'name', type: 'text' },
                 { label: 'Email *', name: 'email', type: 'email' },
                 { label: 'Cargo / Posición', name: 'position', type: 'text' },
@@ -287,12 +294,20 @@ export default function UserManager() {
                 { label: 'WhatsApp', name: 'whatsapp', type: 'text' },
                 { label: 'Licencia / Certificación', name: 'license', type: 'text' },
                 { label: 'Municipio', name: 'location', type: 'text' },
+                { label: '📸 Instagram', name: 'instagram', type: 'text' },
+                { label: '👥 Facebook', name: 'facebook', type: 'text' },
+                { label: '🎵 TikTok', name: 'tiktok', type: 'text' },
+                { label: '▶️ YouTube', name: 'youtube', type: 'text' },
+                { label: '💼 LinkedIn', name: 'linkedin', type: 'text' },
+                { label: '🌐 Sitio Web', name: 'website', type: 'text' },
+                { label: '📂 Link Portafolio / PDF', name: 'portfolio_url', type: 'text' },
               ].map(field => (
                 <div key={field.name}>
                   <label className="form-label">{field.label}</label>
                   <input type={field.type} name={field.name} value={form[field.name] || ''} onChange={handleChange} className="form-input" />
                 </div>
               ))}
+
 
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="form-label">Plan de Suscripción</label>

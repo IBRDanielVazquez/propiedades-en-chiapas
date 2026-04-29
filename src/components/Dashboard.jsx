@@ -112,7 +112,9 @@ export default function Dashboard({ session, onLogout }) {
     colony: '',
     postal_code: '',
     featured_image_url: '',
+    map_url: '',
     images: [],
+
     amenities: []
   });
 
@@ -178,8 +180,10 @@ export default function Dashboard({ session, onLogout }) {
           tiktok: agentProfile.tiktok,
           youtube: agentProfile.youtube,
           linkedin: agentProfile.linkedin,
-          website: agentProfile.website
+          website: agentProfile.website,
+          portfolio_url: agentProfile.portfolio_url
         })
+
         .eq('email', currentUser.email);
 
       if (error) throw error;
@@ -347,7 +351,9 @@ export default function Dashboard({ session, onLogout }) {
         featured_image_url: property.featured_image_url || (property.images && property.images[0]) || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600',
         images: property.images || [],
         amenities: property.amenities || [],
+        map_url: property.map_url || '',
         active: true,
+
         views: property.views || 0,
         leads: property.leads || 0
       };
@@ -907,9 +913,25 @@ export default function Dashboard({ session, onLogout }) {
                         {property.postal_code && chiapasData[property.municipality] && chiapasData[property.municipality][property.postal_code] && chiapasData[property.municipality][property.postal_code].sort().map(col => <option key={col} value={col}>{col}</option>)}
                       </select>
                     </div>
+                    
+                    <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
+                      <label className="form-label">📍 Enlace de Google Maps (Opcional)</label>
+                      <input 
+                        type="text" 
+                        name="map_url" 
+                        value={property.map_url || ''} 
+                        onChange={handleInputChange} 
+                        placeholder="https://goo.gl/maps/..." 
+                        className="form-input" 
+                      />
+                      <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.35rem' }}>
+                        Pega el link de Google Maps para que tus clientes puedan ver la ubicación exacta del inmueble.
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
+
 
               {activeTab === 'amenities' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -1285,6 +1307,8 @@ export default function Dashboard({ session, onLogout }) {
                       { key: 'youtube',   label: '▶️ YouTube',   placeholder: 'tu_canal' },
                       { key: 'linkedin',  label: '💼 LinkedIn',   placeholder: 'tu_perfil' },
                       { key: 'website',   label: '🌐 Sitio Web',  placeholder: 'https://tuweb.com' },
+                      { key: 'portfolio_url', label: '📂 Link Portafolio / Catálogo PDF', placeholder: 'https://...' },
+
                     ].map(field => (
                       <div key={field.key}>
                         <label className="form-label">{field.label}</label>
