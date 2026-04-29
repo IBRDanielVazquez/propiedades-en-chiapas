@@ -10,9 +10,10 @@ import chiapasData from './data/chiapasLocations.json';
 export default function App() {
   const [properties, setProperties]   = useState([]);
   const [loading, setLoading]         = useState(true);
-  const [session, setSession]         = useState(null);    // Supabase Auth session
-  const [authLoading, setAuthLoading] = useState(true);    // Verificando sesión al arrancar
+  const [session, setSession]         = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [showLogin, setShowLogin]     = useState(false);
+  const [accessDenied, setAccessDenied] = useState(false); // email no autorizado
 
   // Filters
   const [filterOp, setFilterOp]           = useState('Todas');
@@ -40,17 +41,53 @@ export default function App() {
   ];
 
   useEffect(() => {
+    const checkAllowlist = async (session) => {
+      if (!session) {
+        setSession(null);
+        setAuthLoading(false);
+        return;
+      }
+
+      // ── ALLOWLIST CHECK: verificar que el email esté en la tabla users ──
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('id, active')
+          .eq('email', session.user.email.toLowerCase())
+          .single();
+
+        if (error || !data || !data.active) {
+          // Email NO autorizado → cerrar sesión inmediatamente
+          await supabase.auth.signOut();
+          setSession(null);
+          setAccessDenied(true);
+          setAuthLoading(false);
+          return;
+        }
+      } catch {
+        // Si Supabase no tiene la tabla aún (modo demo), dejar pasar
+        console.warn('Allowlist check omitido — tabla users no encontrada');
+      }
+
+      setSession(session);
+      setAccessDenied(false);
+      setAuthLoading(false);
+    };
+
     // 1. Verificar sesión existente al cargar
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setAuthLoading(false);
+      checkAllowlist(session);
     });
 
-    // 2. Escuchar cambios de autenticación (login / logout)
+    // 2. Escuchar login / logout
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setAuthLoading(false);
-      if (!session) setShowLogin(false); // si se cierra sesión, vuelve al portal
+      if (!session) {
+        setSession(null);
+        setShowLogin(false);
+        setAuthLoading(false);
+      } else {
+        checkAllowlist(session);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -77,8 +114,7 @@ export default function App() {
     }
   };
 
-  // ── Auth routing ────────────────────────────────────────────────────────
-  // Pantalla de carga mientras verificamos sesión
+  // ── Auth routing ───────────────────────────────────────────────────────
   if (authLoading) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
@@ -90,14 +126,35 @@ export default function App() {
     );
   }
 
-  // Dashboard — solo si hay sesión válida
+  // Acceso denegado — email no en la lista autorizada
+  if (accessDenied) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', padding: '1.5rem' }}>
+        <div style={{ background: '#ffffff', borderRadius: '20px', padding: '2.5rem', maxWidth: '400px', width: '100%', textAlign: 'center', boxShadow: '0 25px 50px rgba(0,0,0,0.4)' }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚫</div>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.75rem' }}>Acceso No Autorizado</h2>
+          <p style={{ color: '#64748b', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+            Tu cuenta de correo no tiene permiso para acceder al CRM.<br />
+            Contacta al administrador para solicitar acceso.
+          </p>
+          <button
+            onClick={() => { setAccessDenied(false); setShowLogin(false); }}
+            className="btn-primary"
+            style={{ padding: '0.75rem 2rem', borderRadius: '10px', fontSize: '0.9rem' }}
+          >
+            Volver al portal
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (session) {
     return <Dashboard session={session} onLogout={async () => { await supabase.auth.signOut(); setSession(null); }} />;
   }
 
-  // Pantalla de login
   if (showLogin) {
-    return <Login onLoginSuccess={() => setShowLogin(false)} onBack={() => setShowLogin(false)} />;
+    return <Login onBack={() => { setShowLogin(false); setAccessDenied(false); }} />;
   }
 
   // ── Filtered properties ──────────────────────────────────────────────────
