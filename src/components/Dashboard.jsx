@@ -5,6 +5,7 @@ import { SAMPLE_USERS, SAMPLE_PROPERTIES, PLANS, generateAnalytics } from '../da
 import PropertyManager from './PropertyManager';
 import AnalyticsView from './AnalyticsView';
 import UserManager from './UserManager';
+import DigitalCard from './DigitalCard';
 
 export default function Dashboard({ session, onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
@@ -82,7 +83,42 @@ export default function Dashboard({ session, onLogout }) {
 
   const [currentView, setCurrentView] = useState('properties'); // 'properties', 'add-property', 'profile', 'analytics', 'users'
   
-  const [agentProfile, setAgentProfile] = useState(currentUser);
+  const [agentProfile, setAgentProfile] = useState({
+    ...currentUser,
+    instagram: currentUser.instagram || '',
+    facebook:  currentUser.facebook  || '',
+    tiktok:    currentUser.tiktok    || '',
+    youtube:   currentUser.youtube   || '',
+    linkedin:  currentUser.linkedin  || '',
+    website:   currentUser.website   || '',
+  });
+
+  // Helper: overlay de feature bloqueada
+  const LockedOverlay = ({ feature, label }) => {
+    const isLocked = !userPlan.features.includes(feature);
+    if (!isLocked) return null;
+    return (
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 10,
+        background: 'rgba(248,250,252,0.88)', backdropFilter: 'blur(3px)',
+        borderRadius: '16px', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: '0.75rem'
+      }}>
+        <div style={{ fontSize: '2.5rem' }}>🔒</div>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>{label}</h3>
+        <p style={{ color: '#64748b', fontSize: '0.85rem', textAlign: 'center', maxWidth: '240px', margin: 0 }}>
+          Disponible desde el plan Básico. Actualiza para desbloquear.
+        </p>
+        <button style={{
+          background: 'linear-gradient(135deg, #7c3aed, #0284c7)', color: '#ffffff',
+          border: 'none', borderRadius: '10px', padding: '0.65rem 1.5rem',
+          fontSize: '0.88rem', fontWeight: '700', cursor: 'pointer', marginTop: '0.25rem'
+        }}>
+          💳 Actualizar Plan
+        </button>
+      </div>
+    );
+  };
 
   React.useEffect(() => {
     setAgentProfile(currentUser);
@@ -495,7 +531,8 @@ export default function Dashboard({ session, onLogout }) {
           )}
           
           {currentView === 'properties' && (
-            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+            <div style={{ animation: 'fadeIn 0.3s ease', position: 'relative' }}>
+              <LockedOverlay feature="una_propiedad" label="Publicar Propiedades" />
               <div style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
@@ -881,8 +918,22 @@ export default function Dashboard({ session, onLogout }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', animation: 'fadeIn 0.3s ease' }}>
               <div style={{ marginBottom: '0.5rem' }}>
                 <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Mi Perfil de Asesor</h1>
-                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Personaliza tus datos de contacto y branding de inmobiliaria.</p>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Personaliza tus datos y previsualiza tu Tarjeta Digital interactiva.</p>
               </div>
+
+              {/* ── Tarjeta Digital ── */}
+              {userPlan.features.includes('card_preview') && (
+                <div>
+                  <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '1.25rem' }}>
+                    🪩 Tu Tarjeta Digital Interactiva
+                  </h2>
+                  <DigitalCard
+                    profile={agentProfile}
+                    plan={userPlan}
+                    isPublished={userPlan.features.includes('card_publish')}
+                  />
+                </div>
+              )}
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2.5rem', alignItems: 'start' }}>
                 
@@ -1089,12 +1140,42 @@ export default function Dashboard({ session, onLogout }) {
                       <label className="form-label">O usa un link para tu Foto</label>
                       <input 
                         type="text" 
-                        value={agentProfile.avatar_url} 
+                        value={agentProfile.avatar_url || ''} 
                         onChange={(e) => setAgentProfile(prev => ({ ...prev, avatar_url: e.target.value }))} 
                         placeholder="https://images.unsplash.com/photo-..." 
                         className="form-input" 
                       />
                     </div>
+
+                    {/* ── Redes Sociales ── */}
+                    <div style={{ gridColumn: '1 / -1', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                      <label className="form-label" style={{ fontSize: '0.95rem', fontWeight: '700', color: '#1e293b' }}>
+                        📱 Redes Sociales
+                      </label>
+                      <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '1rem' }}>
+                        Aparecen en el reverso de tu Tarjeta Digital. Solo escribe tu usuario (sin @).
+                      </p>
+                    </div>
+                    {[
+                      { key: 'whatsapp',  label: '💬 WhatsApp',  placeholder: '9611234567 (número completo)' },
+                      { key: 'instagram', label: '📸 Instagram',  placeholder: 'tu_usuario' },
+                      { key: 'facebook',  label: '👥 Facebook',   placeholder: 'tu_pagina_o_usuario' },
+                      { key: 'tiktok',    label: '🎵 TikTok',    placeholder: 'tu_usuario' },
+                      { key: 'youtube',   label: '▶️ YouTube',   placeholder: 'tu_canal' },
+                      { key: 'linkedin',  label: '💼 LinkedIn',   placeholder: 'tu_perfil' },
+                      { key: 'website',   label: '🌐 Sitio Web',  placeholder: 'https://tuweb.com' },
+                    ].map(field => (
+                      <div key={field.key}>
+                        <label className="form-label">{field.label}</label>
+                        <input
+                          type="text"
+                          value={agentProfile[field.key] || ''}
+                          onChange={e => setAgentProfile(prev => ({ ...prev, [field.key]: e.target.value }))}
+                          placeholder={field.placeholder}
+                          className="form-input"
+                        />
+                      </div>
+                    ))}
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
@@ -1116,7 +1197,8 @@ export default function Dashboard({ session, onLogout }) {
           )}
 
           {currentView === 'analytics' && (
-            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+            <div style={{ animation: 'fadeIn 0.3s ease', position: 'relative' }}>
+              <LockedOverlay feature="analytics" label="Estadísticas de Rendimiento" />
               <div style={{ marginBottom: '2.5rem' }}>
                 <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
                   {currentUser.plan === 'admin' ? 'Rendimiento Global del CRM' : 'Estadísticas de Rendimiento'}

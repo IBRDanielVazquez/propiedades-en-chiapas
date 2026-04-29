@@ -52,21 +52,38 @@ export default function App() {
       try {
         const { data, error } = await supabase
           .from('users')
-          .select('id, active')
+          .select('id, active, plan')
           .eq('email', session.user.email.toLowerCase())
           .single();
 
-        if (error || !data || !data.active) {
-          // Email NO autorizado → cerrar sesión inmediatamente
+        if (error) {
+          // Si no existe, lo creamos automáticamente con el plan Starter
+          const { data: newUser, error: insertError } = await supabase
+            .from('users')
+            .insert({
+              email: session.user.email.toLowerCase(),
+              name: session.user.user_metadata?.full_name || 'Nuevo Asesor',
+              avatar_url: session.user.user_metadata?.avatar_url || '',
+              plan: 'starter',
+              active: true,
+              created_at: new Date().toISOString()
+            })
+            .select()
+            .single();
+
+          if (insertError) {
+            console.warn('No se pudo registrar automáticamente:', insertError.message);
+          }
+        } else if (!data.active) {
+          // El usuario existe pero fue desactivado por el Administrador
           await supabase.auth.signOut();
           setSession(null);
           setAccessDenied(true);
           setAuthLoading(false);
           return;
         }
-      } catch {
-        // Si Supabase no tiene la tabla aún (modo demo), dejar pasar
-        console.warn('Allowlist check omitido — tabla users no encontrada');
+      } catch (err) {
+        console.warn('Allowlist error:', err.message);
       }
 
       setSession(session);

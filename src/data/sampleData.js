@@ -1,10 +1,10 @@
 // Subscription Plans
 export const PLANS = {
-  admin: { id: 'admin', name: 'Administrador CRM', maxProperties: 9999, features: ['all_access', 'manage_users', 'tarjeta_digital', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#ef4444', icon: '⚡' },
-  developer: { id: 'developer', name: 'Desarrollador / Constructor', maxProperties: 999, features: ['tarjeta_digital', 'propiedades_ilimitadas', 'landing', 'analytics', 'developments'], color: '#f59e0b', icon: '🏗️' },
-  starter: { id: 'starter', name: 'Starter', maxProperties: 0, features: ['tarjeta_digital'], color: '#64748b', icon: '💳' },
-  basic: { id: 'basic', name: 'Básico', maxProperties: 1, features: ['tarjeta_digital', 'una_propiedad', 'landing'], color: '#0284c7', icon: '🏠' },
-  premium: { id: 'premium', name: 'Premium', maxProperties: 999, features: ['tarjeta_digital', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#7c3aed', icon: '👑' }
+  admin:     { id: 'admin',     name: 'Administrador CRM',          maxProperties: 9999, features: ['all_access', 'manage_users', 'tarjeta_digital', 'card_preview', 'card_publish', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#ef4444', icon: '⚡' },
+  developer: { id: 'developer', name: 'Desarrollador / Constructor', maxProperties: 999,  features: ['tarjeta_digital', 'card_preview', 'card_publish', 'propiedades_ilimitadas', 'landing', 'analytics', 'developments'], color: '#f59e0b', icon: '🏗️' },
+  starter:   { id: 'starter',   name: 'Starter',                    maxProperties: 0,    features: ['tarjeta_digital', 'card_preview'], color: '#64748b', icon: '💳' },
+  basic:     { id: 'basic',     name: 'Básico',                     maxProperties: 1,    features: ['tarjeta_digital', 'card_preview', 'card_publish', 'una_propiedad', 'landing'], color: '#0284c7', icon: '🏠' },
+  premium:   { id: 'premium',   name: 'Premium',                    maxProperties: 999,  features: ['tarjeta_digital', 'card_preview', 'card_publish', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#7c3aed', icon: '👑' }
 };
 
 export const SAMPLE_USERS = [
@@ -14,12 +14,18 @@ export const SAMPLE_USERS = [
     email: 'admin@crmestate.com',
     position: 'Administrador del CRM',
     phone: '961 000 0000',
-    whatsapp: '961 000 0000',
+    whatsapp: '9610000000',
     company: 'CRM Estate Global',
     license: 'MASTER-ADMIN',
     location: 'TUXTLA GUTIERREZ',
     bio: 'Administrador general y director de proyectos inmobiliarios en el CRM.',
     avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+    instagram: '',
+    facebook: '',
+    tiktok: '',
+    youtube: '',
+    linkedin: '',
+    website: '',
     plan: 'admin'
   },
   {
