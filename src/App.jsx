@@ -4,8 +4,10 @@ import PropertyCard from './components/PropertyCard';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import { supabase } from './supabaseClient';
-import { SAMPLE_PROPERTIES } from './data/sampleData';
+import { SAMPLE_PROPERTIES, SAMPLE_USERS } from './data/sampleData';
 import chiapasData from './data/chiapasLocations.json';
+import DigitalCard from './components/DigitalCard';
+
 
 export default function App() {
   const [properties, setProperties]   = useState([]);
@@ -130,6 +132,73 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  // ── Interceptar ruta pública de tarjeta digital /card/:id ──────────────
+  const isCardRoute = window.location.pathname.startsWith('/card/');
+  const cardUserId = isCardRoute ? window.location.pathname.split('/card/')[1] : null;
+
+  const [cardProfile, setCardProfile] = useState(null);
+  const [cardProfileLoading, setCardProfileLoading] = useState(isCardRoute);
+
+  useEffect(() => {
+    if (!isCardRoute || !cardUserId) return;
+
+    const fetchCardProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', cardUserId)
+          .single();
+
+        if (data) {
+          setCardProfile(data);
+        } else {
+          // Fallback a sample data
+          const localUser = SAMPLE_USERS.find(u => u.id === cardUserId);
+          setCardProfile(localUser || null);
+        }
+      } catch (err) {
+        const localUser = SAMPLE_USERS.find(u => u.id === cardUserId);
+        setCardProfile(localUser || null);
+      } finally {
+        setCardProfileLoading(false);
+      }
+    };
+
+    fetchCardProfile();
+  }, [isCardRoute, cardUserId]);
+
+  if (isCardRoute) {
+    if (cardProfileLoading) {
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ width: '40px', height: '40px', border: '3px solid rgba(255,255,255,0.2)', borderTopColor: '#38bdf8', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <p style={{ color: '#94a3b8', fontSize: '0.9rem', fontWeight: '500' }}>Cargando Tarjeta Digital...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!cardProfile) {
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#ffffff', padding: '2rem', textAlign: 'center' }}>
+          <div>
+            <span style={{ fontSize: '3rem' }}>🚫</span>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', marginTop: '1rem' }}>Tarjeta No Encontrada</h2>
+            <p style={{ color: '#94a3b8', marginTop: '0.5rem' }}>El enlace proporcionado no pertenece a un asesor registrado.</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ minHeight: '100vh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+        <DigitalCard profile={cardProfile} plan={{ id: cardProfile.plan || 'starter' }} isPublished={true} />
+      </div>
+    );
+  }
 
   // ── Auth routing ───────────────────────────────────────────────────────
   if (authLoading) {

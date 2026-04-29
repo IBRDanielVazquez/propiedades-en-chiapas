@@ -192,12 +192,37 @@ export default function DigitalCard({ profile, plan, isPublished = false }) {
                 </div>
               )}
 
-              {/* QR placeholder */}
-              <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', paddingTop: '1.5rem', borderTop: '1px solid #1e293b' }}>
-                <div style={{ width: '70px', height: '70px', background: '#1e293b', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem' }}>
-                  📱
-                </div>
-                <p style={{ color: '#475569', fontSize: '0.72rem', fontWeight: '600', letterSpacing: '0.5px' }}>
+              {/* QR and Download Contact */}
+              <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', paddingTop: '1.25rem', borderTop: '1px solid #1e293b' }}>
+                {/* QR Code from API pointing to a public profile link */}
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(window.location.origin + '/card/' + (profile.id || 'usr'))}`} 
+                  alt="Código QR de contacto" 
+                  style={{ width: '90px', height: '90px', borderRadius: '8px', border: '2px solid #38bdf8', background: '#ffffff', padding: '4px' }}
+                />
+                
+                <button 
+                  onClick={() => {
+                    const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${profile.name || 'Asesor'}\nORG:${profile.company || ''}\nTITLE:${profile.position || ''}\nTEL;TYPE=CELL:${profile.phone || ''}\nEMAIL:${profile.email || ''}\nURL:${profile.website || ''}\nEND:VCARD`;
+                    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `${(profile.name || 'asesor').replace(/\s+/g, '_')}.vcf`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                  style={{
+                    background: '#38bdf8', color: '#0f172a', border: 'none', 
+                    padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.8rem', 
+                    fontWeight: '700', cursor: 'pointer', marginTop: '0.25rem'
+                  }}
+                >
+                  📥 Guardar en Contactos
+                </button>
+                
+                <p style={{ color: '#475569', fontSize: '0.72rem', fontWeight: '600', letterSpacing: '0.5px', marginTop: '0.25rem' }}>
                   ESCANEA PARA CONTACTARME
                 </p>
                 {profile.license && (
@@ -208,6 +233,7 @@ export default function DigitalCard({ profile, plan, isPublished = false }) {
               </div>
             </div>
           </div>
+
         </div>
       </div>
 

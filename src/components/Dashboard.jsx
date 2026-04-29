@@ -124,6 +124,40 @@ export default function Dashboard({ session, onLogout }) {
     setAgentProfile(currentUser);
   }, [activeUserId]);
 
+  const saveProfile = async () => {
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          name: agentProfile.name,
+          position: agentProfile.position,
+          phone: agentProfile.phone,
+          whatsapp: agentProfile.whatsapp,
+          company: agentProfile.company,
+          license: agentProfile.license,
+          location: agentProfile.location,
+          bio: agentProfile.bio,
+          avatar_url: agentProfile.avatar_url,
+          instagram: agentProfile.instagram,
+          facebook: agentProfile.facebook,
+          tiktok: agentProfile.tiktok,
+          youtube: agentProfile.youtube,
+          linkedin: agentProfile.linkedin,
+          website: agentProfile.website
+        })
+        .eq('email', currentUser.email);
+
+      if (error) throw error;
+      alert("¡Perfil de Asesor Actualizado Exitosamente!");
+    } catch (err) {
+      console.error("Error al actualizar perfil:", err);
+      alert("Error al actualizar el perfil.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const [imagePreview, setImagePreview] = useState(null);
 
   const propertyTypes = [
@@ -132,11 +166,18 @@ export default function Dashboard({ session, onLogout }) {
     'Edificio', 'Rancho', 'Quinta', 'Nave Industrial', 'Desarrollo en Preventa'
   ];
 
+  const [enabledCategories, setEnabledCategories] = useState([
+    'Todas', 'Casas', 'Departamentos', 'Lotes Residenciales', 
+    'Terreno Comercial', 'Terreno Agrícola', 'Bodegas', 'Locales Comerciales', 
+    'Oficinas', 'Edificios', 'Ranchos', 'Quintas', 'Naves Industriales', 
+    'Desarrollos en Preventa'
+  ]);
   const [amenities, setAmenities] = useState([
     'Alberca', 'Seguridad 24/7', 'Jardín', 'Cocina Integral', 'Terraza', 
     'Aire Acondicionado', 'Gimnasio', 'Elevador', 'Cisterna', 'Gas Estacionario', 
     'Cuarto de Servicio', 'Mascotas Permitidas', 'Bodega Privada', 'Estacionamiento Visitas'
   ]);
+
 
   const [newAmenity, setNewAmenity] = useState('');
 
@@ -491,6 +532,22 @@ export default function Dashboard({ session, onLogout }) {
             </button>
           )}
 
+          {/* 4.5 Gestión de Categorías (solo Admin) */}
+          {currentUser.plan === 'admin' && (
+            <button 
+              onClick={() => setCurrentView('categories')}
+              style={{ 
+                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: currentView === 'categories' ? '#1e293b' : 'transparent', 
+                color: currentView === 'categories' ? '#38bdf8' : '#94a3b8', 
+                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
+              }}
+            >
+              <span>📂</span> Habilitar Categorías
+            </button>
+          )}
+
+
           {/* 5. Analytics (Premium + Admin) */}
           {(userPlan.features.includes('analytics') || currentUser.plan === 'admin') && (
             <button 
@@ -576,6 +633,7 @@ export default function Dashboard({ session, onLogout }) {
               {tabs.map(tab => (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActiveTab(tab.id)}
                   style={{
                     flex: '1',
@@ -932,8 +990,37 @@ export default function Dashboard({ session, onLogout }) {
                     plan={userPlan}
                     isPublished={userPlan.features.includes('card_publish')}
                   />
+                  
+                  {/* Link Personalizado Estilo GoHighLevel */}
+                  <div style={{ 
+                    marginTop: '1.5rem', background: '#f8fafc', padding: '1.25rem', 
+                    borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', 
+                    flexDirection: 'column', gap: '0.5rem' 
+                  }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#475569' }}>
+                      🔗 Tu Enlace Personalizado:
+                    </span>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                      <input 
+                        type="text" 
+                        readOnly 
+                        value={`${window.location.origin}/card/${agentProfile.id || 'usr'}`} 
+                        style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: '#ffffff', color: '#1e293b', fontWeight: '600' }}
+                      />
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/card/${agentProfile.id || 'usr'}`);
+                          alert('¡Enlace copiado al portapapeles!');
+                        }}
+                        style={{ padding: '0.65rem 1rem', background: '#0284c7', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: '700', fontSize: '0.85rem', cursor: 'pointer' }}
+                      >
+                        Copiar
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
+
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2.5rem', alignItems: 'start' }}>
                 
@@ -1180,13 +1267,76 @@ export default function Dashboard({ session, onLogout }) {
 
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem', borderTop: '1px solid #f1f5f9', paddingTop: '1.5rem' }}>
                     <button 
-                      onClick={() => alert("¡Perfil de Asesor Actualizado Exitosamente!")} 
+                      onClick={saveProfile} 
+                      disabled={isSaving}
                       className="btn-primary" 
                       style={{ padding: '0.75rem 2rem', fontSize: '0.95rem', borderRadius: '8px' }}
                     >
                       Guardar Cambios
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentView === 'categories' && currentUser.plan === 'admin' && (
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ marginBottom: '2.5rem' }}>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
+                  📂 Habilitar Categorías del Portal
+                </h1>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>
+                  Controla cuáles categorías de inmuebles se encuentran activas para los clientes en el buscador del portal principal.
+                </p>
+              </div>
+
+              <div style={{ background: '#ffffff', borderRadius: '16px', padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '1.25rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+                  📁 Categorías Disponibles
+                </h3>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+                  {[
+                    'Todas', 'Casas', 'Departamentos', 'Lotes Residenciales', 
+                    'Terreno Comercial', 'Terreno Agrícola', 'Bodegas', 'Locales Comerciales', 
+                    'Oficinas', 'Edificios', 'Ranchos', 'Quintas', 'Naves Industriales', 
+                    'Desarrollos en Preventa'
+                  ].map(cat => (
+                    <label 
+                      key={cat} 
+                      style={{ 
+                        display: 'flex', alignItems: 'center', gap: '12px', padding: '0.85rem', 
+                        borderRadius: '10px', border: enabledCategories.includes(cat) ? '1px solid #38bdf8' : '1px solid #e2e8f0', 
+                        background: enabledCategories.includes(cat) ? '#f0f9ff' : '#ffffff', cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      <input 
+                        type="checkbox" 
+                        checked={enabledCategories.includes(cat)}
+                        onChange={() => {
+                          setEnabledCategories(prev => 
+                            prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+                          );
+                        }}
+                        style={{ width: '18px', height: '18px', accentColor: '#0284c7', cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: '0.9rem', fontWeight: enabledCategories.includes(cat) ? '600' : '500', color: '#1e293b' }}>
+                        {cat}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <button 
+                    onClick={() => alert("¡Configuración de categorías guardada correctamente!")}
+                    className="btn-primary"
+                    style={{ padding: '0.75rem 2.5rem', borderRadius: '10px', fontSize: '0.95rem' }}
+                  >
+                    💾 Guardar Configuración
+                  </button>
                 </div>
               </div>
             </div>
