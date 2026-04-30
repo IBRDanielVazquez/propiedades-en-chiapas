@@ -93,6 +93,32 @@ export default function Login({ onBack }) {
     // Si éxito → App.jsx detecta el cambio de sesión y verifica allowlist
   };
 
+  // ── Crear Cuenta (Registro) ────────────────────────────────────────────────
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg('');
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim().toLowerCase(),
+      password,
+    });
+
+    if (error) {
+      setErrorMsg(error.message);
+      setLoading(false);
+    } else {
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        setErrorMsg('Este correo ya está registrado. Intenta iniciar sesión.');
+      } else {
+        // En muchos casos Supabase auto-loguea si no requiere confirmación, o envía correo.
+        alert('¡Cuenta creada exitosamente! Tu Demo de 14 Días ha comenzado.');
+        setMode('email'); // Volver a login por si requiere confirmación o para que inicie
+      }
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -116,10 +142,10 @@ export default function Login({ onBack }) {
             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 2.7l7 6.3v9h-4v-6H9v6H5v-9l7-6.3z" />
           </svg>
           <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-0.5px' }}>
-            Acceso CRM
+            {mode === 'register' ? 'Nueva Tarjeta Digital' : 'Acceso CRM'}
           </h2>
           <p style={{ color: '#64748b', fontSize: '0.88rem', marginTop: '0.4rem' }}>
-            Exclusivo para asesores autorizados
+            {mode === 'register' ? 'Crea tu cuenta y obtén 14 días gratis' : 'Exclusivo para asesores autorizados'}
           </p>
         </div>
 
@@ -135,115 +161,69 @@ export default function Login({ onBack }) {
           </div>
         )}
 
-        {/* ── Modo Magic Link ─────────────────────────────────────────── */}
-        {mode === 'magic-link' && (
-          <form onSubmit={handleMagicLinkLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {magicLinkSent ? (
-              <div style={{
-                background: '#f0fdf4', color: '#16a34a',
-                padding: '1.25rem', borderRadius: '12px',
-                fontSize: '0.9rem', fontWeight: '600',
-                border: '1px solid #bbf7d0', textAlign: 'center'
-              }}>
-                📩 ¡Enlace mágico enviado! Revisa tu correo electrónico para acceder.
-              </div>
-            ) : (
-              <>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.88rem', fontWeight: '600', color: '#334155' }}>
-                    Introduce tu Correo Electrónico
-                  </label>
-                  <input
-                    type="email" required
-                    value={email} onChange={e => setEmail(e.target.value)}
-                    placeholder="tu-correo@gmail.com"
-                    style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none' }}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-primary"
-                  style={{
-                    padding: '0.95rem', borderRadius: '12px',
-                    fontSize: '0.95rem', opacity: loading ? 0.7 : 1
-                  }}
-                >
-                  {loading ? 'Enviando...' : '🔑 Enviarme Link de Acceso'}
-                </button>
-              </>
-            )}
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '0.25rem 0' }}>
-              <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-              <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>o</span>
-              <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setMode('email')}
-              style={{
-                padding: '0.85rem', borderRadius: '12px', border: '1px solid #e2e8f0',
-                background: '#f8fafc', cursor: 'pointer', fontSize: '0.88rem',
-                fontWeight: '600', color: '#475569'
-              }}
-            >
-              ✉️ Ingresar con Contraseña
-            </button>
-          </form>
-        )}
-
-
-        {/* ── Modo Email ───────────────────────────────────────────────── */}
-        {mode === 'email' && (
-          <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.88rem', fontWeight: '600', color: '#334155' }}>
-                Correo Electrónico
-              </label>
+        {/* ── Formulario Compartido (Login / Registro) ────────────────────────── */}
+        <form onSubmit={mode === 'register' ? handleSignUp : handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.88rem', fontWeight: '600', color: '#334155' }}>
+              Correo Electrónico
+            </label>
+            <input
+              type="email" required autoComplete="email"
+              value={email} onChange={e => setEmail(e.target.value)}
+              placeholder="asesor@tucorreo.com"
+              style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none' }}
+              onFocus={e => e.target.style.borderColor = 'var(--primary)'}
+              onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.88rem', fontWeight: '600', color: '#334155' }}>
+              Contraseña
+            </label>
+            <div style={{ position: 'relative' }}>
               <input
-                type="email" required autoComplete="email"
-                value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="asesor@propiedadesenchiapas.com"
-                style={{ width: '100%', padding: '0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none' }}
+                type={showPass ? 'text' : 'password'} required autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+                value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                style={{ width: '100%', padding: '0.85rem 3rem 0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none' }}
                 onFocus={e => e.target.style.borderColor = 'var(--primary)'}
                 onBlur={e => e.target.style.borderColor = '#e2e8f0'}
               />
+              <button type="button" onClick={() => setShowPass(p => !p)}
+                style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#94a3b8' }}>
+                {showPass ? '🙈' : '👁️'}
+              </button>
             </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.88rem', fontWeight: '600', color: '#334155' }}>
-                Contraseña
-              </label>
-              <div style={{ position: 'relative' }}>
-                <input
-                  type={showPass ? 'text' : 'password'} required autoComplete="current-password"
-                  value={password} onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  style={{ width: '100%', padding: '0.85rem 3rem 0.85rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '0.95rem', outline: 'none' }}
-                  onFocus={e => e.target.style.borderColor = 'var(--primary)'}
-                  onBlur={e => e.target.style.borderColor = '#e2e8f0'}
-                />
-                <button type="button" onClick={() => setShowPass(p => !p)}
-                  style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: '#94a3b8' }}>
-                  {showPass ? '🙈' : '👁️'}
-                </button>
-              </div>
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary"
-              style={{ padding: '0.95rem', fontSize: '0.95rem', borderRadius: '10px', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-              {loading
-                ? <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} /> Verificando...</>
-                : '🔐 Ingresar'}
-            </button>
-            <button type="button" onClick={() => { setMode('magic-link'); setErrorMsg(''); }}
-              style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.85rem', cursor: 'pointer', textDecoration: 'underline' }}>
-              ← Volver a Link Mágico
-            </button>
+            {mode === 'register' && (
+              <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem' }}>Mínimo 6 caracteres.</p>
+            )}
+          </div>
+          <button type="submit" disabled={loading} className="btn-primary"
+            style={{ padding: '0.95rem', fontSize: '0.95rem', borderRadius: '10px', opacity: loading ? 0.7 : 1, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            {loading
+              ? <><div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.4)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} /> Cargando...</>
+              : mode === 'register' ? '🚀 Iniciar Demo Gratis' : '🔐 Ingresar'}
+          </button>
+        </form>
 
-          </form>
-        )}
+        {/* Toggle Login/Register */}
+        <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+          {mode === 'email' ? (
+            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+              ¿No tienes cuenta?{' '}
+              <button onClick={() => setMode('register')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>
+                Crea tu Tarjeta Digital
+              </button>
+            </p>
+          ) : (
+            <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
+              ¿Ya tienes cuenta?{' '}
+              <button onClick={() => setMode('email')} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>
+                Inicia Sesión
+              </button>
+            </p>
+          )}
+        </div>
 
         {/* Footer */}
         <div style={{ marginTop: '1.5rem', textAlign: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '1.25rem' }}>

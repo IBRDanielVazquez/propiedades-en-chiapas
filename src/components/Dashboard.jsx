@@ -68,6 +68,9 @@ export default function Dashboard({ session, onLogout }) {
             youtube:   data.youtube   || '',
             linkedin:  data.linkedin  || '',
             website:   data.website   || '',
+            palette_id: data.palette_id || 'oro_elegante',
+            logo_url:   data.logo_url   || '',
+            slug:       data.slug       || ''
           });
         }
       } catch (err) {
@@ -128,6 +131,9 @@ export default function Dashboard({ session, onLogout }) {
     youtube:   currentUser.youtube   || '',
     linkedin:  currentUser.linkedin  || '',
     website:   currentUser.website   || '',
+    palette_id: currentUser.palette_id || 'oro_elegante',
+    logo_url:   currentUser.logo_url   || '',
+    slug:       currentUser.slug       || ''
   });
 
   // Helper: overlay de feature bloqueada
@@ -157,16 +163,16 @@ export default function Dashboard({ session, onLogout }) {
     );
   };
 
-
-
-
   const saveProfile = async () => {
     setIsSaving(true);
+    const generatedSlug = agentProfile.slug || agentProfile.name.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+    
     try {
       const { error } = await supabase
         .from('users')
         .update({
           name: agentProfile.name,
+          slug: generatedSlug,
           position: agentProfile.position,
           phone: agentProfile.phone,
           whatsapp: agentProfile.whatsapp,
@@ -181,7 +187,10 @@ export default function Dashboard({ session, onLogout }) {
           youtube: agentProfile.youtube,
           linkedin: agentProfile.linkedin,
           website: agentProfile.website,
-          portfolio_url: agentProfile.portfolio_url
+          portfolio_url: agentProfile.portfolio_url,
+          palette_id: agentProfile.palette_id,
+          logo_url: agentProfile.logo_url,
+          slug: generatedSlug
         })
 
         .eq('email', currentUser.email);
@@ -302,6 +311,18 @@ export default function Dashboard({ session, onLogout }) {
       const reader = new FileReader();
       reader.onload = (event) => {
         setAgentProfile(prev => ({ ...prev, avatar_url: event.target.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleLogoDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer ? e.dataTransfer.files[0] : e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAgentProfile(prev => ({ ...prev, logo_url: event.target.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -635,11 +656,9 @@ export default function Dashboard({ session, onLogout }) {
                   <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
                     {currentUser.plan === 'admin' ? 'Consola Maestra de Propiedades' : 'Mis Propiedades'}
                   </h1>
-                  <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>
-                    {currentUser.plan === 'admin' 
-                      ? 'Supervisión y control maestro de todos los activos inmobiliarios registrados.' 
-                      : 'Administra el inventario de inmuebles asignado a tu cuenta.'}
-                  </p>
+                  <div style={{ background: 'linear-gradient(90deg, #38bdf8, #818cf8)', color: '#ffffff', padding: '0.75rem 1.25rem', borderRadius: '12px', marginTop: '0.75rem', fontSize: '0.9rem', fontWeight: '700', boxShadow: '0 4px 12px rgba(56, 189, 248, 0.2)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                    🚀 PROMOCIÓN: ¡Sube tu primera propiedad GRATIS y llega a miles de clientes!
+                  </div>
                 </div>
                 <button 
                   onClick={() => setCurrentView('add-property')}
@@ -1043,9 +1062,14 @@ export default function Dashboard({ session, onLogout }) {
               {/* ── Tarjeta Digital ── */}
               {userPlan.features.includes('card_preview') && (
                 <div>
-                  <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '1.25rem' }}>
+                  <h2 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#1e293b', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     🪩 Tu Tarjeta Digital Interactiva
                   </h2>
+                  {agentProfile.plan === 'starter' && (
+                    <div style={{ background: '#fef08a', color: '#854d0e', padding: '0.6rem 1.25rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', marginBottom: '1.5rem', display: 'inline-block' }}>
+                      ⏳ Versión Demo de 14 Días ({(14 - Math.floor((new Date() - new Date(agentProfile.created_at || Date.now()))/(1000*60*60*24)))} días restantes)
+                    </div>
+                  )}
                   <DigitalCard
                     profile={agentProfile}
                     plan={userPlan}
@@ -1065,7 +1089,7 @@ export default function Dashboard({ session, onLogout }) {
                       <input 
                         type="text" 
                         readOnly 
-                        value={`${window.location.origin}/card/${agentProfile.id || 'usr'}`} 
+                        value={`${window.location.origin}/card/${agentProfile.slug || agentProfile.id || 'usr'}`} 
                         style={{ flex: 1, padding: '0.65rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.85rem', background: '#ffffff', color: '#1e293b', fontWeight: '600' }}
                       />
                       <button 
@@ -1165,35 +1189,72 @@ export default function Dashboard({ session, onLogout }) {
                   flexDirection: 'column',
                   gap: '1.5rem'
                 }}>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>Editar Información</h2>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#1e293b', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>Personalización Premium</h2>
                   
-                  {/* Drag and Drop Zone for Avatar */}
+                  {/* ── SELECCIÓN DE PALETA DE COLORES ── */}
                   <div>
-                    <label className="form-label">Subir Foto de Perfil (Arrastra y Suelta)</label>
-                    <div 
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={handleAvatarDrop}
-                      style={{
-                        border: '2px dashed #cbd5e1',
-                        borderRadius: '12px',
-                        padding: '1.5rem',
-                        textAlign: 'center',
-                        background: '#f8fafc',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        marginBottom: '1rem'
-                      }}
-                      onClick={() => document.getElementById('avatar-upload').click()}
-                    >
-                      <input 
-                        type="file" 
-                        id="avatar-upload" 
-                        accept="image/*" 
-                        onChange={handleAvatarDrop} 
-                        style={{ display: 'none' }} 
-                      />
-                      <span style={{ fontSize: '1.5rem' }}>👤</span>
-                      <p style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.25rem' }}>Arrastra tu foto o haz clic aquí.</p>
+                    <label className="form-label">Elige tu Paleta de Colores (Estilo Tarjeta)</label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginTop: '0.5rem' }}>
+                      {[
+                        { id: 'oro_elegante',    name: 'Elegante Oro',    colors: ['#0f172a', '#fbbf24'] },
+                        { id: 'modern_minimal', name: 'Minimalista Pro', colors: ['#ffffff', '#000000'] },
+                        { id: 'nature_chiapas', name: 'Esmeralda Chiapas',  colors: ['#064e3b', '#10b981'] },
+                        { id: 'luxury_dark',    name: 'Noche de Lujo',  colors: ['#1e1b4b', '#818cf8'] },
+                        { id: 'corporate_pro',  name: 'Azul Corporativo',    colors: ['#0ea5e9', '#0f172a'] },
+                      ].map(p => (
+                        <button
+                          key={p.id}
+                          onClick={() => setAgentProfile(prev => ({ ...prev, palette_id: p.id }))}
+                          style={{
+                            padding: '10px', borderRadius: '12px', border: agentProfile.palette_id === p.id ? '2px solid #0284c7' : '1px solid #e2e8f0',
+                            background: '#ffffff', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
+                            boxShadow: agentProfile.palette_id === p.id ? '0 4px 12px rgba(2, 132, 199, 0.1)' : 'none'
+                          }}
+                        >
+                          <div style={{ display: 'flex', gap: '4px', marginBottom: '6px' }}>
+                            <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: p.colors[0], border: '1px solid rgba(0,0,0,0.1)' }} />
+                            <div style={{ width: '20px', height: '20px', borderRadius: '4px', background: p.colors[1], border: '1px solid rgba(0,0,0,0.1)' }} />
+                          </div>
+                          <span style={{ fontSize: '0.7rem', fontWeight: '800', color: '#1e293b' }}>{p.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ── CARGA DE LOGO ── */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                    <div>
+                      <label className="form-label">Foto de Perfil</label>
+                      <div 
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={handleAvatarDrop}
+                        style={{
+                          border: '2px dashed #cbd5e1', borderRadius: '12px', padding: '1rem',
+                          textAlign: 'center', background: '#f8fafc', cursor: 'pointer', transition: 'all 0.2s'
+                        }}
+                        onClick={() => document.getElementById('avatar-upload').click()}
+                      >
+                        <input type="file" id="avatar-upload" accept="image/*" onChange={handleAvatarDrop} style={{ display: 'none' }} />
+                        <span style={{ fontSize: '1.2rem' }}>👤</span>
+                        <p style={{ color: '#64748b', fontSize: '0.7rem', marginTop: '4px' }}>Foto de Rostro</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="form-label">Logo de Inmobiliaria</label>
+                      <div 
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={handleLogoDrop}
+                        style={{
+                          border: '2px dashed #cbd5e1', borderRadius: '12px', padding: '1rem',
+                          textAlign: 'center', background: '#f8fafc', cursor: 'pointer', transition: 'all 0.2s'
+                        }}
+                        onClick={() => document.getElementById('logo-upload').click()}
+                      >
+                        <input type="file" id="logo-upload" accept="image/*" onChange={handleLogoDrop} style={{ display: 'none' }} />
+                        <span style={{ fontSize: '1.2rem' }}>🏢</span>
+                        <p style={{ color: '#64748b', fontSize: '0.7rem', marginTop: '4px' }}>Logo Corporativo</p>
+                      </div>
                     </div>
                   </div>
 

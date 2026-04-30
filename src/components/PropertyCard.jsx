@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function PropertyCard({ property }) {
+export default function PropertyCard({ property, onClick }) {
   const formatter = new Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: 'MXN',
@@ -12,7 +12,7 @@ export default function PropertyCard({ property }) {
   const isGuestFavorite = property.status === 'Disponible' || Math.random() > 0.5;
 
   return (
-    <div className="property-card">
+    <div className="property-card" onClick={onClick} style={{ cursor: 'pointer' }}>
       <div className="property-card-img-wrapper">
         <img 
           src={property.featured_image_url || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80'} 

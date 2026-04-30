@@ -7,15 +7,45 @@ import { supabase } from './supabaseClient';
 import { SAMPLE_PROPERTIES, SAMPLE_USERS } from './data/sampleData';
 import chiapasData from './data/chiapasLocations.json';
 import DigitalCard from './components/DigitalCard';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 
 export default function App() {
+  return (
+    <HelmetProvider>
+      <AppContent />
+    </HelmetProvider>
+  );
+}
+
+function AppContent() {
   const [properties, setProperties]   = useState([]);
   const [loading, setLoading]         = useState(true);
   const [session, setSession]         = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [showLogin, setShowLogin]     = useState(false);
   const [accessDenied, setAccessDenied] = useState(false); // email no autorizado
+
+  // ── Modal Ficha Técnica ──
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [agentDetails, setAgentDetails] = useState(null);
+
+  useEffect(() => {
+    if (selectedProperty) {
+      const fetchAgent = async () => {
+        try {
+          const { data } = await supabase.from('users').select('*').eq('id', selectedProperty.user_id).single();
+          if (data) setAgentDetails(data);
+          else setAgentDetails(SAMPLE_USERS.find(u => u.id === selectedProperty.user_id));
+        } catch(err) {
+          setAgentDetails(SAMPLE_USERS.find(u => u.id === selectedProperty.user_id));
+        }
+      };
+      fetchAgent();
+    } else {
+      setAgentDetails(null);
+    }
+  }, [selectedProperty]);
 
   // Filters
   const [filterOp, setFilterOp]           = useState('Todas');
@@ -145,11 +175,16 @@ export default function App() {
 
     const fetchCardProfile = async () => {
       try {
-        const { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', cardUserId)
-          .single();
+        // Intentar buscar por slug primero, luego por ID
+        let query = supabase.from('users').select('*');
+        
+        if (cardUserId.length > 30) { // Probablemente un UUID
+          query = query.eq('id', cardUserId);
+        } else {
+          query = query.eq('slug', cardUserId);
+        }
+
+        const { data, error } = await query.single();
 
         if (data) {
           setCardProfile(data);
@@ -193,8 +228,37 @@ export default function App() {
       );
     }
 
+    // ── VERIFICACIÓN DEMO 14 DÍAS ──
+    const createdAt = new Date(cardProfile.created_at || Date.now());
+    const now = new Date();
+    const daysDiff = (now - createdAt) / (1000 * 60 * 60 * 24);
+
+    if (daysDiff > 14 && (!cardProfile.plan || cardProfile.plan === 'starter') && cardProfile.id !== 'u0') {
+      return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#ffffff', padding: '2rem', textAlign: 'center' }}>
+          <div>
+            <span style={{ fontSize: '4rem' }}>⏳</span>
+            <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginTop: '1rem' }}>Demo Expirada</h2>
+            <p style={{ color: '#94a3b8', marginTop: '0.5rem', maxWidth: '400px', margin: '0.5rem auto' }}>
+              El periodo de prueba de 14 días para esta Tarjeta Digital ha concluido.<br/>
+              Contacta a administración para reactivarla.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div style={{ minHeight: '100vh', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+        <Helmet>
+          <title>{cardProfile.name} | Tarjeta Digital</title>
+          <meta name="description" content={cardProfile.bio || `Tarjeta digital de ${cardProfile.name} en Propiedades en Chiapas`} />
+          <meta property="og:title" content={`${cardProfile.name} | Asesor Inmobiliario`} />
+          <meta property="og:description" content={cardProfile.company || 'Propiedades en Chiapas'} />
+          <meta property="og:image" content={cardProfile.avatar_url || 'https://propiedadesenchiapas.com/logo.png'} />
+          <meta property="og:type" content="website" />
+          <meta name="twitter:card" content="summary_large_image" />
+        </Helmet>
         <DigitalCard profile={cardProfile} plan={{ id: cardProfile.plan || 'starter' }} isPublished={true} />
       </div>
     );
@@ -235,12 +299,16 @@ export default function App() {
     );
   }
 
+  const isCrmRoute = window.location.pathname.startsWith('/crm');
+
   if (session) {
-    return <Dashboard session={session} onLogout={async () => { await supabase.auth.signOut(); setSession(null); }} />;
+    // Si hay sesión activa, el usuario puede ver el dashboard desde donde esté (o podríamos restringirlo a /crm)
+    return <Dashboard session={session} onLogout={async () => { await supabase.auth.signOut(); setSession(null); window.location.href = '/'; }} />;
   }
 
-  if (showLogin) {
-    return <Login onBack={() => { setShowLogin(false); setAccessDenied(false); }} />;
+  // Mostrar login si el estado lo indica, o si el usuario entró a la URL oculta /crm
+  if (showLogin || isCrmRoute) {
+    return <Login onBack={() => { setShowLogin(false); setAccessDenied(false); if(isCrmRoute) window.location.href='/'; }} />;
   }
 
   // ── Filtered properties ──────────────────────────────────────────────────
@@ -258,7 +326,100 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
-      <Navbar onLogin={() => setShowLogin(true)} />
+      <Navbar />
+
+      {/* ── Modal Ficha Técnica ── */}
+      {selectedProperty && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div className="ficha-tecnica-modal" style={{ background: '#fff', width: '100%', maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto', borderRadius: '16px', position: 'relative' }}>
+            <button onClick={() => setSelectedProperty(null)} className="no-print" style={{ position: 'absolute', top: '15px', right: '15px', background: '#f1f5f9', border: 'none', width: '36px', height: '36px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.2rem', zIndex: 10 }}>✕</button>
+            
+            <div id="ficha-imprimible" style={{ padding: '2.5rem 2rem' }}>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #f1f5f9', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
+                <div>
+                  <h1 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#1e293b', marginBottom: '0.5rem', lineHeight: '1.2' }}>{selectedProperty.title}</h1>
+                  <p style={{ color: '#64748b', fontSize: '1rem' }}>📍 {selectedProperty.colony}, {selectedProperty.municipality}</p>
+                </div>
+                <div style={{ textAlign: 'right', minWidth: '150px' }}>
+                  <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0284c7' }}>
+                    {new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(selectedProperty.price)}
+                  </div>
+                  <div style={{ color: '#64748b', fontSize: '0.9rem', fontWeight: '600' }}>{selectedProperty.price_suffix}</div>
+                  <span style={{ display: 'inline-block', padding: '4px 10px', background: '#e0f2fe', color: '#0369a1', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', marginTop: '0.5rem' }}>
+                    {selectedProperty.operation_type}
+                  </span>
+                </div>
+              </div>
+
+              {/* Main Image */}
+              <img src={selectedProperty.featured_image_url} alt={selectedProperty.title} style={{ width: '100%', height: '350px', objectFit: 'cover', borderRadius: '12px', marginBottom: '1.5rem' }} />
+
+              {/* Features & Amenities */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '700', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Detalles Principales</h3>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: '#475569', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    <li><strong>Tipo:</strong> {selectedProperty.type}</li>
+                    <li><strong>Construcción:</strong> {selectedProperty.size_construction_m2 || selectedProperty.size_m2} m²</li>
+                    <li><strong>Terreno:</strong> {selectedProperty.size_land_m2 || selectedProperty.size_m2} m²</li>
+                    <li><strong>Habitaciones:</strong> {selectedProperty.bedrooms}</li>
+                    <li><strong>Baños:</strong> {selectedProperty.bathrooms}</li>
+                    <li><strong>Estacionamiento:</strong> {selectedProperty.garages} cajones</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: '700', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Amenidades</h3>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {selectedProperty.amenities && selectedProperty.amenities.map(am => (
+                      <span key={am} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '4px 8px', borderRadius: '6px', fontSize: '0.85rem', color: '#475569' }}>✓ {am}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem', marginBottom: '1rem' }}>Descripción</h3>
+                <p style={{ color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>{selectedProperty.description}</p>
+              </div>
+
+              {/* Agent info for Print */}
+              <div className="print-agent-info" style={{ display: 'none', marginTop: '3rem', borderTop: '2px solid #0284c7', paddingTop: '1.5rem', breakInside: 'avoid' }}>
+                <h3 style={{ marginBottom: '1rem', color: '#0284c7' }}>Información de Contacto</h3>
+                {agentDetails && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                    <img src={agentDetails.avatar_url || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=300'} style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b' }}>{agentDetails.name}</h4>
+                      <p style={{ margin: '4px 0', color: '#64748b' }}>{agentDetails.company || agentDetails.position}</p>
+                      <p style={{ margin: 0, fontWeight: 'bold', color: '#0284c7' }}>WhatsApp: {agentDetails.whatsapp || agentDetails.phone}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Action Buttons (Not printed) */}
+            <div className="no-print" style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0', borderRadius: '0 0 16px 16px', position: 'sticky', bottom: 0 }}>
+              <button 
+                onClick={() => window.print()}
+                style={{ flex: 1, padding: '1rem', background: '#1e293b', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+              >
+                📄 Descargar PDF / Imprimir
+              </button>
+              
+              <a 
+                href={`https://wa.me/${agentDetails?.whatsapp?.replace(/\D/g,'') || ''}?text=${encodeURIComponent(`Hola, vi la propiedad "${selectedProperty.title}" en Propiedades en Chiapas y quiero más información.`)}`}
+                target="_blank" rel="noreferrer"
+                style={{ flex: 1, padding: '1rem', background: '#25D366', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '700', fontSize: '1rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', textDecoration: 'none' }}
+              >
+                💬 Contactar por WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Categories Bar */}
       <div className="categories-wrapper container">
@@ -329,37 +490,6 @@ export default function App() {
       {/* ── Main Content ────────────────────────────────────────────────── */}
       <main className="container" style={{ paddingBottom: '6rem' }}>
         
-        {/* LANDINGS ATERRIZADAS - SOLICITUD DEL CLIENTE */}
-        {!hasFilters && activeCategory === 'Todas' && (
-          <>
-            <div style={{ marginBottom: '3rem', marginTop: '2rem' }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '1.5rem', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.5rem' }}>🌟 Desarrollos Exclusivos</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
-                {['colinas-del-campestre', 'cuauhtli-terrenos-en-venta-en-el-jobo', 'el-higo-copoya-terrenos-10x20-en-copoya', 'fraccionamiento-montecristo', 'la-canada-desarrollo-eco-campestre', 'la-sima-park-terrenos-en-ocozocoautla', 'monte-de-los-olivos', 'quinta-en-berriozabal', 'sima-park'].map(slug => (
-                  <a key={slug} href={`/${slug}/index.html`} target="_blank" rel="noreferrer" style={{ padding: '1rem', background: '#ffffff', borderRadius: '15px', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={e => e.currentTarget.style.transform='translateY(0)'}>
-                    🏢 {slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(' En ', ' en ').replace(' De ', ' de ').substring(0, 35)}...
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '3rem' }}>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '1.5rem', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.5rem' }}>👥 Asesores Autorizados</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
-                {[
-                  { name: 'Carmen Jimenez', url: 'carmen-jimenez-asesor-inmobiliario-de-ibr' },
-                  { name: 'Luis Garcia', url: 'luis-garcia-asesor-inmobiliario-de-ibr' },
-                  { name: 'Lupyta Mendoza', url: 'lupyta-mendoza-asesor-inmobiliario-ibr' }
-                ].map(asesor => (
-                  <a key={asesor.name} href={`/${asesor.url}/index.html`} target="_blank" rel="noreferrer" style={{ padding: '1rem', background: '#ffffff', borderRadius: '15px', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={e => e.currentTarget.style.transform='translateY(0)'}>
-                    👤 {asesor.name}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6rem', gap: '1rem', color: 'var(--text-muted)' }}>
             <div style={{ width: '36px', height: '36px', border: '3px solid #e2e8f0', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -373,7 +503,7 @@ export default function App() {
               <div key={cat.name} className="category-section">
                 <h2>{cat.name}</h2>
                 <div className="properties-slider">
-                  {catProps.map(property => <PropertyCard key={property.id} property={property} />)}
+                  {catProps.map(property => <PropertyCard key={property.id} property={property} onClick={() => setSelectedProperty(property)} />)}
                 </div>
               </div>
             );
@@ -381,7 +511,7 @@ export default function App() {
         ) : (
           <div className="properties-grid">
             {filteredProperties.length > 0
-              ? filteredProperties.map(property => <PropertyCard key={property.id} property={property} />)
+              ? filteredProperties.map(property => <PropertyCard key={property.id} property={property} onClick={() => setSelectedProperty(property)} />)
               : (
                 <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🔍</div>

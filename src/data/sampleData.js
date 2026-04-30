@@ -2,8 +2,8 @@
 export const PLANS = {
   admin:     { id: 'admin',     name: 'Administrador CRM',          maxProperties: 9999, features: ['all_access', 'manage_users', 'tarjeta_digital', 'card_preview', 'card_publish', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#ef4444', icon: '⚡' },
   developer: { id: 'developer', name: 'Desarrollador / Constructor', maxProperties: 999,  features: ['tarjeta_digital', 'card_preview', 'card_publish', 'propiedades_ilimitadas', 'landing', 'analytics', 'developments'], color: '#f59e0b', icon: '🏗️' },
-  starter:   { id: 'starter',   name: 'Starter',                    maxProperties: 0,    features: ['tarjeta_digital', 'card_preview'], color: '#64748b', icon: '💳' },
-  basic:     { id: 'basic',     name: 'Básico',                     maxProperties: 1,    features: ['tarjeta_digital', 'card_preview', 'card_publish', 'una_propiedad', 'landing'], color: '#0284c7', icon: '🏠' },
+  starter:   { id: 'starter',   name: 'Starter',                    maxProperties: 1,    features: ['tarjeta_digital', 'card_preview', 'una_propiedad', 'landing'], color: '#64748b', icon: '💳' },
+  basic:     { id: 'basic',     name: 'Básico',                     maxProperties: 5,    features: ['tarjeta_digital', 'card_preview', 'card_publish', 'una_propiedad', 'landing'], color: '#0284c7', icon: '🏠' },
   premium:   { id: 'premium',   name: 'Premium',                    maxProperties: 999,  features: ['tarjeta_digital', 'card_preview', 'card_publish', 'propiedades_ilimitadas', 'landing', 'analytics'], color: '#7c3aed', icon: '👑' }
 };
 
