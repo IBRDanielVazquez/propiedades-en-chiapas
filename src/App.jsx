@@ -328,6 +328,38 @@ export default function App() {
 
       {/* ── Main Content ────────────────────────────────────────────────── */}
       <main className="container" style={{ paddingBottom: '6rem' }}>
+        
+        {/* LANDINGS ATERRIZADAS - SOLICITUD DEL CLIENTE */}
+        {!hasFilters && activeCategory === 'Todas' && (
+          <>
+            <div style={{ marginBottom: '3rem', marginTop: '2rem' }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '1.5rem', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.5rem' }}>🌟 Desarrollos Exclusivos</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                {['colinas-del-campestre', 'cuauhtli-terrenos-en-venta-en-el-jobo', 'el-higo-copoya-terrenos-10x20-en-copoya', 'fraccionamiento-montecristo', 'la-canada-desarrollo-eco-campestre', 'la-sima-park-terrenos-en-ocozocoautla', 'monte-de-los-olivos', 'quinta-en-berriozabal', 'sima-park'].map(slug => (
+                  <a key={slug} href={`/${slug}/index.html`} target="_blank" rel="noreferrer" style={{ padding: '1rem', background: '#ffffff', borderRadius: '15px', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={e => e.currentTarget.style.transform='translateY(0)'}>
+                    🏢 {slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).replace(' En ', ' en ').replace(' De ', ' de ').substring(0, 35)}...
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '3rem' }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '1.5rem', borderBottom: '2px solid #e2e8f0', paddingBottom: '0.5rem' }}>👥 Asesores Autorizados</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                {[
+                  { name: 'Carmen Jimenez', url: 'carmen-jimenez-asesor-inmobiliario-de-ibr' },
+                  { name: 'Luis Garcia', url: 'luis-garcia-asesor-inmobiliario-de-ibr' },
+                  { name: 'Lupyta Mendoza', url: 'lupyta-mendoza-asesor-inmobiliario-ibr' }
+                ].map(asesor => (
+                  <a key={asesor.name} href={`/${asesor.url}/index.html`} target="_blank" rel="noreferrer" style={{ padding: '1rem', background: '#ffffff', borderRadius: '15px', border: '1px solid #e2e8f0', color: '#1e293b', fontWeight: 'bold', textDecoration: 'none', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform='translateY(-3px)'} onMouseOut={e => e.currentTarget.style.transform='translateY(0)'}>
+                    👤 {asesor.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '6rem', gap: '1rem', color: 'var(--text-muted)' }}>
             <div style={{ width: '36px', height: '36px', border: '3px solid #e2e8f0', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />

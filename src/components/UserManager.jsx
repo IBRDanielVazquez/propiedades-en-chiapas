@@ -286,8 +286,10 @@ export default function UserManager() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              {[
                 { label: 'Nombre Completo *', name: 'name', type: 'text' },
                 { label: 'Email *', name: 'email', type: 'email' },
+
                 { label: 'Cargo / Posición', name: 'position', type: 'text' },
                 { label: 'Empresa / Inmobiliaria', name: 'company', type: 'text' },
                 { label: 'Teléfono', name: 'phone', type: 'text' },

@@ -1031,8 +1031,13 @@ export default function Dashboard({ session, onLogout }) {
           {currentView === 'profile' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', animation: 'fadeIn 0.3s ease' }}>
               <div style={{ marginBottom: '0.5rem' }}>
-                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>Mi Perfil de Asesor</h1>
-                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>Personaliza tus datos y previsualiza tu Tarjeta Digital interactiva.</p>
+                <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b', letterSpacing: '-1px' }}>
+                  Mi Perfil de Asesor (v2.0)
+                </h1>
+                <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>
+                  Personaliza tus datos y redes sociales. Previsualiza tu Tarjeta Digital interactiva.
+                </p>
+
               </div>
 
               {/* ── Tarjeta Digital ── */}
