@@ -7,6 +7,7 @@ import { supabase } from './supabaseClient';
 import { SAMPLE_PROPERTIES, SAMPLE_USERS } from './data/sampleData';
 import chiapasData from './data/chiapasLocations.json';
 import DigitalCard from './components/DigitalCard';
+import LandingCaptacion from './components/LandingCaptacion';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 
@@ -162,6 +163,9 @@ function AppContent() {
       setLoading(false);
     }
   };
+
+  // ── Interceptar ruta pública de captación de asesores /asesores ────────
+  if (window.location.pathname === '/asesores') return <LandingCaptacion />;
 
   // ── Interceptar ruta pública de tarjeta digital /card/:id ──────────────
   const isCardRoute = window.location.pathname.startsWith('/card/');
