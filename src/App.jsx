@@ -8,6 +8,7 @@ import { SAMPLE_PROPERTIES, SAMPLE_USERS } from './data/sampleData';
 import chiapasData from './data/chiapasLocations.json';
 import DigitalCard from './components/DigitalCard';
 import LandingCaptacion from './components/LandingCaptacion';
+import Home from './components/Home';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -45,10 +46,10 @@ export default function App() {
     );
   }
 
-  // REGLA 4 — /: siempre portal público
+  // REGLA 4 — /: siempre portal público (Home)
   return (
     <HelmetProvider>
-      <PortalRoute />
+      <Home />
     </HelmetProvider>
   );
 }
