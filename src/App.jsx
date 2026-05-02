@@ -12,6 +12,13 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 
 export default function App() {
+  if (window.location.pathname === '/asesores') {
+    return (
+      <HelmetProvider>
+        <LandingCaptacion />
+      </HelmetProvider>
+    );
+  }
   return (
     <HelmetProvider>
       <AppContent />
@@ -163,9 +170,6 @@ function AppContent() {
       setLoading(false);
     }
   };
-
-  // ── Interceptar ruta pública de captación de asesores /asesores ────────
-  if (window.location.pathname === '/asesores') return <LandingCaptacion />;
 
   // ── Interceptar ruta pública de tarjeta digital /card/:id ──────────────
   const isCardRoute = window.location.pathname.startsWith('/card/');
