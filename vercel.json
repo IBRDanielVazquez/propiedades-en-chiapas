@@ -1,20 +1,5 @@
 {
-  "cleanUrls": true,
   "rewrites": [
-    { "source": "/card/:id", "destination": "/index.html" },
-    { "source": "/crm", "destination": "/index.html" },
-    { "source": "/asesores", "destination": "/index.html" },
-    { "source": "/login", "destination": "/index.html" },
-    { "source": "/sima-park", "destination": "/sima-park/index.html" },
-    { "source": "/la-canada-desarrollo-eco-campestre", "destination": "/la-canada-desarrollo-eco-campestre/index.html" },
-    { "source": "/colinas-del-campestre", "destination": "/colinas-del-campestre/index.html" },
-    { "source": "/fraccionamiento-montecristo", "destination": "/fraccionamiento-montecristo/index.html" },
-    { "source": "/cuauhtli-terrenos-en-venta-en-el-jobo", "destination": "/cuauhtli-terrenos-en-venta-en-el-jobo/index.html" },
-    { "source": "/el-higo-copoya-terrenos-10x20-en-copoya", "destination": "/el-higo-copoya-terrenos-10x20-en-copoya/index.html" },
-    { "source": "/monte-de-los-olivos", "destination": "/monte-de-los-olivos/index.html" },
-    { "source": "/quinta-en-berriozabal", "destination": "/quinta-en-berriozabal/index.html" },
-    { "source": "/la-sima-park-terrenos-en-ocozocoautla", "destination": "/la-sima-park-terrenos-en-ocozocoautla/index.html" },
-    { "source": "/luis-garcia-asesor-inmobiliario-de-ibr", "destination": "/luis-garcia-asesor-inmobiliario-de-ibr/index.html" },
-    { "source": "/lupyta-mendoza-asesor-inmobiliario-ibr", "destination": "/lupyta-mendoza-asesor-inmobiliario-ibr/index.html" }
+    { "source": "/((?!.*\\.).*)", "destination": "/index.html" }
   ]
 }

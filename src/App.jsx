@@ -12,7 +12,10 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 
 export default function App() {
-  if (window.location.pathname === '/asesores') {
+  // Normalizar pathname quitando slash final para evitar /asesores/ vs /asesores
+  const path = window.location.pathname.replace(/\/$/, '');
+
+  if (path === '/asesores') {
     return (
       <HelmetProvider>
         <LandingCaptacion />
