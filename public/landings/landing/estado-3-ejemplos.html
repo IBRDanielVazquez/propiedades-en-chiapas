@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mira Ejemplos de Embudos Inmobiliarios | Propiedades en Chiapas</title>
+
+    <meta name="description"
+        content="Ejemplos reales de landing pages inmobiliarias de alta conversión. Ideales para Casa, Terreno o Fraccionamiento. Listas para RRSS.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://propiedadesenchiapas.com/landings/landing/estado-3-ejemplos">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://propiedadesenchiapas.com/landings/landing/estado-3-ejemplos">
+    <meta property="og:locale" content="es_MX">
+    <meta property="og:site_name" content="Propiedades en Chiapas">
+    <meta property="og:title" content="Mira 3 Ejemplos de Embudos Inmobiliarios Listos para Usar">
+    <meta property="og:description"
+        content="Embudos para Casa, Terreno y Fraccionamiento. Optimizados para RRSS y buscadores. Listos desde el día 1.">
+    <meta property="og:image"
+        content="https://propiedadesenchiapas.com/landings/images/hero_fraccionamiento_maestro_chiapas_1772843166514.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mira 3 Ejemplos de Embudos Inmobiliarios Listos para Usar">
+    <meta name="twitter:description"
+        content="Embudos para Casa, Terreno y Fraccionamiento. Optimizados para RRSS y buscadores.">
+    <meta name="twitter:image"
+        content="https://propiedadesenchiapas.com/landings/images/hero_fraccionamiento_maestro_chiapas_1772843166514.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #020617 0%, #172554 100%);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Diagonal stripes bg */
+        .bg-stripes {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.02),
+                    rgba(255, 255, 255, 0.02) 10px,
+                    transparent 10px,
+                    transparent 20px);
+            animation: moveStripes 30s linear infinite;
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            padding: 0 5%;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .hook-tag {
+            color: #60a5fa;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 6vw, 2.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 40px;
+            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+            animation-delay: 0.2s;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-align: left;
+            animation: slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        /* Cascade Delays */
+        .card:nth-child(1) {
+            animation-delay: 0.6s;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.9s;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 1.2s;
+            border-left: 4px solid #10b981;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card:nth-child(1) .card-icon {
+            color: #f59e0b;
+        }
+
+        .card:nth-child(2) .card-icon {
+            color: #3b82f6;
+        }
+
+        .card:nth-child(3) .card-icon {
+            color: #10b981;
+        }
+
+        .card-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .card-info p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            font-family: sans-serif;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes moveStripes {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-50px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-stripes"></div>
+
+    <div class="content">
+        <div class="hook-tag">ASÍ SE VE EL ÉXITO</div>
+        <h1>Te compartimos 3 de nuestros ejemplos <span>BÁSICOS</span></h1>
+
+        <div class="cards-container">
+            <!-- Ejemplo 1 -->
+            <a href="https://propiedadesenchiapas.com/landings/landing/terreno-inversion"
+                style="text-decoration: none; display: block;" class="card">
+                <div class="card-icon"><i data-lucide="map" width="28" height="28"></i></div>
+                <div class="card-info">
+                    <h3>Terrenos de Inversión</h3>
+                    <p>Enfoque financiero y plusvalía</p>
+                </div>
+            </a>
+
+            <!-- Ejemplo 2 -->
+            <a href="https://propiedadesenchiapas.com/landings/landing/casa-premium"
+                style="text-decoration: none; display: block;" class="card">
+                <div class="card-icon"><i data-lucide="home" width="28" height="28"></i></div>
+                <div class="card-info">
+                    <h3>Casa Premium</h3>
+                    <p>Lujo, estilo y pre-clasificación</p>
+                </div>
+            </a>
+
+            <!-- Ejemplo 3 -->
+            <a href="https://propiedadesenchiapas.com/landings/landing/fraccionamiento-master"
+                style="text-decoration: none; display: block;" class="card">
+                <div class="card-icon"><i data-lucide="building" width="28" height="28"></i></div>
+                <div class="card-info">
+                    <h3>Desarrollos Master</h3>
+                    <p>Macro-proyectos y venta masiva</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

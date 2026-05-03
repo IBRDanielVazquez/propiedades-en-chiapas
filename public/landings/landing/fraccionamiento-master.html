@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desarrollo Maestro | Tu Próximo Hogar</title>
+
+    <meta name="description"
+        content="El macroproyecto residencial privado más importante de Chiapas. Lotes urbanizados con Casa Club, acceso controlado. Sin revisión de buró. Financiamiento directo.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://propiedadesenchiapas.com/landings/landing/fraccionamiento-master">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://propiedadesenchiapas.com/landings/landing/fraccionamiento-master">
+    <meta property="og:locale" content="es_MX">
+    <meta property="og:site_name" content="Propiedades en Chiapas">
+    <meta property="og:title" content="Terrenos Residenciales con Casa Club y Seguridad 24/7">
+    <meta property="og:description"
+        content="El mejor entorno para tu familia. Lotes desde 160m² con urbanización premium, financiamiento directo sin revisar buró.">
+    <meta property="og:image"
+        content="https://propiedadesenchiapas.com/landings/images/hero_fraccionamiento_maestro_chiapas_1772843166514.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Fraccionamiento Master — Desarrollo residencial en Chiapas">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Terrenos Residenciales con Casa Club y Seguridad 24/7">
+    <meta name="twitter:description"
+        content="Lotes desde 160m² con urbanización premium. Sin revisar buró. Financiamiento directo.">
+    <meta name="twitter:image"
+        content="https://propiedadesenchiapas.com/landings/images/hero_fraccionamiento_maestro_chiapas_1772843166514.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@700;800;900&display=swap"
+        rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ========================================================================= 
+           WP RESIDENCE SHIELD - HIGH CONVERSION BRUTALIST + CINEMATIC SYSTEM
+           ========================================================================= */
+
+        #og-frac-wrapper {
+            --fc-bg-main: #ffffff;
+            /* Clean White */
+            --fc-bg-alt: #fafaf9;
+            /* Stone 50 */
+            --fc-card-dark: #ffffff;
+            /* White cards with shadow */
+            --fc-brand-primary: #ea580c;
+            /* Vibrant Orange / Terracotta */
+            --fc-brand-light: #fdba74;
+            /* Orange 300 */
+            --fc-yellow: #f59e0b;
+            /* Amber */
+            --fc-blue: #0ea5e9;
+            /* Sky Blue - contrast */
+            --fc-blue-hover: #0284c7;
+            --fc-whatsapp: #22c55e;
+            --fc-text-pure: #1c1917;
+            /* Stone 900 */
+            --fc-text-muted: #57534e;
+            /* Stone 500 */
+            --fc-border: #e7e5e4;
+            /* Stone 200 */
+
+            font-family: 'Inter', sans-serif !important;
+            color: var(--fc-text-pure) !important;
+            background-color: var(--fc-bg-main) !important;
+            line-height: 1.6 !important;
+            text-align: left !important;
+            position: relative !important;
+            z-index: 9999 !important;
+            scroll-behavior: smooth !important;
+        }
+
+        #og-frac-wrapper * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box !important;
+        }
+
+        /* STRICT FONT ENFORCEMENT */
+        #og-frac-wrapper h1,
+        #og-frac-wrapper h2,
+        #og-frac-wrapper h3,
+        #og-frac-wrapper h4,
+        #og-frac-wrapper .og-frac-price-huge {
+            font-family: 'Montserrat', Arial, sans-serif !important;
+            color: var(--fc-text-pure) !important;
+            font-weight: 800 !important;
+            line-height: 1.15 !important;
+            letter-spacing: -0.5px !important;
+        }
+
+        #og-frac-wrapper p,
+        #og-frac-wrapper span,
+        #og-frac-wrapper li,
+        #og-frac-wrapper div {
+            font-family: 'Inter', Helvetica, sans-serif !important;
+        }
+
+        #og-frac-wrapper a {
+            text-decoration: none !important;
+        }
+
+        /* CINEMATIC FADE UP ANIMATION */
+        @keyframes og-frac-fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #og-frac-wrapper .og-frac-animate {
+            opacity: 0;
+        }
+
+        #og-frac-wrapper .og-frac-animate.og-frac-visible {
+            animation: og-frac-fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        }
+
+        /* BUTTONS */
+        #og-frac-wrapper .og-frac-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 20px 30px !important;
+            font-size: 1.15rem !important;
+            font-weight: 800 !important;
+            border-radius: 12px !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            cursor: pointer !important;
+            border: none !important;
+            text-align: center !important;
+            font-family: 'Montserrat', sans-serif !important;
+            width: 100% !important;
+        }
+
+        #og-frac-wrapper .og-frac-btn-blue {
+            background-color: var(--fc-blue) !important;
+            color: var(--lt-text-white) !important;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+        }
+
+        #og-frac-wrapper .og-frac-btn-blue:hover {
+            transform: translateY(-5px) scale(1.02) !important;
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.6) !important;
+            background-color: var(--fc-blue-hover) !important;
+        }
+
+        #og-frac-wrapper .og-frac-btn-green {
+            background-color: var(--fc-whatsapp) !important;
+            color: #000 !important;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3) !important;
+        }
+
+        #og-frac-wrapper .og-frac-btn-green:hover {
+            transform: translateY(-5px) scale(1.02) !important;
+            box-shadow: 0 15px 30px rgba(37, 211, 102, 0.5) !important;
+            background-color: #20b858 !important;
+        }
+
+        /* BADGES */
+        #og-frac-wrapper .og-frac-badge-tilted {
+            display: inline-block !important;
+            font-family: 'Montserrat', sans-serif !important;
+            background: var(--fc-yellow) !important;
+            color: #000 !important;
+            padding: 8px 22px !important;
+            font-weight: 900 !important;
+            font-size: 1.15rem !important;
+            text-transform: uppercase !important;
+            transform: rotate(-3deg) !important;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6) !important;
+            margin-bottom: 25px !important;
+            letter-spacing: 1px !important;
+        }
+
+        /* LAYOUT */
+        #og-frac-wrapper .og-frac-section {
+            padding: 100px 5% !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        #og-frac-wrapper .og-frac-container {
+            max-width: 1100px !important;
+            margin: 0 auto !important;
+        }
+
+        #og-frac-wrapper .og-frac-center {
+            text-align: center !important;
+        }
+
+        /* HERO APP-WIDGET */
+        #og-frac-wrapper .og-frac-hero {
+            position: relative !important;
+            min-height: 95vh !important;
+            display: flex !important;
+            align-items: center !important;
+            padding: 120px 5% 60px !important;
+            background: linear-gradient(135deg, rgba(67, 20, 7, 0.95) 0%, rgba(124, 45, 18, 0.9) 100%) !important;
+        }
+
+        #og-frac-wrapper .og-frac-hero-bg {
+            position: absolute !important;
+            inset: 0 !important;
+            background-image: url('../images/hero_fraccionamiento_maestro_chiapas_1772843166514.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            opacity: 0.15 !important;
+        }
+
+        #og-frac-wrapper .og-frac-hero-content {
+            position: relative !important;
+            z-index: 2 !important;
+            width: 100% !important;
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            display: grid !important;
+            grid-template-columns: 1fr 480px !important;
+            gap: 60px !important;
+            align-items: center !important;
+        }
+
+        @media (max-width: 1024px) {
+            #og-frac-wrapper .og-frac-hero-content {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        #og-frac-wrapper .og-frac-hero-text h1 {
+            font-size: clamp(2.8rem, 6vw, 4.5rem) !important;
+            margin-bottom: 25px !important;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+            color: #ffffff !important;
+        }
+
+        #og-frac-wrapper .og-frac-hero-text p {
+            font-size: 1.35rem !important;
+            color: rgba(255, 255, 255, 0.85) !important;
+            margin-bottom: 35px !important;
+            max-width: 550px !important;
+            text-shadow: none !important;
+        }
+
+        #og-frac-wrapper .og-frac-status {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            margin-bottom: 25px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+        }
+
+        #og-frac-wrapper .og-frac-dot {
+            width: 12px !important;
+            height: 12px !important;
+            background: var(--fc-brand-light) !important;
+            border-radius: 50% !important;
+            box-shadow: 0 0 15px var(--fc-brand-light) !important;
+        }
+
+        #og-frac-wrapper .og-frac-card-widget {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-radius: 24px !important;
+            padding: 50px 40px !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid rgba(0, 0, 0, 0.05) !important;
+            text-align: center !important;
+            backdrop-filter: blur(20px) !important;
+            animation: og-frac-fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s !important;
+            opacity: 0;
+        }
+
+        #og-frac-wrapper .og-frac-price-label {
+            font-size: 1.1rem !important;
+            color: var(--fc-text-muted) !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+        }
+
+        #og-frac-wrapper .og-frac-price-huge {
+            font-size: clamp(3rem, 10vw, 4.5rem) !important;
+            margin: 15px 0 30px !important;
+            color: var(--fc-text-pure) !important;
+            line-height: 1 !important;
+        }
+
+        #og-frac-wrapper .og-frac-list {
+            list-style: none !important;
+            margin-bottom: 40px !important;
+            text-align: left !important;
+        }
+
+        #og-frac-wrapper .og-frac-list li {
+            margin-bottom: 18px !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 15px !important;
+            font-size: 1.15rem !important;
+            font-weight: 500 !important;
+        }
+
+        #og-frac-wrapper .og-frac-list i {
+            color: var(--fc-brand-light) !important;
+            flex-shrink: 0 !important;
+            margin-top: 3px !important;
+        }
+
+        /* EMOTIONAL STORYTELLING */
+        #og-frac-wrapper .og-frac-story-block {
+            max-width: 850px !important;
+            margin: 0 auto !important;
+            text-align: center !important;
+        }
+
+        #og-frac-wrapper .og-frac-story-title {
+            font-size: clamp(2rem, 5vw, 2.8rem) !important;
+            margin-bottom: 30px !important;
+        }
+
+        #og-frac-wrapper .og-frac-story-block p {
+            font-size: 1.25rem !important;
+            color: var(--fc-text-muted) !important;
+            margin-bottom: 25px !important;
+            line-height: 1.8 !important;
+        }
+
+        #og-frac-wrapper .og-frac-story-block strong {
+            color: var(--fc-text-pure) !important;
+            font-weight: 600 !important;
+        }
+
+        /* PLATFORM AMENITIES (APP STYLE GRID) */
+        #og-frac-wrapper .og-frac-amenities-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+            gap: 20px !important;
+            margin-top: 50px !important;
+        }
+
+        #og-frac-wrapper .og-frac-amenity-box {
+            background: var(--fc-bg-alt) !important;
+            border: 1px solid var(--fc-border) !important;
+            border-radius: 16px !important;
+            padding: 40px 30px !important;
+            text-align: center !important;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+
+        #og-frac-wrapper .og-frac-amenity-box:hover {
+            transform: translateY(-8px) !important;
+            border-color: var(--fc-brand-light) !important;
+            background: var(--fc-card-dark) !important;
+        }
+
+        #og-frac-wrapper .og-frac-amenity-box i {
+            color: var(--fc-brand-light) !important;
+            margin-bottom: 20px !important;
+        }
+
+        #og-frac-wrapper .og-frac-amenity-box h3 {
+            font-size: 1.25rem !important;
+            margin-bottom: 15px !important;
+            color: var(--lt-text-white) !important;
+        }
+
+        #og-frac-wrapper .og-frac-amenity-box p {
+            color: var(--fc-text-muted) !important;
+            font-size: 1rem !important;
+        }
+
+        /* TESTIMONIALS (SOCAL PROOF) */
+        #og-frac-wrapper .og-frac-reviews-grid {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+            gap: 30px !important;
+            margin-top: 50px !important;
+        }
+
+        #og-frac-wrapper .og-frac-review-card {
+            background: var(--fc-card-dark) !important;
+            padding: 40px !important;
+            border-radius: 20px !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        #og-frac-wrapper .og-frac-stars {
+            color: var(--fc-yellow) !important;
+            margin-bottom: 20px !important;
+            display: flex !important;
+            gap: 5px !important;
+        }
+
+        #og-frac-wrapper .og-frac-review-text {
+            font-style: italic !important;
+            color: var(--lt-text-gray) !important;
+            font-size: 1.15rem !important;
+            margin-bottom: 30px !important;
+        }
+
+        #og-frac-wrapper .og-frac-review-author {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+        }
+
+        #og-frac-wrapper .og-frac-author-img {
+            width: 55px !important;
+            height: 55px !important;
+            border-radius: 50% !important;
+            object-fit: cover !important;
+        }
+
+        #og-frac-wrapper .og-frac-author-name {
+            font-weight: 800 !important;
+            color: var(--lt-text-white) !important;
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1.1rem !important;
+        }
+
+        #og-frac-wrapper .og-frac-author-date {
+            font-size: 0.9rem !important;
+            color: var(--fc-text-muted) !important;
+        }
+
+        /* MASTER PLAN INTERACTION */
+        #og-frac-wrapper .og-frac-master-map {
+            border-radius: 24px !important;
+            overflow: hidden !important;
+            border: 1px solid var(--fc-border) !important;
+            position: relative !important;
+            margin-top: 60px !important;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        #og-frac-wrapper .og-frac-master-map img {
+            width: 100% !important;
+            display: block !important;
+            filter: none !important;
+        }
+
+        #og-frac-wrapper .og-frac-map-overlay {
+            position: absolute !important;
+            bottom: 40px !important;
+            left: 40px !important;
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            padding: 40px !important;
+            border-radius: 20px !important;
+            max-width: 450px !important;
+            border-left: 8px solid var(--fc-brand-light) !important;
+        }
+
+        @media (max-width: 768px) {
+            #og-frac-wrapper .og-frac-map-overlay {
+                position: relative !important;
+                inset: auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 0 !important;
+                border-left: none !important;
+                border-top: 5px solid var(--fc-brand-light) !important;
+            }
+        }
+
+        /* THE HARD OFFER (FINANCING BLOCK MODULAR) */
+        #og-frac-wrapper .og-frac-offer-box {
+            background: var(--fc-brand-primary) !important;
+            border-radius: 24px !important;
+            padding: 80px 8% !important;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            margin: 100px auto !important;
+            max-width: 1000px !important;
+            text-align: center !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        #og-frac-wrapper .og-frac-offer-box::before {
+            content: '' !important;
+            position: absolute !important;
+            top: -50% !important;
+            left: -50% !important;
+            width: 200% !important;
+            height: 200% !important;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.2) 0%, transparent 60%) !important;
+            pointer-events: none !important;
+        }
+
+        #og-frac-wrapper .og-frac-data-list {
+            display: flex !important;
+            justify-content: center !important;
+            gap: 40px !important;
+            margin-top: 50px !important;
+            flex-wrap: wrap !important;
+        }
+
+        #og-frac-wrapper .og-frac-data-col {
+            text-align: center !important;
+            background: rgba(0, 0, 0, 0.2) !important;
+            padding: 30px !important;
+            border-radius: 16px !important;
+            min-width: 200px !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        /* FAQS */
+        #og-frac-wrapper .og-frac-faq-container {
+            max-width: 850px !important;
+            margin: 60px auto 0 !important;
+        }
+
+        #og-frac-wrapper .og-frac-faq-item {
+            background: var(--fc-bg-alt) !important;
+            margin-bottom: 20px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--fc-border) !important;
+            padding: 35px !important;
+            overflow: hidden !important;
+        }
+
+        #og-frac-wrapper .og-frac-faq-question {
+            font-size: 1.3rem !important;
+            font-weight: 800 !important;
+            font-family: 'Montserrat', sans-serif !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+            color: var(--lt-text-white) !important;
+            cursor: pointer !important;
+            transition: color 0.3s ease !important;
+        }
+
+        #og-frac-wrapper .og-frac-faq-question:hover {
+            color: var(--fc-brand-light) !important;
+        }
+
+        #og-frac-wrapper .og-frac-faq-item.active .og-frac-faq-question i.chevron {
+            transform: rotate(180deg) !important;
+        }
+
+        #og-frac-wrapper .og-frac-faq-answer {
+            color: var(--fc-text-muted) !important;
+            font-size: 1.15rem !important;
+            padding-left: 45px !important;
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0 !important;
+            transition: all 0.4s ease-in-out !important;
+        }
+
+        #og-frac-wrapper .og-frac-faq-item.active .og-frac-faq-answer {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 15px !important;
+        }
+
+        /* FOOTER */
+        #og-frac-wrapper .og-frac-footer {
+            text-align: center !important;
+            padding: 100px 5% 120px !important;
+            background: #431407 !important;
+            /* Deep Terracotta / Espresso */
+        }
+
+        /* STICKY CTA MOBILE */
+        #og-frac-wrapper .og-frac-sticky {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            background: var(--fc-card-dark) !important;
+            padding: 15px 20px !important;
+            border-top: 1px solid var(--fc-border) !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            z-index: 10000 !important;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6) !important;
+        }
+
+        @media (min-width: 769px) {
+            #og-frac-wrapper .og-frac-sticky {
+                display: none !important;
+            }
+        }
+    </style>
+    <style>
+        /* ========================================================================= 
+   MAMALONA INTRO OVERLAY
+   ========================================================================= */
+        body.locked {
+            overflow: hidden !important;
+        }
+
+        .intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(circle at center, #431407 0%, #020617 100%);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.8, 0, 0.2, 1), transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            color: white;
+        }
+
+        .intro-overlay.hidden {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        .intro-content {
+            text-align: center;
+            padding: 0 20px;
+            animation: fadeUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .intro-icon {
+            width: 60px;
+            height: 60px;
+            color: var(--fc-brand-light, #fdba74);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(253, 186, 116, 0.4));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .intro-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            margin-bottom: 15px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .intro-title span {
+            color: var(--fc-brand-light, #fdba74);
+        }
+
+        .intro-subtitle {
+            font-size: 1.2rem;
+            color: #e7e5e4;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .intro-btn {
+            background: linear-gradient(135deg, #fdba74 0%, #ea580c 100%);
+            color: #000;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(234, 88, 12, 0.3);
+            transition: all 0.3s ease;
+            animation: pulseGlow 2s infinite;
+        }
+
+        .intro-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(234, 88, 12, 0.6);
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(234, 88, 12, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(234, 88, 12, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- INTRO OVERLAY -->
+    <div id="intro-overlay" class="intro-overlay">
+        <div class="intro-content">
+            <i data-lucide="key" class="intro-icon"></i>
+            <h1 class="intro-title">Descubre tu Próxima <span>Inversión</span></h1>
+            <p class="intro-subtitle">Acceso exclusivo a propiedades de alto nivel.</p>
+            <button id="enter-btn" class="intro-btn">INGRESAR AHORA</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('locked');
+            const introBtn = document.getElementById('enter-btn');
+            const overlay = document.getElementById('intro-overlay');
+            if (introBtn && overlay) {
+                introBtn.addEventListener('click', () => {
+                    overlay.classList.add('hidden');
+                    document.body.classList.remove('locked');
+                    setTimeout(() => {
+                        overlay.remove();
+                    }, 800);
+                });
+            }
+        });
+    </script>
+
+    <!-- SHIELD WRAPPER TO PROTECT FROM WP RESIDENCE / ELEMENTOR -->
+    <div id="og-frac-wrapper">
+
+        <!-- HERO SECTION -->
+        <header class="og-frac-hero">
+            <div class="og-frac-hero-bg"></div>
+
+            <div class="og-frac-hero-content og-frac-animate">
+                <div class="og-frac-hero-text">
+                    <div class="og-frac-status">
+                        <div class="og-frac-dot"></div> 3ra Etapa en Venta
+                    </div>
+                    <h1>Eleva el estándar de vida de tu familia hoy mismo.</h1>
+                    <p>El macroproyecto residencial privado más importante de la zona metropolitana. Lotes urbanizados
+                        con Casa Club, acceso controlado y amenidades que redefinen tu entorno.</p>
+                </div>
+
+                <!-- THE APP WIDGET FLOATING CARD -->
+                <div class="og-frac-card-widget">
+                    <span class="og-frac-badge-tilted">Promoción: Sin Enganche</span>
+                    <div class="og-frac-price-label">Mensualidades Fijas Desde</div>
+                    <div class="og-frac-price-huge">$4,900</div>
+
+                    <ul class="og-frac-list">
+                        <li><i data-lucide="check-circle" width="22"></i> Sin Revisión de Buró</li>
+                        <li><i data-lucide="check-circle" width="22"></i> Entrega con Servicios a Pie de Lote</li>
+                        <li><i data-lucide="check-circle" width="22"></i> Financiamiento Directo</li>
+                    </ul>
+
+                    <a href="https://wa.me/5219612466204?text=Hola,%20me%20encant%C3%B3%20la%20plantilla%20Fraccionamiento%20Master%20y%20me%20gustar%C3%ADa%20adquirirla"
+                        target="_blank" class="og-frac-btn og-frac-btn-blue"><i data-lucide="calendar-check-2"
+                            style="margin-right: 12px;"></i> Agendar Visita al
+                        Desarrollo</a>
+                    <p
+                        style="font-size: 0.9rem !important; margin-top: 20px !important; color: var(--fc-text-muted) !important;">
+                        Recibe ubicación y tabulador de precios al instante.</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- EMOTIONAL STORYTELLING (THE WHY) -->
+        <section class="og-frac-section" style="background: var(--fc-bg-main) !important;">
+            <div class="og-frac-container og-frac-animate">
+                <div class="og-frac-story-block">
+                    <h2 class="og-frac-story-title">Un entorno donde tus hijos pueden volver a jugar en la calle.</h2>
+                    <p><strong>Dejamos de construir casas, para empezar a construir comunidades reales.</strong>
+                        ¿Recuerdas esa sensación de libertad en la infancia andando en bicicleta hasta que anochecía?
+                        Ese es el ambiente que hemos replicado aquí adentro.</p>
+                    <p>Desarrollamos un polígono bardado totalmente cerrado que solo permite acceso a propietarios.
+                        Cámaras de vigilancia CCT, guardias 24/7 y carriles independientes. Al invertir aquí, no solo
+                        compras tierra, <strong>estás comprando la paz mental de saber que están seguros mientras tú
+                            trabajas.</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PLATFORM AMENITIES -->
+        <section class="og-frac-section" style="background: var(--fc-bg-alt) !important;">
+            <div class="og-frac-container">
+                <div class="og-frac-center og-frac-animate">
+                    <h2 class="og-frac-story-title" style="margin-bottom: 15px !important;">Infraestructura Nivel
+                        Residencial</h2>
+                    <p
+                        style="color: var(--fc-text-muted) !important; font-size: 1.25rem !important; max-width: 600px !important; margin: 0 auto !important;">
+                        Absolutamente todo lo que necesitas sin salir de tu privada.</p>
+                </div>
+
+                <div class="og-frac-amenities-grid">
+                    <div class="og-frac-amenity-box og-frac-animate">
+                        <i data-lucide="shield" width="45" height="45"></i>
+                        <h3>Seguridad Perimetral</h3>
+                        <p>Barda electirficada, plumas automáticas con TAG para residentes y registro facial para
+                            visitas.</p>
+                    </div>
+                    <div class="og-frac-amenity-box og-frac-animate" style="transition-delay: 0.1s;">
+                        <i data-lucide="droplets" width="45" height="45"></i>
+                        <h3>Casa Club Exclusiva</h3>
+                        <p>Alberca semi-olímpica, asadores familiares y salón de eventos climátizado con capacidad para
+                            100 personas.</p>
+                    </div>
+                    <div class="og-frac-amenity-box og-frac-animate" style="transition-delay: 0.2s;">
+                        <i data-lucide="zap" width="45" height="45"></i>
+                        <h3>Servicios Ocultos</h3>
+                        <p>Cero contaminación visual. Cableado eléctrico, telefónico y de fibra óptica 100% subterráneo.
+                        </p>
+                    </div>
+                    <div class="og-frac-amenity-box og-frac-animate" style="transition-delay: 0.3s;">
+                        <i data-lucide="trees" width="45" height="45"></i>
+                        <h3>Parques y Canchas</h3>
+                        <p>Canchas de usos múltiples, juegos infantiles modulares de uso rudo y pet-park con bebederos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS (SOCIAL PROOF) -->
+        <section class="og-frac-section">
+            <div class="og-frac-container">
+                <div class="og-frac-center og-frac-animate">
+                    <h2 class="og-frac-story-title" style="margin-bottom: 10px !important;">Familias Construyendo su
+                        Futuro</h2>
+                    <p style="color: var(--fc-text-muted) !important; font-size: 1.15rem !important;">Historias reales
+                        de personas viviendo el desarrollo.</p>
+                </div>
+
+                <div class="og-frac-reviews-grid">
+                    <div class="og-frac-review-card og-frac-animate">
+                        <div class="og-frac-stars">
+                            <i data-lucide="star" fill="currentColor" width="20"></i><i data-lucide="star"
+                                fill="currentColor" width="20"></i><i data-lucide="star" fill="currentColor"
+                                width="20"></i><i data-lucide="star" fill="currentColor" width="20"></i><i
+                                data-lucide="star" fill="currentColor" width="20"></i>
+                        </div>
+                        <p class="og-frac-review-text">"Compramos en preventa hace 2 años y comenzamos a construir hace
+                            6 meses. Visitar mi obra todos los fines de semana y ver el pavimento rayado, las áreas
+                            verdes ya crecidas y todo tan limpio nos confirma que fue la mejor decisión. Ya queremos
+                            mudarnos."</p>
+                        <div class="og-frac-review-author">
+                            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                                alt="Propietaria" class="og-frac-author-img">
+                            <div>
+                                <div class="og-frac-author-name">Arq. Sofia Montes</div>
+                                <div class="og-frac-author-date">Residente de Etapa 1</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="og-frac-review-card og-frac-animate" style="transition-delay: 0.1s;">
+                        <div class="og-frac-stars">
+                            <i data-lucide="star" fill="currentColor" width="20"></i><i data-lucide="star"
+                                fill="currentColor" width="20"></i><i data-lucide="star" fill="currentColor"
+                                width="20"></i><i data-lucide="star" fill="currentColor" width="20"></i><i
+                                data-lucide="star" fill="currentColor" width="20"></i>
+                        </div>
+                        <p class="og-frac-review-text">"El hecho de que no me pidieran investigar el buró de crédito fue
+                            clave. Trabajo por mi cuenta, genero buen dinero, pero en los bancos me ponían 1000 trabas.
+                            Di la primera mensualidad de apartado y firmé contrato con ellos rapidísimo ante notario."
+                        </p>
+                        <div class="og-frac-review-author">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
+                                alt="Inversor" class="og-frac-author-img">
+                            <div>
+                                <div class="og-frac-author-name">David Herrera</div>
+                                <div class="og-frac-author-date">Comerciante y Propietario</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MASTER PLAN INTERACTION -->
+        <section class="og-frac-section" style="padding-top: 20px !important;">
+            <div class="og-frac-container">
+                <h2 class="og-frac-story-title og-frac-center og-frac-animate">Master Plan Autorizado</h2>
+
+                <div class="og-frac-master-map og-frac-animate">
+                    <img src="https://raw.githubusercontent.com/IBR-Agency/assets/main/master_plan_chiapas.png"
+                        onerror="this.src='../images/master_plan_real_estate_chiapas_1772842360526.png'"
+                        alt="Masterplan del Desarrollo en Chiapas">
+                    <div class="og-frac-map-overlay">
+                        <h3 style="font-size: 2rem !important; margin-bottom: 20px !important;">Master Plan Autorizado
+                        </h3>
+                        <p
+                            style="font-size: 1.1rem !important; margin-bottom: 30px !important; color: #e2e8f0 !important;">
+                            Urbanización sustentable en el corazón de Chiapas. Plusvalía garantizada por ubicación
+                            estratégica.</p>
+                        <a href="https://wa.me/5219612466204?text=Hola,%20me%20encant%C3%B3%20la%20plantilla%20Fraccionamiento%20Master%20y%20me%20gustar%C3%ADa%20adquirirla"
+                            target="_blank" class="og-frac-btn og-frac-btn-blue"><i data-lucide="download"
+                                style="margin-right: 10px;"></i> Descargar Master Plan Full
+                            HD</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- THE FINANCING HARD OFFER -->
+        <section class="og-frac-section" style="padding: 0 !important; border: none !important;">
+            <div class="og-frac-container">
+                <div class="og-frac-offer-box og-frac-animate">
+                    <span class="og-frac-badge-tilted" style="background-color: var(--lt-text-white) !important;">Aparta
+                        hoy con $5,000
+                        MXN</span>
+                    <h2 style="font-size: clamp(2.2rem, 5vw, 3.5rem) !important; margin-bottom: 20px !important;">El
+                        crédito no bancario más accesible.</h2>
+                    <p
+                        style="font-size: 1.25rem !important; color: var(--fc-text-muted) !important; max-width: 700px !important; margin: 0 auto !important;">
+                        No necesitas aval comercial ni historial impecable. Nosotros financiamos a meses tu terreno como
+                        constructora desarrolladora de forma directa.</p>
+
+                    <div class="og-frac-data-list">
+                        <div class="og-frac-data-col">
+                            <div
+                                style="font-size: 1rem !important; color: var(--fc-brand-light) !important; font-weight: 700 !important; text-transform: uppercase !important; margin-bottom: 10px !important;">
+                                Plazo Fijo</div>
+                            <div
+                                style="font-size: 2.5rem !important; font-weight: 900 !important; font-family: 'Montserrat', sans-serif !important;">
+                                Hasta 72 Meses</div>
+                        </div>
+                        <div class="og-frac-data-col">
+                            <div
+                                style="font-size: 1rem !important; color: var(--fc-brand-light) !important; font-weight: 700 !important; text-transform: uppercase !important; margin-bottom: 10px !important;">
+                                Mensualidad Base</div>
+                            <div
+                                style="font-size: 2.5rem !important; font-weight: 900 !important; font-family: 'Montserrat', sans-serif !important;">
+                                $4,900 MXN</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REINFORCED VARIABLES / BENEFITS SECTION -->
+        <section class="og-frac-section"
+            style="background: linear-gradient(135deg, #fffedd 0%, #fef3c7 100%) !important;">
+            <div class="og-frac-container">
+                <div class="og-frac-center og-frac-animate">
+                    <h2 class="og-frac-story-title">Nuestra Ventaja Inmobiliaria</h2>
+                    <p
+                        style="color: var(--fc-text-muted) !important; font-size: 1.25rem !important; margin-bottom: 40px !important;">
+                        Más que un terreno, una solución integral a tu patrimonio.</p>
+                </div>
+                <div class="og-frac-amenities-grid">
+                    <div class="og-frac-amenity-box og-frac-animate">
+                        <i data-lucide="trending-up" width="45" height="45"></i>
+                        <h3>Plusvalía Acelerada</h3>
+                        <p>Ubicación en zona de crecimiento exponencial. Tu inversión trabaja sola desde el primer día.
+                        </p>
+                    </div>
+                    <div class="og-frac-amenity-box og-frac-animate">
+                        <i data-lucide="shield-check" width="45" height="45"></i>
+                        <h3>Certeza Jurídica 200%</h3>
+                        <p>Documentación validada ante notario público. Sin sorpresas, sin riesgos, solo patrimonio
+                            real.</p>
+                    </div>
+                    <div class="og-frac-amenity-box og-frac-animate">
+                        <i data-lucide="home" width="45" height="45"></i>
+                        <h3>Listo para Construir</h3>
+                        <p>Servicios a pie de lote. No esperes años para ver avances, la infraestructura es inmediata.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CHIAPAS GEOGRAPHIC MAP -->
+        <section class="og-frac-section">
+            <div class="og-frac-container">
+                <h2 class="og-frac-story-title og-frac-center og-frac-animate">Ubicación Estratégica en Chiapas</h2>
+                <div class="og-frac-master-map og-frac-animate">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1918844.2046109966!2d-94.2012001556942!3d15.6599762141973!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ed36aa2217c91b%3A0xe5495cd5df620021!2sChiapas!5e0!3m2!1sen!2smx!4v1709774618218!5m2!1sen!2smx"
+                        width="100%" height="500"
+                        style="border:0; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ DETAILED SECTION -->
+        <section class="og-frac-section"
+            style="background: var(--fc-bg-alt) !important; border-top: 1px solid var(--fc-border) !important;">
+            <div class="og-frac-container">
+                <div class="og-frac-center og-frac-animate">
+                    <h2 class="og-frac-story-title" style="margin-bottom: 10px !important;">Preguntas de Nuestros
+                        Clientes</h2>
+                    <p style="color: var(--fc-text-muted) !important; font-size: 1.15rem !important;">Lo que necesitas
+                        saber para invertir seguro.</p>
+                </div>
+
+                <div class="og-frac-faq-container">
+                    <div class="og-frac-faq-item og-frac-animate">
+                        <div class="og-frac-faq-question">
+                            <i data-lucide="hard-hat" color="var(--fc-brand-light)"></i>
+                            <span style="flex: 1;">¿Cuándo puedo empezar a construir mi casa?</span>
+                            <i data-lucide="chevron-down" class="chevron" color="var(--fc-brand-light)"></i>
+                        </div>
+                        <div class="og-frac-faq-answer">Si compras en la Etapa 1, al momento de liquidar tu enganche
+                            mínimo puedes meter materiales de forma inmediata, la calle está pavimentada y los registros
+                            de luz y agua están al pie. Si compras Etapas posteriores en desarrollo, se otorgan tiempos
+                            de gracia de 6 a 12 meses.</div>
+                    </div>
+                    <div class="og-frac-faq-item og-frac-animate" style="transition-delay: 0.1s;">
+                        <div class="og-frac-faq-question">
+                            <i data-lucide="wallet" color="var(--fc-brand-light)"></i>
+                            <span style="flex: 1;">¿Se pagará mantenimiento por vivir ahí?</span>
+                            <i data-lucide="chevron-down" class="chevron" color="var(--fc-brand-light)"></i>
+                        </div>
+                        <div class="og-frac-faq-answer">Sí. Para sostener que todo funcione de lujo (seguridad real en
+                            la caseta, jardinería de áreas verdes comunes, recolección de basura interna y mantenimiento
+                            a la casa club) se instituye una modesta cuota de mantenimiento condominal acordada en
+                            contrato. Se calcula que oscila entre 900 a 1,500 pesos mensuales por lote.</div>
+                    </div>
+                    <div class="og-frac-faq-item og-frac-animate" style="transition-delay: 0.2s;">
+                        <div class="og-frac-faq-question">
+                            <i data-lucide="paw-print" color="var(--fc-brand-light)"></i>
+                            <span style="flex: 1;">¿Es un fraccionamiento Pet Friendly?</span>
+                            <i data-lucide="chevron-down" class="chevron" color="var(--fc-brand-light)"></i>
+                        </div>
+                        <div class="og-frac-faq-answer">Totalmente. El desarrollo incluye dentro de sus amenidades un
+                            Pet Park cercado. El reglamento interno únicamente te pide pasearlos con correa en áreas
+                            vecinales y mantener la higiene comunitaria para evitar afectar a tus vecinos.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="og-frac-footer">
+            <div class="og-frac-container">
+                <h2 style="font-size: 2.5rem !important; margin-bottom: 30px !important; color: #ffffff !important;">
+                    Proyecto Inmobiliario</h2>
+                <p style="color: rgba(255,255,255,0.7) !important; margin-bottom: 40px !important;">Tu aliado en
+                    inversiones inmobiliarias premium en Chiapas.</p>
+
+                <div
+                    style="display: flex !important; justify-content: center !important; gap: 25px !important; margin-bottom: 40px !important;">
+                    <a href="#" class="og-frac-social-btn"
+                        style="color: #ffffff !important; background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.1) !important;"><i
+                            data-lucide="facebook" width="30"></i></a>
+                    <a href="#" class="og-frac-social-btn"
+                        style="color: #ffffff !important; background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.1) !important;"><i
+                            data-lucide="instagram" width="30"></i></a>
+                    <a href="https://wa.me/5219612466204?text=Hola,%20me%20encant%C3%B3%20la%20plantilla%20Fraccionamiento%20Master%20y%20me%20gustar%C3%ADa%20adquirirla"
+                        class="og-frac-social-btn"
+                        style="color: #ffffff !important; background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.1) !important;"><i
+                            data-lucide="message-circle" width="30"></i></a>
+                </div>
+
+                <div
+                    style="font-size: 1.1rem !important; color: rgba(255,255,255,0.7) !important; display: flex !important; flex-direction: column !important; align-items: center !important;">
+                    <p><i data-lucide="map-pin" width="18" style="vertical-align: middle; margin-right: 8px;"></i>
+                        Tuxtla Gutiérrez, Chiapas, México</p>
+                    <p style="margin-top: 10px !important;"><i data-lucide="phone" width="18"
+                            style="vertical-align: middle; margin-right: 8px;"></i> +52 961 246 6204</p>
+                </div>
+
+                <p
+                    style="margin-top: 60px !important; font-size: 0.9rem !important; color: rgba(255,255,255,0.4) !important;">
+                    © 2026
+                    IBR Inmobiliaria. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+
+        <!-- END FOOTER -->
+
+        <!-- STICKY MOBILE CTA -->
+        <div class="og-frac-sticky">
+            <div>
+                <span
+                    style="display:block !important; font-size: 0.75rem !important; color: var(--fc-text-muted) !important; text-transform: uppercase !important; font-weight: 700 !important; letter-spacing: 0.5px !important;">Desde</span>
+                <span
+                    style="font-family: 'Montserrat', sans-serif !important; font-weight: 900 !important; font-size: 1.25rem !important; color: var(--lt-text-white) !important;">$4,900
+                    / mes</span>
+            </div>
+            <a href="https://wa.me/5219612466204?text=Hola,%20me%20encant%C3%B3%20la%20plantilla%20Fraccionamiento%20Master%20y%20me%20gustar%C3%ADa%20adquirirla"
+                target="_blank" class="og-frac-btn og-frac-btn-blue"
+                style="width: auto !important; padding: 12px 25px !important; font-size: 0.95rem !important;">Cotizar</a>
+        </div>
+
+    </div>
+
+    <script>
+        if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Observer config
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('og-frac-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.og-frac-animate').forEach((element) => {
+                observer.observe(element);
+            });
+
+            // Accordion Logic
+            const faqQuestions = document.querySelectorAll('.og-frac-faq-question');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const item = question.closest('.og-frac-faq-item');
+                    const isActive = item.classList.contains('active');
+
+                    // Close all
+                    document.querySelectorAll('.og-frac-faq-item').forEach(faq => {
+                        faq.classList.remove('active');
+                    });
+
+                    // Toggle current
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
