@@ -9,6 +9,7 @@ import chiapasData from './data/chiapasLocations.json';
 import DigitalCard from './components/DigitalCard';
 import LandingCaptacion from './components/LandingCaptacion';
 import Home from './components/Home';
+import PropertyDetail from './components/PropertyDetail';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -23,6 +24,16 @@ export default function App() {
     return (
       <HelmetProvider>
         <LandingCaptacion />
+      </HelmetProvider>
+    );
+  }
+
+  // REGLA — /propiedad/:id: siempre pública, antes del auth check
+  if (path.startsWith('/propiedad/')) {
+    const propertyId = path.split('/propiedad/')[1] || '';
+    return (
+      <HelmetProvider>
+        <PropertyDetail propertyId={propertyId} />
       </HelmetProvider>
     );
   }

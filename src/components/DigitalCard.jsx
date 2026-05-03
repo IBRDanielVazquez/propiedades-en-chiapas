@@ -382,12 +382,19 @@ export default function DigitalCard({ profile, plan, isPublished = false }) {
               ) : (
                 <div style={{ display:'flex', flexDirection:'column', gap:'.75rem' }}>
                   {propiedades.map(p => (
-                    <div key={p.id} style={{
-                      display:'flex', gap:'.85rem', alignItems:'center',
-                      background:GRIS_BG, borderRadius:14, overflow:'hidden',
-                      border:`1px solid ${GRIS_BD}`, cursor:'pointer',
-                      transition:'box-shadow .2s',
-                    }}>
+                    <a
+                      key={p.id}
+                      href={`/propiedad/${p.id}`}
+                      style={{
+                        display:'flex', gap:'.85rem', alignItems:'center',
+                        background:GRIS_BG, borderRadius:14, overflow:'hidden',
+                        border:`1px solid ${GRIS_BD}`, cursor:'pointer',
+                        transition:'box-shadow .2s, border-color .2s',
+                        textDecoration:'none',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.boxShadow=`0 4px 16px rgba(26,26,110,.12)`; e.currentTarget.style.borderColor=`${MARINO}55`; }}
+                      onMouseLeave={e => { e.currentTarget.style.boxShadow='none'; e.currentTarget.style.borderColor=GRIS_BD; }}
+                    >
                       {/* Imagen */}
                       <div style={{ width:80, height:74, flexShrink:0, background:`linear-gradient(135deg,${MARINO},#3730a3)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem' }}>
                         {p.featured_image_url
@@ -404,7 +411,9 @@ export default function DigitalCard({ profile, plan, isPublished = false }) {
                           {p.municipality && <span style={{ background:`${VERDE}15`, color:VERDE, borderRadius:6, padding:'1px 7px', fontSize:'.68rem', fontWeight:700 }}>📍 {p.municipality}</span>}
                         </div>
                       </div>
-                    </div>
+                      {/* Flecha */}
+                      <div style={{ paddingRight:'.85rem', color:MARINO, fontWeight:900, fontSize:'1rem', opacity:.5 }}>›</div>
+                    </a>
                   ))}
                   <a href="/" style={{ display:'block', textAlign:'center', padding:'.75rem', background:MARINO, color:BLANCO, borderRadius:12, fontWeight:800, fontSize:'.85rem', textDecoration:'none', marginTop:'.25rem' }}>
                     Ver todas las propiedades →
