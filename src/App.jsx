@@ -57,7 +57,24 @@ export default function App() {
     );
   }
 
-  // REGLA 4 — /: siempre portal público (Home)
+  // REGLA 4 — /: siempre portal público (Marketing Landing)
+  if (path === '/') {
+    return (
+      <HelmetProvider>
+        <LandingCaptacion />
+      </HelmetProvider>
+    );
+  }
+
+  // REGLA 5 — /portal: buscador de propiedades
+  if (path === '/portal' || path === '/buscar') {
+    return (
+      <HelmetProvider>
+        <Home />
+      </HelmetProvider>
+    );
+  }
+
   return (
     <HelmetProvider>
       <Home />
