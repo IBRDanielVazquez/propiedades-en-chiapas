@@ -90,7 +90,12 @@ export default function Home() {
     const fetchStats = async () => {
       try {
         const [rProps, rAsesores] = await Promise.all([
-          supabase.from('properties').select('municipality', { count: 'exact' }).eq('active', true),
+          supabase.from('properties').select('municipality', { count: 'exact' }).eq('active', true)
+            .not('title', 'ilike', '%Premium en %')
+            .not('title', 'ilike', 'Residencia Casa Premier%')
+            .not('title', 'ilike', 'Fraccionamiento Master%')
+            .not('title', 'ilike', 'Lotes de Inversión Premium%')
+            .not('title', 'ilike', 'Lote Comercial Estratégico%'),
           supabase.from('users').select('id', { count: 'exact' }).eq('active', true),
         ]);
 
@@ -117,12 +122,11 @@ export default function Home() {
           .from('properties')
           .select('*')
           .eq('active', true)
-          .in('user_id', [
-            '731ce118-d513-4c21-bda5-4b15ef017ecc', // Daniel
-            '5efd0207-17cf-4315-81a2-e3d903e48328', // Carmen
-            '215637a9-5d6a-4e18-953f-510cfca9cd7f', // Lupyta
-            'fa0858cc-fab2-49d6-977f-9c5ec2186409'  // Luis
-          ])
+          .not('title', 'ilike', '%Premium en %')
+          .not('title', 'ilike', 'Residencia Casa Premier%')
+          .not('title', 'ilike', 'Fraccionamiento Master%')
+          .not('title', 'ilike', 'Lotes de Inversión Premium%')
+          .not('title', 'ilike', 'Lote Comercial Estratégico%')
           .order('created_at', { ascending: false })
           .limit(6);
 
@@ -142,12 +146,11 @@ export default function Home() {
     setBuscando(true);
     try {
       let query = supabase.from('properties').select('*').eq('active', true)
-        .in('user_id', [
-          '731ce118-d513-4c21-bda5-4b15ef017ecc',
-          '5efd0207-17cf-4315-81a2-e3d903e48328',
-          '215637a9-5d6a-4e18-953f-510cfca9cd7f',
-          'fa0858cc-fab2-49d6-977f-9c5ec2186409'
-        ]);
+        .not('title', 'ilike', '%Premium en %')
+        .not('title', 'ilike', 'Residencia Casa Premier%')
+        .not('title', 'ilike', 'Fraccionamiento Master%')
+        .not('title', 'ilike', 'Lotes de Inversión Premium%')
+        .not('title', 'ilike', 'Lote Comercial Estratégico%');
 
       if (busqueda.trim()) {
         query = query.or(

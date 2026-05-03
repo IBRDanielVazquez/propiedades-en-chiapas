@@ -24,6 +24,11 @@ export default function Dashboard({ session, onLogout }) {
       const { data, error } = await supabase
         .from('properties')
         .select('*')
+        .not('title', 'ilike', '%Premium en %')
+        .not('title', 'ilike', 'Residencia Casa Premier%')
+        .not('title', 'ilike', 'Fraccionamiento Master%')
+        .not('title', 'ilike', 'Lotes de Inversión Premium%')
+        .not('title', 'ilike', 'Lote Comercial Estratégico%')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
