@@ -30,19 +30,22 @@ export default function PropertyCard({ property, onClick }) {
       </div>
 
       <div className="property-title-row">
-        <div className="property-title">{property.city}, {property.type}</div>
+        <div className="property-title">{(property.municipality || property.city || 'Chiapas').toUpperCase()} · {property.type}</div>
         <div className="property-rating">
           <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '12px', width: '12px', fill: 'currentcolor' }}><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
           {rating}
         </div>
       </div>
       
-      <div className="property-subtitle" style={{ marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      <div className="property-subtitle" style={{ marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: '500' }}>
         {property.title}
       </div>
       <div className="property-subtitle">
-        {property.bedrooms} hab · {property.bathrooms} baños · {property.size_m2} m²
+        {property.bedrooms ? `${property.bedrooms} hab · ` : ''} 
+        {property.bathrooms ? `${property.bathrooms} baños · ` : ''} 
+        {property.size_m2 || property.size_construction_m2 || '—'} m²
       </div>
+
 
       {property.amenities && property.amenities.length > 0 && (
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '6px', marginBottom: '4px' }}>

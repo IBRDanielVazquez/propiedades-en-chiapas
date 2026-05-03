@@ -117,6 +117,12 @@ export default function Home() {
           .from('properties')
           .select('*')
           .eq('active', true)
+          .in('user_id', [
+            '731ce118-d513-4c21-bda5-4b15ef017ecc', // Daniel
+            '5efd0207-17cf-4315-81a2-e3d903e48328', // Carmen
+            '215637a9-5d6a-4e18-953f-510cfca9cd7f', // Lupyta
+            'fa0858cc-fab2-49d6-977f-9c5ec2186409'  // Luis
+          ])
           .order('created_at', { ascending: false })
           .limit(6);
 
@@ -135,7 +141,13 @@ export default function Home() {
   const buscar = useCallback(async () => {
     setBuscando(true);
     try {
-      let query = supabase.from('properties').select('*').eq('active', true);
+      let query = supabase.from('properties').select('*').eq('active', true)
+        .in('user_id', [
+          '731ce118-d513-4c21-bda5-4b15ef017ecc',
+          '5efd0207-17cf-4315-81a2-e3d903e48328',
+          '215637a9-5d6a-4e18-953f-510cfca9cd7f',
+          'fa0858cc-fab2-49d6-977f-9c5ec2186409'
+        ]);
 
       if (busqueda.trim()) {
         query = query.or(

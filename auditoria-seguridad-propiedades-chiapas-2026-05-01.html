@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Auditoría de Seguridad — Propiedades en Chiapas — 2026-05-01</title>
+<style>
+  :root{--rojo:#dc2626;--naranja:#ea580c;--amarillo:#ca8a04;--azul:#2563eb;--gris:#6b7280;--verde:#16a34a;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  .wrap{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+  h1{font-size:2rem;font-weight:800;letter-spacing:-1px}
+  h2{font-size:1.3rem;font-weight:700;margin-bottom:1rem}
+  h3{font-size:1rem;font-weight:700;margin-bottom:.5rem}
+  a{color:var(--azul)}
+
+  /* Header */
+  .header{background:#0f172a;color:#f8fafc;padding:2.5rem;border-radius:20px;margin-bottom:2rem}
+  .header-meta{display:flex;gap:2rem;flex-wrap:wrap;margin-top:1.25rem;font-size:.85rem;color:#94a3b8}
+  .header-meta span{display:flex;align-items:center;gap:.35rem}
+
+  /* Score */
+  .score-ring{display:flex;align-items:center;gap:2rem;background:#1e293b;border-radius:16px;padding:1.5rem 2rem;margin-top:1.5rem;flex-wrap:wrap}
+  .score-num{font-size:3.5rem;font-weight:900;line-height:1}
+  .score-label{font-size:.8rem;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+  .score-verdict{font-size:1.1rem;font-weight:700;color:#fbbf24;margin-top:.25rem}
+  .score-bar-wrap{flex:1;min-width:200px}
+  .score-bar-bg{height:12px;background:#374151;border-radius:99px;overflow:hidden}
+  .score-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#dc2626,#fbbf24,#22c55e);width:52%}
+
+  /* Semaforo */
+  .semaforo{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:2rem}
+  .sem-card{border-radius:14px;padding:1.25rem;text-align:center;border:2px solid transparent}
+  .sem-card .count{font-size:2.5rem;font-weight:900;line-height:1}
+  .sem-card .label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:.25rem}
+  .s-critico{background:#fef2f2;border-color:#fca5a5;color:var(--rojo)}
+  .s-alto{background:#fff7ed;border-color:#fed7aa;color:var(--naranja)}
+  .s-medio{background:#fefce8;border-color:#fde68a;color:var(--amarillo)}
+  .s-bajo{background:#eff6ff;border-color:#bfdbfe;color:var(--azul)}
+  .s-info{background:#f9fafb;border-color:#e5e7eb;color:var(--gris)}
+  .s-ok{background:#f0fdf4;border-color:#bbf7d0;color:var(--verde)}
+
+  /* Badge */
+  .badge{display:inline-flex;align-items:center;gap:.3rem;padding:3px 10px;border-radius:99px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .b-critico{background:#fef2f2;color:var(--rojo);border:1px solid #fca5a5}
+  .b-alto{background:#fff7ed;color:var(--naranja);border:1px solid #fed7aa}
+  .b-medio{background:#fefce8;color:var(--amarillo);border:1px solid #fde68a}
+  .b-bajo{background:#eff6ff;color:var(--azul);border:1px solid #bfdbfe}
+  .b-info{background:#f9fafb;color:var(--gris);border:1px solid #e5e7eb}
+  .b-ok{background:#f0fdf4;color:var(--verde);border:1px solid #bbf7d0}
+
+  /* Cards hallazgos */
+  .hallazgo{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:1.75rem;margin-bottom:1.25rem;border-left:5px solid transparent}
+  .hallazgo.critico{border-left-color:var(--rojo)}
+  .hallazgo.alto{border-left-color:var(--naranja)}
+  .hallazgo.medio{border-left-color:var(--amarillo)}
+  .hallazgo.bajo{border-left-color:var(--azul)}
+  .hallazgo.info{border-left-color:var(--gris)}
+  .hallazgo-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+  .hallazgo h3{font-size:1.05rem}
+
+  pre{background:#0f172a;color:#e2e8f0;padding:1.25rem;border-radius:10px;overflow-x:auto;font-size:.82rem;line-height:1.6;margin:.75rem 0}
+  .code-vulnerable{background:#450a0a;border:1px solid #991b1b}
+  .code-correcto{background:#052e16;border:1px solid #166534}
+  code.inline{background:#f1f5f9;padding:2px 6px;border-radius:5px;font-size:.82rem;color:#dc2626}
+
+  /* Impact */
+  .impact-box{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:1rem;margin:.75rem 0;font-size:.88rem}
+  .impact-box strong{color:var(--naranja)}
+
+  /* TOC */
+  .toc{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:1.5rem;margin-bottom:2rem}
+  .toc ol{padding-left:1.25rem}
+  .toc li{margin:.35rem 0;font-size:.9rem}
+  .toc a{color:var(--azul);text-decoration:none;font-weight:600}
+  .toc a:hover{text-decoration:underline}
+
+  /* Section title */
+  .section-title{display:flex;align-items:center;gap:.75rem;margin:2.5rem 0 1rem;font-size:1.4rem;font-weight:800;padding-bottom:.75rem;border-bottom:2px solid var(--border)}
+
+  /* Checklist */
+  .checklist{list-style:none;padding:0}
+  .checklist li{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border);font-size:.9rem}
+  .checklist li:last-child{border:none}
+  .checklist input{width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--verde);cursor:pointer}
+
+  /* Plan remediation */
+  .rem-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:.85rem;display:flex;gap:1rem;align-items:flex-start}
+  .rem-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;flex-shrink:0;color:#fff}
+  .n-critico{background:var(--rojo)}
+  .n-alto{background:var(--naranja)}
+  .n-medio{background:var(--amarillo);color:#1e293b}
+  .n-bajo{background:var(--azul)}
+  .rem-time{font-size:.75rem;color:var(--muted);font-weight:600;margin-top:.25rem}
+
+  /* Buenas practicas */
+  .bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.85rem}
+  .bp-item{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:1rem;display:flex;gap:.75rem;align-items:flex-start;font-size:.88rem;color:#166534;font-weight:600}
+
+  /* Footer */
+  .footer{text-align:center;padding:3rem 0 2rem;color:var(--muted);font-size:.82rem}
+
+  @media print{
+    .wrap{max-width:100%;padding:1rem}
+    .hallazgo{page-break-inside:avoid}
+    pre{white-space:pre-wrap;word-break:break-all}
+  }
+  @media(max-width:600px){
+    h1{font-size:1.5rem}
+    .score-ring{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.75rem">
+    <svg viewBox="0 0 24 24" style="width:40px;height:40px;fill:#38bdf8" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/>
+    </svg>
+    <div>
+      <div style="font-size:.75rem;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:1px">IBR Security Shield</div>
+      <h1>Auditoría de Seguridad</h1>
+    </div>
+  </div>
+  <div class="header-meta">
+    <span>📁 Propiedades en Chiapas (CRM + Portal público)</span>
+    <span>📅 2026-05-01</span>
+    <span>⚙️ React 19 + Vite + Supabase</span>
+    <span>🌐 propiedadesenchiapas.com (Vercel)</span>
+  </div>
+
+  <div class="score-ring">
+    <div>
+      <div class="score-label">Puntuación de Seguridad</div>
+      <div class="score-num" style="color:#fbbf24">52</div>
+      <div class="score-verdict">⚠️ No apto para producción con datos sensibles</div>
+    </div>
+    <div class="score-bar-wrap">
+      <div style="font-size:.78rem;color:#94a3b8;margin-bottom:.5rem">0 — Crítico &nbsp;|&nbsp; 50 — Aceptable &nbsp;|&nbsp; 75 — Bueno &nbsp;|&nbsp; 100 — Excelente</div>
+      <div class="score-bar-bg"><div class="score-bar-fill"></div></div>
+      <div style="font-size:.78rem;color:#fbbf24;margin-top:.5rem;font-weight:700">52/100 — Correcciones necesarias antes de manejar datos reales de clientes</div>
+    </div>
+  </div>
+</div>
+
+<!-- SEMÁFORO -->
+<div class="semaforo">
+  <div class="sem-card s-critico"><div class="count">2</div><div class="label">🔴 CRÍTICO</div></div>
+  <div class="sem-card s-alto"><div class="count">2</div><div class="label">🟠 ALTO</div></div>
+  <div class="sem-card s-medio"><div class="count">3</div><div class="label">🟡 MEDIO</div></div>
+  <div class="sem-card s-bajo"><div class="count">2</div><div class="label">🔵 BAJO</div></div>
+  <div class="sem-card s-info"><div class="count">3</div><div class="label">⚪ INFO</div></div>
+  <div class="sem-card s-ok"><div class="count">7</div><div class="label">✅ OK</div></div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📋 Índice</h2>
+  <ol>
+    <li><a href="#criticos">Vulnerabilidades CRÍTICAS</a></li>
+    <li><a href="#altos">Vulnerabilidades ALTAS</a></li>
+    <li><a href="#medios">Vulnerabilidades MEDIAS</a></li>
+    <li><a href="#bajos">Vulnerabilidades BAJAS</a></li>
+    <li><a href="#info">Observaciones INFO</a></li>
+    <li><a href="#ok">Buenas prácticas detectadas</a></li>
+    <li><a href="#remediation">Plan de remediación priorizado</a></li>
+    <li><a href="#checklist">Checklist post-corrección</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="criticos" class="section-title">🔴 Vulnerabilidades CRÍTICAS</div>
+
+<!-- C1 -->
+<div class="hallazgo critico">
+  <div class="hallazgo-header">
+    <h3>C-01 · Archivo <code class="inline">.env.production</code> commiteado en git</h3>
+    <span class="badge b-critico">🔴 CRÍTICO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    El archivo <code class="inline">.env.production</code> con las credenciales reales de Supabase fue commiteado y existe en el historial de git. Aunque el archivo se borre hoy, las credenciales quedan permanentemente en el historial y cualquiera con acceso al repo puede recuperarlas.
+  </p>
+
+  <strong>Evidencia — historial de git:</strong>
+  <pre class="code-vulnerable">commit 1eb126df1eee049e63aeea3aa27ec91ad3f41147
+Author: Daniel Alberto Vázquez Mendoza
+Date:   Thu Apr 30 15:17:23 2026 -0600
+
++VITE_SUPABASE_URL=https://lfmbhdtrxmtxjwyfzdcz.supabase.co
++VITE_SUPABASE_ANON_KEY=sb_publishable_Ne1rajOeqAJETBoXcIvA6A_l0-NBH1f</pre>
+
+  <strong>Estado actual del <code class="inline">.gitignore</code>:</strong>
+  <pre class="code-vulnerable"># .gitignore actual — solo ignora .env, NO .env.production
+.env        ← ✅ ignorado
+# .env.production ← ❌ FALTA — por eso entró en git</pre>
+
+  <div class="impact-box">
+    <strong>Impacto:</strong> Con la URL y ANON key de Supabase, un atacante puede hacer queries directas a tu base de datos, leer todas las propiedades, usuarios y datos del CRM, y dependiendo del RLS configurado en Supabase, manipular o borrar datos. Si alguna vez se subió la <code class="inline">service_role</code> key (que bypasea el RLS), el impacto sería catastrófico.
+  </div>
+
+  <strong>Corrección paso a paso:</strong>
+  <pre class="code-correcto"># Paso 1 — Sacar .env.production del tracking de git
+git rm --cached .env.production
+
+# Paso 2 — Actualizar .gitignore
+echo ".env.production" >> .gitignore
+echo ".env.local" >> .gitignore
+echo ".env.*.local" >> .gitignore
+
+# Paso 3 — Commitear
+git add .gitignore
+git commit -m "security: remove .env.production from git tracking"
+
+# Paso 4 — Limpiar el historial (OBLIGATORIO)
+# Instalar git-filter-repo si no lo tienes:
+pip install git-filter-repo
+
+# Eliminar el archivo de TODO el historial:
+git filter-repo --path .env.production --invert-paths --force
+
+# Paso 5 — Hacer force push (coordinar con el equipo)
+git push origin --force --all
+
+# Paso 6 — Rotar las credenciales en Supabase dashboard
+# → Settings → API → Regenerar las API Keys
+# Las antiguas deben considerarse comprometidas.</pre>
+</div>
+
+<!-- C2 -->
+<div class="hallazgo critico">
+  <div class="hallazgo-header">
+    <h3>C-02 · Registro abierto: cualquier email puede crear una cuenta de asesor</h3>
+    <span class="badge b-critico">🔴 CRÍTICO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    El componente <code class="inline">Login.jsx</code> permite que cualquier persona en internet cree una cuenta nueva sin ningún mecanismo de validación. Además, <code class="inline">App.jsx</code> auto-inserta en la tabla <code class="inline">users</code> a cualquier usuario que se autentique con Google o magic link aunque no esté registrado previamente.
+  </p>
+
+  <strong>Código vulnerable — Login.jsx, handleSignUp:</strong>
+  <pre class="code-vulnerable">// Cualquier persona puede llegar a esta URL y crear una cuenta
+const { data, error } = await supabase.auth.signUp({
+  email: email.trim().toLowerCase(),
+  password,          // sin validación de fortaleza
+  // sin CAPTCHA, sin verificación de dominio, sin aprobación manual
+});</pre>
+
+  <strong>Código vulnerable — App.jsx, checkAllowlist:</strong>
+  <pre class="code-vulnerable">// Si el email NO existe en la tabla users → lo CREA automáticamente
+// Esto significa que cualquier email de Google entra al CRM
+if (error) {
+  const { data: newUser, error: insertError } = await supabase
+    .from('users')
+    .insert({
+      email: session.user.email.toLowerCase(),
+      plan: 'starter',
+      active: true,      // ← activo por defecto
+    })
+    .select().single();
+}</pre>
+
+  <div class="impact-box">
+    <strong>Impacto:</strong> Un atacante puede registrar cientos de cuentas, explorar el CRM completo con plan "starter", y potencialmente escalar privilegios si encuentra otros fallos de autorización. El texto "Exclusivo para asesores autorizados" es decorativo — no hay ningún control real.
+  </div>
+
+  <strong>Corrección — eliminar el auto-registro y añadir invite-only:</strong>
+  <pre class="code-correcto">// OPCIÓN A: Quitar el botón/función de registro completamente
+// Solo Magic Link o Google para emails ya existentes en la tabla users.
+
+// OPCIÓN B: Invite-only — el admin crea el usuario, luego el asesor activa
+// En App.jsx, cambiar el comportamiento de auto-insert:
+
+const checkAllowlist = async (session) => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, active, plan')
+    .eq('email', session.user.email.toLowerCase())
+    .single();
+
+  if (error || !data) {
+    // NO crear automáticamente — mostrar pantalla de "acceso pendiente"
+    await supabase.auth.signOut();
+    setSession(null);
+    setAccessDenied(true);  // mensaje: "Tu cuenta aún no está activada"
+    setAuthLoading(false);
+    return;
+  }
+
+  if (!data.active) {
+    await supabase.auth.signOut();
+    setSession(null);
+    setAccessDenied(true);
+    setAuthLoading(false);
+    return;
+  }
+
+  setSession(session);
+  setAuthLoading(false);
+};</pre>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="altos" class="section-title">🟠 Vulnerabilidades ALTAS</div>
+
+<!-- A1 -->
+<div class="hallazgo alto">
+  <div class="hallazgo-header">
+    <h3>A-01 · Permisos de archivos <code class="inline">.env</code> demasiado abiertos</h3>
+    <span class="badge b-alto">🟠 ALTO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    Los archivos <code class="inline">.env</code> y <code class="inline">.env.production</code> tienen permisos <code class="inline">644</code> (lectura para todos los usuarios del sistema). En un servidor compartido o si alguien obtiene acceso al sistema de archivos, puede leer las credenciales directamente.
+  </p>
+  <pre class="code-vulnerable">-rw-r--r--@ .env             # 644 — cualquier usuario del sistema puede leer
+-rw-r--r--@ .env.production  # 644 — igual de expuesto</pre>
+  <pre class="code-correcto">chmod 600 .env
+chmod 600 .env.production
+# -rw------- → solo el propietario puede leer y escribir</pre>
+</div>
+
+<!-- A2 -->
+<div class="hallazgo alto">
+  <div class="hallazgo-header">
+    <h3>A-02 · Falta de validación de fortaleza de contraseña en registro</h3>
+    <span class="badge b-alto">🟠 ALTO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    El formulario de registro acepta cualquier contraseña sin validar longitud, complejidad ni si está en listas de contraseñas comprometidas. El único requisito visible es "Mínimo 6 caracteres" que viene de Supabase por defecto — una contraseña como <code class="inline">123456</code> es válida.
+  </p>
+  <pre class="code-vulnerable">// Login.jsx — no hay validación de password antes de signUp
+const { data, error } = await supabase.auth.signUp({
+  email: email.trim().toLowerCase(),
+  password,  // acepta "123456", "aaaaaa", etc.
+});</pre>
+  <pre class="code-correcto">// Añadir validación antes de llamar a Supabase
+const validatePassword = (pwd) => {
+  if (pwd.length < 8) return 'Mínimo 8 caracteres';
+  if (!/[A-Z]/.test(pwd)) return 'Debe incluir al menos una mayúscula';
+  if (!/[0-9]/.test(pwd)) return 'Debe incluir al menos un número';
+  return null;
+};
+
+const handleSignUp = async (e) => {
+  e.preventDefault();
+  const pwdError = validatePassword(password);
+  if (pwdError) { setErrorMsg(pwdError); return; }
+  // ... resto del flujo
+};</pre>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="medios" class="section-title">🟡 Vulnerabilidades MEDIAS</div>
+
+<!-- M1 -->
+<div class="hallazgo medio">
+  <div class="hallazgo-header">
+    <h3>M-01 · Errores de Supabase expuestos al usuario via <code class="inline">alert()</code></h3>
+    <span class="badge b-medio">🟡 MEDIO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    En <code class="inline">UserManager.jsx</code> se usa <code class="inline">alert()</code> con mensajes que podrían incluir información técnica interna. Aunque actualmente los mensajes son genéricos, el patrón es peligroso — un error de Supabase puede contener el nombre de tablas, columnas o estructura interna.
+  </p>
+  <pre class="code-vulnerable">// UserManager.jsx — alert directo con mensajes de sistema
+alert(editingUser ? '¡Asesor actualizado!' : '¡Asesor creado exitosamente!');
+
+// Los catch blocks silencian errores de Supabase — pueden enmascarar fallos
+try {
+  const { data, error } = await supabase.from('users').update(form)...
+  if (error) throw error;
+  saved = data;
+} catch { saved = { ...form, id: editingUser.id }; }  // ← catch vacío</pre>
+  <pre class="code-correcto">// Reemplazar alert() por notificaciones inline
+// Nunca pasar err.message directamente al UI sin sanitizar
+
+const handleError = (err, fallbackMsg) => {
+  console.error('[UserManager]', err); // solo en dev
+  setErrorMsg(fallbackMsg); // mensaje genérico al usuario
+};
+
+// Catch con logging apropiado
+} catch (err) {
+  handleError(err, 'No se pudo guardar. Intenta de nuevo.');
+  saved = { ...form, id: editingUser.id };
+}</pre>
+</div>
+
+<!-- M2 -->
+<div class="hallazgo medio">
+  <div class="hallazgo-header">
+    <h3>M-02 · No hay verificación de RLS en Supabase documentada</h3>
+    <span class="badge b-medio">🟡 MEDIO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    El proyecto usa la <code class="inline">ANON key</code> de Supabase para todas las operaciones del frontend. La seguridad real de los datos depende 100% de las políticas de Row Level Security (RLS) en Supabase, pero no hay evidencia en el código o esquema de que RLS esté habilitado y correctamente configurado para todas las tablas.
+  </p>
+  <div class="impact-box">
+    <strong>Impacto:</strong> Si RLS no está habilitado en la tabla <code class="inline">users</code> o <code class="inline">properties</code>, cualquier usuario autenticado con la anon key puede leer y modificar todos los registros de todos los asesores.
+  </div>
+  <pre class="code-correcto">-- En Supabase SQL Editor, verificar y habilitar RLS:
+
+-- 1. Habilitar RLS en todas las tablas
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE properties ENABLE ROW LEVEL SECURITY;
+
+-- 2. Política: cada asesor solo ve/edita sus propios datos
+CREATE POLICY "asesor_read_own"
+  ON users FOR SELECT
+  USING (auth.uid() = id OR email = auth.jwt()->>'email');
+
+-- 3. Solo admins pueden leer todos los usuarios
+CREATE POLICY "admin_read_all"
+  ON users FOR SELECT
+  USING (auth.jwt()->>'role' = 'admin');
+
+-- 4. Propiedades: cualquiera puede leer las activas (portal público)
+CREATE POLICY "public_read_active_properties"
+  ON properties FOR SELECT
+  USING (active = true);
+
+-- 5. Solo el asesor propietario puede editar sus propiedades
+CREATE POLICY "asesor_edit_own_properties"
+  ON properties FOR ALL
+  USING (auth.uid() = user_id);</pre>
+</div>
+
+<!-- M3 -->
+<div class="hallazgo medio">
+  <div class="hallazgo-header">
+    <h3>M-03 · <code class="inline">console.warn</code> expone mensajes de error de Supabase en producción</h3>
+    <span class="badge b-medio">🟡 MEDIO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    Hay múltiples <code class="inline">console.warn</code> y <code class="inline">console.error</code> que imprimen mensajes de error de Supabase en la consola del navegador. En producción, esto puede revelar estructura de tablas, nombres de columnas y detalles de la base de datos a cualquiera que abra las DevTools.
+  </p>
+  <pre class="code-vulnerable">// App.jsx
+console.warn('Allowlist error:', err.message);         // expone error de Supabase
+console.warn('Portal: usando sample data', err.message);
+
+// UserManager.jsx
+console.warn('Supabase users no disponible, usando sample data:', err.message);
+console.warn('Toggle user persist failed:', err.message);</pre>
+  <pre class="code-correcto">// Usar una función que solo loguea en desarrollo
+const devLog = (...args) => {
+  if (import.meta.env.DEV) console.warn(...args);
+};
+
+// Reemplazar todos los console.warn en producción
+devLog('Allowlist error:', err.message);</pre>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="bajos" class="section-title">🔵 Vulnerabilidades BAJAS</div>
+
+<!-- B1 -->
+<div class="hallazgo bajo">
+  <div class="hallazgo-header">
+    <h3>B-01 · URL de avatar sin validación (posible Open Redirect / SSRF)</h3>
+    <span class="badge b-bajo">🔵 BAJO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    El campo <code class="inline">avatar_url</code> acepta cualquier URL sin validar que pertenezca a un dominio conocido. Un admin malintencionado podría insertar una URL que apunte a recursos internos o a contenido inapropiado que se renderizaría en el CRM.
+  </p>
+  <pre class="code-correcto">// Validar que avatar_url sea una URL HTTPS de dominio conocido
+const ALLOWED_AVATAR_DOMAINS = ['images.unsplash.com', 'lh3.googleusercontent.com', 'storage.googleapis.com'];
+
+const validateAvatarUrl = (url) => {
+  if (!url) return true; // campo opcional
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && ALLOWED_AVATAR_DOMAINS.some(d => parsed.hostname.endsWith(d));
+  } catch {
+    return false;
+  }
+};</pre>
+</div>
+
+<!-- B2 -->
+<div class="hallazgo bajo">
+  <div class="hallazgo-header">
+    <h3>B-02 · Sin Content Security Policy (CSP) headers</h3>
+    <span class="badge b-bajo">🔵 BAJO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:.75rem">
+    El proyecto no configura headers de seguridad HTTP. En producción (Vercel), estos se configuran en <code class="inline">vercel.json</code>. Sin CSP, si existiera un XSS sería más fácil de explotar.
+  </p>
+  <pre class="code-correcto">// vercel.json — añadir headers de seguridad
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co;"
+        },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
+      ]
+    }
+  ]
+}</pre>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="info" class="section-title">⚪ Observaciones INFO</div>
+
+<div class="hallazgo info">
+  <div class="hallazgo-header">
+    <h3>I-01 · La ANON key de Supabase en VITE_* es visible en el bundle del frontend</h3>
+    <span class="badge b-info">⚪ INFO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem">
+    Las variables <code class="inline">VITE_*</code> se embeben en el bundle JavaScript que se sirve al navegador — esto es por diseño en Vite. La <code class="inline">VITE_SUPABASE_ANON_KEY</code> (<code class="inline">sb_publishable_</code>) es la clave pública de Supabase, diseñada para ser expuesta. No es un fallo siempre que RLS esté correctamente configurado (ver M-02). <strong>Nunca usar una <code class="inline">service_role</code> key como variable VITE_.</strong>
+  </p>
+</div>
+
+<div class="hallazgo info">
+  <div class="hallazgo-header">
+    <h3>I-02 · No hay <code class="inline">.env.example</code> en el repositorio</h3>
+    <span class="badge b-info">⚪ INFO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem">
+    No existe un archivo <code class="inline">.env.example</code> con las variables necesarias sin valores reales. Esto dificulta el onboarding de colaboradores y puede llevar a que alguien copie el <code class="inline">.env.production</code> real por no saber qué variables se necesitan.
+  </p>
+  <pre class="code-correcto"># Crear .env.example con valores placeholder
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-anon-key-aqui</pre>
+</div>
+
+<div class="hallazgo info">
+  <div class="hallazgo-header">
+    <h3>I-03 · Sin rate limiting en el frontend para los formularios de auth</h3>
+    <span class="badge b-info">⚪ INFO</span>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem">
+    No hay protección en el cliente contra spam de intentos de login o envío masivo de magic links. Supabase tiene rate limiting propio por IP, pero es configurable y podría no ser suficiente. Considerar añadir un honeypot field o CAPTCHA si el abuso se convierte en problema.
+  </p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="ok" class="section-title">✅ Buenas prácticas detectadas</div>
+
+<div class="bp-grid">
+  <div class="bp-item">✅ <div><strong>0 CVEs en dependencias</strong><br/><span style="color:#166534;font-weight:400">npm audit: found 0 vulnerabilities</span></div></div>
+  <div class="bp-item">✅ <div><strong>Sin XSS vectores</strong><br/><span style="color:#166534;font-weight:400">No hay innerHTML ni dangerouslySetInnerHTML</span></div></div>
+  <div class="bp-item">✅ <div><strong>Sin eval() / exec()</strong><br/><span style="color:#166534;font-weight:400">No se ejecuta código dinámico</span></div></div>
+  <div class="bp-item">✅ <div><strong>Anon key, no service_role</strong><br/><span style="color:#166534;font-weight:400">Correcto uso de la clave pública de Supabase</span></div></div>
+  <div class="bp-item">✅ <div><strong>.env en .gitignore</strong><br/><span style="color:#166534;font-weight:400">El .env local no entra en git</span></div></div>
+  <div class="bp-item">✅ <div><strong>HTTPS forzado por Vercel</strong><br/><span style="color:#166534;font-weight:400">TLS automático en producción</span></div></div>
+  <div class="bp-item">✅ <div><strong>Supabase Auth nativo</strong><br/><span style="color:#166534;font-weight:400">No hay gestión manual de tokens JWT</span></div></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="remediation" class="section-title">🛠️ Plan de remediación priorizado</div>
+
+<div class="rem-item">
+  <div class="rem-num n-critico">1</div>
+  <div>
+    <strong>Rotar las credenciales de Supabase</strong> — regenerar las API Keys en el dashboard de Supabase. Las actuales deben considerarse comprometidas porque están en git history.
+    <div class="rem-time">⏱️ 15 minutos · Supabase Dashboard → Settings → API → Regenerate</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-critico">2</div>
+  <div>
+    <strong>Limpiar .env.production del historial de git</strong> — usar <code class="inline">git filter-repo</code> y force push. Coordinar con el equipo.
+    <div class="rem-time">⏱️ 30 minutos · Ver corrección C-01</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-alto">3</div>
+  <div>
+    <strong>Deshabilitar auto-registro y auto-insert en allowlist</strong> — el CRM debe ser invite-only. Eliminar <code class="inline">handleSignUp</code> y cambiar <code class="inline">checkAllowlist</code> para denegar en lugar de crear.
+    <div class="rem-time">⏱️ 1 hora · src/components/Login.jsx + src/App.jsx</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-alto">4</div>
+  <div>
+    <strong>Añadir .env.production a .gitignore + crear .env.example</strong>
+    <div class="rem-time">⏱️ 5 minutos</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-alto">5</div>
+  <div>
+    <strong>Verificar y habilitar RLS en Supabase</strong> — revisar que todas las tablas tengan RLS activado y políticas correctas.
+    <div class="rem-time">⏱️ 2 horas · Supabase Dashboard → Table Editor → RLS</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-alto">6</div>
+  <div>
+    <strong>chmod 600 en archivos .env locales</strong>
+    <div class="rem-time">⏱️ 1 minuto</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-medio" style="background:var(--amarillo)">7</div>
+  <div>
+    <strong>Añadir validación de contraseña fuerte</strong> — mínimo 8 chars, mayúscula + número.
+    <div class="rem-time">⏱️ 30 minutos · src/components/Login.jsx</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-medio" style="background:var(--amarillo)">8</div>
+  <div>
+    <strong>Crear vercel.json con headers de seguridad</strong> — X-Frame-Options, CSP, HSTS, etc.
+    <div class="rem-time">⏱️ 20 minutos · /vercel.json</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-bajo">9</div>
+  <div>
+    <strong>Reemplazar console.warn/error con devLog en producción</strong>
+    <div class="rem-time">⏱️ 20 minutos · App.jsx + UserManager.jsx</div>
+  </div>
+</div>
+<div class="rem-item">
+  <div class="rem-num n-bajo">10</div>
+  <div>
+    <strong>Validar avatar_url con allowlist de dominios</strong>
+    <div class="rem-time">⏱️ 15 minutos · UserManager.jsx</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════ -->
+<div id="checklist" class="section-title">☑️ Checklist post-corrección</div>
+
+<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem">
+  <ul class="checklist">
+    <li><input type="checkbox"/> <div><strong>[C-01]</strong> API Keys de Supabase rotadas — claves antiguas desactivadas</div></li>
+    <li><input type="checkbox"/> <div><strong>[C-01]</strong> .env.production eliminado del historial de git con git filter-repo</div></li>
+    <li><input type="checkbox"/> <div><strong>[C-01]</strong> Force push a todos los branches realizado</div></li>
+    <li><input type="checkbox"/> <div><strong>[C-01]</strong> .env.production añadido al .gitignore</div></li>
+    <li><input type="checkbox"/> <div><strong>[C-02]</strong> handleSignUp eliminado del componente Login.jsx</div></li>
+    <li><input type="checkbox"/> <div><strong>[C-02]</strong> checkAllowlist en App.jsx modificado para denegar en lugar de auto-crear</div></li>
+    <li><input type="checkbox"/> <div><strong>[A-01]</strong> chmod 600 aplicado a .env y .env.production locales</div></li>
+    <li><input type="checkbox"/> <div><strong>[A-02]</strong> Validación de contraseña fuerte implementada en registro</div></li>
+    <li><input type="checkbox"/> <div><strong>[M-01]</strong> alert() reemplazado por notificaciones inline en UserManager</div></li>
+    <li><input type="checkbox"/> <div><strong>[M-02]</strong> RLS verificado y habilitado en Supabase para tablas users y properties</div></li>
+    <li><input type="checkbox"/> <div><strong>[M-03]</strong> console.warn/error protegidos por flag DEV en producción</div></li>
+    <li><input type="checkbox"/> <div><strong>[B-01]</strong> Validación de avatar_url con allowlist de dominios</div></li>
+    <li><input type="checkbox"/> <div><strong>[B-02]</strong> vercel.json con headers de seguridad creado y deployado</div></li>
+    <li><input type="checkbox"/> <div><strong>[I-02]</strong> .env.example creado y commiteado</div></li>
+    <li><input type="checkbox"/> <div>Re-auditoría realizada — puntuación objetivo: 90+/100</div></li>
+  </ul>
+</div>
+
+<div class="footer">
+  <p>IBR Security Shield · Propiedades en Chiapas · Auditoría 2026-05-01</p>
+  <p style="margin-top:.5rem">⛔ Este proyecto NO debe manejar datos reales de clientes hasta resolver C-01 y C-02</p>
+</div>
+
+</div>
+</body>
+</html>

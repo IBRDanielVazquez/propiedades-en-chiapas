@@ -20,6 +20,8 @@ create table if not exists public.users (
   avatar_url    text,
   plan          text not null default 'starter' check (plan in ('admin','developer','premium','basic','starter')),
   active        boolean not null default true,
+  slug          text unique,
+  trial_start_date timestamptz not null default now(),
   created_at    timestamptz not null default now()
 );
 
