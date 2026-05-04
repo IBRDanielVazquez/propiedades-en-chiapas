@@ -68,17 +68,17 @@ const downloadVCard = (user) => {
 VERSION:3.0
 FN:${user.name}
 ORG:Propiedades en Chiapas
-TITLE:${user.cargo || 'Asesor Inmobiliario'}
-TEL;TYPE=CELL:+${user.phone || user.whatsapp || ''}
+TITLE:${user.position || 'Asesor Inmobiliario'}
+TEL;TYPE=CELL:+${user.whatsapp || user.phone || ''}
 EMAIL:${user.email || ''}
 URL:https://propiedadesenchiapas.com/card/${user.slug}
-PHOTO;VALUE=URI:${user.photo_url || ''}
+PHOTO;VALUE=URI:${user.avatar_url || ''}
 END:VCARD`;
   const blob = new Blob([vcard], { type: 'text/vcard' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `${user.slug}.vcf`;
+  a.download = `${user.slug || 'contacto'}.vcf`;
   a.click();
   URL.revokeObjectURL(url);
 };
@@ -104,12 +104,21 @@ export default function DigitalCard() {
       return;
     }
     try {
-      const { data: userData, error: userError } = await supabase
+      // Validate if slug is a UUID to avoid 400 error on id.eq
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+      
+      let query = supabase
         .from('users')
         .select('*')
-        .or(`slug.eq.${slug},id.eq.${slug}`)
-        .eq('active', true)
-        .single();
+        .eq('active', true);
+
+      if (isUUID) {
+        query = query.or(`slug.eq."${slug}",id.eq."${slug}"`);
+      } else {
+        query = query.eq('slug', slug);
+      }
+
+      const { data: userData, error: userError } = await query.single();
 
       if (userError || !userData) {
         setLoading(false);
@@ -142,7 +151,7 @@ export default function DigitalCard() {
   };
 
   if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: FONTS.sans }}>Cargando...</div>;
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: FONTS.sans, color: COLORS.primary }}>Cargando tarjeta premium...</div>;
   }
 
   if (!user) {
@@ -162,16 +171,18 @@ export default function DigitalCard() {
   const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??';
 
   return (
-    <div style={{ background: '#f8f9fa', minHeight: '100vh', display: 'flex', justifyContent: 'center', padding: '0 0 40px 0' }}>
+    <div style={{ background: COLORS.white, minHeight: '100vh', display: 'flex', justifyContent: 'center', padding: 0 }}>
       <Helmet>
         <title>{user.name} | Propiedades en Chiapas</title>
+        <meta name="description" content={user.bio || `Contacta a ${user.name}, asesor verificado en Chiapas.`} />
         <meta property="og:title" content={`${user.name} - Asesor Inmobiliario`} />
         <meta property="og:description" content={`Contacta a ${user.name} para encontrar tu propiedad ideal en Chiapas.`} />
-        <meta property="og:image" content={user.photo_url || ''} />
+        <meta property="og:image" content={user.avatar_url || ''} />
         <meta property="og:url" content={cardUrl} />
+        <meta property="og:type" content="profile" />
       </Helmet>
 
-      <div style={{ width: '100%', maxWidth: 430, background: COLORS.white, boxShadow: `0 10px 30px ${COLORS.shadow}`, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      <div style={{ width: '100%', maxWidth: 430, background: COLORS.white, boxShadow: `0 4px 40px ${COLORS.shadow}`, display: 'flex', flexDirection: 'column', position: 'relative' }}>
         
         {/* 1. HEADER AGENCIA */}
         <header style={{ height: 40, background: COLORS.primary, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -179,11 +190,11 @@ export default function DigitalCard() {
         </header>
 
         {/* 2. FOTO + IDENTIDAD */}
-        <section style={{ padding: '30px 24px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <section style={{ padding: '32px 24px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ position: 'relative', marginBottom: 16 }}>
-            {user.photo_url ? (
+            {user.avatar_url ? (
               <img 
-                src={user.photo_url} 
+                src={user.avatar_url} 
                 alt={user.name} 
                 loading="lazy"
                 style={{ width: 110, height: 110, borderRadius: '50%', border: `3px solid ${COLORS.gold}`, objectFit: 'cover' }} 
@@ -196,14 +207,14 @@ export default function DigitalCard() {
           </div>
           
           <h1 style={{ margin: '0 0 4px', fontSize: 22, fontWeight: 700, color: COLORS.primary, fontFamily: FONTS.serif }}>{user.name}</h1>
-          <p style={{ margin: '0 0 8px', fontSize: 13, color: COLORS.grayText, fontStyle: 'italic', fontFamily: FONTS.sans }}>{user.cargo || 'Asesor Inmobiliario'}</p>
+          <p style={{ margin: '0 0 8px', fontSize: 13, color: COLORS.grayText, fontStyle: 'italic', fontFamily: FONTS.sans }}>{user.position || 'Asesor Inmobiliario'}</p>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
             <span style={{ fontSize: 11, color: COLORS.verified, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 2, fontFamily: FONTS.sans }}>
                ✓ Asesor Verificado
             </span>
           </div>
-          <p style={{ margin: 0, fontSize: 12, color: COLORS.grayText, fontFamily: FONTS.sans }}>📍 {user.municipio || 'Chiapas'}, MX</p>
+          <p style={{ margin: 0, fontSize: 12, color: COLORS.grayText, fontFamily: FONTS.sans }}>📍 {user.location || 'Chiapas'}, MX</p>
         </section>
 
         {/* 3. BOTÓN WHATSAPP PRINCIPAL */}
@@ -260,35 +271,37 @@ export default function DigitalCard() {
         )}
 
         {/* 6. REDES SOCIALES */}
-        <section style={{ padding: '10px 0 24px' }}>
-          <div style={{ display: 'flex', gap: 10, overflowX: 'auto', padding: '0 24px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {user.instagram && (
-              <a href={`https://instagram.com/${user.instagram}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(225, 48, 108, 0.1)', color: '#E1306C' }}>
-                <IconSocial type="instagram" /> Instagram
-              </a>
-            )}
-            {user.facebook && (
-              <a href={`https://facebook.com/${user.facebook}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(24, 119, 242, 0.1)', color: '#1877F2' }}>
-                <IconSocial type="facebook" /> Facebook
-              </a>
-            )}
-            {user.tiktok && (
-              <a href={`https://tiktok.com/@${user.tiktok}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(0, 0, 0, 0.05)', color: '#000' }}>
-                <IconSocial type="tiktok" /> TikTok
-              </a>
-            )}
-            {user.youtube && (
-              <a href={`https://youtube.com/${user.youtube}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(255, 0, 0, 0.1)', color: '#FF0000' }}>
-                <IconSocial type="youtube" /> YouTube
-              </a>
-            )}
-            {user.website && (
-              <a href={user.website} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(26, 26, 110, 0.1)', color: COLORS.primary }}>
-                <IconSocial type="web" /> Web
-              </a>
-            )}
-          </div>
-        </section>
+        {(user.instagram || user.facebook || user.tiktok || user.youtube || user.website) && (
+          <section style={{ padding: '10px 0 24px' }}>
+            <div style={{ display: 'flex', gap: 10, overflowX: 'auto', padding: '0 24px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {user.instagram && (
+                <a href={`https://instagram.com/${user.instagram}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(225, 48, 108, 0.1)', color: '#E1306C' }}>
+                  <IconSocial type="instagram" /> Instagram
+                </a>
+              )}
+              {user.facebook && (
+                <a href={`https://facebook.com/${user.facebook}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(24, 119, 242, 0.1)', color: '#1877F2' }}>
+                  <IconSocial type="facebook" /> Facebook
+                </a>
+              )}
+              {user.tiktok && (
+                <a href={`https://tiktok.com/@${user.tiktok}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(0, 0, 0, 0.05)', color: '#000' }}>
+                  <IconSocial type="tiktok" /> TikTok
+                </a>
+              )}
+              {user.youtube && (
+                <a href={`https://youtube.com/${user.youtube}`} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(255, 0, 0, 0.1)', color: '#FF0000' }}>
+                  <IconSocial type="youtube" /> YouTube
+                </a>
+              )}
+              {user.website && (
+                <a href={user.website} target="_blank" rel="noopener noreferrer" style={{ ...styles.socialPill, background: 'rgba(26, 26, 110, 0.1)', color: COLORS.primary }}>
+                  <IconSocial type="web" /> Web
+                </a>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* 7. PROPIEDADES */}
         {properties.length > 0 && (
@@ -302,7 +315,7 @@ export default function DigitalCard() {
                   style={{ minWidth: 160, width: 160, cursor: 'pointer', borderRadius: 12, overflow: 'hidden', border: `1px solid ${COLORS.lightGray}` }}
                 >
                   <img 
-                    src={prop.images?.[0] || 'https://via.placeholder.com/160x90?text=Sin+Foto'} 
+                    src={prop.featured_image_url || prop.images?.[0] || 'https://via.placeholder.com/160x90?text=Sin+Foto'} 
                     alt={prop.title} 
                     loading="lazy"
                     style={{ width: '100%', height: 90, objectFit: 'cover' }}
