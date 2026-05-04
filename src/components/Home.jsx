@@ -66,7 +66,7 @@ const KF = `
 `;
 
 // ── Componente principal ──────────────────────────────────────────────────────
-export default function Home() {
+export default function Home({ session }) {
   // Búsqueda
   const [busqueda,  setBusqueda]  = useState('');
   const [tipo,      setTipo]      = useState('');
@@ -219,7 +219,7 @@ export default function Home() {
 
       <div style={{ fontFamily:"'Inter','Segoe UI',sans-serif", color:'#1e293b', background:'#fff', overflowX:'hidden' }}>
 
-        <Navbar />
+        <Navbar session={session} />
 
         {/* ══════════════════════════════════════════════════════════════
             HERO FULLSCREEN

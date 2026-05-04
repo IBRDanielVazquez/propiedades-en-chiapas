@@ -32,11 +32,11 @@ const downloadVCard = (user) => {
 VERSION:3.0
 FN:${user.name}
 ORG:Propiedades en Chiapas
-TITLE:${user.position || 'Asesor Inmobiliario'}
+TITLE:${user.role || 'Asesor Inmobiliario'}
 TEL;TYPE=CELL:+${user.whatsapp || user.phone || ''}
 EMAIL:${user.email || ''}
 URL:https://propiedadesenchiapas.com/card/${user.slug}
-PHOTO;VALUE=URI:${user.avatar_url || ''}
+PHOTO;VALUE=URI:${user.photo_url || ''}
 END:VCARD`;
   const blob = new Blob([vcard], { type: 'text/vcard' });
   const url = URL.createObjectURL(blob);
@@ -87,7 +87,7 @@ export default function DigitalCard() {
         <title>{user.name} | Propiedades en Chiapas</title>
         <meta name="description" content={user.bio || `Contacta a ${user.name}`} />
         <meta property="og:title" content={`${user.name} - Asesor Verificado`} />
-        <meta property="og:image" content={user.avatar_url || ''} />
+        <meta property="og:image" content={user.photo_url || ''} />
       </Helmet>
 
       {/* --- FLIP CARD SYSTEM --- */}
@@ -113,15 +113,15 @@ export default function DigitalCard() {
             <div style={{ textAlign: 'center', marginTop: -60, padding: '0 20px 20px', flex: 1 }}>
               <div style={{ position: 'relative', display: 'inline-block', marginBottom: 20 }}>
                 <img 
-                  src={user.avatar_url || 'https://via.placeholder.com/120'} 
+                  src={user.photo_url || 'https://via.placeholder.com/120'} 
                   alt={user.name}
                   style={{ width: 120, height: 120, borderRadius: '50%', border: `4px solid ${COLORS.gold}`, objectFit: 'cover', background: '#fff' }}
                 />
               </div>
               <h1 style={{ margin: '0 0 5px', fontSize: 28, fontWeight: 700, color: COLORS.primary, fontFamily: FONTS.serif }}>{user.name}</h1>
-              <p style={{ margin: '0 0 8px', fontSize: 15, color: COLORS.grayText, fontStyle: 'italic' }}>{user.position || 'Asesor Inmobiliario'}</p>
+              <p style={{ margin: '0 0 8px', fontSize: 15, color: COLORS.grayText, fontStyle: 'italic' }}>{user.role || 'Asesor Inmobiliario'}</p>
               <div style={{ color: COLORS.verified, fontSize: 12, fontWeight: 700, marginBottom: 15 }}>✓ Asesor Verificado</div>
-              <p style={{ fontSize: 14, color: COLORS.grayText }}>📍 {user.location || 'Chiapas, MX'}</p>
+              <p style={{ fontSize: 14, color: COLORS.grayText }}>🏢 {user.agency || 'IBR'}</p>
             </div>
 
             <div style={{ padding: '0 40px 40px', textAlign: 'center' }}>

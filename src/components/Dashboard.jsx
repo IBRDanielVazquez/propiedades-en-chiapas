@@ -76,6 +76,9 @@ export default function Dashboard({ session, onLogout }) {
           setCurrentUserData(data);
           setAgentProfile({
             ...data,
+            role: data.role || data.position || '',
+            agency: data.agency || data.company || '',
+            photo_url: data.photo_url || data.avatar_url || '',
             whatsapp:  data.whatsapp  || '',
             instagram: data.instagram || '',
             facebook:  data.facebook  || '',
@@ -200,24 +203,20 @@ export default function Dashboard({ session, onLogout }) {
         .update({
           name: agentProfile.name,
           slug: generatedSlug,
-          position: agentProfile.position,
+          role: agentProfile.role || agentProfile.position,
           phone: agentProfile.phone,
           whatsapp: agentProfile.whatsapp,
-          company: agentProfile.company,
-          license: agentProfile.license,
-          location: agentProfile.location,
+          agency: agentProfile.agency || agentProfile.company,
           bio: agentProfile.bio,
-          avatar_url: agentProfile.avatar_url,
+          photo_url: agentProfile.photo_url || agentProfile.avatar_url,
           instagram: agentProfile.instagram,
           facebook: agentProfile.facebook,
           tiktok: agentProfile.tiktok,
           youtube: agentProfile.youtube,
           linkedin: agentProfile.linkedin,
           website: agentProfile.website,
-          portfolio_url: agentProfile.portfolio_url,
           palette_id: agentProfile.palette_id,
-          logo_url: agentProfile.logo_url,
-          slug: generatedSlug
+          logo_url: agentProfile.logo_url
         })
 
         .eq('email', currentUser.email);
@@ -745,9 +744,10 @@ export default function Dashboard({ session, onLogout }) {
                     <h3 style={{ marginBottom: '1.5rem', fontWeight: '800' }}>Editar Datos</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                       <input type="text" value={agentProfile.name} onChange={e => setAgentProfile(p => ({ ...p, name: e.target.value }))} className="form-input" placeholder="Nombre" style={{ height: '48px' }} />
-                      <input type="text" value={agentProfile.position} onChange={e => setAgentProfile(p => ({ ...p, position: e.target.value }))} className="form-input" placeholder="Cargo" style={{ height: '48px' }} />
+                      <input type="text" value={agentProfile.role} onChange={e => setAgentProfile(p => ({ ...p, role: e.target.value }))} className="form-input" placeholder="Cargo (e.g. Asesor Premium)" style={{ height: '48px' }} />
+                      <input type="text" value={agentProfile.agency} onChange={e => setAgentProfile(p => ({ ...p, agency: e.target.value }))} className="form-input" placeholder="Agencia (e.g. IBR)" style={{ height: '48px' }} />
                       <textarea value={agentProfile.bio} onChange={e => setAgentProfile(p => ({ ...p, bio: e.target.value }))} className="form-textarea" placeholder="Biografía" style={{ minHeight: '120px' }} />
-                      <button onClick={saveProfile} className="btn-primary" style={{ height: '52px' }}>Guardar Perfil</button>
+                      <button onClick={saveProfile} className="btn-primary" style={{ height: '52px' }}>{isSaving ? 'Guardando...' : 'Guardar Perfil'}</button>
                     </div>
                   </div>
                 </div>
