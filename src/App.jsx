@@ -83,96 +83,13 @@ export default function App() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RUTA: /card/:id — Tarjeta digital pública
+// RUTA: /card/:id — Tarjeta digital pública premium
 // ─────────────────────────────────────────────────────────────────────────────
 function CardRoute({ userId }) {
-  const [cardProfile, setCardProfile]       = useState(null);
-  const [cardProfileLoading, setLoading]    = useState(true);
-
-  useEffect(() => {
-    if (!userId) { setLoading(false); return; }
-
-    const fetchCardProfile = async () => {
-      try {
-        let query = supabase.from('users').select('*');
-        // UUID tiene más de 30 caracteres; si no, buscar por slug
-        query = userId.length > 30
-          ? query.eq('id', userId)
-          : query.eq('slug', userId);
-
-        const { data } = await query.single();
-        if (data) {
-          setCardProfile(data);
-        } else {
-          setCardProfile(SAMPLE_USERS.find(u => u.id === userId) || null);
-        }
-      } catch {
-        setCardProfile(SAMPLE_USERS.find(u => u.id === userId) || null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCardProfile();
-  }, [userId]);
-
-  // Cargando
-  if (cardProfileLoading) {
-    return (
-      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0f172a' }}>
-        <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'1rem' }}>
-          <div style={{ width:'40px', height:'40px', border:'3px solid rgba(255,255,255,0.2)', borderTopColor:'#38bdf8', borderRadius:'50%', animation:'spin 0.8s linear infinite' }} />
-          <p style={{ color:'#94a3b8', fontSize:'0.9rem', fontWeight:'500' }}>Cargando Tarjeta Digital...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // No encontrado
-  if (!cardProfile) {
-    return (
-      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0f172a', color:'#fff', padding:'2rem', textAlign:'center' }}>
-        <div>
-          <span style={{ fontSize:'3rem' }}>🚫</span>
-          <h2 style={{ fontSize:'1.5rem', fontWeight:'800', marginTop:'1rem' }}>Tarjeta No Encontrada</h2>
-          <p style={{ color:'#94a3b8', marginTop:'0.5rem' }}>El enlace no pertenece a un asesor registrado.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Verificación demo 14 días
-  const daysDiff = (Date.now() - new Date(cardProfile.created_at || Date.now())) / 86400000;
-  if (daysDiff > 14 && (!cardProfile.plan || cardProfile.plan === 'starter') && cardProfile.id !== 'u0') {
-    return (
-      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0f172a', color:'#fff', padding:'2rem', textAlign:'center' }}>
-        <div>
-          <span style={{ fontSize:'4rem' }}>⏳</span>
-          <h2 style={{ fontSize:'1.8rem', fontWeight:'800', marginTop:'1rem' }}>Demo Expirada</h2>
-          <p style={{ color:'#94a3b8', marginTop:'0.5rem', maxWidth:'400px', margin:'0.5rem auto' }}>
-            El periodo de prueba de 14 días ha concluido.<br/>
-            Contacta a administración para reactivarla.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{ minHeight:'100vh', background:'#0f172a', display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}>
-      <Helmet>
-        <title>{cardProfile.name} | Tarjeta Digital</title>
-        <meta name="description" content={cardProfile.bio || `Tarjeta digital de ${cardProfile.name} en Propiedades en Chiapas`} />
-        <meta property="og:title" content={`${cardProfile.name} | Asesor Inmobiliario`} />
-        <meta property="og:description" content={cardProfile.company || 'Propiedades en Chiapas'} />
-        <meta property="og:image" content={cardProfile.avatar_url || 'https://propiedadesenchiapas.com/logo.png'} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
-      <DigitalCard profile={cardProfile} plan={{ id: cardProfile.plan || 'starter' }} isPublished={true} />
-    </div>
-  );
+  // Ahora DigitalCard maneja su propio estado y fetching por slug
+  return <DigitalCard />;
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RUTA: /crm y /dashboard — Auth-gated: Dashboard o Login
