@@ -169,3 +169,16 @@ export const SAMPLE_PROPERTIES = [
     leads: 0
   }
 ];
+
+export const generateAnalytics = (userId, properties) => {
+  const userProps = properties.filter(p => p.user_id === userId);
+  const totalViews = userProps.reduce((sum, p) => sum + (p.views || 0), 0);
+  const totalLeads = userProps.reduce((sum, p) => sum + (p.leads || 0), 0);
+  
+  return {
+    views: totalViews,
+    leads: totalLeads,
+    conversion: totalViews > 0 ? ((totalLeads / totalViews) * 100).toFixed(1) : 0,
+    topProperty: userProps.sort((a, b) => (b.views || 0) - (a.views || 0))[0]?.title || 'N/A'
+  };
+};
