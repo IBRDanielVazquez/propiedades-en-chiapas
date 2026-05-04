@@ -278,11 +278,10 @@ function PortalRoute() {
             'fa0858cc-fab2-49d6-977f-9c5ec2186409'  // Luis
           ])
           .order('created_at', { ascending: false });
-        if (error) throw error;
-        setProperties(data?.length > 0 ? data : SAMPLE_PROPERTIES.filter(p => p.active));
+        setProperties(data || []);
       } catch (err) {
-        console.warn('Portal: usando sample data', err.message);
-        setProperties(SAMPLE_PROPERTIES.filter(p => p.active));
+        console.warn('Error loading properties:', err.message);
+        setProperties([]);
       } finally {
         setLoading(false);
       }

@@ -5,6 +5,7 @@ import { SAMPLE_USERS, SAMPLE_PROPERTIES, PLANS, generateAnalytics } from '../da
 import PropertyManager from './PropertyManager';
 import AnalyticsView from './AnalyticsView';
 import UserManager from './UserManager';
+import AgencyManager from './AgencyManager';
 import DigitalCard from './DigitalCard';
 
 export default function Dashboard({ session, onLogout }) {
@@ -46,15 +47,11 @@ export default function Dashboard({ session, onLogout }) {
 
       if (error) throw error;
 
-      if (data && data.length > 0) {
+      if (data) {
         setAllProperties(data);
-      } else {
-        // Sin datos en Supabase → usar sample data de demostración
-        setAllProperties(SAMPLE_PROPERTIES);
       }
     } catch (err) {
-      console.warn('Supabase no disponible, usando sample data:', err.message);
-      setAllProperties(SAMPLE_PROPERTIES);
+      console.warn('Error loading properties:', err.message);
     } finally {
       setIsLoading(false);
     }
@@ -99,7 +96,19 @@ export default function Dashboard({ session, onLogout }) {
     fetchUserProfile();
   }, [session]);
 
-  const currentUser = currentUserData || SAMPLE_USERS.find(u => u.id === activeUserId) || SAMPLE_USERS[0];
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    if (currentUserData?.plan === 'admin') {
+      const fetchUsers = async () => {
+        const { data } = await supabase.from('users').select('*').order('name');
+        if (data) setUsers(data);
+      };
+      fetchUsers();
+    }
+  }, [currentUserData]);
+
+  const currentUser = currentUserData || { name: 'Cargando...', plan: 'starter' };
   const userPlan = PLANS[currentUser.plan] || PLANS['starter'];
 
   
@@ -520,9 +529,9 @@ export default function Dashboard({ session, onLogout }) {
                 color: '#f8fafc', border: '1px solid #334155', fontWeight: '600', fontSize: '0.85rem'
               }}
             >
-              {SAMPLE_USERS.map(u => (
+              {users.map(u => (
                 <option key={u.id} value={u.id}>
-                  {u.name} ({PLANS[u.plan].name})
+                  {u.name} ({PLANS[u.plan]?.name || 'Starter'})
                 </option>
               ))}
             </select>
@@ -542,7 +551,7 @@ export default function Dashboard({ session, onLogout }) {
                 }}
               >
                 <option value="all">Todas las Cuentas</option>
-                {SAMPLE_USERS.filter(u => u.id !== 'u0').map(u => (
+                {users.filter(u => u.id !== currentUser.id).map(u => (
                   <option key={u.id} value={u.id}>
                     {u.name}
                   </option>
@@ -611,20 +620,22 @@ export default function Dashboard({ session, onLogout }) {
             </button>
           )}
 
-          {/* 4.5 Gestión de Categorías (solo Admin) */}
+          {/* 4.5 Gestión de Agencias (solo Admin) */}
           {currentUser.plan === 'admin' && (
             <button 
-              onClick={() => setCurrentView('categories')}
+              onClick={() => setCurrentView('agencies')}
               style={{ 
                 textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'categories' ? '#1e293b' : 'transparent', 
-                color: currentView === 'categories' ? '#38bdf8' : '#94a3b8', 
+                background: currentView === 'agencies' ? '#1e293b' : 'transparent', 
+                color: currentView === 'agencies' ? '#38bdf8' : '#94a3b8', 
                 fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
               }}
             >
-              <span>📂</span> Habilitar Categorías
+              <span>🏢</span> Gestión de Agencias
             </button>
           )}
+
+          {/* 4.6 Gestión de Categorías (solo Admin) */}
 
 
           {/* 5. Analytics (Premium + Admin) */}
@@ -755,6 +766,7 @@ export default function Dashboard({ session, onLogout }) {
           )}
 
           {currentView === 'users' && currentUser.plan === 'admin' && <UserManager />}
+          {currentView === 'agencies' && currentUser.plan === 'admin' && <AgencyManager />}
           {currentView === 'categories' && currentUser.plan === 'admin' && (
             <div style={{ padding: '2rem', background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ fontWeight: '800' }}>Categorías</h3>

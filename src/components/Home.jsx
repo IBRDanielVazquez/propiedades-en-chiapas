@@ -131,9 +131,9 @@ export default function Home() {
           .limit(6);
 
         if (error) throw error;
-        setPropiedades(data?.length ? data : SAMPLE_PROPERTIES.filter(p => p.active).slice(0, 6));
+        setPropiedades(data || []);
       } catch {
-        setPropiedades(SAMPLE_PROPERTIES.filter(p => p.active).slice(0, 6));
+        setPropiedades([]);
       } finally {
         setLoading(false);
       }
@@ -169,15 +169,7 @@ export default function Home() {
       // Fallback a sample data con filtros locales
       const lista = data?.length
         ? data
-        : SAMPLE_PROPERTIES.filter(p => {
-            if (!p.active) return false;
-            if (busqueda && !p.title?.toLowerCase().includes(busqueda.toLowerCase()) &&
-                !p.municipality?.toLowerCase().includes(busqueda.toLowerCase())) return false;
-            if (tipo && !p.type?.toLowerCase().includes(tipo.toLowerCase())) return false;
-            if (municipio && p.municipality !== municipio) return false;
-            if (precioMax && p.price > parseFloat(precioMax)) return false;
-            return true;
-          });
+        : [];
 
       setResultados(lista);
     } catch {
