@@ -50,7 +50,7 @@ export default function App() {
     if (path === '/asesores') return <LandingCaptacion />;
     
     // Dashboard (Protected)
-    if (path.startsWith('/dashboard') || path.startsWith('/crm')) {
+    if (path.startsWith('/crm')) {
       if (!session) return <Login onBack={() => window.location.href = '/'} />;
       return (
         <Dashboard 
