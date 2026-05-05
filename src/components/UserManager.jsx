@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
-import { PLANS } from '../data/sampleData';
+import { PLANS } from '../data/plans';
 
 const EMPTY_USER = {
   name: '',

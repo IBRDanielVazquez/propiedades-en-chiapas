@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '../supabaseClient';
-import { SAMPLE_PROPERTIES } from '../data/sampleData';
 import chiapasData from '../data/chiapasLocations.json';
 import PropertyCard from './PropertyCard';
 import Navbar from './Navbar';
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 const MUNICIPALITIES = Object.keys(chiapasData).sort();
+// Ciudades reales en la BD (city field)
+const CITIES_DB = [
+  'Berriozábal',
+  'Chiapa de Corzo',
+  'Ocozocoautla de Espinosa',
+  'San Cristóbal de las Casas',
+  'Tapachula',
+  'Tuxtla Gutiérrez',
+];
 
 const TIPOS = [
   'Casa', 'Departamento', 'Terreno', 'Lote Residencial',
@@ -90,7 +98,7 @@ export default function Home({ session }) {
     const fetchStats = async () => {
       try {
         const [rProps, rAsesores] = await Promise.all([
-          supabase.from('properties').select('municipality', { count: 'exact' }).eq('active', true)
+          supabase.from('properties').select('city', { count: 'exact' }).eq('active', true)
             .not('title', 'ilike', '%Premium en %')
             .not('title', 'ilike', 'Residencia Casa Premier%')
             .not('title', 'ilike', 'Fraccionamiento Master%')
@@ -101,7 +109,7 @@ export default function Home({ session }) {
 
         const totalProps  = rProps.count  || 0;
         const totalAsesores = rAsesores.count || 0;
-        const munis = new Set((rProps.data || []).map(p => p.municipality).filter(Boolean));
+        const munis = new Set((rProps.data || []).map(p => p.city).filter(Boolean));
 
         setStats({ propiedades: totalProps, municipios: munis.size, asesores: totalAsesores });
       } catch {
@@ -154,24 +162,18 @@ export default function Home({ session }) {
 
       if (busqueda.trim()) {
         query = query.or(
-          `title.ilike.%${busqueda}%,municipality.ilike.%${busqueda}%,colony.ilike.%${busqueda}%`
+          `title.ilike.%${busqueda}%,city.ilike.%${busqueda}%,address.ilike.%${busqueda}%`
         );
       }
       if (tipo)      query = query.ilike('type', `%${tipo}%`);
-      if (municipio) query = query.eq('municipality', municipio);
+      if (municipio) query = query.eq('city', municipio);
       if (precioMax) query = query.lte('price', parseFloat(precioMax));
 
       query = query.order('created_at', { ascending: false }).limit(24);
 
       const { data, error } = await query;
       if (error) throw error;
-
-      // Fallback a sample data con filtros locales
-      const lista = data?.length
-        ? data
-        : [];
-
-      setResultados(lista);
+      setResultados(data || []);
     } catch {
       setResultados([]);
     } finally {
@@ -280,8 +282,8 @@ export default function Home({ session }) {
               <div style={{ flex:1.2, borderRight:'1px solid #f1f5f9' }}>
                 <select value={municipio} onChange={e => setMunicipio(e.target.value)}
                   style={{ width:'100%',height:'100%',border:'none',outline:'none',padding:'.9rem 1rem',fontSize:'.88rem',color: municipio ? '#1e293b' : '#9ca3af',fontWeight:600,background:'transparent',cursor:'pointer' }}>
-                  <option value="">📍 Municipio</option>
-                  {MUNICIPALITIES.map(m => <option key={m} value={m}>{m}</option>)}
+                  <option value="">📍 Ciudad</option>
+                  {CITIES_DB.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
 
@@ -514,7 +516,7 @@ export default function Home({ session }) {
               <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',borderBottom:'2px solid #f1f5f9',paddingBottom:'1.25rem',marginBottom:'1.25rem',flexWrap:'wrap',gap:'1rem' }}>
                 <div>
                   <h2 style={{ fontSize:'1.5rem',fontWeight:800,color:'#1e293b',margin:'0 0 .3rem',lineHeight:1.2 }}>{selectedProperty.title}</h2>
-                  <p style={{ color:'#64748b' }}>📍 {selectedProperty.colony}, {selectedProperty.municipality}</p>
+                  <p style={{ color:'#64748b' }}>📍 {[selectedProperty.address, selectedProperty.city].filter(Boolean).join(', ')}</p>
                 </div>
                 <div style={{ textAlign:'right' }}>
                   <div style={{ fontSize:'1.6rem',fontWeight:900,color:'#1A1A6E' }}>{FMT(selectedProperty.price)}</div>

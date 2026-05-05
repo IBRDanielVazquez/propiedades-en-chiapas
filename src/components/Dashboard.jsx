@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import chiapasData from '../data/chiapasLocations.json';
-import { SAMPLE_USERS, SAMPLE_PROPERTIES, PLANS, generateAnalytics } from '../data/sampleData';
+import { PLANS, generateAnalytics } from '../data/plans';
 import PropertyManager from './PropertyManager';
 import AnalyticsView from './AnalyticsView';
 import UserManager from './UserManager';
@@ -405,31 +405,25 @@ export default function Dashboard({ session, onLogout }) {
         leads: property.leads || 0
       };
 
-      // ── Intentar guardar en Supabase ─────────────────────────────────────
+      // ── Guardar en Supabase ──────────────────────────────────────────────
       let savedProp = null;
-      try {
-        if (isEditing) {
-          const { data, error } = await supabase
-            .from('properties')
-            .update(payload)
-            .eq('id', property.id)
-            .select()
-            .single();
-          if (error) throw error;
-          savedProp = data;
-        } else {
-          const { data, error } = await supabase
-            .from('properties')
-            .insert(payload)
-            .select()
-            .single();
-          if (error) throw error;
-          savedProp = data;
-        }
-      } catch (sbError) {
-        console.warn('Supabase write failed, guardando localmente:', sbError.message);
-        // Fallback local
-        savedProp = { ...payload, id: property.id || `p_local_${Date.now()}` };
+      if (isEditing) {
+        const { data, error } = await supabase
+          .from('properties')
+          .update(payload)
+          .eq('id', property.id)
+          .select()
+          .single();
+        if (error) throw error;
+        savedProp = data;
+      } else {
+        const { data, error } = await supabase
+          .from('properties')
+          .insert(payload)
+          .select()
+          .single();
+        if (error) throw error;
+        savedProp = data;
       }
 
       // ── Actualizar estado local ──────────────────────────────────────────
