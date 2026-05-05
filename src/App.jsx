@@ -6,6 +6,7 @@ import DigitalCard from './components/DigitalCard';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import LandingCaptacion from './components/LandingCaptacion';
+import LandingViewer from './components/LandingViewer';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -38,7 +39,13 @@ export default function App() {
   const renderView = () => {
     // Digital Card (Public)
     if (path.startsWith('/card/')) return <DigitalCard />;
-    
+
+    // Landing Pages dinámicas (Public) — /l/:slug
+    if (path.startsWith('/l/')) {
+      const slug = path.replace('/l/', '').replace(/\/$/, '');
+      return <LandingViewer slug={slug} />;
+    }
+
     // Asesores Landing (Public)
     if (path === '/asesores') return <LandingCaptacion />;
     

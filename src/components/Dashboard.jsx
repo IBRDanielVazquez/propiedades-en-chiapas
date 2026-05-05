@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 import chiapasData from '../data/chiapasLocations.json';
 import { PLANS, generateAnalytics } from '../data/plans';
+import LandingManager from './LandingManager';
 import PropertyManager from './PropertyManager';
 import AnalyticsView from './AnalyticsView';
 import UserManager from './UserManager';
@@ -628,8 +629,20 @@ export default function Dashboard({ session, onLogout }) {
             </button>
           )}
 
-          {/* 4.6 Gestión de Categorías (solo Admin) */}
-
+          {/* 4.6 Landing Pages (solo Admin) */}
+          {currentUser.plan === 'admin' && (
+            <button
+              onClick={() => setCurrentView('landings')}
+              style={{
+                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
+                background: currentView === 'landings' ? '#1e293b' : 'transparent',
+                color: currentView === 'landings' ? '#38bdf8' : '#94a3b8',
+                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px'
+              }}
+            >
+              <span>🚀</span> Landing Pages
+            </button>
+          )}
 
           {/* 5. Analytics (Premium + Admin) */}
           {(userPlan.features.includes('analytics') || currentUser.plan === 'admin') && (
@@ -761,6 +774,7 @@ export default function Dashboard({ session, onLogout }) {
 
           {currentView === 'users' && currentUser.plan === 'admin' && <UserManager />}
           {currentView === 'agencies' && currentUser.plan === 'admin' && <AgencyManager />}
+          {currentView === 'landings' && currentUser.plan === 'admin' && <LandingManager />}
           {currentView === 'categories' && currentUser.plan === 'admin' && (
             <div style={{ padding: '2rem', background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ fontWeight: '800' }}>Categorías</h3>
