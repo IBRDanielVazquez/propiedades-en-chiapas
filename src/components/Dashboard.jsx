@@ -63,37 +63,43 @@ export default function Dashboard({ session, onLogout }) {
   const [currentUserData, setCurrentUserData] = useState(null);
 
   useEffect(() => {
-    if (!session?.user?.email) return;
+    if (!session?.user?.id) return;
 
     const fetchUserProfile = async () => {
       try {
         const { data, error } = await supabase
           .from('users')
           .select('*')
-          .eq('email', session.user.email.toLowerCase())
+          .eq('id', session.user.id)
           .single();
 
-        if (data) {
-          setCurrentUserData(data);
-          setAgentProfile({
-            ...data,
-            role: data.role || data.position || '',
-            agency: data.agency || data.company || '',
-            photo_url: data.photo_url || data.avatar_url || '',
-            whatsapp:  data.whatsapp  || '',
-            instagram: data.instagram || '',
-            facebook:  data.facebook  || '',
-            tiktok:    data.tiktok    || '',
-            youtube:   data.youtube   || '',
-            linkedin:  data.linkedin  || '',
-            website:   data.website   || '',
-            palette_id: data.palette_id || 'oro_elegante',
-            logo_url:   data.logo_url   || '',
-            slug:       data.slug       || ''
-          });
+        if (error || !data) {
+          // Sesión huérfana — usuario eliminado de public.users
+          await supabase.auth.signOut();
+          window.location.href = '/crm';
+          return;
         }
+
+        setCurrentUserData(data);
+        setAgentProfile({
+          ...data,
+          role:       data.role       || data.position  || '',
+          agency:     data.agency     || data.company   || '',
+          photo_url:  data.photo_url  || data.avatar_url || '',
+          whatsapp:   data.whatsapp   || '',
+          instagram:  data.instagram  || '',
+          facebook:   data.facebook   || '',
+          tiktok:     data.tiktok     || '',
+          youtube:    data.youtube    || '',
+          linkedin:   data.linkedin   || '',
+          website:    data.website    || '',
+          palette_id: data.palette_id || 'oro_elegante',
+          logo_url:   data.logo_url   || '',
+          slug:       data.slug       || ''
+        });
       } catch (err) {
-        console.warn('Error fetching Supabase profile:', err.message);
+        await supabase.auth.signOut();
+        window.location.href = '/crm';
       }
     };
 
