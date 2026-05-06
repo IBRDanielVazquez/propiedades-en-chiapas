@@ -158,7 +158,7 @@ export default function Dashboard({ session, onLogout }) {
     amenities: []
   });
 
-  const [currentView, setCurrentView] = useState('properties'); // 'properties', 'add-property', 'profile', 'analytics', 'users'
+  const [currentView, setCurrentView] = useState('landings'); // vista inicial para admin
   
   const [agentProfile, setAgentProfile] = useState({
     ...currentUser,
@@ -499,171 +499,45 @@ export default function Dashboard({ session, onLogout }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       {/* Sidebar */}
-      <aside style={{ width: '280px', background: '#0f172a', padding: '2.5rem 0', display: 'flex', flexDirection: 'column', color: '#f8fafc' }}>
-        <div style={{ padding: '0 2rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', height: '32px', width: '32px', fill: '#38bdf8' }}>
+      <aside style={{ width: '260px', background: '#0f172a', padding: '2rem 0', display: 'flex', flexDirection: 'column', color: '#f8fafc', flexShrink: 0 }}>
+        {/* Logo */}
+        <div style={{ padding: '0 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <svg viewBox="0 0 24 24" style={{ height: '30px', width: '30px', fill: '#38bdf8', flexShrink: 0 }}>
             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 2.7l7 6.3v9h-4v-6H9v6H5v-9l7-6.3z" />
           </svg>
           <div>
-            <h2 style={{ color: '#ffffff', fontSize: '1.25rem', fontWeight: '700', letterSpacing: '-0.5px' }}>CRM Estate</h2>
-            <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '2px' }}>Propiedades en Chiapas</p>
+            <h2 style={{ color: '#fff', fontSize: '1.1rem', fontWeight: '800', margin: 0 }}>CRM Estate</h2>
+            <p style={{ color: '#475569', fontSize: '0.72rem', margin: 0 }}>Propiedades en Chiapas</p>
           </div>
         </div>
 
-        {/* GoHighLevel Style Switchers */}
-        <div style={{ padding: '0 1rem', marginBottom: '2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <div>
-            <label style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem' }}>
-              🔑 Rol de Acceso
-            </label>
-            <select 
-              value={activeUserId} 
-              onChange={(e) => {
-                const uid = e.target.value;
-                setActiveUserId(uid);
-                setAdminUserFilter('all');
-                setCurrentView(uid === 'u0' ? 'properties' : 'profile'); 
-              }}
-              style={{
-                width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#1e293b', 
-                color: '#f8fafc', border: '1px solid #334155', fontWeight: '600', fontSize: '0.85rem'
-              }}
-            >
-              {users.map(u => (
-                <option key={u.id} value={u.id}>
-                  {u.name} ({PLANS[u.plan]?.name || 'Starter'})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {currentUser.plan === 'admin' && (
-            <div>
-              <label style={{ fontSize: '0.7rem', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '700', paddingLeft: '1rem', display: 'block', marginBottom: '0.5rem' }}>
-                🏢 Cuenta / Asesor (Sub-Account)
-              </label>
-              <select 
-                value={adminUserFilter} 
-                onChange={(e) => setAdminUserFilter(e.target.value)}
-                style={{
-                  width: '100%', padding: '0.75rem', borderRadius: '10px', background: '#0f172a', 
-                  color: '#38bdf8', border: '1px solid #38bdf8', fontWeight: '600', fontSize: '0.85rem'
-                }}
-              >
-                <option value="all">Todas las Cuentas</option>
-                {users.filter(u => u.id !== currentUser.id).map(u => (
-                  <option key={u.id} value={u.id}>
-                    {u.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-        
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>
-          {/* 1. Profile / Tarjeta Digital (All tiers) */}
-          <button 
-            onClick={() => setCurrentView('profile')}
-            style={{ 
-              textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-              background: currentView === 'profile' ? '#1e293b' : 'transparent', 
-              color: currentView === 'profile' ? '#38bdf8' : '#94a3b8', 
-              fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
-            }}
-          >
-            <span>💳</span> Mi Tarjeta Digital
-          </button>
-
-          {/* 2. My Properties (Basic + Premium + Admin) */}
-          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas') || currentUser.plan === 'admin') && (
-            <button 
-              onClick={() => setCurrentView('properties')}
-              style={{ 
-                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'properties' ? '#1e293b' : 'transparent', 
-                color: currentView === 'properties' ? '#38bdf8' : '#94a3b8', 
-                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
-              }}
-            >
-              <span>🏠</span> {currentUser.plan === 'admin' ? 'Ver Propiedades CRM' : 'Mis Propiedades'} ({userProperties.length})
-            </button>
-          )}
-
-          {/* 3. Add Property (Basic + Premium + Admin) */}
-          {(userPlan.features.includes('una_propiedad') || userPlan.features.includes('propiedades_ilimitadas') || currentUser.plan === 'admin') && (
-            <button 
-              onClick={() => setCurrentView('add-property')}
-              style={{ 
-                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'add-property' ? '#1e293b' : 'transparent', 
-                color: currentView === 'add-property' ? '#38bdf8' : '#94a3b8', 
-                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
-              }}
-            >
-              <span>➕</span> Agregar Propiedad
-            </button>
-          )}
-
-          {/* 4. Gestión de Asesores (solo Admin) */}
-          {currentUser.plan === 'admin' && (
-            <button 
-              onClick={() => setCurrentView('users')}
-              style={{ 
-                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'users' ? '#1e293b' : 'transparent', 
-                color: currentView === 'users' ? '#38bdf8' : '#94a3b8', 
-                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
-              }}
-            >
-              <span>👥</span> Gestión de Asesores
-            </button>
-          )}
-
-          {/* 4.5 Gestión de Agencias (solo Admin) */}
-          {currentUser.plan === 'admin' && (
-            <button 
-              onClick={() => setCurrentView('agencies')}
-              style={{ 
-                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'agencies' ? '#1e293b' : 'transparent', 
-                color: currentView === 'agencies' ? '#38bdf8' : '#94a3b8', 
-                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
-              }}
-            >
-              <span>🏢</span> Gestión de Agencias
-            </button>
-          )}
-
-          {/* 4.6 Landing Pages (solo Admin) */}
-          {currentUser.plan === 'admin' && (
+        {/* Nav */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', padding: '0 0.75rem', flex: 1 }}>
+          {[
+            { view: 'landings',     icon: '🚀', label: 'Landing Pages',      admin: true },
+            { view: 'properties',   icon: '🏠', label: `Propiedades (${userProperties.length})`, admin: false },
+            { view: 'add-property', icon: '➕', label: 'Agregar Propiedad',   admin: false },
+            { view: 'users',        icon: '👥', label: 'Asesores',            admin: true },
+            { view: 'agencies',     icon: '🏢', label: 'Agencias',            admin: true },
+            { view: 'analytics',    icon: '📊', label: 'Estadísticas',        admin: false },
+            { view: 'profile',      icon: '💳', label: 'Mi Tarjeta Digital',  admin: false },
+          ].filter(item => !item.admin || currentUser.plan === 'admin').map(item => (
             <button
-              onClick={() => setCurrentView('landings')}
+              key={item.view}
+              onClick={() => setCurrentView(item.view)}
               style={{
-                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'landings' ? '#1e293b' : 'transparent',
-                color: currentView === 'landings' ? '#38bdf8' : '#94a3b8',
-                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px'
+                textAlign: 'left', padding: '0.8rem 1rem', borderRadius: '10px', border: 'none', cursor: 'pointer',
+                background: currentView === item.view ? '#1e293b' : 'transparent',
+                color: currentView === item.view ? '#38bdf8' : '#94a3b8',
+                fontWeight: '600', fontSize: '0.88rem',
+                display: 'flex', alignItems: 'center', gap: '10px',
+                transition: 'all 0.15s',
               }}
             >
-              <span>🚀</span> Landing Pages
+              <span style={{ fontSize: '1rem' }}>{item.icon}</span>
+              {item.label}
             </button>
-          )}
-
-          {/* 5. Analytics (Premium + Admin) */}
-          {(userPlan.features.includes('analytics') || currentUser.plan === 'admin') && (
-            <button 
-              onClick={() => setCurrentView('analytics')}
-              style={{ 
-                textAlign: 'left', padding: '0.85rem 1.25rem', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                background: currentView === 'analytics' ? '#1e293b' : 'transparent', 
-                color: currentView === 'analytics' ? '#38bdf8' : '#94a3b8', 
-                fontWeight: '600', display: 'flex', alignItems: 'center', gap: '10px' 
-              }}
-            >
-              <span>📊</span> {currentUser.plan === 'admin' ? 'Estadísticas Globales' : 'Estadísticas'}
-            </button>
-          )}
+          ))}
         </nav>
 
         <div style={{ marginTop: 'auto', padding: '0 1rem' }}>
