@@ -5,12 +5,12 @@ const supabaseAnonKey = 'sb_publishable_Ne1rajOeqAJETBoXcIvA6A_l0-NBH1f';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function listUsers() {
-  const { data, error } = await supabase.from('users').select('id, name, email, company, plan');
+  const { data, error } = await supabase.from('users').select('id, name, email, agency, plan');
   if (error) {
     console.error('Error fetching users:', error.message);
   } else {
     console.log('--- Users in Database ---');
-    data.forEach(u => console.log(`[${u.id}] ${u.name} (${u.email}) - Agency: ${u.company} - Plan: ${u.plan}`));
+    data.forEach(u => console.log(`[${u.id}] ${u.name} (${u.email}) - Agency: ${u.agency} - Plan: ${u.plan}`));
   }
 }
 
