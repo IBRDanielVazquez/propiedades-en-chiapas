@@ -9,7 +9,7 @@ export default function PropertyCard({ property, onClick }) {
 
   // Mocking Airbnb-like metrics
   const rating = property.rating || "4.92";
-  const isGuestFavorite = property.status === 'Disponible' || Math.random() > 0.5;
+  const isGuestFavorite = property.status === 'Disponible' || (property.id ? (String(property.id).charCodeAt(0) % 2 === 0) : false);
 
   return (
     <div className="property-card" onClick={onClick} style={{ cursor: 'pointer' }}>

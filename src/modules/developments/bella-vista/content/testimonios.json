@@ -1,8 +1,20 @@
 [
   {
     "id": 1,
-    "name": "Cliente Ejemplo",
-    "role": "Inversionista",
-    "text": "Bella Vista representa la mejor oportunidad de inversión y exclusividad en Chiapas."
+    "name": "Ing. Carlos Mendoza",
+    "role": "Retirado y Residente",
+    "text": "Buscaba un santuario de paz y descanso de fin de semana para mi familia. Bella Vista superó nuestras expectativas. El clima fresco de Ocozocoautla es inigualable, y la seguridad privada 24/7 nos da una tranquilidad absoluta."
+  },
+  {
+    "id": 2,
+    "name": "Dra. Sofía Altamirano",
+    "role": "Inversionista Premium",
+    "text": "La plusvalía en esta zona es impresionante. Su plan de financiamiento directo de $450 semanales me facilitó adquirir dos lotes de forma rápida, segura y sin la burocracia de los bancos. Trato sumamente profesional."
+  },
+  {
+    "id": 3,
+    "name": "Lic. Rodrigo Ruiz",
+    "role": "Propietario",
+    "text": "Es el balance perfecto. Despertar rodeado de naturaleza con las comodidades de un Club Campestre privado, y estar a solo 25 minutos de mis oficinas en Tuxtla Gutiérrez, es un privilegio inmenso que vale cada centavo."
   }
 ]

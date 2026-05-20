@@ -1,0 +1,193 @@
+/* 
+ * Bella Vista Ocozocoautla - Custom Luxury Design System
+ * Scoped style variables and modern high-end animations
+ */
+
+.bv-page {
+  background-color: #14110E;
+  color: #F4EFE6;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.bv-title-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.bv-text-sans {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+.bv-gold-gradient {
+  background: linear-gradient(135deg, #F3E7D3 0%, #C2A683 50%, #8E714F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.bv-gold-bg {
+  background: linear-gradient(135deg, #C2A683 0%, #A58760 100%);
+}
+
+.bv-gold-border {
+  border: 1px solid rgba(194, 166, 131, 0.2);
+}
+
+.bv-gold-border-hover:hover {
+  border-color: rgba(194, 166, 131, 0.6);
+  box-shadow: 0 10px 30px -10px rgba(194, 166, 131, 0.15);
+}
+
+.bv-glass-card {
+  background: rgba(30, 26, 22, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(194, 166, 131, 0.12);
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bv-glass-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(194, 166, 131, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 50px -10px rgba(194, 166, 131, 0.08);
+}
+
+.bv-btn-primary {
+  background: linear-gradient(135deg, #C2A683 0%, #A58760 100%);
+  color: #14110E;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(194, 166, 131, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bv-btn-primary:hover {
+  background: linear-gradient(135deg, #D5BC9C 0%, #B89971 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(194, 166, 131, 0.4);
+}
+
+.bv-btn-secondary {
+  background: transparent;
+  color: #C2A683;
+  border: 1px solid rgba(194, 166, 131, 0.4);
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bv-btn-secondary:hover {
+  background: rgba(194, 166, 131, 0.08);
+  border-color: #C2A683;
+  color: #F4EFE6;
+  transform: translateY(-1px);
+}
+
+/* Luxury Input Field */
+.bv-input {
+  background: rgba(22, 19, 16, 0.8);
+  border: 1px solid rgba(194, 166, 131, 0.2);
+  color: #F4EFE6;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.bv-input:focus {
+  border-color: #C2A683;
+  box-shadow: 0 0 0 3px rgba(194, 166, 131, 0.15);
+  background: rgba(30, 26, 22, 0.9);
+}
+
+.bv-input::placeholder {
+  color: rgba(244, 239, 230, 0.4);
+}
+
+/* Grid & Layout Utilities */
+.bv-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.bv-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 3rem;
+}
+
+@media (max-width: 768px) {
+  .bv-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* Accordion custom styling */
+.bv-faq-item {
+  border-bottom: 1px solid rgba(194, 166, 131, 0.12);
+  transition: all 0.3s ease;
+}
+
+.bv-faq-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #F4EFE6;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.bv-faq-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+  color: rgba(244, 239, 230, 0.7);
+  font-size: 0.975rem;
+  line-height: 1.6;
+}
+
+.bv-faq-content.open {
+  max-height: 300px;
+  padding-bottom: 1.5rem;
+}
+
+.bv-faq-icon {
+  transition: transform 0.3s ease;
+  color: #C2A683;
+}
+
+.bv-faq-icon.open {
+  transform: rotate(45deg);
+}
+
+/* WhatsApp pulse micro-animation */
+@keyframes wa-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+  70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+.bv-wa-pulse {
+  animation: wa-pulse 2s infinite;
+}
+
+/* Immersive video overlay */
+.bv-hero-overlay {
+  background: linear-gradient(to bottom, rgba(20, 17, 14, 0.3) 0%, rgba(20, 17, 14, 0.8) 70%, #14110E 100%);
+}

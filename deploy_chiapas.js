@@ -18,9 +18,19 @@ async function deploy() {
         console.log("Connected to Propiedades en Chiapas FTP");
         const distDir = path.join(__dirname, "dist");
         
-        // Creando una carpeta segura "nuevo" para no romper el WordPress en vivo
-        await client.ensureDir("/public_html/nuevo")
-        await client.uploadFromDir(distDir, "/public_html/nuevo")
+        // Subiendo selectivamente solo los archivos actualizados de la SPA y el nuevo módulo
+        console.log("Uploading index.html...");
+        await client.uploadFrom(path.join(distDir, "index.html"), "/public_html/index.html");
+
+        console.log("Uploading assets...");
+        await client.ensureDir("/public_html/assets");
+        await client.uploadFromDir(path.join(distDir, "assets"), "/public_html/assets");
+
+        console.log("Ensuring new development folders exist...");
+        await client.ensureDir("/public_html/bella-vista");
+        await client.ensureDir("/public_html/bella-vista/images");
+        await client.ensureDir("/public_html/bella-vista/videos");
+        await client.ensureDir("/public_html/bella-vista/audio");
         
         console.log("Deploy finished successfully.");
     }

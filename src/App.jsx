@@ -71,12 +71,7 @@ export default function App() {
     }
 
     // Bella Vista Landing (Public)
-    if (path === '/bella-vista') {
-      const prefix = window.location.pathname.startsWith('/nuevo') ? '/nuevo' : '';
-      window.history.replaceState(null, '', `${prefix}/bella-vista-ocozocoautla`);
-      return <BellaVistaLanding />;
-    }
-    if (path === '/bella-vista-ocozocoautla') {
+    if (path === '/bella-vista' || path === '/bella-vista-ocozocoautla') {
       return <BellaVistaLanding />;
     }
 

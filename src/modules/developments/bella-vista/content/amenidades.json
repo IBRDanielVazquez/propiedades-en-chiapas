@@ -1,7 +1,38 @@
 [
   {
     "id": "acceso-controlado",
-    "title": "Acceso Controlado",
-    "description": "Seguridad 24/7 y acceso monitoreado para la tranquilidad de tu familia."
+    "title": "Arco Monumental y Acceso Controlado",
+    "description": "Seguridad de nivel residencial las 24 horas del día. Un pórtico de entrada monumental que te da la bienvenida a un entorno protegido.",
+    "icon": "🛡️"
+  },
+  {
+    "id": "club-campestre",
+    "title": "Club Campestre Exclusivo",
+    "description": "Un espacio de convivencia premium con piscina, terraza social, asadores y áreas ideales para celebrar los mejores momentos con tu familia.",
+    "icon": "🏊"
+  },
+  {
+    "id": "senderos-ecologicos",
+    "title": "Senderos Ecológicos",
+    "description": "Rutas perfectamente trazadas y conservadas dentro de los bosques de la región, perfectas para caminatas matutinas, meditación y running.",
+    "icon": "🌿"
+  },
+  {
+    "id": "areas-deportivas",
+    "title": "Instalaciones Deportivas",
+    "description": "Canchas de usos múltiples completamente equipadas y zonas de fitness al aire libre para ejercitarte en el ambiente más fresco y natural.",
+    "icon": "🏀"
+  },
+  {
+    "id": "parque-infantil",
+    "title": "Parque Rústico Infantil",
+    "description": "Juegos ecológicos de madera integrados armónicamente con la naturaleza para que los más pequeños jueguen libres en un entorno seguro.",
+    "icon": "🎪"
+  },
+  {
+    "id": "zona-yoga",
+    "title": "Espacios Wellness & Yoga",
+    "description": "Decks de madera elevados y rodeados de vegetación, diseñados específicamente para sesiones de yoga, meditación profunda y paz total.",
+    "icon": "🧘"
   }
 ]

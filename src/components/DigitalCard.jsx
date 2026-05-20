@@ -56,10 +56,6 @@ export default function DigitalCard() {
   const slug = window.location.pathname.split('/card/')[1]?.split('/')[0] || '';
   const cardUrl = `https://propiedadesenchiapas.com/card/${slug}`;
 
-  useEffect(() => {
-    fetchData();
-  }, [slug]);
-
   const fetchData = async () => {
     if (!slug) { setLoading(false); return; }
     try {
@@ -77,6 +73,10 @@ export default function DigitalCard() {
       setProperties(propsData || []);
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [slug]);
 
   if (loading) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FONTS.sans, color: COLORS.primary }}>Cargando Tarjeta Premium...</div>;
   if (!user) return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FONTS.sans }}><h3>Asesor no encontrado</h3></div>;
