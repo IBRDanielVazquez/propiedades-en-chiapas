@@ -1,0 +1,10 @@
+/**
+ * Bella Vista Tokens Override
+ * Módulo: developments/bella-vista/styles
+ * Propósito: Personalizar el sistema de diseño de PEC (colores, sombras, etc.) para Bella Vista.
+ */
+:root {
+  --color-bv-bg-primary: #1A1612;
+  --color-bv-text-primary: #F4EFE6;
+  --color-bv-accent: #C2A683;
+}
