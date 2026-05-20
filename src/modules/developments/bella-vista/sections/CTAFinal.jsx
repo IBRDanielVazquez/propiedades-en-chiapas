@@ -17,14 +17,24 @@ export default function CTAFinal() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
+    let value = e.target.value;
+    if (e.target.name === 'phone') {
+      // Solo permitir dígitos y limitar a 10
+      value = value.replace(/\D/g, '').slice(0, 10);
+    }
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: value
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.phone.length !== 10) {
+      setStatus('error');
+      setErrorMessage('El teléfono de contacto debe tener exactamente 10 dígitos numéricos.');
+      return;
+    }
     setStatus('loading');
     setErrorMessage('');
 

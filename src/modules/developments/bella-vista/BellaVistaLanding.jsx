@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useBellaVistaTracking } from './hooks/useBellaVistaTracking';
 import './styles/tokens.css';
 import './styles/fonts.css';
@@ -30,6 +31,11 @@ export default function BellaVistaLanding() {
 
   return (
     <div className="bv-page min-h-screen text-[#F4EFE6] selection:bg-[#C2A683] selection:text-[#14110E] overflow-x-hidden">
+      <Helmet>
+        <title>Bella Vista Ocozocoautla | Preventa Exclusiva de Terrenos Campestres en Chiapas</title>
+        <meta name="description" content="Adquiere tu lote campestre en Bella Vista Ocozocoautla con certeza jurídica y financiamiento directo desde $450 semanales sin revisión de buró. ¡Agenda tu visita!" />
+      </Helmet>
+
       {/* Cinematic Hero Header */}
       <HeroCinematic 
         onCTAButton={scrollToContact} 
