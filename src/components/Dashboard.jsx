@@ -62,6 +62,22 @@ export default function Dashboard({ session, onLogout }) {
 
   const [currentUserData, setCurrentUserData] = useState(null);
 
+  const currentUser = currentUserData || { name: 'Cargando...', plan: 'starter' };
+  const userPlan = PLANS[currentUser.plan] || PLANS['starter'];
+
+  const [agentProfile, setAgentProfile] = useState({
+    ...currentUser,
+    instagram: currentUser.instagram || '',
+    facebook:  currentUser.facebook  || '',
+    tiktok:    currentUser.tiktok    || '',
+    youtube:   currentUser.youtube   || '',
+    linkedin:  currentUser.linkedin  || '',
+    website:   currentUser.website   || '',
+    palette_id: currentUser.palette_id || 'oro_elegante',
+    logo_url:   currentUser.logo_url   || '',
+    slug:       currentUser.slug       || ''
+  });
+
   useEffect(() => {
     if (!session?.user?.id) return;
 
@@ -118,9 +134,6 @@ export default function Dashboard({ session, onLogout }) {
     }
   }, [currentUserData]);
 
-  const currentUser = currentUserData || { name: 'Cargando...', plan: 'starter' };
-  const userPlan = PLANS[currentUser.plan] || PLANS['starter'];
-
   
   // Visibility Scope
   const userProperties = currentUser.plan === 'admin'
@@ -159,19 +172,6 @@ export default function Dashboard({ session, onLogout }) {
   });
 
   const [currentView, setCurrentView] = useState('landings'); // vista inicial para admin
-  
-  const [agentProfile, setAgentProfile] = useState({
-    ...currentUser,
-    instagram: currentUser.instagram || '',
-    facebook:  currentUser.facebook  || '',
-    tiktok:    currentUser.tiktok    || '',
-    youtube:   currentUser.youtube   || '',
-    linkedin:  currentUser.linkedin  || '',
-    website:   currentUser.website   || '',
-    palette_id: currentUser.palette_id || 'oro_elegante',
-    logo_url:   currentUser.logo_url   || '',
-    slug:       currentUser.slug       || ''
-  });
 
   // Helper: overlay de feature bloqueada
   const LockedOverlay = ({ feature, label }) => {

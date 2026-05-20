@@ -5,10 +5,6 @@ export default function AgencyManager() {
   const [agencies, setAgencies] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAgencies();
-  }, []);
-
   const fetchAgencies = async () => {
     // Para no romper si la tabla no existe, intentamos leerla
     const { data, error } = await supabase.from('agencies').select('*');
@@ -22,6 +18,10 @@ export default function AgencyManager() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchAgencies();
+  }, []);
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>

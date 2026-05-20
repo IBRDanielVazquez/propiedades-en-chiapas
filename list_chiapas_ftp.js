@@ -6,7 +6,7 @@ async function list() {
         await client.access({
             host: "82.29.86.157",
             user: "u169590082.propiedadesenchiapas.com",
-            password: "PropenChiapas2026DVIBR151280.",
+            password: "AODvxdNvZR#y6]Ne",
             secure: false
         })
         const list = await client.list("/public_html")

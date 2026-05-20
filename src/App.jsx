@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import LandingCaptacion from './components/LandingCaptacion';
 import LandingViewer from './components/LandingViewer';
+import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLanding';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -34,7 +35,13 @@ export default function App() {
     );
   }
 
-  const path = window.location.pathname;
+  let path = window.location.pathname;
+  if (path.startsWith('/nuevo')) {
+    path = path.slice(6);
+  }
+  if (!path.startsWith('/')) {
+    path = '/' + path;
+  }
 
   const renderView = () => {
     // Digital Card (Public)
@@ -61,6 +68,11 @@ export default function App() {
           }} 
         />
       );
+    }
+
+    // Bella Vista Landing (Public)
+    if (path === '/bella-vista' || path === '/bella-vista-ocozocoautla') {
+      return <BellaVistaLanding />;
     }
 
     // Default: Home Page (Public)

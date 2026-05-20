@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "question": "¿Dónde se encuentra ubicado Bella Vista?",
+    "answer": "Bella Vista se encuentra en Ocozocoautla, Chiapas, en una exclusiva zona campestre de altísima plusvalía. Ofrece el escape perfecto a la naturaleza con una conectividad inmediata a las principales vialidades de la región."
+  },
+  {
+    "id": 2,
+    "question": "¿Cómo funciona el plan de financiamiento directo?",
+    "answer": "Hemos creado el plan más cómodo del mercado: puedes adquirir tu lote con aportaciones desde $450 MXN semanales. Es financiamiento directo de la empresa, sin revisión de buró de crédito, sin intereses ocultos y de aprobación inmediata."
+  },
+  {
+    "id": 3,
+    "question": "¿Qué amenidades y servicios ofrece el desarrollo?",
+    "answer": "Bella Vista está diseñado para elevar tu calidad de vida. Contará con acceso controlado, seguridad integral 24/7, club deportivo campestre, amplias vialidades interiores, áreas verdes y reservas naturales dedicadas al senderismo."
+  },
+  {
+    "id": 4,
+    "question": "¿Ofrecen certeza jurídica en la compra?",
+    "answer": "Totalmente. Todos nuestros terrenos son propiedad privada, con registro catastral individual y libres de todo gravamen. El contrato de compraventa y los procesos de escrituración están avalados por notarios públicos autorizados."
+  },
+  {
+    "id": 5,
+    "question": "¿Cómo puedo agendar una visita presencial?",
+    "answer": "Realizamos recorridos guiados personalizados de manera totalmente gratuita todos los fines de semana. Puedes agendar tu lugar escribiéndonos por WhatsApp o completando el formulario de contacto de esta landing page."
+  }
+]
