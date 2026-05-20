@@ -12,7 +12,7 @@ async function deploy() {
         await client.access({
             host: "82.29.86.157",
             user: "u169590082.propiedadesenchiapas.com",
-            password: "PropenChiapas2026DVIBR151280.",
+            password: "AODvxdNvZR#y6]Ne",
             secure: false
         })
         console.log("Connected to Propiedades en Chiapas FTP");
