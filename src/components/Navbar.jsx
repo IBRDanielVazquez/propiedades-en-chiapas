@@ -24,9 +24,6 @@ export default function Navbar({ session }) {
 
         {/* Links */}
         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <a href="/asesores" style={{ fontSize: '0.9rem', fontWeight: '700', color: '#475569', textDecoration: 'none' }}>
-            Para Asesores
-          </a>
           {session ? (
             <a href="/dashboard" style={{
               background: '#1A1A6E', color: '#fff', padding: '0.6rem 1.25rem',

@@ -67,14 +67,38 @@ const KF = `
     .search-box      { flex-direction: column !important; border-radius: 16px !important; }
     .search-btn      { border-radius: 12px !important; width: 100% !important; }
     .stats-row       { grid-template-columns: 1fr 1fr !important; }
-    .cats-row        { grid-template-columns: repeat(4,1fr) !important; }
+    .cats-row        {
+      display: flex !important;
+      overflow-x: auto !important;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 0.5rem 12px !important;
+      gap: 0.75rem !important;
+    }
+    .cats-row::-webkit-scrollbar {
+      height: 4px;
+    }
+    .cats-row::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .cats-row::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 2px;
+    }
+    .cats-row > button {
+      flex: 0 0 105px !important;
+    }
     .props-grid      { grid-template-columns: 1fr !important; }
     .cta-row         { flex-direction: column !important; text-align: center !important; }
+  }
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .props-grid      { grid-template-columns: repeat(2, 1fr) !important; }
   }
 `;
 
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function Home({ session }) {
+  const SHOW_STATS = false;
   // Búsqueda
   const [busqueda,  setBusqueda]  = useState('');
   const [tipo,      setTipo]      = useState('');
@@ -258,7 +282,7 @@ export default function Home({ session }) {
               <span style={{ color:'#34d399' }}>en cualquier rincón de Chiapas</span>
             </h1>
             <p style={{ color:'rgba(255,255,255,.65)',fontSize:'1.05rem',lineHeight:1.65,maxWidth:540,margin:'0 auto 2.5rem' }}>
-              Casas, terrenos, locales y más. Más de {stats.propiedades || '100'} propiedades activas en {stats.municipios || '18'} municipios.
+              Casas, terrenos, locales y más en todo Chiapas.
             </p>
 
             {/* ── BUSCADOR ── */}
@@ -326,23 +350,25 @@ export default function Home({ session }) {
         {/* ══════════════════════════════════════════════════════════════
             STATS EN VIVO
         ══════════════════════════════════════════════════════════════ */}
-        <section style={{ background:'#f8fafc',borderBottom:'1px solid #e2e8f0',padding:'2.5rem 1.5rem' }}>
-          <div style={{ maxWidth:900,margin:'0 auto' }}>
-            <div className="stats-row" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.5rem',textAlign:'center' }}>
-              {[
-                { label:'Propiedades activas', val: statsLoad ? '…' : stats.propiedades.toLocaleString('es-MX'), icon:'🏠' },
-                { label:'Municipios con oferta', val: statsLoad ? '…' : stats.municipios.toLocaleString('es-MX'), icon:'📍' },
-                { label:'Asesores registrados', val: statsLoad ? '…' : stats.asesores.toLocaleString('es-MX'),   icon:'👤' },
-              ].map(s => (
-                <div key={s.label} style={{ padding:'1.5rem 1rem',background:'#fff',borderRadius:16,border:'1px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,.04)',animation:'count-up .6s ease both' }}>
-                  <div style={{ fontSize:'1.75rem',marginBottom:'.4rem' }}>{s.icon}</div>
-                  <div style={{ fontSize:'2rem',fontWeight:900,color:'#1A1A6E',lineHeight:1,marginBottom:'.3rem' }}>{s.val}</div>
-                  <div style={{ fontSize:'.82rem',color:'#64748b',fontWeight:600 }}>{s.label}</div>
-                </div>
-              ))}
+        {SHOW_STATS && (
+          <section style={{ background:'#f8fafc',borderBottom:'1px solid #e2e8f0',padding:'2.5rem 1.5rem' }}>
+            <div style={{ maxWidth:900,margin:'0 auto' }}>
+              <div className="stats-row" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.5rem',textAlign:'center' }}>
+                {[
+                  { label:'Propiedades activas', val: statsLoad ? '…' : stats.propiedades.toLocaleString('es-MX'), icon:'🏠' },
+                  { label:'Municipios con oferta', val: statsLoad ? '…' : stats.municipios.toLocaleString('es-MX'), icon:'📍' },
+                  { label:'Asesores registrados', val: statsLoad ? '…' : stats.asesores.toLocaleString('es-MX'),   icon:'👤' },
+                ].map(s => (
+                  <div key={s.label} style={{ padding:'1.5rem 1rem',background:'#fff',borderRadius:16,border:'1px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,.04)',animation:'count-up .6s ease both' }}>
+                    <div style={{ fontSize:'1.75rem',marginBottom:'.4rem' }}>{s.icon}</div>
+                    <div style={{ fontSize:'2rem',fontWeight:900,color:'#1A1A6E',lineHeight:1,marginBottom:'.3rem' }}>{s.val}</div>
+                    <div style={{ fontSize:'.82rem',color:'#64748b',fontWeight:600 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ══════════════════════════════════════════════════════════════
             CATEGORÍAS
@@ -479,7 +505,7 @@ export default function Home({ session }) {
         {/* Footer */}
         <footer style={{ padding:'2rem 1.5rem',borderTop:'1px solid #e2e8f0',background:'#f7f7f7' }}>
           <div style={{ maxWidth:1100,margin:'0 auto',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'1rem',fontSize:'.88rem',color:'#94a3b8' }}>
-            <div>© 2026 Propiedades Chiapas, Inc. · Privacidad · Términos</div>
+            <div>© 2026 Propiedades Chiapas, Inc. · Privacidad · Términos · <a href="/asesores" style={{ color:'#94a3b8', textDecoration:'none', fontWeight:600 }}>Regístrate</a></div>
             <div style={{ display:'flex',gap:'1rem',fontWeight:600,color:'#64748b' }}>
               <span>🌐 Español (MX)</span>
               <span>$ MXN</span>
