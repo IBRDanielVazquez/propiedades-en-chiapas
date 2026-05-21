@@ -1,13 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
+import {
+  Search, Heart, MapPin, Maximize, SlidersHorizontal,
+  Compass, MessageCircle, User, Bell,
+} from 'lucide-react';
 import { supabase } from '../supabaseClient';
-import chiapasData from '../data/chiapasLocations.json';
-import PropertyCard from './PropertyCard';
-import Navbar from './Navbar';
 
-// ── Constantes ────────────────────────────────────────────────────────────────
-const MUNICIPALITIES = Object.keys(chiapasData).sort();
-// Ciudades reales en la BD (city field)
+// ─── Constantes ───────────────────────────────────────────────────────────────
+const SHOW_STATS = false;
+
+// Categorías del diseño premium → filtro real sobre campo "type"
+const CATEGORIES = [
+  { id: 'todas',        label: 'Todas',      emoji: '✦',  filtro: null },
+  { id: 'casas',        label: 'Casas',      emoji: '🏡', filtro: 'casa' },
+  { id: 'terrenos',     label: 'Terrenos',   emoji: '🌳', filtro: 'terreno' },
+  { id: 'departamentos',label: 'Deptos',     emoji: '🏢', filtro: 'departamento' },
+  { id: 'comercial',    label: 'Comercial',  emoji: '🏪', filtro: 'local' },
+  { id: 'campestre',    label: 'Campestre',  emoji: '⛰️',  filtro: 'rancho' },
+  { id: 'quintas',      label: 'Quintas',    emoji: '🌿', filtro: 'quinta' },
+  { id: 'bodegas',      label: 'Bodegas',    emoji: '🏭', filtro: 'bodega' },
+];
+
+// Ciudades reales en la BD
 const CITIES_DB = [
   'Berriozábal',
   'Chiapa de Corzo',
@@ -17,23 +31,7 @@ const CITIES_DB = [
   'Tuxtla Gutiérrez',
 ];
 
-const TIPOS = [
-  'Casa', 'Departamento', 'Terreno', 'Lote Residencial',
-  'Local Comercial', 'Bodega', 'Oficina', 'Rancho',
-  'Quinta', 'Nave Industrial', 'Edificio', 'Desarrollo',
-];
-
-const CATEGORIAS = [
-  { nombre: 'Casas',        filtro: 'casa',          emoji: '🏠' },
-  { nombre: 'Departamentos',filtro: 'departamento',   emoji: '🏢' },
-  { nombre: 'Terrenos',     filtro: 'terreno',        emoji: '🌿' },
-  { nombre: 'Locales',      filtro: 'local comercial',emoji: '🏪' },
-  { nombre: 'Bodegas',      filtro: 'bodega',         emoji: '🏭' },
-  { nombre: 'Ranchos',      filtro: 'rancho',         emoji: '🐄' },
-  { nombre: 'Quintas',      filtro: 'quinta',         emoji: '🌳' },
-  { nombre: 'Oficinas',     filtro: 'oficina',        emoji: '💼' },
-];
-
+// Filtros de precio
 const PRECIOS = [
   { label: 'Hasta $500K',  max: 500000 },
   { label: 'Hasta $1M',    max: 1000000 },
@@ -42,126 +40,311 @@ const PRECIOS = [
   { label: 'Más de $5M',   max: 99999999 },
 ];
 
-const FMT = (n) => new Intl.NumberFormat('es-MX', {
-  style: 'currency', currency: 'MXN', maximumFractionDigits: 0,
-}).format(n);
+// Filtros de título que no deben mostrarse en el portal público
+const EXCLUDE_TITLES = [
+  '%Premium en %',
+  'Residencia Casa Premier%',
+  'Fraccionamiento Master%',
+  'Lotes de Inversión Premium%',
+  'Lote Comercial Estratégico%',
+];
 
-// ── Keyframes ─────────────────────────────────────────────────────────────────
-const KF = `
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+const peso = (n) =>
+  n === 0 ? 'Consultar' : '$' + Number(n).toLocaleString('es-MX');
+
+// ─── Estilos ─────────────────────────────────────────────────────────────────
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+  @keyframes spin   { to { transform: rotate(360deg); } }
+  @keyframes rise   { to { opacity:1; transform:none; } }
   @keyframes pulse-wa {
     0%   { box-shadow: 0 0 0 0 rgba(37,211,102,.6); }
     70%  { box-shadow: 0 0 0 16px rgba(37,211,102,0); }
     100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
   }
-  @keyframes count-up {
-    from { opacity: 0; transform: scale(.85); }
-    to   { opacity: 1; transform: scale(1); }
+
+  .pec-root {
+    --bg:#F7F4EE; --card:#FFFFFF; --ink:#1B1A17;
+    --muted:#6E6A60; --line:#E7E2D7;
+    --green:#15433A; --green-soft:#1F5A4C;
+    --amber:#C8862B; --amber-soft:#E0A94A;
+    font-family:'Manrope',sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    min-height:100%;
+    -webkit-font-smoothing:antialiased;
   }
-  @media (max-width: 768px) {
-    .home-hero-title { font-size: 2rem !important; }
-    .search-box      { flex-direction: column !important; border-radius: 16px !important; }
-    .search-btn      { border-radius: 12px !important; width: 100% !important; }
-    .stats-row       { grid-template-columns: 1fr 1fr !important; }
-    .cats-row        {
-      display: flex !important;
-      overflow-x: auto !important;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      padding: 0 0.5rem 12px !important;
-      gap: 0.75rem !important;
-    }
-    .cats-row::-webkit-scrollbar {
-      height: 4px;
-    }
-    .cats-row::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    .cats-row::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 2px;
-    }
-    .cats-row > button {
-      flex: 0 0 105px !important;
-    }
-    .props-grid      { grid-template-columns: 1fr !important; }
-    .cta-row         { flex-direction: column !important; text-align: center !important; }
+  .pec-root * { box-sizing:border-box; }
+  .serif { font-family:'Fraunces',serif; }
+
+  .pec-shell { max-width:1180px; margin:0 auto; padding:0 18px 120px; }
+
+  /* ── Header ── */
+  .pec-top {
+    position:sticky; top:0; z-index:30;
+    background:rgba(247,244,238,0.82);
+    backdrop-filter:saturate(160%) blur(14px);
+    padding:16px 18px 10px;
+    border-bottom:1px solid var(--line);
   }
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .props-grid      { grid-template-columns: repeat(2, 1fr) !important; }
+  .pec-top-row {
+    max-width:1180px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
   }
+  .pec-brand { display:flex; align-items:center; gap:10px; }
+  .pec-logo {
+    width:38px; height:38px; border-radius:12px;
+    background:linear-gradient(145deg,var(--green),var(--green-soft));
+    display:grid; place-items:center; color:#fff; font-weight:800;
+    box-shadow:0 6px 16px rgba(21,67,58,.25);
+  }
+  .pec-brand h1 { font-size:15px; font-weight:800; letter-spacing:-.2px; line-height:1.05; margin:0; }
+  .pec-brand span { font-size:11px; color:var(--muted); font-weight:600; }
+  .pec-iconbtn {
+    width:42px; height:42px; border-radius:50%; border:1px solid var(--line);
+    background:var(--card); display:grid; place-items:center; cursor:pointer;
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .pec-iconbtn:hover { transform:translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.06); }
+
+  /* ── Search ── */
+  .pec-search-wrap {
+    max-width:1180px; margin:14px auto 0;
+    background:var(--card); border:1px solid var(--line); border-radius:999px;
+    padding:6px 6px 6px 20px;
+    box-shadow:0 10px 30px rgba(27,26,23,.07);
+    display:flex; align-items:center; gap:10px;
+    transition:box-shadow .2s ease;
+  }
+  .pec-search-wrap:hover { box-shadow:0 14px 34px rgba(27,26,23,.11); }
+  .pec-search-input {
+    flex:1; border:none; outline:none; background:transparent;
+    font-family:'Manrope',sans-serif; font-size:14px; font-weight:600; color:var(--ink);
+  }
+  .pec-search-input::placeholder { color:var(--muted); }
+  .pec-search-sel {
+    border:none; outline:none; background:transparent;
+    font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--muted);
+    cursor:pointer; padding:0 8px; border-left:1px solid var(--line); height:32px;
+  }
+  .pec-search-go {
+    width:42px; height:42px; border-radius:50%; flex:none; border:none; cursor:pointer;
+    background:linear-gradient(145deg,var(--amber),var(--amber-soft));
+    display:grid; place-items:center; color:#fff;
+    box-shadow:0 6px 16px rgba(200,134,43,.35);
+    transition:transform .15s ease;
+  }
+  .pec-search-go:hover { transform:scale(1.07); }
+
+  /* ── Categories ── */
+  .pec-cats {
+    display:flex; gap:10px; overflow-x:auto; padding:18px 2px 8px;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .pec-cats::-webkit-scrollbar { display:none; }
+  .pec-cat {
+    flex:none; display:flex; align-items:center; gap:8px;
+    padding:9px 16px; border-radius:999px; border:1px solid var(--line);
+    background:var(--card); font-size:13px; font-weight:700; color:var(--muted);
+    cursor:pointer; transition:all .18s ease; white-space:nowrap;
+  }
+  .pec-cat:hover { border-color:#cfc8b8; color:var(--ink); }
+  .pec-cat.on {
+    background:var(--green); border-color:var(--green); color:#fff;
+    box-shadow:0 8px 20px rgba(21,67,58,.22);
+  }
+
+  .pec-h2 { font-size:22px; font-weight:600; letter-spacing:-.4px; margin:20px 0 2px; }
+  .pec-sub { font-size:13px; color:var(--muted); margin:0 0 16px; }
+
+  /* ── Grid ── */
+  .pec-grid { display:grid; grid-template-columns:1fr; gap:26px; }
+  @media(min-width:640px)  { .pec-grid { grid-template-columns:1fr 1fr; gap:24px; } }
+  @media(min-width:980px)  { .pec-grid { grid-template-columns:1fr 1fr 1fr; } }
+
+  .pec-card {
+    cursor:pointer; opacity:0; transform:translateY(14px);
+    animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+
+  .pec-media {
+    position:relative; border-radius:20px; overflow:hidden; aspect-ratio:4/3.2;
+    background:#e9e4d8; box-shadow:0 14px 30px rgba(27,26,23,.10);
+  }
+  .pec-media img {
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition:transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .pec-card:hover .pec-media img { transform:scale(1.06); }
+
+  /* Placeholder sin foto */
+  .pec-placeholder {
+    width:100%; height:100%; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:10px;
+    background:linear-gradient(145deg,#1F5A4C,#15433A);
+    color:rgba(255,255,255,.7); font-size:13px; font-weight:700;
+    letter-spacing:.5px;
+  }
+  .pec-placeholder span { font-size:2.5rem; }
+
+  .pec-fav {
+    position:absolute; top:12px; right:12px; width:36px; height:36px;
+    border-radius:50%; border:none; background:rgba(255,255,255,.82);
+    backdrop-filter:blur(6px); display:grid; place-items:center;
+    cursor:pointer; transition:transform .15s ease;
+  }
+  .pec-fav:active { transform:scale(.88); }
+
+  .pec-badge {
+    position:absolute; top:12px; left:12px; padding:6px 12px; border-radius:999px;
+    background:rgba(27,26,23,.78); backdrop-filter:blur(6px); color:#fff;
+    font-size:11px; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+  }
+  .pec-badge-dev {
+    position:absolute; top:12px; left:12px; padding:6px 12px; border-radius:999px;
+    background:rgba(21,67,58,.88); backdrop-filter:blur(6px); color:#a7f3d0;
+    font-size:11px; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+  }
+
+  .pec-info { padding:12px 4px 0; }
+  .pec-info .r1 { display:flex; justify-content:space-between; align-items:start; gap:10px; }
+  .pec-zone { display:flex; align-items:center; gap:5px; font-size:13px; color:var(--muted); font-weight:600; }
+  .pec-title { font-size:15.5px; font-weight:700; letter-spacing:-.2px; margin:3px 0 0; line-height:1.25; }
+  .pec-type  { display:inline-block; margin-top:5px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--amber); }
+  .pec-specs { display:flex; gap:14px; margin-top:9px; font-size:12.5px; color:var(--muted); font-weight:600; }
+  .pec-specs span { display:flex; align-items:center; gap:5px; }
+  .pec-price { margin-top:11px; font-size:18px; font-weight:800; letter-spacing:-.3px; }
+  .pec-price small { font-size:12.5px; font-weight:600; color:var(--muted); }
+
+  /* ── Banner promo ── */
+  .pec-banner {
+    margin:40px 0 20px;
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-soft) 100%);
+    border-radius:24px; padding:40px 32px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    flex-wrap:wrap;
+    box-shadow:0 20px 40px rgba(21,67,58,.25);
+  }
+  .pec-banner-text h2 {
+    font-size:clamp(1.3rem,3vw,1.9rem); font-weight:700;
+    color:#fff; margin:0 0 .5rem; letter-spacing:-.4px; line-height:1.2;
+  }
+  .pec-banner-text p { color:rgba(255,255,255,.7); font-size:14px; margin:0; line-height:1.6; }
+  .pec-banner-btn {
+    background:var(--amber); color:#fff; border:none; border-radius:999px;
+    padding:14px 28px; font-family:'Manrope',sans-serif; font-size:14px;
+    font-weight:800; cursor:pointer; text-decoration:none; display:inline-block;
+    box-shadow:0 8px 20px rgba(200,134,43,.4); white-space:nowrap;
+    transition:transform .15s ease, box-shadow .2s ease;
+    flex:none;
+  }
+  .pec-banner-btn:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(200,134,43,.5); }
+
+  /* ── Footer ── */
+  .pec-footer {
+    background:#fff; border-top:1px solid var(--line); padding:24px 18px;
+  }
+  .pec-footer-inner {
+    max-width:1180px; margin:0 auto;
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:12px;
+    font-size:13px; color:var(--muted); font-weight:600;
+  }
+  .pec-footer a { color:var(--muted); text-decoration:none; }
+  .pec-footer a:hover { color:var(--green); }
+
+  /* ── Bottom nav (mobile) ── */
+  .pec-nav {
+    position:fixed; bottom:0; left:0; right:0; z-index:40;
+    background:rgba(255,255,255,.9); backdrop-filter:blur(16px);
+    border-top:1px solid var(--line); display:flex; justify-content:space-around;
+    padding:9px 8px calc(9px + env(safe-area-inset-bottom));
+  }
+  .pec-navi {
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    font-size:10.5px; font-weight:700; color:var(--muted);
+    background:none; border:none; cursor:pointer;
+    padding:4px 14px; border-radius:12px; transition:color .15s ease;
+  }
+  .pec-navi.on { color:var(--green); }
+  @media(min-width:980px) { .pec-nav { display:none; } }
+
+  /* ── Loading spinner ── */
+  .pec-spinner {
+    width:36px; height:36px; border-radius:50%;
+    border:3px solid var(--line); border-top-color:var(--green);
+    animation:spin .8s linear infinite;
+  }
+
+  /* ── Clear btn ── */
+  .pec-clear-btn {
+    background:#fee2e2; color:#dc2626; border:1px solid #fca5a5;
+    border-radius:999px; padding:.35rem 1rem; font-size:.8rem; font-weight:700;
+    cursor:pointer; transition:opacity .15s;
+  }
+  .pec-clear-btn:hover { opacity:.8; }
+
+  /* ── WhatsApp flotante ── */
+  .wa-btn {
+    position:fixed; bottom:5rem; right:1.5rem; z-index:9000;
+    width:54px; height:54px; border-radius:50%;
+    background:#25D366; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 16px rgba(37,211,102,.5);
+    animation:pulse-wa 2.5s ease infinite; text-decoration:none;
+  }
+  @media(min-width:980px) { .wa-btn { bottom:1.75rem; right:1.75rem; } }
 `;
 
-// ── Componente principal ──────────────────────────────────────────────────────
+// ─── Componente principal ─────────────────────────────────────────────────────
 export default function Home({ session }) {
-  const SHOW_STATS = false;
-  // Búsqueda
-  const [busqueda,  setBusqueda]  = useState('');
-  const [tipo,      setTipo]      = useState('');
-  const [municipio, setMunicipio] = useState('');
-  const [precioMax, setPrecioMax] = useState('');
+  // Filtros
+  const [query,         setQuery]         = useState('');
+  const [municipio,     setMunicipio]     = useState('');
+  const [precioMax,     setPrecioMax]     = useState('');
+  const [catActiva,     setCatActiva]     = useState('todas');
 
   // Datos
-  const [propiedades, setPropiedades] = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [stats,       setStats]       = useState({ propiedades: 0, municipios: 0, asesores: 0 });
-  const [statsLoad,   setStatsLoad]   = useState(true);
+  const [propiedades,   setPropiedades]   = useState([]);
+  const [resultados,    setResultados]    = useState(null); // null = vista inicial
+  const [loading,       setLoading]       = useState(true);
+  const [buscando,      setBuscando]      = useState(false);
 
   // UI
-  const [categoriaActiva, setCategoriaActiva] = useState('');
-  const [buscando,        setBuscando]        = useState(false);
-  const [resultados,      setResultados]      = useState(null); // null = sin búsqueda activa
-  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [favs,          setFavs]          = useState({});
+  const [loaded,        setLoaded]        = useState(false);
 
-  // ── Cargar stats en vivo ────────────────────────────────────────────────────
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [rProps, rAsesores] = await Promise.all([
-          supabase.from('properties').select('city', { count: 'exact' }).eq('active', true)
-            .not('title', 'ilike', '%Premium en %')
-            .not('title', 'ilike', 'Residencia Casa Premier%')
-            .not('title', 'ilike', 'Fraccionamiento Master%')
-            .not('title', 'ilike', 'Lotes de Inversión Premium%')
-            .not('title', 'ilike', 'Lote Comercial Estratégico%'),
-          supabase.from('users').select('id', { count: 'exact' }).eq('active', true),
-        ]);
-
-        const totalProps  = rProps.count  || 0;
-        const totalAsesores = rAsesores.count || 0;
-        const munis = new Set((rProps.data || []).map(p => p.city).filter(Boolean));
-
-        setStats({ propiedades: totalProps, municipios: munis.size, asesores: totalAsesores });
-      } catch {
-        setStats({ propiedades: 120, municipios: 18, asesores: 45 });
-      } finally {
-        setStatsLoad(false);
-      }
-    };
-    fetchStats();
+    const t = setTimeout(() => setLoaded(true), 60);
+    return () => clearTimeout(t);
   }, []);
 
-  // ── Cargar 6 propiedades destacadas ────────────────────────────────────────
+  const toggleFav = (id, e) => {
+    e.stopPropagation();
+    setFavs(f => ({ ...f, [id]: !f[id] }));
+  };
+
+  // ── Excluir títulos de prueba ────────────────────────────────────────────────
+  const applyExclusions = (q) => {
+    EXCLUDE_TITLES.forEach(t => {
+      q = q.not('title', 'ilike', t);
+    });
+    return q;
+  };
+
+  // ── Carga inicial: 9 propiedades destacadas ──────────────────────────────────
   useEffect(() => {
     const fetchPropiedades = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        let q = supabase
           .from('properties')
           .select('*')
           .eq('active', true)
-          .not('title', 'ilike', '%Premium en %')
-          .not('title', 'ilike', 'Residencia Casa Premier%')
-          .not('title', 'ilike', 'Fraccionamiento Master%')
-          .not('title', 'ilike', 'Lotes de Inversión Premium%')
-          .not('title', 'ilike', 'Lote Comercial Estratégico%')
           .order('created_at', { ascending: false })
-          .limit(6);
-
+          .limit(9);
+        q = applyExclusions(q);
+        const { data, error } = await q;
         if (error) throw error;
         setPropiedades(data || []);
       } catch {
@@ -173,29 +356,29 @@ export default function Home({ session }) {
     fetchPropiedades();
   }, []);
 
-  // ── Buscar con filtros ──────────────────────────────────────────────────────
-  const buscar = useCallback(async () => {
+  // ── Buscar con filtros ───────────────────────────────────────────────────────
+  const buscar = useCallback(async (overrideType) => {
     setBuscando(true);
     try {
-      let query = supabase.from('properties').select('*').eq('active', true)
-        .not('title', 'ilike', '%Premium en %')
-        .not('title', 'ilike', 'Residencia Casa Premier%')
-        .not('title', 'ilike', 'Fraccionamiento Master%')
-        .not('title', 'ilike', 'Lotes de Inversión Premium%')
-        .not('title', 'ilike', 'Lote Comercial Estratégico%');
+      let q = supabase.from('properties').select('*').eq('active', true);
+      q = applyExclusions(q);
 
-      if (busqueda.trim()) {
-        query = query.or(
-          `title.ilike.%${busqueda}%,city.ilike.%${busqueda}%,address.ilike.%${busqueda}%`
-        );
+      if (query.trim()) {
+        q = q.or(`title.ilike.%${query}%,city.ilike.%${query}%,address.ilike.%${query}%`);
       }
-      if (tipo)      query = query.ilike('type', `%${tipo}%`);
-      if (municipio) query = query.eq('city', municipio);
-      if (precioMax) query = query.lte('price', parseFloat(precioMax));
 
-      query = query.order('created_at', { ascending: false }).limit(24);
+      // Tipo por categoría activa o override
+      const tipo = overrideType !== undefined ? overrideType : (() => {
+        const cat = CATEGORIES.find(c => c.id === catActiva);
+        return cat?.filtro || null;
+      })();
+      if (tipo) q = q.ilike('type', `%${tipo}%`);
 
-      const { data, error } = await query;
+      if (municipio) q = q.eq('city', municipio);
+      if (precioMax) q = q.lte('price', parseFloat(precioMax));
+
+      q = q.order('created_at', { ascending: false }).limit(24);
+      const { data, error } = await q;
       if (error) throw error;
       setResultados(data || []);
     } catch {
@@ -203,35 +386,104 @@ export default function Home({ session }) {
     } finally {
       setBuscando(false);
     }
-  }, [busqueda, tipo, municipio, precioMax]);
+  }, [query, catActiva, municipio, precioMax]);
 
-  // Buscar al seleccionar categoría
-  const seleccionarCategoria = (filtro) => {
-    const nuevo = categoriaActiva === filtro ? '' : filtro;
-    setCategoriaActiva(nuevo);
-    setTipo(nuevo);
-    // Disparar búsqueda con el nuevo tipo
-    setTimeout(() => buscar(), 0);
+  // ── Seleccionar categoría ────────────────────────────────────────────────────
+  const seleccionarCat = (catId) => {
+    const nuevo = catActiva === catId ? 'todas' : catId;
+    setCatActiva(nuevo);
+    const cat = CATEGORIES.find(c => c.id === nuevo);
+    setTimeout(() => buscar(cat?.filtro || null), 0);
   };
 
-  const limpiarBusqueda = () => {
-    setBusqueda(''); setTipo(''); setMunicipio(''); setPrecioMax('');
-    setCategoriaActiva(''); setResultados(null);
+  // ── Limpiar ──────────────────────────────────────────────────────────────────
+  const limpiar = () => {
+    setQuery(''); setMunicipio(''); setPrecioMax('');
+    setCatActiva('todas'); setResultados(null);
   };
 
   const propsMostradas = resultados ?? propiedades;
-  const hayBusqueda = busqueda || tipo || municipio || precioMax;
+  const hayFiltros = query || municipio || precioMax || catActiva !== 'todas';
+
+  // ── Render card ──────────────────────────────────────────────────────────────
+  const renderCard = (p, i) => {
+    const tieneImagen = !!p.featured_image_url;
+    const esDev = !!p.landing_slug;
+
+    return (
+      <article
+        key={p.id}
+        className="pec-card"
+        style={{ animationDelay: loaded ? `${i * 70}ms` : '0ms' }}
+        onClick={() => window.location.href = `/propiedad/${p.id}`}
+      >
+        <div className="pec-media">
+          {tieneImagen ? (
+            <img src={p.featured_image_url} alt={p.title} loading="lazy" />
+          ) : (
+            <div className="pec-placeholder">
+              <span>🏠</span>
+              Sin foto aún
+            </div>
+          )}
+
+          {/* Badge: desarrollo (verde) o tipo destacado (oscuro) */}
+          {esDev ? (
+            <div className="pec-badge-dev">Ver desarrollo</div>
+          ) : null}
+
+          <button
+            className="pec-fav"
+            onClick={(e) => toggleFav(p.id, e)}
+            aria-label="Guardar en favoritos"
+          >
+            <Heart
+              size={18}
+              fill={favs[p.id] ? '#C8862B' : 'none'}
+              color={favs[p.id] ? '#C8862B' : '#1B1A17'}
+              strokeWidth={2.2}
+            />
+          </button>
+        </div>
+
+        <div className="pec-info">
+          <div className="r1">
+            <div>
+              <div className="pec-zone">
+                <MapPin size={13} />
+                {p.city || 'Chiapas'}
+              </div>
+              <h3 className="pec-title">{p.title}</h3>
+              {p.type && <span className="pec-type">{p.type}</span>}
+            </div>
+          </div>
+
+          <div className="pec-specs">
+            {p.size_m2 && (
+              <span><Maximize size={14} /> {p.size_m2} m²</span>
+            )}
+          </div>
+
+          <div className="pec-price">
+            {peso(p.price || 0)}{' '}
+            {p.price > 0 && (
+              <small>{p.price_suffix || 'MXN'}</small>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  };
 
   return (
     <>
-      <style>{KF}</style>
+      <style>{STYLES}</style>
 
-      {/* ── OG / SEO ─────────────────────────────────────────────────────── */}
       <Helmet>
         <title>Propiedades en Chiapas — Casas, Terrenos y Más</title>
-        <meta name="description" content="Encuentra casas, terrenos, departamentos y locales comerciales en Chiapas. Más de 100 propiedades activas. Portal inmobiliario #1 en Chiapas." />
+        <meta name="description" content="Encuentra casas, terrenos, departamentos y locales comerciales en Chiapas. Portal inmobiliario #1 en Chiapas." />
         <meta property="og:title" content="Propiedades en Chiapas — Casas, Terrenos y Más" />
-        <meta property="og:description" content="Portal inmobiliario #1 en Chiapas. Casas, terrenos, departamentos y más. Busca y contacta directamente al asesor." />
+        <meta property="og:description" content="Portal inmobiliario #1 en Chiapas. Casas, terrenos, departamentos y más." />
         <meta property="og:image" content="https://propiedadesenchiapas.com/og-portal.jpg" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://propiedadesenchiapas.com" />
@@ -240,356 +492,188 @@ export default function Home({ session }) {
         <meta name="twitter:title" content="Propiedades en Chiapas" />
         <meta name="twitter:description" content="Portal inmobiliario #1. Casas, terrenos, departamentos en todo Chiapas." />
         <meta name="twitter:image" content="https://propiedadesenchiapas.com/og-portal.jpg" />
-        <meta name="theme-color" content="#0D0D4A" />
+        <meta name="theme-color" content="#15433A" />
       </Helmet>
 
-      <div style={{ fontFamily:"'Inter','Segoe UI',sans-serif", color:'#1e293b', background:'#fff', overflowX:'hidden' }}>
+      <div className="pec-root">
 
-        <Navbar session={session} />
-
-        {/* ══════════════════════════════════════════════════════════════
-            HERO FULLSCREEN
-        ══════════════════════════════════════════════════════════════ */}
-        <section style={{
-          background:'linear-gradient(135deg,#0D0D4A 0%,#1A1A6E 60%,#2a2a8a 100%)',
-          minHeight:'100vh', display:'flex', alignItems:'center',
-          justifyContent:'center', position:'relative', overflow:'hidden',
-          padding:'7rem 1.5rem 5rem',
-        }}>
-          {/* Orbes decorativos */}
-          <div style={{ position:'absolute',top:'-120px',right:'-120px',width:'550px',height:'550px',borderRadius:'50%',background:'rgba(46,125,50,.07)',pointerEvents:'none' }}/>
-          <div style={{ position:'absolute',bottom:'-80px',left:'-80px',width:'400px',height:'400px',borderRadius:'50%',background:'rgba(201,168,76,.05)',pointerEvents:'none' }}/>
-          {/* Patrón puntos */}
-          <svg style={{ position:'absolute',inset:0,width:'100%',height:'100%',opacity:.04,pointerEvents:'none' }}>
-            <defs>
-              <pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
-                <circle cx="2" cy="2" r="1.5" fill="#fff"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dots)"/>
-          </svg>
-
-          <div style={{ maxWidth:860, width:'100%', position:'relative', zIndex:1, textAlign:'center', animation:'fadeUp .7s ease both' }}>
-            {/* Badge */}
-            <div style={{ display:'inline-flex',alignItems:'center',gap:'.5rem',background:'rgba(255,255,255,.08)',border:'1px solid rgba(255,255,255,.15)',borderRadius:999,padding:'.4rem 1.1rem',marginBottom:'1.75rem' }}>
-              <span style={{ width:8,height:8,borderRadius:'50%',background:'#4ade80',display:'inline-block',boxShadow:'0 0 6px #4ade80' }}/>
-              <span style={{ color:'rgba(255,255,255,.85)',fontSize:'.78rem',fontWeight:700,letterSpacing:'.05em',textTransform:'uppercase' }}>Portal #1 de propiedades en Chiapas</span>
+        {/* ── Header ── */}
+        <header className="pec-top">
+          <div className="pec-top-row">
+            <div className="pec-brand">
+              <div className="pec-logo serif">P</div>
+              <div>
+                <h1>Propiedades en Chiapas</h1>
+                <span>Encuentra tu lugar</span>
+              </div>
             </div>
-
-            {/* Título */}
-            <h1 className="home-hero-title" style={{ color:'#fff',fontSize:'clamp(2.2rem,5vw,3.5rem)',fontWeight:900,lineHeight:1.08,letterSpacing:'-.03em',margin:'0 0 1rem' }}>
-              Encuentra tu propiedad ideal<br/>
-              <span style={{ color:'#34d399' }}>en cualquier rincón de Chiapas</span>
-            </h1>
-            <p style={{ color:'rgba(255,255,255,.65)',fontSize:'1.05rem',lineHeight:1.65,maxWidth:540,margin:'0 auto 2.5rem' }}>
-              Casas, terrenos, locales y más en todo Chiapas.
-            </p>
-
-            {/* ── BUSCADOR ── */}
-            <div className="search-box" style={{
-              display:'flex', background:'#fff', borderRadius:18,
-              boxShadow:'0 20px 60px rgba(0,0,0,.35)',
-              overflow:'hidden', maxWidth:780, margin:'0 auto',
-            }}>
-              {/* Texto libre */}
-              <div style={{ flex:2, display:'flex', alignItems:'center', gap:'.5rem', padding:'.9rem 1.25rem', borderRight:'1px solid #f1f5f9' }}>
-                <span style={{ fontSize:'1.1rem', flexShrink:0 }}>🔍</span>
-                <input
-                  type="text" placeholder="Colonia, municipio o tipo..."
-                  value={busqueda} onChange={e => setBusqueda(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && buscar()}
-                  style={{ border:'none',outline:'none',width:'100%',fontSize:'.95rem',color:'#1e293b',fontWeight:500,background:'transparent' }}
-                />
-              </div>
-
-              {/* Municipio */}
-              <div style={{ flex:1.2, borderRight:'1px solid #f1f5f9' }}>
-                <select value={municipio} onChange={e => setMunicipio(e.target.value)}
-                  style={{ width:'100%',height:'100%',border:'none',outline:'none',padding:'.9rem 1rem',fontSize:'.88rem',color: municipio ? '#1e293b' : '#9ca3af',fontWeight:600,background:'transparent',cursor:'pointer' }}>
-                  <option value="">📍 Ciudad</option>
-                  {CITIES_DB.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-
-              {/* Precio */}
-              <div style={{ flex:1, borderRight:'1px solid #f1f5f9' }}>
-                <select value={precioMax} onChange={e => setPrecioMax(e.target.value)}
-                  style={{ width:'100%',height:'100%',border:'none',outline:'none',padding:'.9rem 1rem',fontSize:'.88rem',color: precioMax ? '#1e293b' : '#9ca3af',fontWeight:600,background:'transparent',cursor:'pointer' }}>
-                  <option value="">💰 Precio</option>
-                  {PRECIOS.map(p => <option key={p.max} value={p.max}>{p.label}</option>)}
-                </select>
-              </div>
-
-              {/* Botón buscar */}
-              <button className="search-btn" onClick={buscar} disabled={buscando} style={{
-                background:'#2E7D32', color:'#fff', border:'none',
-                padding:'.9rem 1.75rem', fontWeight:800, fontSize:'.95rem',
-                cursor: buscando ? 'not-allowed' : 'pointer',
-                display:'flex', alignItems:'center', gap:'.5rem', flexShrink:0,
-              }}>
-                {buscando
-                  ? <div style={{ width:18,height:18,border:'2px solid rgba(255,255,255,.3)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin .7s linear infinite' }}/>
-                  : '→'
-                }
-                {!buscando && <span>Buscar</span>}
+            <div style={{ display:'flex', gap:10 }}>
+              <button className="pec-iconbtn" aria-label="Notificaciones"><Bell size={18} /></button>
+              <button
+                className="pec-iconbtn"
+                aria-label="Iniciar sesión"
+                onClick={() => window.location.href = '/crm'}
+              >
+                <User size={18} />
               </button>
             </div>
-
-            {/* Tags rápidos */}
-            <div style={{ display:'flex',gap:'.6rem',justifyContent:'center',flexWrap:'wrap',marginTop:'1.25rem' }}>
-              {['Casa en Tuxtla','Terreno en San Cristóbal','Departamento','Local Comercial'].map(tag => (
-                <button key={tag} onClick={() => { setBusqueda(tag); setTimeout(buscar,0); }}
-                  style={{ background:'rgba(255,255,255,.1)',border:'1px solid rgba(255,255,255,.2)',color:'rgba(255,255,255,.8)',borderRadius:999,padding:'.35rem .9rem',fontSize:'.78rem',fontWeight:600,cursor:'pointer',transition:'all .2s' }}>
-                  {tag}
-                </button>
-              ))}
-            </div>
           </div>
-        </section>
 
-        {/* ══════════════════════════════════════════════════════════════
-            STATS EN VIVO
-        ══════════════════════════════════════════════════════════════ */}
-        {SHOW_STATS && (
-          <section style={{ background:'#f8fafc',borderBottom:'1px solid #e2e8f0',padding:'2.5rem 1.5rem' }}>
-            <div style={{ maxWidth:900,margin:'0 auto' }}>
-              <div className="stats-row" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.5rem',textAlign:'center' }}>
-                {[
-                  { label:'Propiedades activas', val: statsLoad ? '…' : stats.propiedades.toLocaleString('es-MX'), icon:'🏠' },
-                  { label:'Municipios con oferta', val: statsLoad ? '…' : stats.municipios.toLocaleString('es-MX'), icon:'📍' },
-                  { label:'Asesores registrados', val: statsLoad ? '…' : stats.asesores.toLocaleString('es-MX'),   icon:'👤' },
-                ].map(s => (
-                  <div key={s.label} style={{ padding:'1.5rem 1rem',background:'#fff',borderRadius:16,border:'1px solid #e2e8f0',boxShadow:'0 2px 8px rgba(0,0,0,.04)',animation:'count-up .6s ease both' }}>
-                    <div style={{ fontSize:'1.75rem',marginBottom:'.4rem' }}>{s.icon}</div>
-                    <div style={{ fontSize:'2rem',fontWeight:900,color:'#1A1A6E',lineHeight:1,marginBottom:'.3rem' }}>{s.val}</div>
-                    <div style={{ fontSize:'.82rem',color:'#64748b',fontWeight:600 }}>{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+          {/* ── Buscador ── */}
+          <div className="pec-search-wrap">
+            <Search size={18} strokeWidth={2.4} color="var(--muted)" />
+            <input
+              className="pec-search-input"
+              placeholder="¿Dónde quieres vivir? Colonia, municipio..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && buscar()}
+            />
+            <select
+              className="pec-search-sel"
+              value={municipio}
+              onChange={e => setMunicipio(e.target.value)}
+              aria-label="Filtrar por ciudad"
+            >
+              <option value="">📍 Ciudad</option>
+              {CITIES_DB.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <select
+              className="pec-search-sel"
+              value={precioMax}
+              onChange={e => setPrecioMax(e.target.value)}
+              aria-label="Filtrar por precio"
+            >
+              <option value="">💰 Precio</option>
+              {PRECIOS.map(p => <option key={p.max} value={p.max}>{p.label}</option>)}
+            </select>
+            <button className="pec-search-go" onClick={() => buscar()} aria-label="Buscar">
+              <SlidersHorizontal size={18} />
+            </button>
+          </div>
+        </header>
 
-        {/* ══════════════════════════════════════════════════════════════
-            CATEGORÍAS
-        ══════════════════════════════════════════════════════════════ */}
-        <section style={{ padding:'4rem 1.5rem 2rem',background:'#fff' }}>
-          <div style={{ maxWidth:1100,margin:'0 auto' }}>
-            <div style={{ textAlign:'center',marginBottom:'2.5rem' }}>
-              <h2 style={{ fontSize:'clamp(1.5rem,3vw,2rem)',fontWeight:900,letterSpacing:'-.02em',margin:'0 0 .5rem' }}>
-                ¿Qué tipo de propiedad buscas?
+        <div className="pec-shell">
+
+          {/* ── Categorías ── */}
+          <div className="pec-cats" role="list">
+            {CATEGORIES.map(c => (
+              <button
+                key={c.id}
+                className={'pec-cat' + (catActiva === c.id ? ' on' : '')}
+                onClick={() => seleccionarCat(c.id)}
+                role="listitem"
+              >
+                <span>{c.emoji}</span>
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          {/* ── Cabecera de sección ── */}
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:10 }}>
+            <div>
+              <h2 className="pec-h2 serif">
+                {resultados !== null
+                  ? `${resultados.length} resultado${resultados.length !== 1 ? 's' : ''} encontrado${resultados.length !== 1 ? 's' : ''}`
+                  : 'Propiedades destacadas'}
               </h2>
-              <p style={{ color:'#64748b',fontSize:'.95rem' }}>Selecciona una categoría para filtrar</p>
+              <p className="pec-sub">
+                {resultados !== null
+                  ? (municipio ? `en ${municipio}` : 'en todo Chiapas')
+                  : `${propsMostradas.length} lugares en Chiapas`}
+              </p>
             </div>
-
-            <div className="cats-row" style={{ display:'grid',gridTemplateColumns:'repeat(8,1fr)',gap:'1rem' }}>
-              {CATEGORIAS.map(cat => (
-                <button key={cat.nombre} onClick={() => seleccionarCategoria(cat.filtro)}
-                  style={{
-                    background: categoriaActiva === cat.filtro ? '#1A1A6E' : '#f8fafc',
-                    border: `2px solid ${categoriaActiva === cat.filtro ? '#1A1A6E' : '#e2e8f0'}`,
-                    borderRadius:14, padding:'1.1rem .5rem', cursor:'pointer',
-                    display:'flex', flexDirection:'column', alignItems:'center', gap:'.5rem',
-                    transition:'all .2s',
-                    boxShadow: categoriaActiva === cat.filtro ? '0 4px 16px rgba(26,26,110,.25)' : 'none',
-                  }}>
-                  <span style={{ fontSize:'1.6rem',lineHeight:1 }}>{cat.emoji}</span>
-                  <span style={{ fontSize:'.72rem',fontWeight:700,color: categoriaActiva === cat.filtro ? '#fff' : '#475569',textAlign:'center',lineHeight:1.3 }}>
-                    {cat.nombre}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════════════════════════════════════════════════════════
-            PROPIEDADES DESTACADAS / RESULTADOS
-        ══════════════════════════════════════════════════════════════ */}
-        <section style={{ padding:'2rem 1.5rem 5rem',background:'#fff' }}>
-          <div style={{ maxWidth:1100,margin:'0 auto' }}>
-
-            {/* Cabecera de sección */}
-            <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1.75rem',flexWrap:'wrap',gap:'1rem' }}>
-              <div>
-                <h2 style={{ fontSize:'clamp(1.3rem,2.5vw,1.7rem)',fontWeight:900,letterSpacing:'-.02em',margin:'0 0 .25rem' }}>
-                  {resultados !== null
-                    ? `${resultados.length} resultado${resultados.length !== 1 ? 's' : ''} encontrado${resultados.length !== 1 ? 's' : ''}`
-                    : 'Propiedades destacadas'}
-                </h2>
-                <p style={{ color:'#64748b',fontSize:'.88rem',margin:0 }}>
-                  {resultados !== null
-                    ? (municipio ? `en ${municipio}` : 'en todo Chiapas')
-                    : 'Las más recientes en el portal'}
-                </p>
-              </div>
-              {hayBusqueda && (
-                <button onClick={limpiarBusqueda} style={{ background:'#fee2e2',color:'#dc2626',border:'1px solid #fca5a5',borderRadius:999,padding:'.4rem 1rem',fontSize:'.82rem',fontWeight:700,cursor:'pointer' }}>
-                  ✕ Limpiar búsqueda
-                </button>
-              )}
-            </div>
-
-            {/* Grid de propiedades */}
-            {loading && resultados === null ? (
-              <div style={{ display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'5rem',gap:'1rem',color:'#94a3b8' }}>
-                <div style={{ width:36,height:36,border:'3px solid #e2e8f0',borderTopColor:'#1A1A6E',borderRadius:'50%',animation:'spin .8s linear infinite' }}/>
-                <p style={{ fontWeight:600 }}>Cargando propiedades...</p>
-              </div>
-            ) : propsMostradas.length === 0 ? (
-              <div style={{ textAlign:'center',padding:'4rem',color:'#94a3b8' }}>
-                <div style={{ fontSize:'2.5rem',marginBottom:'.75rem' }}>🔍</div>
-                <h3 style={{ fontWeight:700,color:'#475569',marginBottom:'.5rem' }}>No encontramos propiedades</h3>
-                <p style={{ fontSize:'.9rem' }}>Intenta con otros filtros o amplía la búsqueda.</p>
-                <button onClick={limpiarBusqueda} style={{ marginTop:'1rem',background:'#1A1A6E',color:'#fff',border:'none',borderRadius:10,padding:'.75rem 1.75rem',fontWeight:700,cursor:'pointer' }}>
-                  Ver todas las propiedades
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="props-grid" style={{ display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.5rem' }}>
-                  {propsMostradas.map(p => (
-                    <PropertyCard key={p.id} property={p} onClick={() => setSelectedProperty(p)} />
-                  ))}
-                </div>
-
-                {/* Ver más */}
-                {resultados === null && (
-                  <div style={{ textAlign:'center',marginTop:'3rem' }}>
-                    <button onClick={() => { setResultados(null); buscar(); }}
-                      style={{ background:'#f8fafc',border:'2px solid #e2e8f0',borderRadius:12,padding:'.9rem 2.5rem',fontWeight:800,fontSize:'.97rem',color:'#1A1A6E',cursor:'pointer',transition:'all .2s' }}>
-                      Ver todas las propiedades →
-                    </button>
-                  </div>
-                )}
-              </>
+            {hayFiltros && (
+              <button className="pec-clear-btn" onClick={limpiar}>
+                ✕ Limpiar filtros
+              </button>
             )}
           </div>
-        </section>
 
-        {/* ══════════════════════════════════════════════════════════════
-            CTA ASESORES
-        ══════════════════════════════════════════════════════════════ */}
-        <section style={{ background:'linear-gradient(135deg,#0D0D4A,#1A1A6E)',padding:'5rem 1.5rem' }}>
-          <div style={{ maxWidth:900,margin:'0 auto' }}>
-            <div className="cta-row" style={{ display:'flex',alignItems:'center',justifyContent:'space-between',gap:'2rem',flexWrap:'wrap' }}>
-              <div style={{ flex:1 }}>
-                <span style={{ background:'rgba(52,211,153,.15)',color:'#34d399',border:'1px solid rgba(52,211,153,.3)',borderRadius:999,padding:'.3rem .9rem',fontSize:'.75rem',fontWeight:800,letterSpacing:'.05em',textTransform:'uppercase',display:'inline-block',marginBottom:'1rem' }}>
-                  Para asesores
-                </span>
-                <h2 style={{ color:'#fff',fontSize:'clamp(1.5rem,3vw,2.2rem)',fontWeight:900,letterSpacing:'-.02em',margin:'0 0 .75rem',lineHeight:1.15 }}>
-                  ¿Eres asesor inmobiliario?<br/>
-                  <span style={{ color:'#34d399' }}>Crea tu tarjeta digital gratis</span>
-                </h2>
-                <p style={{ color:'rgba(255,255,255,.65)',fontSize:'1rem',lineHeight:1.6,margin:'0',maxWidth:480 }}>
-                  Publica propiedades, genera fichas técnicas y comparte tu perfil en Instagram y WhatsApp. 14 días gratis, sin tarjeta de crédito.
-                </p>
-              </div>
-              <div style={{ display:'flex',flexDirection:'column',gap:'1rem',alignItems:'flex-start' }}>
-                <a href="/asesores" style={{
-                  background:'#2E7D32',color:'#fff',textDecoration:'none',
-                  borderRadius:14,padding:'1rem 2.5rem',fontWeight:900,fontSize:'1rem',
-                  boxShadow:'0 4px 20px rgba(46,125,50,.45)',
-                  display:'inline-block',transition:'opacity .2s',
-                }}>
-                  Empezar 14 días gratis →
-                </a>
-                <span style={{ color:'rgba(255,255,255,.4)',fontSize:'.78rem',fontWeight:500 }}>
-                  Sin tarjeta de crédito · Cancela cuando quieras
-                </span>
-              </div>
+          {/* ── Grid propiedades ── */}
+          {loading && resultados === null ? (
+            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'5rem', gap:'1rem', color:'var(--muted)' }}>
+              <div className="pec-spinner" />
+              <p style={{ fontWeight:600, fontSize:14 }}>Cargando propiedades...</p>
             </div>
-          </div>
-        </section>
+          ) : buscando ? (
+            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'4rem', gap:'1rem', color:'var(--muted)' }}>
+              <div className="pec-spinner" />
+              <p style={{ fontWeight:600, fontSize:14 }}>Buscando...</p>
+            </div>
+          ) : propsMostradas.length === 0 ? (
+            <div style={{ textAlign:'center', padding:'4rem', color:'var(--muted)' }}>
+              <div style={{ fontSize:'2.5rem', marginBottom:'.75rem' }}>🔍</div>
+              <h3 style={{ fontWeight:700, marginBottom:'.5rem', color:'var(--ink)' }}>No encontramos propiedades</h3>
+              <p style={{ fontSize:14 }}>Intenta con otros filtros o amplía la búsqueda.</p>
+              <button onClick={limpiar}
+                style={{ marginTop:'1rem', background:'var(--green)', color:'#fff', border:'none',
+                  borderRadius:10, padding:'.75rem 1.75rem', fontWeight:700, cursor:'pointer',
+                  fontFamily:'Manrope,sans-serif' }}>
+                Ver todas las propiedades
+              </button>
+            </div>
+          ) : (
+            <div className="pec-grid">
+              {propsMostradas.map((p, i) => renderCard(p, i))}
+            </div>
+          )}
 
-        {/* Footer */}
-        <footer style={{ padding:'2rem 1.5rem',borderTop:'1px solid #e2e8f0',background:'#f7f7f7' }}>
-          <div style={{ maxWidth:1100,margin:'0 auto',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'1rem',fontSize:'.88rem',color:'#94a3b8' }}>
-            <div>© 2026 Propiedades Chiapas, Inc. · Privacidad · Términos · <a href="/asesores" style={{ color:'#94a3b8', textDecoration:'none', fontWeight:600 }}>Regístrate</a></div>
-            <div style={{ display:'flex',gap:'1rem',fontWeight:600,color:'#64748b' }}>
+          {/* ── Banner promo asesores ── */}
+          <div className="pec-banner">
+            <div className="pec-banner-text">
+              <h2 className="serif">¿Eres asesor inmobiliario?<br />Crea tu tarjeta digital gratis</h2>
+              <p>Publica propiedades, genera fichas técnicas y comparte tu perfil.<br />14 días gratis, sin tarjeta de crédito.</p>
+            </div>
+            <a href="/asesores" className="pec-banner-btn">
+              Empezar 14 días gratis →
+            </a>
+          </div>
+
+        </div>
+
+        {/* ── Footer ── */}
+        <footer className="pec-footer">
+          <div className="pec-footer-inner">
+            <div>
+              © 2026 Propiedades Chiapas, Inc. ·{' '}
+              <a href="/asesores">Regístrate</a> ·{' '}
+              <a href="/crm">Iniciar sesión</a>
+            </div>
+            <div style={{ display:'flex', gap:'1rem' }}>
               <span>🌐 Español (MX)</span>
               <span>$ MXN</span>
             </div>
           </div>
         </footer>
+
+        {/* ── Bottom nav — app feel (mobile) ── */}
+        <nav className="pec-nav" aria-label="Navegación principal">
+          <button className="pec-navi on"><Compass size={21} /> Explorar</button>
+          <button className="pec-navi"><Heart size={21} /> Favoritos</button>
+          <button className="pec-navi"><MessageCircle size={21} /> Mensajes</button>
+          <button className="pec-navi" onClick={() => window.location.href = '/crm'}>
+            <User size={21} /> Perfil
+          </button>
+        </nav>
+
+        {/* ── WhatsApp flotante ── */}
+        <a
+          href="https://wa.me/529612466204"
+          target="_blank"
+          rel="noreferrer"
+          className="wa-btn"
+          title="¿Tienes dudas? Escríbenos"
+          aria-label="Contactar por WhatsApp"
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.848L.057 23.743a.75.75 0 0 0 .921.921l5.895-1.465A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 0 1-4.95-1.355l-.355-.213-3.681.915.93-3.594-.233-.371A9.718 9.718 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
+          </svg>
+        </a>
+
       </div>
-
-      {/* ── Botón WhatsApp flotante ──────────────────────────────────────── */}
-      <a href="https://wa.me/529612466204" target="_blank" rel="noreferrer"
-        title="¿Tienes dudas? Escríbenos"
-        style={{
-          position:'fixed',bottom:'1.75rem',right:'1.75rem',zIndex:9000,
-          width:56,height:56,borderRadius:'50%',
-          background:'#25D366',display:'flex',alignItems:'center',justifyContent:'center',
-          boxShadow:'0 4px 16px rgba(37,211,102,.5)',
-          animation:'pulse-wa 2.5s ease infinite',textDecoration:'none',
-        }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.848L.057 23.743a.75.75 0 0 0 .921.921l5.895-1.465A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 0 1-4.95-1.355l-.355-.213-3.681.915.93-3.594-.233-.371A9.718 9.718 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
-        </svg>
-      </a>
-
-      {/* ── Modal ficha técnica ──────────────────────────────────────────── */}
-      {selectedProperty && (
-        <div onClick={e => { if (e.target === e.currentTarget) setSelectedProperty(null); }}
-          style={{ position:'fixed',inset:0,zIndex:9999,background:'rgba(0,0,0,.75)',display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem' }}>
-          <div style={{ background:'#fff',width:'100%',maxWidth:740,maxHeight:'90vh',overflowY:'auto',borderRadius:16,position:'relative' }}>
-            <button onClick={() => setSelectedProperty(null)}
-              style={{ position:'absolute',top:12,right:12,background:'#f1f5f9',border:'none',width:34,height:34,borderRadius:'50%',cursor:'pointer',fontSize:'1.1rem',zIndex:10 }}>✕</button>
-
-            <div style={{ padding:'2rem' }}>
-              <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',borderBottom:'2px solid #f1f5f9',paddingBottom:'1.25rem',marginBottom:'1.25rem',flexWrap:'wrap',gap:'1rem' }}>
-                <div>
-                  <h2 style={{ fontSize:'1.5rem',fontWeight:800,color:'#1e293b',margin:'0 0 .3rem',lineHeight:1.2 }}>{selectedProperty.title}</h2>
-                  <p style={{ color:'#64748b' }}>📍 {[selectedProperty.address, selectedProperty.city].filter(Boolean).join(', ')}</p>
-                </div>
-                <div style={{ textAlign:'right' }}>
-                  <div style={{ fontSize:'1.6rem',fontWeight:900,color:'#1A1A6E' }}>{FMT(selectedProperty.price)}</div>
-                  <span style={{ background:'#e0f2fe',color:'#0369a1',borderRadius:8,padding:'3px 10px',fontSize:'.82rem',fontWeight:700 }}>{selectedProperty.operation_type}</span>
-                </div>
-              </div>
-
-              {selectedProperty.featured_image_url && (
-                <img src={selectedProperty.featured_image_url} alt={selectedProperty.title}
-                  style={{ width:'100%',height:280,objectFit:'cover',borderRadius:12,marginBottom:'1.25rem' }}/>
-              )}
-
-              <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(120px,1fr))',gap:'.75rem',marginBottom:'1.25rem' }}>
-                {[
-                  { l:'Tipo',          v: selectedProperty.type },
-                  { l:'Construcción',  v: `${selectedProperty.size_construction_m2 || selectedProperty.size_m2 || '—'} m²` },
-                  { l:'Terreno',       v: `${selectedProperty.size_land_m2 || selectedProperty.size_m2 || '—'} m²` },
-                  { l:'Recámaras',     v: selectedProperty.bedrooms || '—' },
-                  { l:'Baños',         v: selectedProperty.bathrooms || '—' },
-                  { l:'Cajones',       v: selectedProperty.garages || '—' },
-                ].map(d => (
-                  <div key={d.l} style={{ background:'#f8fafc',borderRadius:10,padding:'.75rem',textAlign:'center' }}>
-                    <div style={{ fontSize:'.72rem',color:'#94a3b8',fontWeight:700,marginBottom:.2+'rem',textTransform:'uppercase' }}>{d.l}</div>
-                    <div style={{ fontWeight:800,color:'#1e293b',fontSize:'.95rem' }}>{d.v}</div>
-                  </div>
-                ))}
-              </div>
-
-              {selectedProperty.description && (
-                <p style={{ color:'#475569',lineHeight:1.65,fontSize:'.92rem',whiteSpace:'pre-wrap' }}>{selectedProperty.description}</p>
-              )}
-            </div>
-
-            <div style={{ display:'flex',gap:'.75rem',padding:'1.25rem 2rem',background:'#f8fafc',borderTop:'1px solid #e2e8f0',borderRadius:'0 0 16px 16px',position:'sticky',bottom:0 }}>
-              <button onClick={() => window.print()}
-                style={{ flex:1,padding:'.9rem',background:'#1e293b',color:'#fff',border:'none',borderRadius:10,fontWeight:700,cursor:'pointer' }}>
-                📄 Imprimir / PDF
-              </button>
-              <a href={`https://wa.me/529612466204?text=${encodeURIComponent(`Hola, vi la propiedad "${selectedProperty.title}" y quiero más información.`)}`}
-                target="_blank" rel="noreferrer"
-                style={{ flex:1,padding:'.9rem',background:'#25D366',color:'#fff',borderRadius:10,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',gap:'.4rem',textDecoration:'none' }}>
-                💬 WhatsApp
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
