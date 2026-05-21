@@ -1,46 +1,29 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
-  Search, Heart, MapPin, Maximize, SlidersHorizontal,
-  Compass, MessageCircle, User, Bell,
+  Search, Heart, MapPin, Bed, Bath, Maximize, ArrowRight,
+  Home as HomeIcon, Building2, Trees, Store, Warehouse, Beef,
+  TreePine, Briefcase, Sparkles,
 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
-const SHOW_STATS = false;
+// ─── Constantes ────────────────────────────────────────────────────────────────
+const SHOW_STATS = false; // mantenido por compatibilidad futura
 
-// Categorías del diseño premium → filtro real sobre campo "type"
+// Categorías: id = valor exacto del campo "type" en la BD
 const CATEGORIES = [
-  { id: 'todas',        label: 'Todas',      emoji: '✦',  filtro: null },
-  { id: 'casas',        label: 'Casas',      emoji: '🏡', filtro: 'casa' },
-  { id: 'terrenos',     label: 'Terrenos',   emoji: '🌳', filtro: 'terreno' },
-  { id: 'departamentos',label: 'Deptos',     emoji: '🏢', filtro: 'departamento' },
-  { id: 'comercial',    label: 'Comercial',  emoji: '🏪', filtro: 'local' },
-  { id: 'campestre',    label: 'Campestre',  emoji: '⛰️',  filtro: 'rancho' },
-  { id: 'quintas',      label: 'Quintas',    emoji: '🌿', filtro: 'quinta' },
-  { id: 'bodegas',      label: 'Bodegas',    emoji: '🏭', filtro: 'bodega' },
+  { id: 'todas',        label: 'Todas',        Icon: Sparkles   },
+  { id: 'casa',         label: 'Casas',        Icon: HomeIcon   },
+  { id: 'departamento', label: 'Departamentos',Icon: Building2  },
+  { id: 'terreno',      label: 'Terrenos',     Icon: Trees      },
+  { id: 'local',        label: 'Locales',      Icon: Store      },
+  { id: 'bodega',       label: 'Bodegas',      Icon: Warehouse  },
+  { id: 'rancho',       label: 'Ranchos',      Icon: Beef       },
+  { id: 'quinta',       label: 'Quintas',      Icon: TreePine   },
+  { id: 'oficina',      label: 'Oficinas',     Icon: Briefcase  },
 ];
 
-// Ciudades reales en la BD
-const CITIES_DB = [
-  'Berriozábal',
-  'Chiapa de Corzo',
-  'Ocozocoautla de Espinosa',
-  'San Cristóbal de las Casas',
-  'Tapachula',
-  'Tuxtla Gutiérrez',
-];
-
-// Filtros de precio
-const PRECIOS = [
-  { label: 'Hasta $500K',  max: 500000 },
-  { label: 'Hasta $1M',    max: 1000000 },
-  { label: 'Hasta $2M',    max: 2000000 },
-  { label: 'Hasta $5M',    max: 5000000 },
-  { label: 'Más de $5M',   max: 99999999 },
-];
-
-// Filtros de título que no deben mostrarse en el portal público
+// Títulos de prueba a excluir del portal público
 const EXCLUDE_TITLES = [
   '%Premium en %',
   'Residencia Casa Premier%',
@@ -52,299 +35,403 @@ const EXCLUDE_TITLES = [
 const peso = (n) =>
   n === 0 ? 'Consultar' : '$' + Number(n).toLocaleString('es-MX');
 
-// ─── Estilos ─────────────────────────────────────────────────────────────────
+// ─── Estilos (HomePEC exacto: azul índigo + esmeralda, sin barra inferior) ────
 const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-  @keyframes spin   { to { transform: rotate(360deg); } }
-  @keyframes rise   { to { opacity:1; transform:none; } }
+  @keyframes rise { to { opacity:1; transform:none; } }
+  @keyframes spin  { to { transform:rotate(360deg); } }
   @keyframes pulse-wa {
-    0%   { box-shadow: 0 0 0 0 rgba(37,211,102,.6); }
-    70%  { box-shadow: 0 0 0 16px rgba(37,211,102,0); }
-    100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+    0%   { box-shadow:0 0 0 0 rgba(37,211,102,.6); }
+    70%  { box-shadow:0 0 0 16px rgba(37,211,102,0); }
+    100% { box-shadow:0 0 0 0 rgba(37,211,102,0); }
   }
 
-  .pec-root {
-    --bg:#F7F4EE; --card:#FFFFFF; --ink:#1B1A17;
-    --muted:#6E6A60; --line:#E7E2D7;
-    --green:#15433A; --green-soft:#1F5A4C;
-    --amber:#C8862B; --amber-soft:#E0A94A;
-    font-family:'Manrope',sans-serif;
-    color:var(--ink);
-    background:var(--bg);
-    min-height:100%;
+  .pec {
+    --ink:#0B1B3A;
+    --indigo:#13287A;
+    --indigo-2:#1E3A9B;
+    --emerald:#0E9F6E;
+    --emerald-2:#10B981;
+    --amber:#E8A33D;
+    --bg:#F6F8FC;
+    --card:#FFFFFF;
+    --muted:#5C6B8A;
+    --line:#E4EAF4;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    color:var(--ink); background:var(--bg); min-height:100%;
     -webkit-font-smoothing:antialiased;
   }
-  .pec-root * { box-sizing:border-box; }
-  .serif { font-family:'Fraunces',serif; }
-
-  .pec-shell { max-width:1180px; margin:0 auto; padding:0 18px 120px; }
+  .pec * { box-sizing:border-box; margin:0; padding:0; }
+  .disp  { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; }
 
   /* ── Header ── */
-  .pec-top {
-    position:sticky; top:0; z-index:30;
-    background:rgba(247,244,238,0.82);
-    backdrop-filter:saturate(160%) blur(14px);
-    padding:16px 18px 10px;
+  .pec-hd {
+    position:sticky; top:0; z-index:50;
+    background:rgba(246,248,252,.85);
+    backdrop-filter:saturate(180%) blur(16px);
     border-bottom:1px solid var(--line);
   }
-  .pec-top-row {
-    max-width:1180px; margin:0 auto;
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  .pec-hd-in {
+    max-width:1200px; margin:0 auto; padding:14px 18px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
-  .pec-brand { display:flex; align-items:center; gap:10px; }
-  .pec-logo {
-    width:38px; height:38px; border-radius:12px;
-    background:linear-gradient(145deg,var(--green),var(--green-soft));
-    display:grid; place-items:center; color:#fff; font-weight:800;
-    box-shadow:0 6px 16px rgba(21,67,58,.25);
+  .pec-logo { display:flex; align-items:center; gap:10px; min-width:0; }
+  .pec-mark {
+    width:40px; height:40px; border-radius:12px; flex:none;
+    background:linear-gradient(145deg,var(--indigo),var(--indigo-2));
+    display:grid; place-items:center;
+    box-shadow:0 8px 20px rgba(19,40,122,.28);
+    position:relative; overflow:hidden;
   }
-  .pec-brand h1 { font-size:15px; font-weight:800; letter-spacing:-.2px; line-height:1.05; margin:0; }
-  .pec-brand span { font-size:11px; color:var(--muted); font-weight:600; }
-  .pec-iconbtn {
-    width:42px; height:42px; border-radius:50%; border:1px solid var(--line);
-    background:var(--card); display:grid; place-items:center; cursor:pointer;
-    transition:transform .15s ease, box-shadow .2s ease;
+  .pec-mark::after {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 70% 20%,rgba(16,185,129,.6),transparent 60%);
   }
-  .pec-iconbtn:hover { transform:translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.06); }
+  .pec-mark svg { position:relative; z-index:1; }
+  .pec-logo b   { font-size:15px; font-weight:800; letter-spacing:-.3px; line-height:1; white-space:nowrap; }
+  .pec-logo small {
+    display:block; font-size:10.5px; color:var(--emerald);
+    font-weight:700; letter-spacing:.6px; text-transform:uppercase; margin-top:2px;
+  }
+  .pec-login {
+    flex:none; border:1.5px solid var(--indigo); color:var(--indigo);
+    background:transparent; font-weight:700; font-size:13.5px;
+    padding:9px 18px; border-radius:999px; cursor:pointer; transition:.18s;
+    font-family:'Plus Jakarta Sans',sans-serif;
+  }
+  .pec-login:hover { background:var(--indigo); color:#fff; }
+
+  /* ── Hero ── */
+  .pec-hero {
+    position:relative; overflow:hidden;
+    background:linear-gradient(160deg,var(--ink) 0%,var(--indigo) 55%,var(--indigo-2) 100%);
+    color:#fff; padding:54px 18px 64px;
+  }
+  .pec-hero::before {
+    content:''; position:absolute; top:-30%; right:-10%;
+    width:520px; height:520px; border-radius:50%;
+    background:radial-gradient(circle,rgba(16,185,129,.35),transparent 65%);
+    filter:blur(10px);
+  }
+  .pec-hero::after {
+    content:''; position:absolute; inset:0; opacity:.06;
+    background-image:radial-gradient(circle at 1px 1px,#fff 1px,transparent 0);
+    background-size:26px 26px;
+  }
+  .pec-hero-in { max-width:920px; margin:0 auto; position:relative; z-index:2; text-align:center; }
+  .pec-pill {
+    display:inline-flex; align-items:center; gap:7px;
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.18);
+    padding:7px 15px; border-radius:999px;
+    font-size:12px; font-weight:700; letter-spacing:.4px; margin-bottom:22px;
+  }
+  .pec-pill i {
+    width:7px; height:7px; border-radius:50%;
+    background:var(--emerald-2); box-shadow:0 0 0 4px rgba(16,185,129,.25);
+  }
+  .pec-hero h1 { font-size:clamp(30px,6vw,52px); line-height:1.05; font-weight:700; letter-spacing:-1px; }
+  .pec-hero h1 span {
+    color:transparent;
+    background:linear-gradient(100deg,var(--emerald-2),#6EE7B7);
+    -webkit-background-clip:text; background-clip:text;
+  }
+  .pec-hero p { margin:16px auto 0; max-width:520px; font-size:15.5px; line-height:1.5; color:rgba(255,255,255,.78); }
 
   /* ── Search ── */
-  .pec-search-wrap {
-    max-width:1180px; margin:14px auto 0;
-    background:var(--card); border:1px solid var(--line); border-radius:999px;
-    padding:6px 6px 6px 20px;
-    box-shadow:0 10px 30px rgba(27,26,23,.07);
-    display:flex; align-items:center; gap:10px;
-    transition:box-shadow .2s ease;
+  .pec-search {
+    max-width:760px; margin:30px auto 0; background:#fff; border-radius:20px;
+    padding:8px; display:flex; align-items:center; gap:6px;
+    box-shadow:0 24px 60px rgba(7,15,40,.35); position:relative; z-index:2;
   }
-  .pec-search-wrap:hover { box-shadow:0 14px 34px rgba(27,26,23,.11); }
-  .pec-search-input {
-    flex:1; border:none; outline:none; background:transparent;
-    font-family:'Manrope',sans-serif; font-size:14px; font-weight:600; color:var(--ink);
+  .pec-search .field { flex:1; display:flex; align-items:center; gap:11px; padding:12px 16px; min-width:0; }
+  .pec-search input {
+    border:none; outline:none; font-family:inherit; font-size:15px; font-weight:600;
+    color:var(--ink); width:100%; background:transparent;
   }
-  .pec-search-input::placeholder { color:var(--muted); }
-  .pec-search-sel {
-    border:none; outline:none; background:transparent;
-    font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--muted);
-    cursor:pointer; padding:0 8px; border-left:1px solid var(--line); height:32px;
+  .pec-search input::placeholder { color:#9AA7BF; font-weight:500; }
+  .pec-search .btn {
+    flex:none; background:linear-gradient(145deg,var(--emerald),var(--emerald-2));
+    color:#fff; border:none; font-family:inherit; font-weight:800; font-size:14.5px;
+    padding:14px 26px; border-radius:14px; cursor:pointer;
+    display:flex; align-items:center; gap:8px;
+    box-shadow:0 8px 20px rgba(14,159,110,.4); transition:.18s;
   }
-  .pec-search-go {
-    width:42px; height:42px; border-radius:50%; flex:none; border:none; cursor:pointer;
-    background:linear-gradient(145deg,var(--amber),var(--amber-soft));
-    display:grid; place-items:center; color:#fff;
-    box-shadow:0 6px 16px rgba(200,134,43,.35);
-    transition:transform .15s ease;
-  }
-  .pec-search-go:hover { transform:scale(1.07); }
+  .pec-search .btn:hover { transform:translateY(-1px); box-shadow:0 12px 26px rgba(14,159,110,.5); }
+  .pec-search .btn span { display:none; }
+  @media(min-width:560px) { .pec-search .btn span { display:inline; } }
 
   /* ── Categories ── */
-  .pec-cats {
-    display:flex; gap:10px; overflow-x:auto; padding:18px 2px 8px;
-    scrollbar-width:none; -webkit-overflow-scrolling:touch;
-  }
+  .pec-wrap { max-width:1200px; margin:0 auto; padding:0 18px 90px; }
+  .pec-cats { display:flex; gap:9px; overflow-x:auto; padding:22px 0 6px; scrollbar-width:none; }
   .pec-cats::-webkit-scrollbar { display:none; }
   .pec-cat {
-    flex:none; display:flex; align-items:center; gap:8px;
-    padding:9px 16px; border-radius:999px; border:1px solid var(--line);
-    background:var(--card); font-size:13px; font-weight:700; color:var(--muted);
-    cursor:pointer; transition:all .18s ease; white-space:nowrap;
+    flex:none; display:flex; align-items:center; gap:8px; padding:10px 16px;
+    border-radius:14px; border:1.5px solid var(--line); background:#fff;
+    font-size:13px; font-weight:700; color:var(--muted);
+    cursor:pointer; transition:.16s; white-space:nowrap;
+    font-family:'Plus Jakarta Sans',sans-serif;
   }
-  .pec-cat:hover { border-color:#cfc8b8; color:var(--ink); }
-  .pec-cat.on {
-    background:var(--green); border-color:var(--green); color:#fff;
-    box-shadow:0 8px 20px rgba(21,67,58,.22);
+  .pec-cat:hover { border-color:#B9C6E0; color:var(--ink); transform:translateY(-1px); }
+  .pec-cat.on { background:var(--indigo); border-color:var(--indigo); color:#fff; box-shadow:0 8px 18px rgba(19,40,122,.25); }
+
+  /* ── Section heads ── */
+  .pec-shead { display:flex; align-items:end; justify-content:space-between; gap:12px; margin:34px 0 18px; }
+  .pec-shead h2 { font-size:clamp(20px,4vw,27px); font-weight:700; letter-spacing:-.5px; line-height:1.1; }
+  .pec-shead p  { font-size:13px; color:var(--muted); margin-top:4px; }
+
+  /* ── Grid + Cards ── */
+  .pec-grid { display:grid; grid-template-columns:1fr; gap:24px; }
+  @media(min-width:560px) { .pec-grid { grid-template-columns:1fr 1fr; } }
+  @media(min-width:920px) { .pec-grid { grid-template-columns:1fr 1fr 1fr; } }
+
+  .card {
+    cursor:pointer; opacity:0; transform:translateY(16px);
+    animation:rise .5s cubic-bezier(.2,.7,.2,1) forwards;
   }
-
-  .pec-h2 { font-size:22px; font-weight:600; letter-spacing:-.4px; margin:20px 0 2px; }
-  .pec-sub { font-size:13px; color:var(--muted); margin:0 0 16px; }
-
-  /* ── Grid ── */
-  .pec-grid { display:grid; grid-template-columns:1fr; gap:26px; }
-  @media(min-width:640px)  { .pec-grid { grid-template-columns:1fr 1fr; gap:24px; } }
-  @media(min-width:980px)  { .pec-grid { grid-template-columns:1fr 1fr 1fr; } }
-
-  .pec-card {
-    cursor:pointer; opacity:0; transform:translateY(14px);
-    animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards;
+  @keyframes rise { to { opacity:1; transform:none; } }
+  .card-media {
+    position:relative; border-radius:18px; overflow:hidden; aspect-ratio:4/3.1;
+    background:#dde5f2; box-shadow:0 12px 28px rgba(11,27,58,.10);
   }
-
-  .pec-media {
-    position:relative; border-radius:20px; overflow:hidden; aspect-ratio:4/3.2;
-    background:#e9e4d8; box-shadow:0 14px 30px rgba(27,26,23,.10);
+  .card-media img {
+    width:100%; height:100%; object-fit:cover;
+    transition:transform .7s cubic-bezier(.2,.7,.2,1);
   }
-  .pec-media img {
-    width:100%; height:100%; object-fit:cover; display:block;
-    transition:transform .6s cubic-bezier(.2,.7,.2,1);
+  .card:hover .card-media img { transform:scale(1.07); }
+  .card-ph {
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:8px;
+    background:linear-gradient(145deg,#1E3A9B,#13287A); color:rgba(255,255,255,.7);
   }
-  .pec-card:hover .pec-media img { transform:scale(1.06); }
-
-  /* Placeholder sin foto */
-  .pec-placeholder {
-    width:100%; height:100%; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:10px;
-    background:linear-gradient(145deg,#1F5A4C,#15433A);
-    color:rgba(255,255,255,.7); font-size:13px; font-weight:700;
-    letter-spacing:.5px;
-  }
-  .pec-placeholder span { font-size:2.5rem; }
-
-  .pec-fav {
-    position:absolute; top:12px; right:12px; width:36px; height:36px;
-    border-radius:50%; border:none; background:rgba(255,255,255,.82);
+  .card-ph span { font-size:12px; font-weight:700; letter-spacing:.4px; }
+  .card-fav {
+    position:absolute; top:11px; right:11px; width:36px; height:36px;
+    border-radius:50%; border:none; background:rgba(255,255,255,.85);
     backdrop-filter:blur(6px); display:grid; place-items:center;
-    cursor:pointer; transition:transform .15s ease;
+    cursor:pointer; transition:.15s;
   }
-  .pec-fav:active { transform:scale(.88); }
+  .card-fav:active { transform:scale(.86); }
+  .card-tags {
+    position:absolute; top:11px; left:11px;
+    display:flex; gap:6px; flex-wrap:wrap; max-width:75%;
+  }
+  .tag {
+    padding:6px 11px; border-radius:999px; font-size:10.5px;
+    font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+    backdrop-filter:blur(6px);
+  }
+  .tag-feat { background:rgba(232,163,61,.95); color:#3A2400; }
+  .tag-land { background:rgba(14,159,110,.95); color:#fff; }
+  .card-body  { padding:13px 4px 0; }
+  .card-zone  { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; }
+  .card-title { font-size:16px; font-weight:700; letter-spacing:-.3px; margin-top:3px; }
+  .card-specs {
+    display:flex; gap:13px; margin-top:9px;
+    font-size:12.5px; color:var(--muted); font-weight:600; flex-wrap:wrap;
+  }
+  .card-specs span { display:flex; align-items:center; gap:5px; }
+  .card-foot {
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:8px; margin-top:12px; padding-top:12px; border-top:1px solid var(--line);
+  }
+  .card-price b     { font-size:19px; font-weight:800; letter-spacing:-.4px; }
+  .card-price small { font-size:12px; color:var(--muted); font-weight:600; margin-left:4px; }
+  .card-go {
+    flex:none; width:34px; height:34px; border-radius:10px;
+    background:var(--bg); display:grid; place-items:center;
+    color:var(--indigo); transition:.16s;
+  }
+  .card:hover .card-go { background:var(--indigo); color:#fff; }
 
-  .pec-badge {
-    position:absolute; top:12px; left:12px; padding:6px 12px; border-radius:999px;
-    background:rgba(27,26,23,.78); backdrop-filter:blur(6px); color:#fff;
-    font-size:11px; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
-  }
-  .pec-badge-dev {
-    position:absolute; top:12px; left:12px; padding:6px 12px; border-radius:999px;
-    background:rgba(21,67,58,.88); backdrop-filter:blur(6px); color:#a7f3d0;
-    font-size:11px; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
-  }
-
-  .pec-info { padding:12px 4px 0; }
-  .pec-info .r1 { display:flex; justify-content:space-between; align-items:start; gap:10px; }
-  .pec-zone { display:flex; align-items:center; gap:5px; font-size:13px; color:var(--muted); font-weight:600; }
-  .pec-title { font-size:15.5px; font-weight:700; letter-spacing:-.2px; margin:3px 0 0; line-height:1.25; }
-  .pec-type  { display:inline-block; margin-top:5px; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:var(--amber); }
-  .pec-specs { display:flex; gap:14px; margin-top:9px; font-size:12.5px; color:var(--muted); font-weight:600; }
-  .pec-specs span { display:flex; align-items:center; gap:5px; }
-  .pec-price { margin-top:11px; font-size:18px; font-weight:800; letter-spacing:-.3px; }
-  .pec-price small { font-size:12.5px; font-weight:600; color:var(--muted); }
-
-  /* ── Banner promo ── */
-  .pec-banner {
-    margin:40px 0 20px;
-    background:linear-gradient(135deg,var(--green) 0%,var(--green-soft) 100%);
-    border-radius:24px; padding:40px 32px;
-    display:flex; align-items:center; justify-content:space-between; gap:24px;
-    flex-wrap:wrap;
-    box-shadow:0 20px 40px rgba(21,67,58,.25);
-  }
-  .pec-banner-text h2 {
-    font-size:clamp(1.3rem,3vw,1.9rem); font-weight:700;
-    color:#fff; margin:0 0 .5rem; letter-spacing:-.4px; line-height:1.2;
-  }
-  .pec-banner-text p { color:rgba(255,255,255,.7); font-size:14px; margin:0; line-height:1.6; }
-  .pec-banner-btn {
-    background:var(--amber); color:#fff; border:none; border-radius:999px;
-    padding:14px 28px; font-family:'Manrope',sans-serif; font-size:14px;
-    font-weight:800; cursor:pointer; text-decoration:none; display:inline-block;
-    box-shadow:0 8px 20px rgba(200,134,43,.4); white-space:nowrap;
-    transition:transform .15s ease, box-shadow .2s ease;
-    flex:none;
-  }
-  .pec-banner-btn:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(200,134,43,.5); }
-
-  /* ── Footer ── */
-  .pec-footer {
-    background:#fff; border-top:1px solid var(--line); padding:24px 18px;
-  }
-  .pec-footer-inner {
-    max-width:1180px; margin:0 auto;
-    display:flex; justify-content:space-between; align-items:center;
-    flex-wrap:wrap; gap:12px;
-    font-size:13px; color:var(--muted); font-weight:600;
-  }
-  .pec-footer a { color:var(--muted); text-decoration:none; }
-  .pec-footer a:hover { color:var(--green); }
-
-  /* ── Bottom nav (mobile) ── */
-  .pec-nav {
-    position:fixed; bottom:0; left:0; right:0; z-index:40;
-    background:rgba(255,255,255,.9); backdrop-filter:blur(16px);
-    border-top:1px solid var(--line); display:flex; justify-content:space-around;
-    padding:9px 8px calc(9px + env(safe-area-inset-bottom));
-  }
-  .pec-navi {
-    display:flex; flex-direction:column; align-items:center; gap:3px;
-    font-size:10.5px; font-weight:700; color:var(--muted);
-    background:none; border:none; cursor:pointer;
-    padding:4px 14px; border-radius:12px; transition:color .15s ease;
-  }
-  .pec-navi.on { color:var(--green); }
-  @media(min-width:980px) { .pec-nav { display:none; } }
-
-  /* ── Loading spinner ── */
+  /* ── Spinner / estados ── */
   .pec-spinner {
     width:36px; height:36px; border-radius:50%;
-    border:3px solid var(--line); border-top-color:var(--green);
+    border:3px solid var(--line); border-top-color:var(--emerald);
     animation:spin .8s linear infinite;
   }
 
-  /* ── Clear btn ── */
-  .pec-clear-btn {
-    background:#fee2e2; color:#dc2626; border:1px solid #fca5a5;
-    border-radius:999px; padding:.35rem 1rem; font-size:.8rem; font-weight:700;
-    cursor:pointer; transition:opacity .15s;
+  /* ── Promo banner ── */
+  .promo {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:22px; flex-wrap:wrap; margin-top:48px; padding:34px 32px;
+    border-radius:24px; text-decoration:none; color:#fff;
+    position:relative; overflow:hidden; cursor:pointer;
+    background:linear-gradient(125deg,var(--ink) 0%,var(--indigo) 60%,var(--emerald) 160%);
+    box-shadow:0 24px 50px rgba(11,27,58,.30);
+    transition:transform .25s ease, box-shadow .25s ease;
   }
-  .pec-clear-btn:hover { opacity:.8; }
+  .promo:hover { transform:translateY(-3px); box-shadow:0 32px 64px rgba(11,27,58,.40); }
+  .promo-glow {
+    position:absolute; top:-60%; right:-5%; width:420px; height:420px;
+    border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle,rgba(16,185,129,.5),transparent 65%);
+  }
+  .promo::after {
+    content:''; position:absolute; inset:0; opacity:.06; pointer-events:none;
+    background-image:radial-gradient(circle at 1px 1px,#fff 1px,transparent 0);
+    background-size:24px 24px;
+  }
+  .promo-content { position:relative; z-index:2; min-width:0; }
+  .promo-badge {
+    display:inline-flex; align-items:center; gap:7px;
+    background:rgba(16,185,129,.22); border:1px solid rgba(16,185,129,.4);
+    color:#A7F3D0; padding:6px 13px; border-radius:999px;
+    font-size:11.5px; font-weight:800; letter-spacing:.4px;
+    text-transform:uppercase; margin-bottom:14px;
+  }
+  .promo-content h3 { font-size:clamp(21px,3.6vw,30px); line-height:1.12; font-weight:700; letter-spacing:-.5px; }
+  .promo-content h3 span {
+    color:transparent;
+    background:linear-gradient(100deg,var(--emerald-2),#6EE7B7);
+    -webkit-background-clip:text; background-clip:text;
+  }
+  .promo-content p { margin-top:11px; font-size:14.5px; color:rgba(255,255,255,.8); }
+  .promo-content p b { color:#fff; font-weight:800; }
+  .promo-cta {
+    position:relative; z-index:2; flex:none;
+    display:flex; align-items:center; gap:9px;
+    background:#fff; color:var(--indigo); font-weight:800; font-size:15px;
+    padding:15px 26px; border-radius:14px; white-space:nowrap;
+    transition:gap .2s ease;
+  }
+  .promo:hover .promo-cta { gap:14px; }
+  @media(max-width:560px) {
+    .promo { padding:28px 22px; }
+    .promo-cta { width:100%; justify-content:center; }
+  }
+
+  /* ── Footer ── */
+  .pec-ft { background:var(--ink); color:rgba(255,255,255,.6); padding:40px 18px; }
+  .pec-ft-in {
+    max-width:1200px; margin:0 auto;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; gap:16px;
+  }
+  .pec-ft-brand { display:flex; flex-direction:column; align-items:center; }
+  .pec-ft b     { color:#fff; font-size:14px; font-weight:800; }
+  .pec-ft .login-ft {
+    color:rgba(255,255,255,.8); font-weight:700; text-decoration:none; font-size:14px;
+    border:1.5px solid rgba(255,255,255,.2); padding:10px 26px;
+    border-radius:999px; transition:.18s;
+  }
+  .pec-ft .login-ft:hover { color:#fff; border-color:#fff; background:rgba(255,255,255,.08); }
 
   /* ── WhatsApp flotante ── */
   .wa-btn {
-    position:fixed; bottom:5rem; right:1.5rem; z-index:9000;
+    position:fixed; bottom:1.75rem; right:1.5rem; z-index:9000;
     width:54px; height:54px; border-radius:50%;
     background:#25D366; display:flex; align-items:center; justify-content:center;
     box-shadow:0 4px 16px rgba(37,211,102,.5);
     animation:pulse-wa 2.5s ease infinite; text-decoration:none;
   }
-  @media(min-width:980px) { .wa-btn { bottom:1.75rem; right:1.75rem; } }
 `;
+
+// ─── Componente Card (separado igual que HomePEC) ─────────────────────────────
+function Card({ p, i, fav, onFav, loaded }) {
+  const tieneImagen = !!p.featured_image_url;
+  const esDev      = !!p.landing_slug;
+
+  return (
+    <article
+      className="card"
+      style={{ animationDelay: loaded ? `${i * 60}ms` : '0ms' }}
+      onClick={() => window.location.href = `/propiedad/${p.id}`}
+    >
+      <div className="card-media">
+        {tieneImagen ? (
+          <img
+            src={p.featured_image_url}
+            alt={p.title}
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className="card-ph">
+            <HomeIcon size={40} strokeWidth={1.6} />
+            <span>Sin foto aún</span>
+          </div>
+        )}
+
+        <div className="card-tags">
+          {esDev && <span className="tag tag-land">Ver desarrollo</span>}
+        </div>
+
+        <button
+          className="card-fav"
+          onClick={(e) => { e.stopPropagation(); onFav(p.id); }}
+          aria-label="Guardar en favoritos"
+        >
+          <Heart
+            size={17}
+            fill={fav ? '#E8A33D' : 'none'}
+            color={fav ? '#E8A33D' : '#0B1B3A'}
+            strokeWidth={2.3}
+          />
+        </button>
+      </div>
+
+      <div className="card-body">
+        <div className="card-zone"><MapPin size={13} /> {p.city || 'Chiapas'}</div>
+        <h3 className="card-title">{p.title}</h3>
+        <div className="card-specs">
+          {p.bedrooms  > 0 && <span><Bed size={14} /> {p.bedrooms} rec</span>}
+          {p.bathrooms > 0 && <span><Bath size={14} /> {p.bathrooms} baños</span>}
+          {p.size_m2        && <span><Maximize size={14} /> {p.size_m2} m²</span>}
+        </div>
+        <div className="card-foot">
+          <div className="card-price">
+            <b>{peso(p.price || 0)}</b>
+            {p.price > 0 && <small>{p.price_suffix || 'MXN'}</small>}
+          </div>
+          <div className="card-go"><ArrowRight size={17} strokeWidth={2.5} /></div>
+        </div>
+      </div>
+    </article>
+  );
+}
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function Home({ session }) {
-  // Filtros
-  const [query,         setQuery]         = useState('');
-  const [municipio,     setMunicipio]     = useState('');
-  const [precioMax,     setPrecioMax]     = useState('');
-  const [catActiva,     setCatActiva]     = useState('todas');
+  const [active,      setActive]      = useState('todas');
+  const [q,           setQ]           = useState('');
+  const [favs,        setFavs]        = useState({});
+  const [loaded,      setLoaded]      = useState(false);
 
-  // Datos
-  const [propiedades,   setPropiedades]   = useState([]);
-  const [resultados,    setResultados]    = useState(null); // null = vista inicial
-  const [loading,       setLoading]       = useState(true);
-  const [buscando,      setBuscando]      = useState(false);
-
-  // UI
-  const [favs,          setFavs]          = useState({});
-  const [loaded,        setLoaded]        = useState(false);
+  // Datos Supabase
+  const [propiedades, setPropiedades] = useState([]);
+  const [resultados,  setResultados]  = useState(null); // null = vista inicial sin búsqueda activa
+  const [loading,     setLoading]     = useState(true);
+  const [buscando,    setBuscando]    = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 60);
+    const t = setTimeout(() => setLoaded(true), 50);
     return () => clearTimeout(t);
   }, []);
 
-  const toggleFav = (id, e) => {
-    e.stopPropagation();
-    setFavs(f => ({ ...f, [id]: !f[id] }));
+  const toggleFav = (id) => setFavs(f => ({ ...f, [id]: !f[id] }));
+
+  // ── Excluir propiedades de prueba ──────────────────────────────────────────
+  const applyExclusions = (query) => {
+    EXCLUDE_TITLES.forEach(t => { query = query.not('title', 'ilike', t); });
+    return query;
   };
 
-  // ── Excluir títulos de prueba ────────────────────────────────────────────────
-  const applyExclusions = (q) => {
-    EXCLUDE_TITLES.forEach(t => {
-      q = q.not('title', 'ilike', t);
-    });
-    return q;
-  };
-
-  // ── Carga inicial: 9 propiedades destacadas ──────────────────────────────────
+  // ── Carga inicial: 9 propiedades (active=true) ────────────────────────────
   useEffect(() => {
     const fetchPropiedades = async () => {
       setLoading(true);
       try {
-        let q = supabase
+        let query = supabase
           .from('properties')
           .select('*')
           .eq('active', true)
           .order('created_at', { ascending: false })
           .limit(9);
-        q = applyExclusions(q);
-        const { data, error } = await q;
+        query = applyExclusions(query);
+        const { data, error } = await query;
         if (error) throw error;
         setPropiedades(data || []);
       } catch {
@@ -356,29 +443,24 @@ export default function Home({ session }) {
     fetchPropiedades();
   }, []);
 
-  // ── Buscar con filtros ───────────────────────────────────────────────────────
+  // ── Buscar con filtros ────────────────────────────────────────────────────
   const buscar = useCallback(async (overrideType) => {
     setBuscando(true);
     try {
-      let q = supabase.from('properties').select('*').eq('active', true);
-      q = applyExclusions(q);
+      let query = supabase.from('properties').select('*').eq('active', true);
+      query = applyExclusions(query);
 
-      if (query.trim()) {
-        q = q.or(`title.ilike.%${query}%,city.ilike.%${query}%,address.ilike.%${query}%`);
+      if (q.trim()) {
+        query = query.or(`title.ilike.%${q}%,city.ilike.%${q}%,address.ilike.%${q}%`);
       }
 
-      // Tipo por categoría activa o override
-      const tipo = overrideType !== undefined ? overrideType : (() => {
-        const cat = CATEGORIES.find(c => c.id === catActiva);
-        return cat?.filtro || null;
-      })();
-      if (tipo) q = q.ilike('type', `%${tipo}%`);
+      const tipo = overrideType !== undefined
+        ? overrideType
+        : (active !== 'todas' ? active : null);
+      if (tipo) query = query.ilike('type', `%${tipo}%`);
 
-      if (municipio) q = q.eq('city', municipio);
-      if (precioMax) q = q.lte('price', parseFloat(precioMax));
-
-      q = q.order('created_at', { ascending: false }).limit(24);
-      const { data, error } = await q;
+      query = query.order('created_at', { ascending: false }).limit(24);
+      const { data, error } = await query;
       if (error) throw error;
       setResultados(data || []);
     } catch {
@@ -386,94 +468,32 @@ export default function Home({ session }) {
     } finally {
       setBuscando(false);
     }
-  }, [query, catActiva, municipio, precioMax]);
+  }, [q, active]);
 
-  // ── Seleccionar categoría ────────────────────────────────────────────────────
+  // ── Seleccionar categoría ─────────────────────────────────────────────────
   const seleccionarCat = (catId) => {
-    const nuevo = catActiva === catId ? 'todas' : catId;
-    setCatActiva(nuevo);
-    const cat = CATEGORIES.find(c => c.id === nuevo);
-    setTimeout(() => buscar(cat?.filtro || null), 0);
+    const nuevo = active === catId ? 'todas' : catId;
+    setActive(nuevo);
+    const tipo = nuevo !== 'todas' ? nuevo : null;
+    setTimeout(() => buscar(tipo), 0);
   };
 
-  // ── Limpiar ──────────────────────────────────────────────────────────────────
+  // ── Limpiar filtros ───────────────────────────────────────────────────────
   const limpiar = () => {
-    setQuery(''); setMunicipio(''); setPrecioMax('');
-    setCatActiva('todas'); setResultados(null);
+    setQ(''); setActive('todas'); setResultados(null);
   };
 
   const propsMostradas = resultados ?? propiedades;
-  const hayFiltros = query || municipio || precioMax || catActiva !== 'todas';
+  const hayFiltros     = q || active !== 'todas';
 
-  // ── Render card ──────────────────────────────────────────────────────────────
-  const renderCard = (p, i) => {
-    const tieneImagen = !!p.featured_image_url;
-    const esDev = !!p.landing_slug;
-
-    return (
-      <article
-        key={p.id}
-        className="pec-card"
-        style={{ animationDelay: loaded ? `${i * 70}ms` : '0ms' }}
-        onClick={() => window.location.href = `/propiedad/${p.id}`}
-      >
-        <div className="pec-media">
-          {tieneImagen ? (
-            <img src={p.featured_image_url} alt={p.title} loading="lazy" />
-          ) : (
-            <div className="pec-placeholder">
-              <span>🏠</span>
-              Sin foto aún
-            </div>
-          )}
-
-          {/* Badge: desarrollo (verde) o tipo destacado (oscuro) */}
-          {esDev ? (
-            <div className="pec-badge-dev">Ver desarrollo</div>
-          ) : null}
-
-          <button
-            className="pec-fav"
-            onClick={(e) => toggleFav(p.id, e)}
-            aria-label="Guardar en favoritos"
-          >
-            <Heart
-              size={18}
-              fill={favs[p.id] ? '#C8862B' : 'none'}
-              color={favs[p.id] ? '#C8862B' : '#1B1A17'}
-              strokeWidth={2.2}
-            />
-          </button>
-        </div>
-
-        <div className="pec-info">
-          <div className="r1">
-            <div>
-              <div className="pec-zone">
-                <MapPin size={13} />
-                {p.city || 'Chiapas'}
-              </div>
-              <h3 className="pec-title">{p.title}</h3>
-              {p.type && <span className="pec-type">{p.type}</span>}
-            </div>
-          </div>
-
-          <div className="pec-specs">
-            {p.size_m2 && (
-              <span><Maximize size={14} /> {p.size_m2} m²</span>
-            )}
-          </div>
-
-          <div className="pec-price">
-            {peso(p.price || 0)}{' '}
-            {p.price > 0 && (
-              <small>{p.price_suffix || 'MXN'}</small>
-            )}
-          </div>
-        </div>
-      </article>
-    );
-  };
+  // Sección "destacadas" — propiedades que aparecen primero (las primeras 3)
+  // cuando no hay búsqueda activa y está en "todas"
+  const destacadas = (!hayFiltros && resultados === null)
+    ? propsMostradas.slice(0, 3)
+    : [];
+  const restantes  = (!hayFiltros && resultados === null)
+    ? propsMostradas.slice(3)
+    : propsMostradas;
 
   return (
     <>
@@ -492,107 +512,79 @@ export default function Home({ session }) {
         <meta name="twitter:title" content="Propiedades en Chiapas" />
         <meta name="twitter:description" content="Portal inmobiliario #1. Casas, terrenos, departamentos en todo Chiapas." />
         <meta name="twitter:image" content="https://propiedadesenchiapas.com/og-portal.jpg" />
-        <meta name="theme-color" content="#15433A" />
+        <meta name="theme-color" content="#13287A" />
       </Helmet>
 
-      <div className="pec-root">
+      <div className="pec">
 
         {/* ── Header ── */}
-        <header className="pec-top">
-          <div className="pec-top-row">
-            <div className="pec-brand">
-              <div className="pec-logo serif">P</div>
+        <header className="pec-hd">
+          <div className="pec-hd-in">
+            <div className="pec-logo">
+              <div className="pec-mark">
+                <HomeIcon size={20} color="#fff" strokeWidth={2.4} />
+              </div>
               <div>
-                <h1>Propiedades en Chiapas</h1>
-                <span>Encuentra tu lugar</span>
+                <b>Propiedades en Chiapas</b>
+                <small>Portal inmobiliario</small>
               </div>
             </div>
-            <div style={{ display:'flex', gap:10 }}>
-              <button className="pec-iconbtn" aria-label="Notificaciones"><Bell size={18} /></button>
-              <button
-                className="pec-iconbtn"
-                aria-label="Iniciar sesión"
-                onClick={() => window.location.href = '/crm'}
-              >
-                <User size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* ── Buscador ── */}
-          <div className="pec-search-wrap">
-            <Search size={18} strokeWidth={2.4} color="var(--muted)" />
-            <input
-              className="pec-search-input"
-              placeholder="¿Dónde quieres vivir? Colonia, municipio..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && buscar()}
-            />
-            <select
-              className="pec-search-sel"
-              value={municipio}
-              onChange={e => setMunicipio(e.target.value)}
-              aria-label="Filtrar por ciudad"
+            <button
+              className="pec-login"
+              onClick={() => window.location.href = '/crm'}
             >
-              <option value="">📍 Ciudad</option>
-              {CITIES_DB.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
-            <select
-              className="pec-search-sel"
-              value={precioMax}
-              onChange={e => setPrecioMax(e.target.value)}
-              aria-label="Filtrar por precio"
-            >
-              <option value="">💰 Precio</option>
-              {PRECIOS.map(p => <option key={p.max} value={p.max}>{p.label}</option>)}
-            </select>
-            <button className="pec-search-go" onClick={() => buscar()} aria-label="Buscar">
-              <SlidersHorizontal size={18} />
+              Iniciar sesión
             </button>
           </div>
         </header>
 
-        <div className="pec-shell">
+        {/* ── Hero + Buscador ── */}
+        <section className="pec-hero">
+          <div className="pec-hero-in">
+            <div className="pec-pill"><i />PORTAL #1 DE PROPIEDADES EN CHIAPAS</div>
+            <h1 className="disp">
+              Encuentra tu propiedad ideal<br />
+              <span>en cualquier rincón de Chiapas</span>
+            </h1>
+            <p>Casas, terrenos, locales y desarrollos. Las mejores propiedades, con los asesores de confianza de tu región.</p>
+          </div>
 
-          {/* ── Categorías ── */}
+          <div className="pec-search">
+            <div className="field">
+              <Search size={20} color="#13287A" strokeWidth={2.4} />
+              <input
+                placeholder="Colonia, municipio o tipo de propiedad…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && buscar()}
+              />
+            </div>
+            <button className="btn" onClick={() => buscar()}>
+              <Search size={17} strokeWidth={2.8} />
+              <span>Buscar</span>
+            </button>
+          </div>
+        </section>
+
+        {/* ── Contenido principal ── */}
+        <div className="pec-wrap">
+
+          {/* Categorías */}
           <div className="pec-cats" role="list">
-            {CATEGORIES.map(c => (
+            {CATEGORIES.map(({ id, label, Icon }) => (
               <button
-                key={c.id}
-                className={'pec-cat' + (catActiva === c.id ? ' on' : '')}
-                onClick={() => seleccionarCat(c.id)}
+                key={id}
+                className={'pec-cat' + (active === id ? ' on' : '')}
+                onClick={() => seleccionarCat(id)}
                 role="listitem"
               >
-                <span>{c.emoji}</span>
-                {c.label}
+                <Icon size={16} strokeWidth={2.3} /> {label}
               </button>
             ))}
           </div>
 
-          {/* ── Cabecera de sección ── */}
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:10 }}>
-            <div>
-              <h2 className="pec-h2 serif">
-                {resultados !== null
-                  ? `${resultados.length} resultado${resultados.length !== 1 ? 's' : ''} encontrado${resultados.length !== 1 ? 's' : ''}`
-                  : 'Propiedades destacadas'}
-              </h2>
-              <p className="pec-sub">
-                {resultados !== null
-                  ? (municipio ? `en ${municipio}` : 'en todo Chiapas')
-                  : `${propsMostradas.length} lugares en Chiapas`}
-              </p>
-            </div>
-            {hayFiltros && (
-              <button className="pec-clear-btn" onClick={limpiar}>
-                ✕ Limpiar filtros
-              </button>
-            )}
-          </div>
-
-          {/* ── Grid propiedades ── */}
-          {loading && resultados === null ? (
+          {/* Estados de carga */}
+          {(loading && resultados === null) ? (
             <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'5rem', gap:'1rem', color:'var(--muted)' }}>
               <div className="pec-spinner" />
               <p style={{ fontWeight:600, fontSize:14 }}>Cargando propiedades...</p>
@@ -607,56 +599,107 @@ export default function Home({ session }) {
               <div style={{ fontSize:'2.5rem', marginBottom:'.75rem' }}>🔍</div>
               <h3 style={{ fontWeight:700, marginBottom:'.5rem', color:'var(--ink)' }}>No encontramos propiedades</h3>
               <p style={{ fontSize:14 }}>Intenta con otros filtros o amplía la búsqueda.</p>
-              <button onClick={limpiar}
-                style={{ marginTop:'1rem', background:'var(--green)', color:'#fff', border:'none',
-                  borderRadius:10, padding:'.75rem 1.75rem', fontWeight:700, cursor:'pointer',
-                  fontFamily:'Manrope,sans-serif' }}>
+              <button
+                onClick={limpiar}
+                style={{
+                  marginTop:'1rem', background:'var(--indigo)', color:'#fff',
+                  border:'none', borderRadius:10, padding:'.75rem 1.75rem',
+                  fontWeight:700, cursor:'pointer', fontFamily:'inherit',
+                }}
+              >
                 Ver todas las propiedades
               </button>
             </div>
           ) : (
-            <div className="pec-grid">
-              {propsMostradas.map((p, i) => renderCard(p, i))}
-            </div>
+            <>
+              {/* Destacadas — solo vista inicial sin filtros */}
+              {destacadas.length > 0 && (
+                <>
+                  <div className="pec-shead">
+                    <div>
+                      <h2 className="disp">Destacadas</h2>
+                      <p>Las propiedades del momento</p>
+                    </div>
+                    {hayFiltros && (
+                      <button
+                        style={{ background:'none', border:'none', color:'var(--indigo)', fontWeight:700, fontSize:13, cursor:'pointer' }}
+                        onClick={limpiar}
+                      >
+                        ✕ Limpiar
+                      </button>
+                    )}
+                  </div>
+                  <div className="pec-grid">
+                    {destacadas.map((p, i) => (
+                      <Card key={p.id} p={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Todas / filtradas */}
+              <div className="pec-shead">
+                <div>
+                  <h2 className="disp">
+                    {resultados !== null
+                      ? `${resultados.length} resultado${resultados.length !== 1 ? 's' : ''}`
+                      : active !== 'todas'
+                        ? CATEGORIES.find(c => c.id === active)?.label
+                        : 'Todas las propiedades'}
+                  </h2>
+                  <p>
+                    {resultados !== null
+                      ? `encontrado${resultados.length !== 1 ? 's' : ''} en Chiapas`
+                      : `${propsMostradas.length} propiedad${propsMostradas.length !== 1 ? 'es' : ''} disponible${propsMostradas.length !== 1 ? 's' : ''}`}
+                  </p>
+                </div>
+                {hayFiltros && resultados !== null && (
+                  <button
+                    style={{ background:'none', border:'none', color:'var(--indigo)', fontWeight:700, fontSize:13, cursor:'pointer' }}
+                    onClick={limpiar}
+                  >
+                    ✕ Limpiar
+                  </button>
+                )}
+              </div>
+              <div className="pec-grid">
+                {(resultados !== null ? resultados : restantes).map((p, i) => (
+                  <Card key={p.id} p={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
+                ))}
+              </div>
+            </>
           )}
 
-          {/* ── Banner promo asesores ── */}
-          <div className="pec-banner">
-            <div className="pec-banner-text">
-              <h2 className="serif">¿Eres asesor inmobiliario?<br />Crea tu tarjeta digital gratis</h2>
-              <p>Publica propiedades, genera fichas técnicas y comparte tu perfil.<br />14 días gratis, sin tarjeta de crédito.</p>
+          {/* ── Banner promo → /asesores ── */}
+          <a className="promo" href="/asesores">
+            <div className="promo-glow" />
+            <div className="promo-content">
+              <div className="promo-badge">
+                <Sparkles size={14} strokeWidth={2.5} /> Para asesores inmobiliarios
+              </div>
+              <h3 className="disp">
+                Crea tu tarjeta digital y publica<br />
+                tu primera propiedad <span>gratis</span>
+              </h3>
+              <p>Prueba todo el sistema <b>14 días sin costo</b>. Sin tarjeta, sin compromiso.</p>
             </div>
-            <a href="/asesores" className="pec-banner-btn">
-              Empezar 14 días gratis →
-            </a>
-          </div>
+            <div className="promo-cta">
+              Empezar gratis <ArrowRight size={18} strokeWidth={2.6} />
+            </div>
+          </a>
 
         </div>
 
-        {/* ── Footer ── */}
-        <footer className="pec-footer">
-          <div className="pec-footer-inner">
-            <div>
-              © 2026 Propiedades Chiapas, Inc. ·{' '}
-              <a href="/asesores">Regístrate</a> ·{' '}
-              <a href="/crm">Iniciar sesión</a>
+        {/* ── Footer: solo Iniciar sesión, centrado ── */}
+        <footer className="pec-ft">
+          <div className="pec-ft-in">
+            <div className="pec-ft-brand">
+              <b>Propiedades en Chiapas</b>
+              <div style={{ marginTop:6, fontSize:13 }}>El portal inmobiliario de Chiapas</div>
             </div>
-            <div style={{ display:'flex', gap:'1rem' }}>
-              <span>🌐 Español (MX)</span>
-              <span>$ MXN</span>
-            </div>
+            <a className="login-ft" href="/crm">Iniciar sesión</a>
           </div>
         </footer>
-
-        {/* ── Bottom nav — app feel (mobile) ── */}
-        <nav className="pec-nav" aria-label="Navegación principal">
-          <button className="pec-navi on"><Compass size={21} /> Explorar</button>
-          <button className="pec-navi"><Heart size={21} /> Favoritos</button>
-          <button className="pec-navi"><MessageCircle size={21} /> Mensajes</button>
-          <button className="pec-navi" onClick={() => window.location.href = '/crm'}>
-            <User size={21} /> Perfil
-          </button>
-        </nav>
 
         {/* ── WhatsApp flotante ── */}
         <a
