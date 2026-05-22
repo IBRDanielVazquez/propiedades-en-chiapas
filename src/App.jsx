@@ -36,9 +36,9 @@ export default function App() {
     );
   }
 
-  let path = window.location.pathname;
+  let path = window.location.pathname.replace(/\/+$/, '') || '/';
   if (path.startsWith('/nuevo')) {
-    path = path.slice(6);
+    path = path.slice(6) || '/';
   }
   if (!path.startsWith('/')) {
     path = '/' + path;
