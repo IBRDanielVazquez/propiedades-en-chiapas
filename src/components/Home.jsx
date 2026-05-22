@@ -316,6 +316,11 @@ const STYLES = `
     border-radius:999px; transition:.18s;
   }
   .pec-ft .login-ft:hover { color:#fff; border-color:#fff; background:rgba(255,255,255,.08); }
+  .pec-ft .privacy-ft {
+    color:rgba(255,255,255,.4); font-size:12px; text-decoration:none;
+    transition:.18s; letter-spacing:.2px;
+  }
+  .pec-ft .privacy-ft:hover { color:rgba(255,255,255,.75); }
 
   /* ── WhatsApp flotante ── */
   .wa-btn {
@@ -690,7 +695,7 @@ export default function Home({ session }) {
 
         </div>
 
-        {/* ── Footer: solo Iniciar sesión, centrado ── */}
+        {/* ── Footer: Iniciar sesión + Aviso de Privacidad ── */}
         <footer className="pec-ft">
           <div className="pec-ft-in">
             <div className="pec-ft-brand">
@@ -698,6 +703,7 @@ export default function Home({ session }) {
               <div style={{ marginTop:6, fontSize:13 }}>El portal inmobiliario de Chiapas</div>
             </div>
             <a className="login-ft" href="/crm">Iniciar sesión</a>
+            <a className="privacy-ft" href="/privacidad">Aviso de Privacidad</a>
           </div>
         </footer>
 

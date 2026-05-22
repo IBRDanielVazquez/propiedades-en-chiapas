@@ -8,6 +8,7 @@ import Login from './components/Login';
 import LandingCaptacion from './components/LandingCaptacion';
 import LandingViewer from './components/LandingViewer';
 import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLanding';
+import AvisoPrivacidad from './components/AvisoPrivacidad';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -73,6 +74,11 @@ export default function App() {
     // Bella Vista Landing (Public)
     if (path === '/bella-vista' || path === '/bella-vista-ocozocoautla') {
       return <BellaVistaLanding />;
+    }
+
+    // Aviso de Privacidad (Public)
+    if (path === '/privacidad') {
+      return <AvisoPrivacidad />;
     }
 
     // Default: Home Page (Public)
