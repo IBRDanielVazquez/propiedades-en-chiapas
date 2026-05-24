@@ -9,6 +9,7 @@ import LandingCaptacion from './components/LandingCaptacion';
 import LandingViewer from './components/LandingViewer';
 import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLanding';
 import AvisoPrivacidad from './components/AvisoPrivacidad';
+import PropertyDetail from './components/PropertyDetail';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -52,6 +53,12 @@ export default function App() {
     if (path.startsWith('/l/')) {
       const slug = path.replace('/l/', '').replace(/\/$/, '');
       return <LandingViewer slug={slug} />;
+    }
+
+    // Ficha de Propiedad (Public) — /propiedad/:id
+    if (path.startsWith('/propiedad/')) {
+      const id = path.replace('/propiedad/', '').replace(/\/$/, '');
+      return <PropertyDetail propertyId={id} />;
     }
 
     // Asesores Landing (Public)

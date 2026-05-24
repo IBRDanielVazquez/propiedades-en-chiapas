@@ -26,11 +26,7 @@ async function deploy() {
         await client.ensureDir("/public_html/assets");
         await client.uploadFromDir(path.join(distDir, "assets"), "/public_html/assets");
 
-        console.log("Ensuring new development folders exist...");
-        await client.ensureDir("/public_html/bella-vista");
-        await client.ensureDir("/public_html/bella-vista/images");
-        await client.ensureDir("/public_html/bella-vista/videos");
-        await client.ensureDir("/public_html/bella-vista/audio");
+        // Removed ensuring development folders as it conflicts with React Router
         
         console.log("Deploy finished successfully.");
     }

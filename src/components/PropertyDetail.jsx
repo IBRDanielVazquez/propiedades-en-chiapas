@@ -3,20 +3,22 @@ import { Helmet } from 'react-helmet-async';
 import { supabase } from '../supabaseClient';
 
 // ── Constantes de color ───────────────────────────────────────────────────────
-const MARINO  = '#1A1A6E';
-const VERDE   = '#2E7D32';
+const MARINO  = '#13287A';
+const VERDE   = '#10B981';
 const VERDEWA = '#25D366';
 const BLANCO  = '#FFFFFF';
-const GRIS_BG = '#F8FAFC';
-const GRIS_BD = '#E2E8F0';
-const GRIS_T  = '#64748B';
-const NEGRO   = '#1E293B';
+const GRIS_BG = '#F6F8FC';
+const GRIS_BD = '#E4EAF4';
+const GRIS_T  = '#5C6B8A';
+const NEGRO   = '#0B1B3A';
 
 // ── WhatsApp fallback si no hay asesor ────────────────────────────────────────
 const WA_FALLBACK = '529612466204';
 
 // ── Keyframes ─────────────────────────────────────────────────────────────────
 const KF = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -122,8 +124,7 @@ export default function PropertyDetail({ propertyId }) {
   };
 
   const volver = () => {
-    if (window.history.length > 1) window.history.back();
-    else window.location.href = '/';
+    window.location.href = '/';
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -135,7 +136,7 @@ export default function PropertyDetail({ propertyId }) {
         <style>{KF}</style>
         <div style={{ minHeight:'100vh', background:GRIS_BG, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:'1rem' }}>
           <div style={{ width:40, height:40, border:`3px solid ${GRIS_BD}`, borderTopColor:MARINO, borderRadius:'50%', animation:'spin .8s linear infinite' }}/>
-          <p style={{ color:GRIS_T, fontWeight:600, fontSize:'.95rem', fontFamily:'Inter,sans-serif' }}>Cargando propiedad...</p>
+          <p style={{ color:GRIS_T, fontWeight:600, fontSize:'.95rem', fontFamily:"'Plus Jakarta Sans', sans-serif" }}>Cargando propiedad...</p>
         </div>
       </>
     );
@@ -145,7 +146,7 @@ export default function PropertyDetail({ propertyId }) {
     return (
       <>
         <style>{KF}</style>
-        <div style={{ minHeight:'100vh', background:GRIS_BG, display:'flex', alignItems:'center', justifyContent:'center', padding:'2rem', textAlign:'center', fontFamily:'Inter,sans-serif' }}>
+        <div style={{ minHeight:'100vh', background:GRIS_BG, display:'flex', alignItems:'center', justifyContent:'center', padding:'2rem', textAlign:'center', fontFamily:"'Plus Jakarta Sans', sans-serif" }}>
           <div>
             <div style={{ fontSize:'3.5rem', marginBottom:'1rem' }}>🏚️</div>
             <h1 style={{ color:NEGRO, fontSize:'1.6rem', fontWeight:800, margin:'0 0 .5rem' }}>Propiedad no encontrada</h1>
@@ -191,7 +192,7 @@ export default function PropertyDetail({ propertyId }) {
         <meta name="theme-color" content={MARINO} />
       </Helmet>
 
-      <div style={{ minHeight:'100vh', background:GRIS_BG, fontFamily:"'Inter','Segoe UI',sans-serif", animation:'fade-in .4s ease' }}>
+      <div style={{ minHeight:'100vh', background:GRIS_BG, fontFamily:"'Plus Jakarta Sans','Segoe UI',sans-serif", animation:'fade-in .4s ease' }}>
 
         {/* ════════════════════════════════════════════════════════════════
             BARRA SUPERIOR STICKY
@@ -304,6 +305,30 @@ export default function PropertyDetail({ propertyId }) {
                 <span style={{ color:GRIS_T, fontSize:'.88rem', fontWeight:600 }}>{property.price_suffix}</span>
               )}
             </div>
+
+            {property.landing_slug && (
+              <div style={{ marginTop: '1.25rem' }}>
+                <a
+                  href={`/${property.landing_slug}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    background: VERDE,
+                    color: BLANCO,
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '12px',
+                    fontSize: '0.9rem',
+                    fontWeight: '800',
+                    textDecoration: 'none',
+                    boxShadow: `0 4px 14px rgba(16,185,129,0.3)`,
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  🏢 Ver desarrollo completo →
+                </a>
+              </div>
+            )}
           </div>
 
           {/* ── SPECS RÁPIDOS ──────────────────────────────────────────── */}

@@ -531,15 +531,9 @@ export default function Home({ session }) {
               </div>
               <div>
                 <b>Propiedades en Chiapas</b>
-                <small>Portal inmobiliario</small>
+                <small>Portal Inmobiliario</small>
               </div>
             </div>
-            <button
-              className="pec-login"
-              onClick={() => window.location.href = '/crm'}
-            >
-              Iniciar sesión
-            </button>
           </div>
         </header>
 
@@ -703,7 +697,7 @@ export default function Home({ session }) {
               <div style={{ marginTop:6, fontSize:13 }}>El portal inmobiliario de Chiapas</div>
             </div>
             <a className="login-ft" href="/crm">Iniciar sesión</a>
-            <a className="privacy-ft" href="/privacidad">Aviso de Privacidad</a>
+            <a className="privacy-ft" href="/aviso-de-privacidad">Aviso de Privacidad</a>
           </div>
         </footer>
 

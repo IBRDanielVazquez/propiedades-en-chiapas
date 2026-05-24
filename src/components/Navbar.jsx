@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Navbar({ session }) {
+export default function Navbar() {
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
@@ -17,30 +17,17 @@ export default function Navbar({ session }) {
           <svg viewBox="0 0 24 24" style={{ height: '32px', width: '32px', fill: '#1A1A6E' }}>
             <path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 2.7l7 6.3v9h-4v-6H9v6H5v-9l7-6.3z" />
           </svg>
-          <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1A1A6E', letterSpacing: '-0.5px' }}>
-            PROPIEDADES EN CHIAPAS
-          </span>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1A1A6E', letterSpacing: '-0.5px', lineHeight: '1.1' }}>
+              PROPIEDADES EN CHIAPAS
+            </span>
+            <span style={{ fontSize: '0.8rem', fontWeight: '600', color: '#64748b', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+              Portal Inmobiliario
+            </span>
+          </div>
         </a>
-
-        {/* Links */}
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          {session ? (
-            <a href="/dashboard" style={{
-              background: '#1A1A6E', color: '#fff', padding: '0.6rem 1.25rem',
-              borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', textDecoration: 'none'
-            }}>
-              👤 Mi Cuenta
-            </a>
-          ) : (
-            <a href="/dashboard" style={{
-              border: '2px solid #1A1A6E', color: '#1A1A6E', padding: '0.6rem 1.25rem',
-              borderRadius: '10px', fontSize: '0.9rem', fontWeight: '700', textDecoration: 'none'
-            }}>
-              Iniciar Sesión
-            </a>
-          )}
-        </div>
       </div>
     </nav>
   );
 }
+
