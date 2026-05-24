@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
 // ── Constantes de color ───────────────────────────────────────────────────────
@@ -42,6 +43,8 @@ const FMT_M2 = (n) => (n ? `${Number(n).toLocaleString('es-MX')} m²` : '—');
 // COMPONENTE PRINCIPAL
 // ─────────────────────────────────────────────────────────────────────────────
 export default function PropertyDetail({ propertyId }) {
+  const { id } = useParams();
+  const actualId = propertyId || id;
   const [property,    setProperty]    = useState(null);
   const [agent,       setAgent]       = useState(null);
   const [loading,     setLoading]     = useState(true);
@@ -54,7 +57,7 @@ export default function PropertyDetail({ propertyId }) {
 
   // ── Cargar propiedad y asesor ────────────────────────────────────────────
   useEffect(() => {
-    if (!propertyId) { setNotFound(true); setLoading(false); return; }
+    if (!actualId) { setNotFound(true); setLoading(false); return; }
 
     const fetchData = async () => {
       try {
@@ -62,7 +65,7 @@ export default function PropertyDetail({ propertyId }) {
         const { data: prop, error: propError } = await supabase
           .from('properties')
           .select('*')
-          .eq('id', propertyId)
+          .eq('id', actualId)
           .eq('active', true)
           .single();
 
@@ -91,7 +94,7 @@ export default function PropertyDetail({ propertyId }) {
     };
 
     fetchData();
-  }, [propertyId]);
+  }, [actualId]);
 
   // ── Todas las imágenes (featured + gallery) ─────────────────────────────
   const allImages = property
