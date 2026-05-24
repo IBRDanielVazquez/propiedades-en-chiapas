@@ -1,6 +1,14 @@
 import * as ftp from "basic-ftp"
 
-const htaccessContent = `<IfModule mod_rewrite.c>
+const htaccessContent = `<IfModule mod_headers.c>
+  <FilesMatch "index\\.html$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
   RewriteRule ^index\\.html$ - [L]
@@ -26,7 +34,7 @@ async function fixHtaccess() {
         const stream = Readable.from(Buffer.from(htaccessContent, 'utf-8'));
         
         await client.uploadFrom(stream, "/public_html/.htaccess");
-        console.log("✓ .htaccess corregido para apuntar a /index.html en lugar de /nuevo/index.html");
+        console.log("✓ .htaccess corregido con headers anti-caché y apuntando a /index.html");
     }
     catch(err) {
         console.error("Error:", err.message)
