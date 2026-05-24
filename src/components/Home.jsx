@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import {
   Search, Heart, MapPin, Bed, Bath, Maximize, ArrowRight,
   Home as HomeIcon, Building2, Trees, Store, Warehouse, Beef,
@@ -333,21 +334,21 @@ const STYLES = `
 `;
 
 // ─── Componente Card (separado igual que HomePEC) ─────────────────────────────
-function Card({ p, i, fav, onFav, loaded }) {
-  const tieneImagen = !!p.featured_image_url;
-  const esDev      = !!p.landing_slug;
+function Card({ propiedad, i, fav, onFav, loaded, navigate }) {
+  const tieneImagen = !!propiedad.featured_image_url;
+  const esDev      = !!propiedad.landing_slug;
 
   return (
     <article
       className="card"
       style={{ animationDelay: loaded ? `${i * 60}ms` : '0ms' }}
-      onClick={() => window.location.href = `/propiedad/${p.id}`}
+      onClick={() => navigate(`/propiedad/${propiedad.id}`)}
     >
       <div className="card-media">
         {tieneImagen ? (
           <img
-            src={p.featured_image_url}
-            alt={p.title}
+            src={propiedad.featured_image_url}
+            alt={propiedad.title}
             loading="lazy"
             onError={(e) => {
               e.currentTarget.style.display = 'none';
@@ -366,7 +367,7 @@ function Card({ p, i, fav, onFav, loaded }) {
 
         <button
           className="card-fav"
-          onClick={(e) => { e.stopPropagation(); onFav(p.id); }}
+          onClick={(e) => { e.stopPropagation(); onFav(propiedad.id); }}
           aria-label="Guardar en favoritos"
         >
           <Heart
@@ -379,17 +380,17 @@ function Card({ p, i, fav, onFav, loaded }) {
       </div>
 
       <div className="card-body">
-        <div className="card-zone"><MapPin size={13} /> {p.city || 'Chiapas'}</div>
-        <h3 className="card-title">{p.title}</h3>
+        <div className="card-zone"><MapPin size={13} /> {propiedad.city || 'Chiapas'}</div>
+        <h3 className="card-title">{propiedad.title}</h3>
         <div className="card-specs">
-          {p.bedrooms  > 0 && <span><Bed size={14} /> {p.bedrooms} rec</span>}
-          {p.bathrooms > 0 && <span><Bath size={14} /> {p.bathrooms} baños</span>}
-          {p.size_m2        && <span><Maximize size={14} /> {p.size_m2} m²</span>}
+          {propiedad.bedrooms  > 0 && <span><Bed size={14} /> {propiedad.bedrooms} rec</span>}
+          {propiedad.bathrooms > 0 && <span><Bath size={14} /> {propiedad.bathrooms} baños</span>}
+          {propiedad.size_m2        && <span><Maximize size={14} /> {propiedad.size_m2} m²</span>}
         </div>
         <div className="card-foot">
           <div className="card-price">
-            <b>{peso(p.price || 0)}</b>
-            {p.price > 0 && <small>{p.price_suffix || 'MXN'}</small>}
+            <b>{peso(propiedad.price || 0)}</b>
+            {propiedad.price > 0 && <small>{propiedad.price_suffix || 'MXN'}</small>}
           </div>
           <div className="card-go"><ArrowRight size={17} strokeWidth={2.5} /></div>
         </div>
@@ -400,6 +401,7 @@ function Card({ p, i, fav, onFav, loaded }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function Home({ session }) {
+  const navigate = useNavigate();
   const [active,      setActive]      = useState('todas');
   const [q,           setQ]           = useState('');
   const [favs,        setFavs]        = useState({});
@@ -630,7 +632,7 @@ export default function Home({ session }) {
                   </div>
                   <div className="pec-grid">
                     {destacadas.map((p, i) => (
-                      <Card key={p.id} p={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
+                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} navigate={navigate} />
                     ))}
                   </div>
                 </>
@@ -663,7 +665,7 @@ export default function Home({ session }) {
               </div>
               <div className="pec-grid">
                 {(resultados !== null ? resultados : restantes).map((p, i) => (
-                  <Card key={p.id} p={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
+                  <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} navigate={navigate} />
                 ))}
               </div>
             </>

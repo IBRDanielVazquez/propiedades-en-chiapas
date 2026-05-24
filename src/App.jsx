@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import { supabase } from './supabaseClient';
 import Home from './components/Home';
 import DigitalCard from './components/DigitalCard';
@@ -14,6 +15,7 @@ import PropertyDetail from './components/PropertyDetail';
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     // Check session
@@ -37,7 +39,7 @@ export default function App() {
     );
   }
 
-  let path = window.location.pathname.replace(/\/+$/, '') || '/';
+  let path = location.pathname.replace(/\/+$/, '') || '/';
   if (path.startsWith('/nuevo')) {
     path = path.slice(6) || '/';
   }
