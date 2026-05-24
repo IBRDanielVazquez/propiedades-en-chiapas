@@ -334,14 +334,15 @@ const STYLES = `
 `;
 
 // ─── Componente Card (separado igual que HomePEC) ─────────────────────────────
-function Card({ propiedad, i, fav, onFav, loaded, navigate }) {
+function Card({ propiedad, i, fav, onFav, loaded }) {
+  const navigate = useNavigate();
   const tieneImagen = !!propiedad.featured_image_url;
   const esDev      = !!propiedad.landing_slug;
 
   return (
     <article
       className="card"
-      style={{ animationDelay: loaded ? `${i * 60}ms` : '0ms' }}
+      style={{ cursor: 'pointer', animationDelay: loaded ? `${i * 60}ms` : '0ms' }}
       onClick={() => navigate(`/propiedad/${propiedad.id}`)}
     >
       <div className="card-media">
@@ -632,7 +633,7 @@ export default function Home({ session }) {
                   </div>
                   <div className="pec-grid">
                     {destacadas.map((p, i) => (
-                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} navigate={navigate} />
+                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
                     ))}
                   </div>
                 </>
@@ -665,7 +666,7 @@ export default function Home({ session }) {
               </div>
               <div className="pec-grid">
                 {(resultados !== null ? resultados : restantes).map((p, i) => (
-                  <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} navigate={navigate} />
+                  <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
                 ))}
               </div>
             </>
