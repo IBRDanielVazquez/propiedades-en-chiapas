@@ -335,7 +335,6 @@ const STYLES = `
 
 // ─── Componente Card (separado igual que HomePEC) ─────────────────────────────
 function Card({ propiedad, i, fav, onFav, loaded }) {
-  const navigate = useNavigate();
   const tieneImagen = !!propiedad.featured_image_url;
   const esDev      = !!propiedad.landing_slug;
 
@@ -343,7 +342,7 @@ function Card({ propiedad, i, fav, onFav, loaded }) {
     <article
       className="card"
       style={{ cursor: 'pointer', animationDelay: loaded ? `${i * 60}ms` : '0ms' }}
-      onClick={() => navigate(`/propiedad/${propiedad.id}`)}
+      onClick={() => window.location.href = '/propiedad/' + propiedad.id}
     >
       <div className="card-media">
         {tieneImagen ? (
@@ -402,7 +401,6 @@ function Card({ propiedad, i, fav, onFav, loaded }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function Home({ session }) {
-  const navigate = useNavigate();
   const [active,      setActive]      = useState('todas');
   const [q,           setQ]           = useState('');
   const [favs,        setFavs]        = useState({});
@@ -544,6 +542,7 @@ export default function Home({ session }) {
         <section className="pec-hero">
           <div className="pec-hero-in">
             <div className="pec-pill"><i />PORTAL #1 DE PROPIEDADES EN CHIAPAS</div>
+            <p style={{color:'yellow',fontSize:12}}>BUILD v3</p>
             <h1 className="disp">
               Encuentra tu propiedad ideal<br />
               <span>en cualquier rincón de Chiapas</span>
