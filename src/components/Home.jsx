@@ -542,7 +542,6 @@ export default function Home({ session }) {
         <section className="pec-hero">
           <div className="pec-hero-in">
             <div className="pec-pill"><i />PORTAL #1 DE PROPIEDADES EN CHIAPAS</div>
-            <p style={{color:'yellow',fontSize:12}}>BUILD v3</p>
             <h1 className="disp">
               Encuentra tu propiedad ideal<br />
               <span>en cualquier rincón de Chiapas</span>
