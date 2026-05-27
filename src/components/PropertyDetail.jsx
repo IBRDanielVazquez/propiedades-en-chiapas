@@ -70,14 +70,21 @@ export default function PropertyDetail() {
   useEffect(() => {
     if (!id) return;
     (async () => {
-      const { data } = await supabase
+      const { data: prop } = await supabase
         .from("properties")
-        .select("*, users(name, photo_url, whatsapp, phone, agency, role, slug)")
+        .select("*")
         .eq("id", id)
         .single();
-      if (data) {
-        setProp(data);
-        setAsesor(data.users);
+      if (prop) {
+        setProp(prop);
+        if (prop?.user_id) {
+          const { data: asesor } = await supabase
+            .from("users")
+            .select("name, photo_url, whatsapp, phone, agency, role, slug")
+            .eq("id", prop.user_id)
+            .single();
+          setAsesor(asesor);
+        }
       }
       setLoading(false);
     })();
