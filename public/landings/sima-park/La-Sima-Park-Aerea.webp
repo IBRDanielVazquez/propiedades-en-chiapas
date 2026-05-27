@@ -1,0 +1,100 @@
+<!DOCTYPE html><html lang="es"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Página no encontrada! | Propiedades en Chiapas</title>
+
+  <link href="../css/css2_1.css" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f0f3f9 0%, #ffffff 100%);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #1b2e84;
+      overflow: hidden;
+    }
+    .illustration {
+      width: 280px;
+      max-width: 80%;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    h1 {
+      font-size: 58px;
+      font-weight: 800;
+      margin: 20px 0 10px;
+      color: #1b2e84;
+    }
+    p {
+      font-size: 20px;
+      color: #374151;
+      max-width: 600px;
+      margin: 0 auto 35px;
+      line-height: 1.6;
+    }
+    .btn-home {
+      display: inline-block;
+      background-color: #1b2e84;
+      color: white;
+      text-decoration: none;
+      padding: 14px 36px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 18px;
+      box-shadow: 0 5px 15px rgba(27,46,132,0.3);
+      transition: all 0.3s ease;
+    }
+    .btn-home:hover {
+      background-color: #243d96;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(27,46,132,0.4);
+    }
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    @media (max-width: 600px) {
+      h1 { font-size: 42px; }
+      p { font-size: 16px; padding: 0 20px; }
+      .btn-home { font-size: 16px; padding: 12px 26px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ILUSTRACIÓN -->
+  <svg class="illustration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <path fill="#1b2e84" d="M256 48C141.12 48 48 141.12 48 256s93.12 208 208 208 208-93.12 208-208S370.88 48 256 48zm0 384a176 176 0 1 1 0-352 176 176 0 0 1 0 352z"></path>
+    <circle fill="#1b2e84" cx="184" cy="216" r="24"></circle>
+    <circle fill="#1b2e84" cx="328" cy="216" r="24"></circle>
+    <path fill="#1b2e84" d="M256 304c-44.18 0-80 27.34-80 61.09 0 8.84 7.16 16 16 16h128c8.84 0 16-7.16 16-16 0-33.75-35.82-61.09-80-61.09z"></path>
+  </svg>
+
+  <!-- TEXTO PRINCIPAL -->
+  <h1>¡Ooops!</h1>
+  <p>La página que buscas no existe o fue movida.<br>
+  Pero no te preocupes, tenemos muchas propiedades esperándote.</p>
+
+  <!-- BOTÓN -->
+  <a href="https://propiedadesenchiapas.com" class="btn-home">Volver al inicio</a>
+
+  <!-- PIE -->
+  <div class="footer">© 2026 Propiedades en Chiapas</div>
+
+
+
+</body></html>
