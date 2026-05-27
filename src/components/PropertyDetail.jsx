@@ -1,573 +1,443 @@
-import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
-import { useParams } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
-// ── Constantes de color ───────────────────────────────────────────────────────
-const MARINO  = '#13287A';
-const VERDE   = '#10B981';
-const VERDEWA = '#25D366';
-const BLANCO  = '#FFFFFF';
-const GRIS_BG = '#F6F8FC';
-const GRIS_BD = '#E4EAF4';
-const GRIS_T  = '#5C6B8A';
-const NEGRO   = '#0B1B3A';
+// ─── Íconos inline ───────────────────────────────────────────────
+const Icon = {
+  back: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+  ),
+  wa: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zm-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884zm8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+    </svg>
+  ),
+  share: () => (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+    </svg>
+  ),
+  map: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+    </svg>
+  ),
+  area: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 3H3v18h18V3z"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>
+    </svg>
+  ),
+  type: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    </svg>
+  ),
+  tag: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+      <line x1="7" y1="7" x2="7.01" y2="7"/>
+    </svg>
+  ),
+  arrow: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </svg>
+  ),
+  user: () => (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
+    </svg>
+  ),
+};
 
-// ── WhatsApp fallback si no hay asesor ────────────────────────────────────────
-const WA_FALLBACK = '529612466204';
+// ─── Formateador de precio ───────────────────────────────────────
+const fmt = (n) =>
+  n ? "$" + Number(n).toLocaleString("es-MX") : null;
 
-// ── Keyframes ─────────────────────────────────────────────────────────────────
-const KF = `
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-  @keyframes fade-in {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes pulse-wa {
-    0%   { box-shadow: 0 0 0 0 rgba(37,211,102,.55); }
-    70%  { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
-    100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
-  }
-`;
-
-// ── Formateadores ─────────────────────────────────────────────────────────────
-const FMT_PRECIO = (n) =>
-  n ? new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n)
-    : 'Precio a consultar';
-
-const FMT_M2 = (n) => (n ? `${Number(n).toLocaleString('es-MX')} m²` : '—');
-
-// ─────────────────────────────────────────────────────────────────────────────
-// COMPONENTE PRINCIPAL
-// ─────────────────────────────────────────────────────────────────────────────
-export default function PropertyDetail({ propertyId }) {
+// ─── Componente principal ────────────────────────────────────────
+export default function PropertyDetail() {
   const { id } = useParams();
-  const actualId = propertyId || id;
-  const [property,    setProperty]    = useState(null);
-  const [agent,       setAgent]       = useState(null);
-  const [loading,     setLoading]     = useState(true);
-  const [notFound,    setNotFound]    = useState(false);
-  const [activeImg,   setActiveImg]   = useState(0);
-  const [copied,      setCopied]      = useState(false);
-  const [showAllAmen, setShowAllAmen] = useState(false);
+  const navigate = useNavigate();
+  const [prop, setProp] = useState(null);
+  const [asesor, setAsesor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
 
-  const pageUrl = typeof window !== 'undefined' ? window.location.href : '';
-
-  // ── Cargar propiedad y asesor ────────────────────────────────────────────
   useEffect(() => {
-    if (!actualId) { setNotFound(true); setLoading(false); return; }
-
-    const fetchData = async () => {
-      try {
-        // 1. Buscar propiedad
-        const { data: prop, error: propError } = await supabase
-          .from('properties')
-          .select('*')
-          .eq('id', actualId)
-          .eq('active', true)
-          .single();
-
-        if (propError || !prop) { setNotFound(true); setLoading(false); return; }
-        setProperty(prop);
-
-        // Registrar vista (fire-and-forget)
-        supabase.from('properties').update({ views: (prop.views || 0) + 1 }).eq('id', prop.id).then(() => {});
-
-        // 2. Buscar asesor
-        if (prop.user_id) {
-          const { data: agentData } = await supabase
-            .from('users')
-            .select('id,name,email,phone,whatsapp,position,company,bio,avatar_url,slug')
-            .eq('id', prop.user_id)
-            .eq('active', true)
-            .single();
-          setAgent(agentData || null);
-        }
-      } catch (err) {
-        console.error('Error cargando propiedad:', err);
-        setNotFound(true);
-      } finally {
-        setLoading(false);
+    if (!id) return;
+    (async () => {
+      const { data } = await supabase
+        .from("properties")
+        .select("*, users(name, photo_url, whatsapp, phone, agency, role, slug)")
+        .eq("id", id)
+        .single();
+      if (data) {
+        setProp(data);
+        setAsesor(data.users);
       }
-    };
+      setLoading(false);
+    })();
+  }, [id]);
 
-    fetchData();
-  }, [actualId]);
-
-  // ── Todas las imágenes (featured + gallery) ─────────────────────────────
-  const allImages = property
-    ? [
-        property.featured_image_url,
-        ...(Array.isArray(property.images) ? property.images : []),
-      ].filter(Boolean)
-    : [];
-
-  // ── WhatsApp ─────────────────────────────────────────────────────────────
-  const waNumber = agent
-    ? (agent.whatsapp || agent.phone || '').replace(/\D/g, '')
-    : WA_FALLBACK;
-
-  const waMensaje = encodeURIComponent(
-    `Hola, me interesa ${property?.title || 'esta propiedad'} que vi en Propiedades en Chiapas.\n${pageUrl}`
+  if (loading) return (
+    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#F6F8FC" }}>
+      <div className="pd-spin" />
+    </div>
   );
 
-  const compartirWA = () =>
-    window.open(`https://wa.me/${waNumber}?text=${waMensaje}`, '_blank');
+  if (!prop) return (
+    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#F6F8FC" }}>
+      <p style={{ color: "#5C6B8A", fontFamily: "Plus Jakarta Sans, sans-serif" }}>Propiedad no encontrada.</p>
+    </div>
+  );
 
-  const compartirFB = () =>
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, '_blank');
+  const waNumber = asesor?.whatsapp || "529612466204";
+  const waMsg = encodeURIComponent(
+    `Hola, me interesa la propiedad: ${prop.title}. ¿Podrías darme más información?`
+  );
+  const waUrl = `https://wa.me/${waNumber.replace(/\D/g, "")}?text=${waMsg}`;
+  const pageUrl = window.location.href;
 
-  const copiarLink = () => {
-    navigator.clipboard.writeText(pageUrl).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
-    });
-  };
+  return (
+    <div className="pd-root">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-  const volver = () => {
-    window.location.href = '/';
-  };
+        .pd-root {
+          --ink: #0B1B3A;
+          --indigo: #13287A;
+          --indigo2: #1E3A9B;
+          --green: #0E9F6E;
+          --green2: #10B981;
+          --amber: #E8A33D;
+          --bg: #F6F8FC;
+          --card: #FFFFFF;
+          --muted: #5C6B8A;
+          --line: #E4EAF4;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          color: var(--ink);
+          background: var(--bg);
+          min-height: 100vh;
+          -webkit-font-smoothing: antialiased;
+        }
+        .pd-root * { box-sizing: border-box; margin: 0; padding: 0; }
+        .disp { font-family: 'Clash Display', 'Plus Jakarta Sans', sans-serif; }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // ESTADOS DE CARGA
-  // ─────────────────────────────────────────────────────────────────────────
-  if (loading) {
-    return (
-      <>
-        <style>{KF}</style>
-        <div style={{ minHeight:'100vh', background:GRIS_BG, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:'1rem' }}>
-          <div style={{ width:40, height:40, border:`3px solid ${GRIS_BD}`, borderTopColor:MARINO, borderRadius:'50%', animation:'spin .8s linear infinite' }}/>
-          <p style={{ color:GRIS_T, fontWeight:600, fontSize:'.95rem', fontFamily:"'Plus Jakarta Sans', sans-serif" }}>Cargando propiedad...</p>
+        /* Header sticky */
+        .pd-hd {
+          position: sticky; top: 0; z-index: 50;
+          background: rgba(246,248,252,.9);
+          backdrop-filter: blur(16px);
+          border-bottom: 1px solid var(--line);
+          padding: 12px 18px;
+          display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .pd-back {
+          display: flex; align-items: center; gap: 8px;
+          background: none; border: 1.5px solid var(--line);
+          color: var(--indigo); font-weight: 700; font-size: 13.5px;
+          padding: 8px 14px; border-radius: 999px; cursor: pointer;
+          transition: .16s; font-family: inherit;
+        }
+        .pd-back:hover { background: var(--indigo); color: #fff; border-color: var(--indigo); }
+        .pd-hd-title {
+          font-size: 14px; font-weight: 700; color: var(--ink);
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+          flex: 1; text-align: center;
+        }
+        .pd-share-btn {
+          background: none; border: 1.5px solid var(--line);
+          color: var(--muted); padding: 8px 10px; border-radius: 999px;
+          cursor: pointer; display: grid; place-items: center; transition: .16s;
+        }
+        .pd-share-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+
+        /* Body */
+        .pd-body { max-width: 900px; margin: 0 auto; padding: 0 16px 80px; }
+
+        /* Hero image */
+        .pd-hero {
+          margin: 18px 0;
+          border-radius: 22px; overflow: hidden;
+          aspect-ratio: 16/9;
+          background: linear-gradient(145deg, var(--indigo), var(--indigo2));
+          position: relative;
+          box-shadow: 0 20px 50px rgba(19,40,122,.15);
+        }
+        @media(min-width:640px){ .pd-hero { aspect-ratio: 16/8; } }
+        .pd-hero img {
+          width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        .pd-hero-placeholder {
+          width: 100%; height: 100%;
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center; gap: 12px;
+          color: rgba(255,255,255,.5);
+        }
+        .pd-hero-placeholder svg { width: 52px; height: 52px; opacity: .4; }
+        .pd-hero-placeholder span { font-size: 13px; font-weight: 600; }
+        .pd-badge {
+          position: absolute; top: 14px; left: 14px;
+          background: rgba(255,255,255,.15); backdrop-filter: blur(8px);
+          border: 1px solid rgba(255,255,255,.25);
+          color: #fff; font-size: 11px; font-weight: 800;
+          letter-spacing: .5px; text-transform: uppercase;
+          padding: 6px 13px; border-radius: 999px;
+        }
+        .pd-badge-land {
+          background: rgba(16,185,129,.85); border-color: transparent;
+        }
+
+        /* Título y precio */
+        .pd-title-row { margin: 22px 0 6px; }
+        .pd-title { font-size: clamp(22px, 5vw, 32px); font-weight: 700; letter-spacing: -.5px; line-height: 1.1; }
+        .pd-loc {
+          display: flex; align-items: center; gap: 6px;
+          color: var(--muted); font-size: 13.5px; font-weight: 600; margin-top: 8px;
+        }
+        .pd-price-block {
+          margin: 20px 0;
+          padding: 20px;
+          background: linear-gradient(135deg, var(--indigo) 0%, var(--indigo2) 100%);
+          border-radius: 18px;
+          color: #fff;
+          box-shadow: 0 12px 30px rgba(19,40,122,.2);
+        }
+        .pd-price-label { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; opacity: .7; }
+        .pd-price-val { font-size: clamp(28px, 6vw, 40px); font-weight: 800; letter-spacing: -1px; margin-top: 4px; }
+        .pd-price-suffix { font-size: 14px; font-weight: 600; opacity: .8; margin-top: 3px; }
+
+        /* Specs grid */
+        .pd-specs {
+          display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+          margin: 18px 0;
+        }
+        @media(min-width:480px){ .pd-specs { grid-template-columns: repeat(3,1fr); } }
+        .pd-spec {
+          background: var(--card); border: 1px solid var(--line);
+          border-radius: 14px; padding: 14px 12px;
+          display: flex; flex-direction: column; align-items: center; gap: 6px;
+          text-align: center;
+        }
+        .pd-spec-icon { color: var(--indigo); }
+        .pd-spec-val { font-size: 14px; font-weight: 800; color: var(--ink); }
+        .pd-spec-lbl { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+
+        /* Sección */
+        .pd-section { margin: 26px 0; }
+        .pd-section-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 12px; }
+        .pd-description {
+          font-size: 15px; line-height: 1.75; color: #334166;
+          white-space: pre-line;
+        }
+
+        /* CTA Ver desarrollo */
+        .pd-cta-dev {
+          display: flex; align-items: center; justify-content: space-between;
+          background: linear-gradient(135deg, #0a2e1a, var(--green));
+          color: #fff; padding: 18px 22px; border-radius: 18px;
+          cursor: pointer; border: none; width: 100%; font-family: inherit;
+          box-shadow: 0 10px 28px rgba(14,159,110,.3);
+          transition: transform .2s, box-shadow .2s;
+          margin: 20px 0; text-decoration: none;
+        }
+        .pd-cta-dev:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(14,159,110,.4); }
+        .pd-cta-dev-text b { font-size: 16px; font-weight: 800; display: block; }
+        .pd-cta-dev-text span { font-size: 12.5px; opacity: .8; margin-top: 2px; display: block; }
+
+        /* Asesor */
+        .pd-asesor {
+          background: var(--card); border: 1px solid var(--line);
+          border-radius: 20px; padding: 20px; margin: 20px 0;
+        }
+        .pd-asesor-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .pd-asesor-avatar {
+          width: 56px; height: 56px; border-radius: 50%;
+          background: linear-gradient(145deg, var(--indigo), var(--indigo2));
+          display: grid; place-items: center; color: #fff; flex: none;
+          overflow: hidden;
+        }
+        .pd-asesor-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .pd-asesor-name { font-size: 16px; font-weight: 800; }
+        .pd-asesor-role { font-size: 12.5px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+        .pd-asesor-agency { font-size: 12px; color: var(--green2); font-weight: 700; margin-top: 2px; }
+        .pd-wa-btn {
+          display: flex; align-items: center; justify-content: center; gap: 10px;
+          background: #25D366; color: #fff;
+          padding: 14px 20px; border-radius: 14px; border: none;
+          font-size: 15px; font-weight: 800; cursor: pointer;
+          width: 100%; font-family: inherit; text-decoration: none;
+          box-shadow: 0 8px 20px rgba(37,211,102,.3); transition: .18s;
+        }
+        .pd-wa-btn:hover { background: #1da851; box-shadow: 0 12px 26px rgba(37,211,102,.4); }
+
+        /* Compartir */
+        .pd-share {
+          margin: 20px 0;
+          display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        .pd-share-action {
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          padding: 13px; border-radius: 14px; border: 1.5px solid var(--line);
+          font-size: 13.5px; font-weight: 700; cursor: pointer;
+          background: var(--card); color: var(--ink);
+          font-family: inherit; transition: .16s; text-decoration: none;
+        }
+        .pd-share-action:hover { border-color: var(--indigo); color: var(--indigo); }
+        .pd-share-action.wa { background: #25D366; color: #fff; border-color: #25D366; }
+        .pd-share-action.wa:hover { background: #1da851; }
+
+        /* Spinner */
+        .pd-spin {
+          width: 40px; height: 40px; border-radius: 50%;
+          border: 3px solid var(--line);
+          border-top-color: var(--indigo);
+          animation: spin .8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
+
+      {/* Header */}
+      <header className="pd-hd">
+        <button className="pd-back" onClick={() => navigate(-1)}>
+          <Icon.back /> Volver
+        </button>
+        <span className="pd-hd-title disp">{prop.title}</span>
+        <button className="pd-share-btn" onClick={() => navigator.clipboard?.writeText(pageUrl)}>
+          <Icon.share />
+        </button>
+      </header>
+
+      <div className="pd-body">
+
+        {/* Hero */}
+        <div className="pd-hero">
+          {prop.featured_image_url && !imgError ? (
+            <img
+              src={prop.featured_image_url}
+              alt={prop.title}
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="pd-hero-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              </svg>
+              <span>Sin foto aún</span>
+            </div>
+          )}
+          <div className={`pd-badge ${prop.landing_slug ? "pd-badge-land" : ""}`}>
+            {prop.landing_slug ? "✦ Ver desarrollo" : prop.operation_type || "Venta"}
+          </div>
         </div>
-      </>
-    );
-  }
 
-  if (notFound || !property) {
-    return (
-      <>
-        <style>{KF}</style>
-        <div style={{ minHeight:'100vh', background:GRIS_BG, display:'flex', alignItems:'center', justifyContent:'center', padding:'2rem', textAlign:'center', fontFamily:"'Plus Jakarta Sans', sans-serif" }}>
-          <div>
-            <div style={{ fontSize:'3.5rem', marginBottom:'1rem' }}>🏚️</div>
-            <h1 style={{ color:NEGRO, fontSize:'1.6rem', fontWeight:800, margin:'0 0 .5rem' }}>Propiedad no encontrada</h1>
-            <p style={{ color:GRIS_T, marginBottom:'1.5rem' }}>Es posible que ya no esté disponible o el enlace sea incorrecto.</p>
-            <button onClick={volver} style={{ padding:'.75rem 2rem', background:MARINO, color:BLANCO, border:'none', borderRadius:12, fontWeight:800, fontSize:'.95rem', cursor:'pointer' }}>
-              ← Volver al portal
+        {/* Título */}
+        <div className="pd-title-row">
+          <h1 className="pd-title disp">{prop.title}</h1>
+          <div className="pd-loc">
+            <Icon.map /> {prop.city || "Chiapas"}
+          </div>
+        </div>
+
+        {/* Precio */}
+        <div className="pd-price-block">
+          <div className="pd-price-label">Precio</div>
+          <div className="pd-price-val disp">{fmt(prop.price) || "Consultar"}</div>
+          {prop.price_suffix && (
+            <div className="pd-price-suffix">{prop.price_suffix}</div>
+          )}
+        </div>
+
+        {/* Specs */}
+        <div className="pd-specs">
+          <div className="pd-spec">
+            <span className="pd-spec-icon"><Icon.type /></span>
+            <span className="pd-spec-val">{prop.type || "—"}</span>
+            <span className="pd-spec-lbl">Tipo</span>
+          </div>
+          <div className="pd-spec">
+            <span className="pd-spec-icon"><Icon.area /></span>
+            <span className="pd-spec-val">{prop.size_m2 ? prop.size_m2 + " m²" : "—"}</span>
+            <span className="pd-spec-lbl">Terreno</span>
+          </div>
+          <div className="pd-spec">
+            <span className="pd-spec-icon"><Icon.tag /></span>
+            <span className="pd-spec-val" style={{ color: "#10B981" }}>
+              {prop.status || "Disponible"}
+            </span>
+            <span className="pd-spec-lbl">Estado</span>
+          </div>
+        </div>
+
+        {/* Ver desarrollo completo */}
+        {prop.landing_slug && (
+          <a
+            className="pd-cta-dev"
+            href={`/${prop.landing_slug}`}
+          >
+            <div className="pd-cta-dev-text">
+              <b>Ver desarrollo completo</b>
+              <span>Planos, amenidades, galería y más</span>
+            </div>
+            <Icon.arrow />
+          </a>
+        )}
+
+        {/* Descripción */}
+        {prop.description && (
+          <div className="pd-section">
+            <h2 className="pd-section-title disp">Sobre esta propiedad</h2>
+            <p className="pd-description">{prop.description}</p>
+          </div>
+        )}
+
+        {/* Asesor */}
+        <div className="pd-asesor">
+          <div className="pd-asesor-head">
+            <div className="pd-asesor-avatar">
+              {asesor?.photo_url
+                ? <img src={asesor.photo_url} alt={asesor.name} />
+                : <Icon.user />
+              }
+            </div>
+            <div>
+              <div className="pd-asesor-name">{asesor?.name || "Asesor Inmobiliario"}</div>
+              <div className="pd-asesor-role">{asesor?.role || "Asesor Inmobiliario"}</div>
+              {asesor?.agency && (
+                <div className="pd-asesor-agency">{asesor.agency}</div>
+              )}
+            </div>
+          </div>
+          <a className="pd-wa-btn" href={waUrl} target="_blank" rel="noopener noreferrer">
+            <Icon.wa /> Contactar por WhatsApp
+          </a>
+        </div>
+
+        {/* Compartir */}
+        <div className="pd-section">
+          <h2 className="pd-section-title disp">Compartir propiedad</h2>
+          <div className="pd-share">
+            <a
+              className="pd-share-action wa"
+              href={`https://wa.me/?text=${encodeURIComponent(prop.title + " - " + pageUrl)}`}
+              target="_blank" rel="noopener noreferrer"
+            >
+              <Icon.wa /> WhatsApp
+            </a>
+            <button
+              className="pd-share-action"
+              onClick={() => navigator.clipboard?.writeText(pageUrl)}
+            >
+              <Icon.share /> Copiar link
             </button>
           </div>
         </div>
-      </>
-    );
-  }
 
-  const amenities = Array.isArray(property.amenities) ? property.amenities : [];
-  const amenMostrar = showAllAmen ? amenities : amenities.slice(0, 8);
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // RENDER PRINCIPAL
-  // ─────────────────────────────────────────────────────────────────────────
-  return (
-    <>
-      <style>{KF}</style>
-
-      {/* ── OG Tags dinámicos ──────────────────────────────────────────── */}
-      <Helmet>
-        <title>{property.title} | Propiedades en Chiapas</title>
-        <meta name="description" content={property.description?.slice(0, 155) || `${property.type} en ${property.municipality}, Chiapas. ${FMT_PRECIO(property.price)}`} />
-
-        <meta property="og:title"       content={`${property.title} — ${FMT_PRECIO(property.price)}`} />
-        <meta property="og:description" content={`${property.type} en ${property.municipality}, Chiapas. ${property.bedrooms ? `${property.bedrooms} recámaras · ` : ''}${FMT_PRECIO(property.price)}`} />
-        <meta property="og:image"       content={property.featured_image_url || 'https://propiedadesenchiapas.com/og-default.jpg'} />
-        <meta property="og:image:width"  content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:type"        content="website" />
-        <meta property="og:url"         content={pageUrl} />
-        <meta property="og:site_name"   content="Propiedades en Chiapas" />
-
-        <meta name="twitter:card"        content="summary_large_image" />
-        <meta name="twitter:title"       content={property.title} />
-        <meta name="twitter:description" content={`${FMT_PRECIO(property.price)} · ${property.municipality}, Chiapas`} />
-        <meta name="twitter:image"       content={property.featured_image_url || 'https://propiedadesenchiapas.com/og-default.jpg'} />
-
-        <meta name="theme-color" content={MARINO} />
-      </Helmet>
-
-      <div style={{ minHeight:'100vh', background:GRIS_BG, fontFamily:"'Plus Jakarta Sans','Segoe UI',sans-serif", animation:'fade-in .4s ease' }}>
-
-        {/* ════════════════════════════════════════════════════════════════
-            BARRA SUPERIOR STICKY
-        ════════════════════════════════════════════════════════════════ */}
-        <div style={{ position:'sticky', top:0, zIndex:100, background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, boxShadow:'0 1px 12px rgba(0,0,0,.06)' }}>
-          <div style={{ maxWidth:900, margin:'0 auto', padding:'.75rem 1rem', display:'flex', alignItems:'center', gap:'.75rem' }}>
-            {/* Botón volver */}
-            <button onClick={volver} style={{ display:'flex', alignItems:'center', gap:'.4rem', background:GRIS_BG, border:`1px solid ${GRIS_BD}`, borderRadius:10, padding:'.5rem .9rem', fontWeight:700, fontSize:'.82rem', color:NEGRO, cursor:'pointer', flexShrink:0 }}>
-              ← Volver
-            </button>
-
-            {/* Título truncado */}
-            <p style={{ flex:1, fontWeight:700, fontSize:'.88rem', color:NEGRO, margin:0, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>
-              {property.title}
-            </p>
-
-            {/* Botones compartir */}
-            <div style={{ display:'flex', gap:'.5rem', flexShrink:0 }}>
-              <button onClick={copiarLink} title="Copiar link" style={{ width:36, height:36, borderRadius:9, background: copied ? VERDE : GRIS_BG, border:`1px solid ${GRIS_BD}`, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem', transition:'background .2s' }}>
-                {copied ? '✓' : '🔗'}
-              </button>
-              <button onClick={compartirWA} title="Compartir WhatsApp" style={{ width:36, height:36, borderRadius:9, background:VERDEWA, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem' }}>
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.848L.057 23.743a.75.75 0 0 0 .921.921l5.895-1.465A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 0 1-4.95-1.355l-.355-.213-3.681.915.93-3.594-.233-.371A9.718 9.718 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
-              </button>
-              <button onClick={compartirFB} title="Compartir Facebook" style={{ width:36, height:36, borderRadius:9, background:'#1877F2', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'.9rem', color:BLANCO, fontWeight:900 }}>
-                f
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* ════════════════════════════════════════════════════════════════
-            CONTENIDO CENTRAL
-        ════════════════════════════════════════════════════════════════ */}
-        <div style={{ maxWidth:900, margin:'0 auto', padding:'0 0 6rem' }}>
-
-          {/* ── GALERÍA DE IMÁGENES ────────────────────────────────────── */}
-          <div style={{ background:NEGRO, position:'relative' }}>
-            {/* Imagen principal */}
-            <div style={{ width:'100%', aspectRatio:'16/9', maxHeight:480, overflow:'hidden', position:'relative' }}>
-              {allImages.length > 0 ? (
-                <img
-                  key={activeImg}
-                  src={allImages[activeImg]}
-                  alt={`${property.title} — foto ${activeImg + 1}`}
-                  style={{ width:'100%', height:'100%', objectFit:'cover', animation:'fade-in .35s ease' }}
-                  onError={e => { e.target.src = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=900'; }}
-                />
-              ) : (
-                <div style={{ width:'100%', height:'100%', background:`linear-gradient(135deg, #0D0D4A, ${MARINO})`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'4rem' }}>🏠</div>
-              )}
-
-              {/* Badge operación */}
-              <div style={{ position:'absolute', top:12, left:12, background: property.operation_type === 'Renta' ? '#0284c7' : VERDE, color:BLANCO, borderRadius:8, padding:'5px 12px', fontSize:'.8rem', fontWeight:800, boxShadow:'0 2px 8px rgba(0,0,0,.3)' }}>
-                {property.operation_type || 'Venta'}
-              </div>
-
-              {/* Contador fotos */}
-              {allImages.length > 1 && (
-                <div style={{ position:'absolute', bottom:12, right:12, background:'rgba(0,0,0,.6)', color:BLANCO, borderRadius:8, padding:'4px 10px', fontSize:'.78rem', fontWeight:700, backdropFilter:'blur(4px)' }}>
-                  📷 {activeImg + 1} / {allImages.length}
-                </div>
-              )}
-
-              {/* Flechas navegación */}
-              {allImages.length > 1 && (
-                <>
-                  <button
-                    onClick={() => setActiveImg(i => (i - 1 + allImages.length) % allImages.length)}
-                    style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', background:'rgba(0,0,0,.5)', color:BLANCO, border:'none', width:38, height:38, borderRadius:'50%', fontSize:'1.1rem', cursor:'pointer', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center' }}
-                  >‹</button>
-                  <button
-                    onClick={() => setActiveImg(i => (i + 1) % allImages.length)}
-                    style={{ position:'absolute', right:10, top:'50%', transform:'translateY(-50%)', background:'rgba(0,0,0,.5)', color:BLANCO, border:'none', width:38, height:38, borderRadius:'50%', fontSize:'1.1rem', cursor:'pointer', backdropFilter:'blur(4px)', display:'flex', alignItems:'center', justifyContent:'center' }}
-                  >›</button>
-                </>
-              )}
-            </div>
-
-            {/* Miniaturas */}
-            {allImages.length > 1 && (
-              <div style={{ display:'flex', gap:6, padding:'8px 10px', overflowX:'auto', background:'rgba(0,0,0,.4)', scrollbarWidth:'none' }}>
-                {allImages.map((img, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setActiveImg(i)}
-                    style={{ flexShrink:0, width:60, height:44, borderRadius:6, overflow:'hidden', cursor:'pointer', border: i === activeImg ? `2.5px solid ${VERDEWA}` : '2.5px solid transparent', transition:'border-color .2s', opacity: i === activeImg ? 1 : .65 }}
-                  >
-                    <img src={img} alt={`miniatura ${i+1}`} style={{ width:'100%', height:'100%', objectFit:'cover' }}
-                      onError={e => { e.target.src = 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=120'; }} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* ── TÍTULO + PRECIO ────────────────────────────────────────── */}
-          <div style={{ padding:'1.5rem 1.25rem 1rem', background:BLANCO, borderBottom:`1px solid ${GRIS_BD}` }}>
-            <h1 style={{ fontSize:'1.5rem', fontWeight:900, color:NEGRO, margin:'0 0 .5rem', lineHeight:1.2 }}>
-              {property.title}
-            </h1>
-            <p style={{ color:GRIS_T, fontSize:'.9rem', margin:'0 0 1rem' }}>
-              📍 {[property.colony, property.municipality].filter(Boolean).join(', ')}{property.municipality ? ', Chiapas' : ''}
-            </p>
-            <div style={{ display:'flex', alignItems:'baseline', gap:'.75rem', flexWrap:'wrap' }}>
-              <span style={{ fontSize:'2rem', fontWeight:900, color:MARINO, lineHeight:1 }}>
-                {FMT_PRECIO(property.price)}
-              </span>
-              {property.price_suffix && (
-                <span style={{ color:GRIS_T, fontSize:'.88rem', fontWeight:600 }}>{property.price_suffix}</span>
-              )}
-            </div>
-
-            {property.landing_slug && (
-              <div style={{ marginTop: '1.25rem' }}>
-                <a
-                  href={`/${property.landing_slug}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    background: VERDE,
-                    color: BLANCO,
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '12px',
-                    fontSize: '0.9rem',
-                    fontWeight: '800',
-                    textDecoration: 'none',
-                    boxShadow: `0 4px 14px rgba(16,185,129,0.3)`,
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  🏢 Ver desarrollo completo →
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* ── SPECS RÁPIDOS ──────────────────────────────────────────── */}
-          {(property.bedrooms || property.bathrooms || property.garages || property.size_m2 || property.size_construction_m2 || property.size_land_m2) && (
-            <div style={{ background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, padding:'1rem 1.25rem' }}>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(80px, 1fr))', gap:'.75rem' }}>
-                {property.bedrooms > 0 && <SpecChip icon="🛏️" valor={property.bedrooms} label="Recámaras" />}
-                {property.bathrooms > 0 && <SpecChip icon="🚿" valor={property.bathrooms} label="Baños" />}
-                {property.garages > 0  && <SpecChip icon="🚗" valor={property.garages}   label="Cajones" />}
-                {(property.size_construction_m2 || property.size_m2) && (
-                  <SpecChip icon="📐" valor={FMT_M2(property.size_construction_m2 || property.size_m2)} label="Construcción" />
-                )}
-                {property.size_land_m2 && (
-                  <SpecChip icon="🗺️" valor={FMT_M2(property.size_land_m2)} label="Terreno" />
-                )}
-                {property.floors > 1 && <SpecChip icon="🏗️" valor={property.floors} label="Pisos" />}
-              </div>
-            </div>
-          )}
-
-          {/* ── DESCRIPCIÓN ────────────────────────────────────────────── */}
-          {property.description && (
-            <div style={{ background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, padding:'1.5rem 1.25rem' }}>
-              <h2 style={{ fontSize:'1.05rem', fontWeight:800, color:NEGRO, margin:'0 0 .85rem', paddingBottom:'.5rem', borderBottom:`2px solid ${GRIS_BD}` }}>
-                Descripción
-              </h2>
-              <p style={{ color:GRIS_T, lineHeight:1.75, fontSize:'.92rem', whiteSpace:'pre-wrap', margin:0 }}>
-                {property.description}
-              </p>
-            </div>
-          )}
-
-          {/* ── FICHA TÉCNICA DETALLADA ─────────────────────────────────── */}
-          <div style={{ background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, padding:'1.5rem 1.25rem' }}>
-            <h2 style={{ fontSize:'1.05rem', fontWeight:800, color:NEGRO, margin:'0 0 1rem', paddingBottom:'.5rem', borderBottom:`2px solid ${GRIS_BD}` }}>
-              Ficha Técnica
-            </h2>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(200px, 1fr))', gap:'.5rem' }}>
-              {[
-                { label:'Tipo de propiedad', valor: property.type },
-                { label:'Operación',         valor: property.operation_type },
-                { label:'Estado',            valor: property.status },
-                { label:'Municipio',         valor: property.municipality },
-                { label:'Colonia/Zona',      valor: property.colony },
-                { label:'Código postal',     valor: property.postal_code },
-                { label:'Año de construcción', valor: property.year_built },
-                { label:'Amueblado',         valor: property.furnished ? 'Sí' : property.furnished === false ? 'No' : null },
-                { label:'Cuarto de servicio', valor: property.maid_room ? 'Sí' : property.maid_room === false ? 'No' : null },
-              ].filter(row => row.valor).map(row => (
-                <div key={row.label} style={{ display:'flex', justifyContent:'space-between', padding:'.5rem .75rem', background:GRIS_BG, borderRadius:8, fontSize:'.85rem' }}>
-                  <span style={{ color:GRIS_T, fontWeight:600 }}>{row.label}</span>
-                  <span style={{ color:NEGRO, fontWeight:700 }}>{row.valor}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── AMENIDADES ─────────────────────────────────────────────── */}
-          {amenities.length > 0 && (
-            <div style={{ background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, padding:'1.5rem 1.25rem' }}>
-              <h2 style={{ fontSize:'1.05rem', fontWeight:800, color:NEGRO, margin:'0 0 1rem', paddingBottom:'.5rem', borderBottom:`2px solid ${GRIS_BD}` }}>
-                Amenidades
-              </h2>
-              <div style={{ display:'flex', flexWrap:'wrap', gap:'.5rem' }}>
-                {amenMostrar.map(am => (
-                  <span key={am} style={{ background:`${VERDE}14`, border:`1px solid ${VERDE}33`, color:VERDE, borderRadius:8, padding:'5px 12px', fontSize:'.82rem', fontWeight:700 }}>
-                    ✓ {am}
-                  </span>
-                ))}
-              </div>
-              {amenities.length > 8 && (
-                <button onClick={() => setShowAllAmen(v => !v)} style={{ marginTop:'.75rem', background:'none', border:`1px solid ${GRIS_BD}`, borderRadius:8, padding:'.45rem 1rem', fontSize:'.82rem', fontWeight:700, color:MARINO, cursor:'pointer' }}>
-                  {showAllAmen ? 'Ver menos ↑' : `Ver todas (${amenities.length}) ↓`}
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* ── MUNICIPIO (mapa referencial) ────────────────────────────── */}
-          {property.municipality && (
-            <div style={{ background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, padding:'1.5rem 1.25rem' }}>
-              <h2 style={{ fontSize:'1.05rem', fontWeight:800, color:NEGRO, margin:'0 0 .75rem', paddingBottom:'.5rem', borderBottom:`2px solid ${GRIS_BD}` }}>
-                Ubicación
-              </h2>
-              <div style={{ background:GRIS_BG, border:`1px solid ${GRIS_BD}`, borderRadius:12, padding:'1rem', display:'flex', alignItems:'center', gap:'1rem', marginBottom:'.75rem' }}>
-                <div style={{ width:48, height:48, background:`linear-gradient(135deg,${MARINO},#3730a3)`, borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.3rem', flexShrink:0 }}>📍</div>
-                <div>
-                  <p style={{ fontWeight:800, color:NEGRO, margin:0, fontSize:'.95rem' }}>{property.municipality}, Chiapas</p>
-                  {property.colony && <p style={{ color:GRIS_T, margin:'2px 0 0', fontSize:'.85rem' }}>{property.colony}</p>}
-                </div>
-              </div>
-              {/* Iframe de mapa por municipio */}
-              <div style={{ borderRadius:12, overflow:'hidden', border:`1px solid ${GRIS_BD}`, height:240 }}>
-                <iframe
-                  title={`Mapa ${property.municipality}`}
-                  width="100%"
-                  height="240"
-                  style={{ border:'none', display:'block' }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(`${property.municipality}, Chiapas, México`)}&output=embed&zoom=11`}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* ════════════════════════════════════════════════════════════
-              TARJETA DEL ASESOR
-          ════════════════════════════════════════════════════════════ */}
-          <div style={{ margin:'0', background:BLANCO, borderBottom:`1px solid ${GRIS_BD}`, padding:'1.5rem 1.25rem' }}>
-            <h2 style={{ fontSize:'1.05rem', fontWeight:800, color:NEGRO, margin:'0 0 1rem', paddingBottom:'.5rem', borderBottom:`2px solid ${GRIS_BD}` }}>
-              Contactar al Asesor
-            </h2>
-
-            <div style={{ display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1.25rem' }}>
-              {/* Foto asesor */}
-              <div style={{ width:64, height:64, borderRadius:'50%', border:`3px solid ${VERDE}`, flexShrink:0, overflow:'hidden', boxShadow:'0 4px 12px rgba(0,0,0,.12)' }}>
-                {agent?.avatar_url ? (
-                  <img src={agent.avatar_url} alt={agent.name} style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
-                ) : (
-                  <div style={{ width:'100%', height:'100%', background:`linear-gradient(135deg,${MARINO},#3730a3)`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.6rem' }}>
-                    👤
-                  </div>
-                )}
-              </div>
-
-              {/* Datos */}
-              <div style={{ flex:1, minWidth:0 }}>
-                <p style={{ fontWeight:900, color:NEGRO, margin:'0 0 .2rem', fontSize:'1rem' }}>
-                  {agent?.name || 'Asesor Propiedades en Chiapas'}
-                </p>
-                <p style={{ color:GRIS_T, margin:'0 0 .2rem', fontSize:'.85rem', fontWeight:600 }}>
-                  {agent?.position || 'Asesor Inmobiliario'}
-                </p>
-                {agent?.company && (
-                  <p style={{ color:MARINO, margin:0, fontSize:'.82rem', fontWeight:700 }}>🏢 {agent.company}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Bio del asesor */}
-            {agent?.bio && (
-              <p style={{ color:GRIS_T, fontSize:'.85rem', lineHeight:1.65, fontStyle:'italic', margin:'0 0 1.25rem', padding:'.75rem 1rem', background:GRIS_BG, borderRadius:10, borderLeft:`3px solid ${VERDE}` }}>
-                "{agent.bio}"
-              </p>
-            )}
-
-            {/* Botones de contacto */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.65rem' }}>
-              {/* WhatsApp */}
-              <a
-                href={`https://wa.me/${waNumber}?text=${waMensaje}`}
-                target="_blank" rel="noreferrer"
-                style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.9rem', borderRadius:14, background:VERDEWA, color:BLANCO, textDecoration:'none', fontWeight:800, fontSize:'.9rem', boxShadow:'0 4px 14px rgba(37,211,102,.35)', animation:'pulse-wa 2.5s ease infinite' }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.848L.057 23.743a.75.75 0 0 0 .921.921l5.895-1.465A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 0 1-4.95-1.355l-.355-.213-3.681.915.93-3.594-.233-.371A9.718 9.718 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
-                WhatsApp
-              </a>
-
-              {/* Llamar */}
-              {(agent?.phone || agent?.whatsapp) && (
-                <a href={`tel:${agent.phone || agent.whatsapp}`}
-                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.9rem', borderRadius:14, background:MARINO, color:BLANCO, textDecoration:'none', fontWeight:800, fontSize:'.9rem', boxShadow:`0 4px 14px rgba(26,26,110,.3)` }}>
-                  📞 Llamar
-                </a>
-              )}
-
-              {/* Email */}
-              {agent?.email && (
-                <a href={`mailto:${agent.email}?subject=Consulta sobre ${property.title}&body=Hola, me interesa ${property.title}. ${pageUrl}`}
-                  style={{ gridColumn: agent?.phone || agent?.whatsapp ? 'auto' : 'span 2', display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.9rem', borderRadius:14, background:'#7B3FBE', color:BLANCO, textDecoration:'none', fontWeight:800, fontSize:'.9rem', boxShadow:'0 4px 14px rgba(123,63,190,.3)' }}>
-                  ✉️ Enviar email
-                </a>
-              )}
-
-              {/* Ver tarjeta digital */}
-              {agent?.slug && (
-                <a href={`/card/${agent.slug}`}
-                  style={{ gridColumn:'span 2', display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.75rem', borderRadius:14, background:GRIS_BG, border:`1px solid ${GRIS_BD}`, color:MARINO, textDecoration:'none', fontWeight:700, fontSize:'.85rem' }}>
-                  👤 Ver perfil completo del asesor →
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* ── BOTONES COMPARTIR (bottom) ───────────────────────────────── */}
-          <div style={{ background:BLANCO, padding:'1.25rem 1.25rem 2rem' }}>
-            <h2 style={{ fontSize:'.88rem', fontWeight:800, color:GRIS_T, textTransform:'uppercase', letterSpacing:'.06em', margin:'0 0 .85rem' }}>Compartir propiedad</h2>
-            <div style={{ display:'flex', gap:'.65rem', flexWrap:'wrap' }}>
-              <button onClick={compartirWA}
-                style={{ flex:1, minWidth:140, display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.85rem', borderRadius:12, background:VERDEWA, color:BLANCO, border:'none', fontWeight:800, fontSize:'.88rem', cursor:'pointer' }}>
-                💬 WhatsApp
-              </button>
-              <button onClick={compartirFB}
-                style={{ flex:1, minWidth:140, display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.85rem', borderRadius:12, background:'#1877F2', color:BLANCO, border:'none', fontWeight:800, fontSize:'.88rem', cursor:'pointer' }}>
-                👥 Facebook
-              </button>
-              <button onClick={() => window.print()}
-                style={{ flex:1, minWidth:140, display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', padding:'.85rem', borderRadius:12, background:GRIS_BG, color:NEGRO, border:`1px solid ${GRIS_BD}`, fontWeight:800, fontSize:'.88rem', cursor:'pointer' }}>
-                🖨️ Imprimir
-              </button>
-            </div>
-          </div>
-
-        </div>{/* /contenido central */}
-
-        {/* ── BOTÓN FLOTANTE WHATSAPP ─────────────────────────────────── */}
-        <a
-          href={`https://wa.me/${waNumber}?text=${waMensaje}`}
-          target="_blank" rel="noreferrer"
-          style={{
-            position:'fixed', bottom:24, right:20, zIndex:999,
-            width:58, height:58, borderRadius:'50%',
-            background:VERDEWA, color:BLANCO,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 6px 24px rgba(37,211,102,.5)',
-            animation:'pulse-wa 2.5s ease infinite',
-            textDecoration:'none', fontSize:'1.5rem',
-          }}
-          title="Consultar por WhatsApp"
-        >
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.522 5.848L.057 23.743a.75.75 0 0 0 .921.921l5.895-1.465A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.718 9.718 0 0 1-4.95-1.355l-.355-.213-3.681.915.93-3.594-.233-.371A9.718 9.718 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/></svg>
-        </a>
-
-      </div>{/* /container */}
-    </>
-  );
-}
-
-// ── Chip de especificación ────────────────────────────────────────────────────
-function SpecChip({ icon, valor, label }) {
-  return (
-    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'.25rem', background:GRIS_BG, border:`1px solid ${GRIS_BD}`, borderRadius:12, padding:'.7rem .5rem', textAlign:'center' }}>
-      <span style={{ fontSize:'1.3rem', lineHeight:1 }}>{icon}</span>
-      <span style={{ fontWeight:900, color:NEGRO, fontSize:'.95rem' }}>{valor}</span>
-      <span style={{ color:GRIS_T, fontSize:'.7rem', fontWeight:600 }}>{label}</span>
+      </div>
     </div>
   );
 }
