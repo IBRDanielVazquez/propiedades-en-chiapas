@@ -3,22 +3,18 @@
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate, proxy-revalidate" },
-        { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
         { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
       ]
     }
   ],
   "rewrites": [
-    { "source": "/landings/(.*)", "destination": "/landings/$1" },
-    { "source": "/:folder(monte-de-los-olivos|colinas-del-campestre|sima-park|la-sima-park-terrenos-en-ocozocoautla|la-canada-desarrollo-eco-campestre|el-higo-copoya-terrenos-10x20-en-copoya|fraccionamiento-montecristo|quinta-en-berriozabal|cuauhtli-terrenos-en-venta-en-el-jobo|bella-vista|carmen-jimenez-asesor-inmobiliario-de-ibr|luis-garcia-asesor-inmobiliario-de-ibr|lupyta-mendoza-asesor-inmobiliario-ibr)", "destination": "/:folder/index.html" },
-    { "source": "/:folder(monte-de-los-olivos|colinas-del-campestre|sima-park|la-sima-park-terrenos-en-ocozocoautla|la-canada-desarrollo-eco-campestre|el-higo-copoya-terrenos-10x20-en-copoya|fraccionamiento-montecristo|quinta-en-berriozabal|cuauhtli-terrenos-en-venta-en-el-jobo|bella-vista|carmen-jimenez-asesor-inmobiliario-de-ibr|luis-garcia-asesor-inmobiliario-de-ibr|lupyta-mendoza-asesor-inmobiliario-ibr)/", "destination": "/:folder/index.html" },
-    { "source": "/((?!.*\\.).*)", "destination": "/index.html" }
+    {
+      "source": "/:folder(monte-de-los-olivos|colinas-del-campestre|sima-park|la-sima-park-terrenos-en-ocozocoautla|la-canada-desarrollo-eco-campestre|el-higo-copoya-terrenos-10x20-en-copoya|fraccionamiento-montecristo|quinta-en-berriozabal|cuauhtli-terrenos-en-venta-en-el-jobo|bella-vista|carmen-jimenez-asesor-inmobiliario-de-ibr|luis-garcia-asesor-inmobiliario-de-ibr|lupyta-mendoza-asesor-inmobiliario-ibr)",
+      "destination": "/:folder/index.html"
+    },
+    {
+      "source": "/((?!.*\\.).*)",
+      "destination": "/index.html"
+    }
   ]
 }
