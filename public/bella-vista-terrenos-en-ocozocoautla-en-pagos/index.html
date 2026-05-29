@@ -8,6 +8,9 @@
 <meta property="og:title" content="Bella Vista Ocozocoautla – Terrenos desde $450 Semanales">
 <meta property="og:description" content="Lotes de 200m² desde $450 semanales. Sin enganche, sin intereses. 6 amenidades exclusivas en Ocozocoautla, Chiapas.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="images/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="images/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
@@ -17,23 +20,26 @@
    ═══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  /* Colors */
-  --navy:#0D1B3E;
-  --navy-deep:#050F21;
-  --navy-mid:#0A162B;
-  --slate:#0D1F3D;
+  /* 
+     COLOR PALETTE SYSTEM — Optimized for Real Estate & Land Sales
+     60% Organic Cream/Forest Green, 30% Moss Green/Charcoal, 10% Sun Gold/Leaf Green
+  */
+  --navy:#1E293B;
+  --navy-deep:#052213;
+  --navy-mid:#082E1B;
+  --slate:#0C3C24;
   --gold:#D4AF37;
   --gold-light:#F3C64F;
-  --gold-glow:rgba(212,175,55,.15);
+  --gold-glow:rgba(212,175,55,.12);
   --white:#FFFFFF;
-  --cream:#FDFBF7;
-  --cream-dark:#F3EBE0;
-  --green-deep:#062314;
-  --green-mid:#09331D;
+  --cream:#FAF8F5;
+  --cream-dark:#EFECE6;
+  --green-deep:#052213;
+  --green-mid:#082E1B;
   --green-accent:#10B981;
   --green-wa:#25D366;
-  --muted:#8596B0;
-  --muted-light:#A4B4CB;
+  --muted:#64748B;
+  --muted-light:#94A3B8;
   /* Spacing */
   --section-py:clamp(60px,10vw,100px);
   --container-px:clamp(16px,4vw,32px);
@@ -111,15 +117,10 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 .section--slate{background:var(--slate)}
 .section--green{background:var(--green-deep)}
 .section--green-mid{background:var(--green-mid)}
-.section--cream{background:var(--cream);color:#1F2A44}
+.section--cream{background:var(--cream);color:#2C3A30}
 .section--cream .section-tag{color:#8A6D25}
-.section--cream .section-subtitle{color:#475569}
-.section--cream h2,.section--cream h3{color:#1F2A44}
-.section--cream .terreno-text > p{color:#475569}
-.section--cream .check-list li{color:#475569}
-.section--cream .check-list strong{color:#1F2A44}
-.section--cream .check-list__icon{background:linear-gradient(135deg,#A5832E,#D0A63C)}
-.section--cream .check-list__icon svg{fill:var(--white)}
+.section--cream .section-subtitle{color:#435348}
+.section--cream h2,.section--cream h3{color:#2C3A30}
 
 /* Section dividers */
 .section--divider-top{border-top:1px solid rgba(201,168,76,.12)}
@@ -1377,49 +1378,33 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
   </div>
 </section>
 
-<!-- ═══════════════════ 8. TU TERRENO ═══════════════════ -->
-<section class="section section--cream section--divider-top" id="terreno">
-  <div class="container">
-    <div class="text-center">
-      <span class="section-tag reveal">Tu terreno</span>
-      <h2 class="reveal">Construye <span class="text-gold-italic">el lugar de tus sueños.</span></h2>
-    </div>
+<!-- ═══════════════════ 8. GALERÍA DEL DESARROLLO ═══════════════════ -->
+<section class="section section--cream section--divider-top" id="galeria-desarrollo">
+  <div class="container text-center">
+    <span class="section-tag reveal">Fotografías del Desarrollo</span>
+    <h2 class="reveal">Explora Bella Vista<br><span class="text-gold-italic">con tus propios ojos</span></h2>
+    <p class="section-subtitle reveal">Desliza para ver vistas espectaculares del terreno, calles tratadas, la exuberante naturaleza y renders del plan maestro.</p>
+  </div>
 
-    <div class="terreno-layout">
-      <div class="img-placeholder img-placeholder--cream terreno-image reveal" style="min-height:320px">
-        📸 Imagen: Lote con medidas marcadas (10m × 20m) y render de cabaña
-        <div class="terreno-image__badge">
-          <strong>10 × 20 metros</strong>
-          <span>200 M² · TU LIENZO</span>
+  <div class="container" style="margin-top:var(--gap-xl)">
+    <div class="swiper desarrolloSwiper reveal">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Vista Aérea: Terrenos planos rodeados de naturaleza en Ocozocoautla</div>
+        </div>
+        <div class="swiper-slide">
+          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Calles y Accesos: Vialidades amplias y delimitadas en proceso de tratamiento</div>
+        </div>
+        <div class="swiper-slide">
+          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Entorno Natural: Vegetación abundante y pinos autóctonos de Chiapas</div>
+        </div>
+        <div class="swiper-slide">
+          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Render Cabaña Modelo: Tu futura casa de descanso perfectamente integrada al paisaje</div>
         </div>
       </div>
-
-      <div class="terreno-text reveal reveal-delay-1">
-        <p>Lotes rústicos de 200 m² listos para que diseñes tu casa de descanso, tu refugio familiar o tu próxima inversión. Sin enganche, sin intereses y con pagos desde $450 semanales.</p>
-
-        <ul class="check-list">
-          <li>
-            <span class="check-list__icon"><svg viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg></span>
-            <span><strong>Lote de 200 m²</strong> · 10 metros de frente por 20 de fondo. Ideal para casa de campo o cabaña familiar.</span>
-          </li>
-          <li>
-            <span class="check-list__icon"><svg viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg></span>
-            <span><strong>Sin enganche · Sin intereses</strong> · Desde $450 semanales. Sin trámites complicados ni sorpresas.</span>
-          </li>
-          <li>
-            <span class="check-list__icon"><svg viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg></span>
-            <span><strong>Escrituración garantizada</strong> · Documentos notariados en regla, sin riesgos legales.</span>
-          </li>
-          <li>
-            <span class="check-list__icon"><svg viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg></span>
-            <span><strong>Acceso a las 6 amenidades incluido</strong> · Sin costo adicional conforme se desarrollan.</span>
-          </li>
-          <li>
-            <span class="check-list__icon"><svg viewBox="0 0 16 16"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg></span>
-            <span><strong>Reglamento que protege tu inversión</strong> · Para que el desarrollo conserve su valor con el tiempo.</span>
-          </li>
-        </ul>
-      </div>
+      <div class="swiper-pagination" style="bottom:10px!important"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
     </div>
   </div>
 </section>
@@ -1427,52 +1412,43 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 <!-- ═══════════════════ 9. PRECIOS ═══════════════════ -->
 <section class="section section--green section--divider-top" id="precios">
   <div class="container text-center">
-    <span class="section-tag reveal">Opciones de compra · Lotes de 200 m²</span>
-    <h2 class="reveal">Elige tu forma <span class="text-gold-italic">de invertir</span></h2>
-    <p class="section-subtitle reveal">Planes de pago flexibles diseñados para que tu inversión sea accesible y sin complicaciones.</p>
-
-    <div class="pricing-grid">
-      <!-- Plan 1: Sin Enganche -->
-      <div class="pricing-card pricing-card--featured reveal">
-        <span class="pricing-badge">Más popular</span>
-        <div class="pricing-card__type">A crédito · Sin enganche</div>
+    <span class="section-tag reveal">Único Plan de Financiamiento</span>
+    <h2 class="reveal">Invierte de forma <span class="text-gold-italic">fácil y directa</span></h2>
+    <p class="section-subtitle reveal">Sin revisiones bancarias ni trámites complicados. Un plan de pagos diseñado para tu tranquilidad financiera.</p>
+    
+    <div class="pricing-single-wrapper reveal" style="max-width: 600px; margin: var(--gap-xl) auto 0;">
+      <div class="pricing-card pricing-card--featured" style="transform:none; padding:var(--gap-lg) var(--gap-xl);">
+        <span class="pricing-badge">Plan de Pago Único</span>
+        <div class="pricing-card__type" style="color:var(--gold-light)">Financiamiento Directo · Sin Enganche</div>
         <div class="pricing-card__price">$1,800</div>
         <div class="pricing-card__period">al mes · 80 mensualidades</div>
-        <ul class="pricing-card__details">
-          <li><strong>$675 el m²</strong></li>
-          <li>Incluye vigilancia y mantenimiento</li>
-          <li>Escrituración al liquidar</li>
+        <div style="font-size:1.15rem; font-weight:700; color:var(--white); margin:12px 0 20px;">Equivalente a solo <span class="text-gold-italic">$450 semanales</span></div>
+        
+        <ul class="pricing-card__details" style="text-align:left; border-top:1px solid rgba(255,255,255,.08); padding-top:20px;">
+          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <span style="color:var(--gold)">✓</span> <strong>Lotes de 200 m²</strong> (10x20 metros) listos para construir.
+          </li>
+          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <span style="color:var(--gold)">✓</span> <strong>Cero enganche</strong>: ingresas solo con tu primera mensualidad.
+          </li>
+          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <span style="color:var(--gold)">✓</span> <strong>Sin intereses</strong>: el precio total se congela desde el primer día.
+          </li>
+          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+            <span style="color:var(--gold)">✓</span> <strong>Acceso a las 6 amenidades exclusivas</strong> incluido sin costo extra.
+          </li>
+          <li style="display:flex; align-items:center; gap:10px;">
+            <span style="color:var(--gold)">✓</span> <strong>Certeza jurídica total</strong>: documentos en regla respaldados ante Notario.
+          </li>
         </ul>
-      </div>
-
-      <!-- Plan 2: Con Enganche -->
-      <div class="pricing-card reveal reveal-delay-1">
-        <span class="pricing-badge pricing-badge--green">Junto a amenidades</span>
-        <div class="pricing-card__type">Con enganche</div>
-        <div class="pricing-card__price">$20,000</div>
-        <div class="pricing-card__period">de entrada</div>
-        <ul class="pricing-card__details">
-          <li><strong>+ 68 meses de $1,800</strong></li>
-          <li>$675 el m² · Lotes cerca de amenidades</li>
-          <li>Incluye vigilancia y mantenimiento</li>
-        </ul>
-      </div>
-
-      <!-- Plan 3: Contado -->
-      <div class="pricing-card reveal reveal-delay-2">
-        <span class="pricing-badge">Mejor precio</span>
-        <div class="pricing-card__type">Pago de contado</div>
-        <div class="pricing-card__price">$120,000</div>
-        <div class="pricing-card__period">pago único · $600 el m²</div>
-        <ul class="pricing-card__details">
-          <li><strong>Ahorras $15,000</strong></li>
-          <li>Sin cuota mensual de vigilancia</li>
-          <li>Escrituración inmediata</li>
-        </ul>
+        
+        <div style="margin-top:28px;">
+          <a href="#formulario" class="btn btn--gold" style="width:100%; justify-content:center;">📋 Apartar mi lote hoy →</a>
+        </div>
       </div>
     </div>
-
-    <p class="pricing-note reveal">Los planes A crédito y Con enganche incluyen $100 mensuales de vigilancia y mantenimiento del desarrollo.</p>
+    
+    <p class="pricing-note reveal" style="color:var(--muted)">El plan de pago incluye $100 mensuales de vigilancia y mantenimiento del desarrollo para proteger tu inversión.</p>
   </div>
 </section>
 
@@ -1498,7 +1474,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
         ¿Cómo sé que esto es legítimo y que mi dinero está seguro?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">Cada lote cuenta con clave catastral individual, carta de liberación y escritura pública ante Notario Público. Nuestro fraccionamiento cumple con toda la normativa municipal y estatal. Puedes verificar la documentación antes de comprometerte.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">Cada lote cuenta con carta de liberación garantizada, deslinde oficial y escritura pública definitiva ante Notario Público. Nuestro fraccionamiento cumple plenamente con toda la normativa municipal y estatal. Puedes verificar toda la documentación física antes de comprometerte.</div></div>
     </div>
 
     <div class="faq-item reveal reveal-delay-2">
@@ -1715,6 +1691,19 @@ const swiper = new Swiper('.amenidadesSwiper', {
     560: { slidesPerView: 1.5, spaceBetween: 20 },
     768: { slidesPerView: 2.2, spaceBetween: 24 },
     1024: { slidesPerView: 3, spaceBetween: 28 }
+  }
+});
+
+const desarrolloSwiper = new Swiper('.desarrolloSwiper', {
+  loop: true,
+  autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
+  pagination: { el: '.swiper-pagination', clickable: true },
+  navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+  slidesPerView: 1,
+  spaceBetween: 20,
+  breakpoints: {
+    768: { slidesPerView: 1.5, spaceBetween: 24 },
+    1024: { slidesPerView: 2, spaceBetween: 28 }
   }
 });
 
