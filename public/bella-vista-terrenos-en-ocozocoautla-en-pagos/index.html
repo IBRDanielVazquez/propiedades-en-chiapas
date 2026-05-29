@@ -99,9 +99,9 @@ h1, h2, h3 {
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
-h1 { font-size: clamp(48px, 8vw, 80px); }
-h2 { font-size: clamp(36px, 5vw, 58px); }
-h3 { font-size: clamp(20px, 3vw, 28px); }
+h1 { font-size: clamp(54px, 9vw, 92px); }
+h2 { font-size: clamp(42px, 6vw, 66px); }
+h3 { font-size: clamp(22px, 3.5vw, 32px); }
 
 .section-label, [class*="label"], [class*="tag"], [class*="subtitle"] {
   font-family: var(--sans);
@@ -191,7 +191,7 @@ section p, section li { text-align: center; }
 }
 .stat__number {
   font-family: var(--serif);
-  font-size: clamp(28px, 4vw, 38px);
+  font-size: clamp(38px, 6vw, 50px);
   font-weight: 700;
   color: var(--gold) !important;
 }
@@ -980,6 +980,157 @@ section p, section li { text-align: center; }
 #visita .step-card p {
   color: rgba(255, 255, 255, 0.7) !important;
 }
+
+
+/* Mobile centering adjustments for natural scroll */
+@media (max-width: 768px) {
+  .masterplan-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center !important;
+  }
+  .masterplan-text p {
+    text-align: center !important;
+    margin-bottom: 24px;
+  }
+  .masterplan-text .btn {
+    margin: 0 auto !important;
+    display: inline-flex !important;
+  }
+  .top-stats-bar {
+    flex-direction: column !important;
+    gap: 32px !important;
+  }
+  .stats-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 32px !important;
+  }
+  .value-grid, .steps-grid {
+    text-align: center !important;
+    align-items: center !important;
+  }
+  .card, .step-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .step-card__number, .value-card__icon {
+    margin: 0 auto 16px auto !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   CAMBIOS GLOBALES DE LEGIBILIDAD Y CENTRADO
+   ═══════════════════════════════════════════ */
+
+/* 1. CENTRADO UNIVERSAL */
+section, .section, [class*="section"],
+[class*="hero"], [class*="container"],
+[class*="wrap"], [class*="content"] {
+  text-align: center !important;
+}
+
+.hero, [class*="hero"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.hero h1, .hero p, .hero div {
+  text-align: center !important;
+  max-width: 700px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.hero [style*="text-align:left"],
+.hero [style*="text-align: left"] {
+  text-align: center !important;
+}
+
+/* 2. TAMAÑOS DE FUENTE ACCESIBLES */
+body {
+  font-size: 17px !important;
+  line-height: 1.8 !important;
+}
+
+p, li, span, div {
+  font-size: 17px !important;
+  line-height: 1.8 !important;
+}
+
+h1 {
+  font-size: clamp(52px, 9vw, 96px) !important;
+  line-height: 1.05 !important;
+}
+
+h2 {
+  font-size: clamp(38px, 6vw, 64px) !important;
+  line-height: 1.1 !important;
+  margin-bottom: 20px !important;
+}
+
+h3 {
+  font-size: clamp(24px, 4vw, 36px) !important;
+}
+
+/* Labels de sección */
+[class*="label"], [class*="tag"], 
+[class*="subtitle"], [class*="eyebrow"] {
+  font-size: 13px !important;
+  letter-spacing: 3px !important;
+}
+
+/* Precio hook */
+[class*="price"], [class*="precio"] {
+  font-size: clamp(72px, 16vw, 130px) !important;
+}
+
+/* Stats bar números */
+[class*="stat"] div:first-child,
+.stats-bar div div:first-child {
+  font-size: clamp(32px, 5vw, 48px) !important;
+}
+
+/* Stats bar labels */
+[class*="stat"] div:last-child,
+.stats-bar div div:last-child {
+  font-size: 12px !important;
+  letter-spacing: 2px !important;
+}
+
+/* 3. PADDING DE SECCIONES */
+section, [class*="section"] {
+  padding: 80px 24px !important;
+}
+
+@media(max-width: 768px) {
+  section, [class*="section"] {
+    padding: 60px 20px !important;
+  }
+}
+
+.container, [class*="container"],
+[class*="wrap"] {
+  max-width: 720px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+}
+
+/* 4. BOTONES MÁS GRANDES */
+a[href*="wa.me"], button, .btn,
+[class*="btn"], [class*="cta"] {
+  font-size: 16px !important;
+  padding: 18px 32px !important;
+  min-height: 56px !important;
+}
+
 </style>
 </head>
 <body>
@@ -1001,90 +1152,90 @@ section p, section li { text-align: center; }
 
 <!-- ═══════════════════ 2. HERO — CINEMATIC ═══════════════════ -->
 <section class="hero" id="inicio">
-  <canvas class="hero__particles" id="hero-particles"></canvas>
+  
   <div class="hero__content">
-    <div style="text-align:left;max-width:640px;padding:0 24px;margin:0 auto">
-      <div style="font-size:11px;letter-spacing:3px;font-weight:700;
+    <div style="text-align:center;max-width:800px;padding:0 24px;margin:0 auto;display:flex;flex-direction:column;align-items:center;">
+      <div style="font-size:12px;letter-spacing:3px;font-weight:700;
         color:#B8924A;text-transform:uppercase;margin-bottom:20px">
         BELLA VISTA · OCOZOCOAUTLA
       </div>
       <h1 style="font-family:'Cormorant Garamond',serif;
-        font-size:clamp(52px,10vw,88px);font-weight:700;
-        line-height:1.05;color:white;margin-bottom:24px">
+        font-size:clamp(64px,11vw,110px);font-weight:800;
+        line-height:1;color:white;margin-bottom:24px;letter-spacing:-1px;">
         200 m²<br>
         <em style="color:#D4AF72">desde $450</em><br>
         a la semana.
       </h1>
-      <p style="font-size:16px;color:rgba(255,255,255,0.75);
-        max-width:480px;line-height:1.7;margin-bottom:32px">
+      <p style="font-size:18px;color:rgba(255,255,255,0.85);
+        max-width:540px;line-height:1.75;margin:0 auto 36px">
         Terreno eco-campestre en Ocozocoautla, Chiapas.<br>
         Sin enganche · Sin buró · Escritura pública.<br>
-        <strong style="color:white">
+        <strong style="color:white; font-weight:700">
         Incluye vigilancia y mantenimiento.</strong>
       </p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
         <a href="https://wa.me/529612466204?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Bella%20Vista"
           target="_blank"
           style="display:inline-flex;align-items:center;gap:8px;
-          background:#25D366;color:white;padding:16px 28px;
-          border-radius:999px;font-size:15px;font-weight:700;
-          text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,0.4)">
+          background:#25D366;color:white;padding:18px 36px;
+          border-radius:999px;font-size:16px;font-weight:700;
+          text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,0.4);
+          transition:transform 0.2s;">
           Quiero información →
         </a>
         <a href="#formulario"
           style="display:inline-flex;align-items:center;gap:8px;
-          background:transparent;color:#D4AF72;padding:16px 28px;
-          border-radius:999px;font-size:15px;font-weight:600;
-          text-decoration:none;border:1.5px solid #B8924A">
+          background:transparent;color:#D4AF72;padding:18px 36px;
+          border-radius:999px;font-size:16px;font-weight:600;
+          text-decoration:none;border:1.5px solid #B8924A;
+          transition:transform 0.2s;">
           Agendar visita
         </a>
       </div>
     </div>
     
-    <div class="hero__image-wrapper reveal reveal-delay-4" style="margin-top:40px;">
+    <div class="hero__image-wrapper reveal reveal-delay-4" style="margin-top:48px;">
       <img src="images/hero-bg.png" alt="Cabaña campestre en Bella Vista" style="width:100%; max-width:680px; height:auto; border-radius:var(--radius-lg); box-shadow:var(--shadow-lift); border:1px solid rgba(255,255,255,0.06); display:block; margin:0 auto;">
     </div>
   </div>
 
-  <div class="hero__scroll">
-    <span>Descubre más</span>
-    <div class="hero__scroll-line"></div>
+  
   </div>
 </section>
 
-<div style="background:#1C1C1C;padding:20px 24px;
+<div class="top-stats-bar" style="background:#1C1C1C;padding:40px 24px;
   display:flex;justify-content:center;
-  gap:40px;flex-wrap:wrap;
+  gap:48px;flex-wrap:wrap;
   border-top:1px solid rgba(184,146,74,0.2)">
   <div style="text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;
-      font-size:28px;font-weight:700;color:#D4AF72">200 m²</div>
+      font-size:38px;font-weight:700;color:#D4AF72;line-height:1">200 m²</div>
     <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
-      text-transform:uppercase;margin-top:2px">Por lote</div>
+      text-transform:uppercase;margin-top:6px">Por lote</div>
   </div>
   <div style="text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;
-      font-size:28px;font-weight:700;color:#D4AF72">10 × 20</div>
+      font-size:38px;font-weight:700;color:#D4AF72;line-height:1">10 × 20</div>
     <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
-      text-transform:uppercase;margin-top:2px">Metros</div>
+      text-transform:uppercase;margin-top:6px">Metros</div>
   </div>
   <div style="text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;
-      font-size:28px;font-weight:700;color:#D4AF72">$450</div>
+      font-size:38px;font-weight:700;color:#D4AF72;line-height:1">$450</div>
     <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
-      text-transform:uppercase;margin-top:2px">Por semana</div>
+      text-transform:uppercase;margin-top:6px">Por semana</div>
   </div>
   <div style="text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;
-      font-size:28px;font-weight:700;color:#D4AF72">6</div>
+      font-size:38px;font-weight:700;color:#D4AF72;line-height:1">6</div>
     <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
-      text-transform:uppercase;margin-top:2px">Amenidades incluidas</div>
+      text-transform:uppercase;margin-top:6px">Amenidades incluidas</div>
   </div>
   <div style="text-align:center">
     <div style="font-family:'Cormorant Garamond',serif;
-      font-size:28px;font-weight:700;color:#D4AF72">✓</div>
+      font-size:38px;font-weight:700;color:#D4AF72;line-height:1">✓</div>
     <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
-      text-transform:uppercase;margin-top:2px">Vigilancia incluida</div>
+      text-transform:uppercase;margin-top:6px">Vigilancia incluida</div>
   </div>
 </div>
 
@@ -1247,7 +1398,7 @@ section p, section li { text-align: center; }
   <div class="container">
     <div class="text-center">
       <span class="section-tag reveal">Master Plan</span>
-      <h2 class="reveal">Cada lote pensado<br>para que construyas<br><em>a tu ritmo.</em></h2>
+      <h2 class="reveal" style="font-size:clamp(46px, 9vw, 84px); line-height:1.05; text-transform:uppercase; font-weight:800; letter-spacing:-1px;">Cada lote pensado<br>para que construyas<br><em style="color:var(--gold)">a tu ritmo.</em></h2>
     </div>
 
     <div class="masterplan-layout">
@@ -1320,7 +1471,7 @@ section p, section li { text-align: center; }
 
 <!-- ═══════════════════ 9. PRECIOS ═══════════════════ -->
 <section id="precios" style="background:#F7F1E8;padding:80px 20px;text-align:center">
-  <div style="font-size:11px;letter-spacing:3px;font-weight:700;color:#B8924A;text-transform:uppercase;margin-bottom:16px">PLAN MAESTRO DE FINANCIAMIENTO</div>
+  <div style="font-size:clamp(14px, 3vw, 18px);letter-spacing:4px;font-weight:800;color:#B8924A;text-transform:uppercase;margin-bottom:16px">PLAN MAESTRO DE FINANCIAMIENTO</div>
   <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(80px,18vw,140px);font-weight:700;color:#141414;line-height:1;letter-spacing:-4px">$450</div>
   <div style="font-size:clamp(18px,4vw,28px);font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B8924A;margin-top:4px">A LA SEMANA</div>
   <div style="font-size:15px;color:#6B6B6B;margin-top:16px;max-width:400px;margin-left:auto;margin-right:auto">Lote de 200 m² · 80 mensualidades · Sin enganche<br>Sin intereses · Sin buró · Con escritura pública</div>
@@ -1495,62 +1646,7 @@ section p, section li { text-align: center; }
 <!-- ═══════════════════ SCRIPTS ═══════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-/* ─── Hero Particles (Cinematic) ─── */
-(function(){
-  const canvas = document.getElementById('hero-particles');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let particles = [];
-  const PARTICLE_COUNT = 40;
-
-  function resize(){
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  function createParticle(){
-    return {
-      x: Math.random() * canvas.width,
-      y: canvas.height + 10,
-      size: Math.random() * 2.5 + 0.5,
-      speedY: Math.random() * 0.6 + 0.2,
-      speedX: (Math.random() - 0.5) * 0.3,
-      opacity: Math.random() * 0.4 + 0.1,
-      life: 0,
-      maxLife: Math.random() * 400 + 200
-    };
-  }
-
-  for (let i = 0; i < PARTICLE_COUNT; i++){
-    const p = createParticle();
-    p.y = Math.random() * canvas.height;
-    p.life = Math.random() * p.maxLife;
-    particles.push(p);
-  }
-
-  function animate(){
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach((p, i) => {
-      p.x += p.speedX;
-      p.y -= p.speedY;
-      p.life++;
-      const fade = p.life > p.maxLife * 0.7
-        ? 1 - (p.life - p.maxLife * 0.7) / (p.maxLife * 0.3)
-        : Math.min(p.life / 40, 1);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(201,168,76,${p.opacity * fade})`;
-      ctx.fill();
-      if (p.life >= p.maxLife || p.y < -10){
-        particles[i] = createParticle();
-      }
-    });
-    requestAnimationFrame(animate);
-  }
-  animate();
-})();
+/* Hero Particles Disabled */
 
 /* ─── SwiperJS ─── */
 const swiper = new Swiper('.amenidadesSwiper', {
