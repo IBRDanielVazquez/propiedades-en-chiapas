@@ -222,13 +222,17 @@ section p, section li { text-align: center; }
 }
 
 /* Cream2 sections (Paso 3) */
-#galeria-desarrollo, #precios {
+#ubicacion, #galeria-desarrollo, #precios {
   background: var(--cream2);
   color: var(--dark);
 }
+#ubicacion p, #ubicacion h2, #ubicacion h3, #ubicacion strong,
 #galeria-desarrollo p, #galeria-desarrollo h2, #galeria-desarrollo h3,
 #precios p, #precios h2, #precios h3 {
   color: var(--dark) !important;
+}
+#ubicacion .section-tag {
+  color: var(--gold) !important;
 }
 
 /* Dark sections (Paso 3) */
@@ -1005,8 +1009,8 @@ section p, section li { text-align: center; }
   <div style="font-size:15px;color:rgba(255,255,255,0.6);margin-top:12px">O <strong style="color:#E8C97A">$1,800</strong> mensuales · congelados 80 meses · sin intereses</div>
 </div>
 
-    <h1 class="reveal reveal-delay-3">Lotes de 200 m² en <span class="text-gold-italic">Bella Vista</span></h1>
-    <p class="hero__subtitle reveal reveal-delay-3">Naturaleza, plusvalía y estilo de vida. Escritura pública, entrega inmediata y 6 amenidades exclusivas en Ocozocoautla, Chiapas.</p>
+    <h1 class="reveal reveal-delay-3">Tu terreno en Chiapas.<br><em>Desde $450 a la semana.</em></h1>
+    <p class="hero__subtitle reveal reveal-delay-3">200 m² en Ocozocoautla, rodeados de montañas and naturaleza. Sin enganche. Sin buró. Con escritura pública desde el día uno.</p>
 
     <div class="hero__tags reveal reveal-delay-3">
       <span class="hero__tag">✓ Escritura pública</span>
@@ -1039,8 +1043,8 @@ section p, section li { text-align: center; }
 <section class="section" id="beneficios">
   <div class="container text-center">
     <span class="section-tag reveal">¿Por qué Bella Vista?</span>
-    <h2 class="reveal">Más que un lote,<br><span class="text-gold-italic">una inversión con certeza</span></h2>
-    <p class="section-subtitle reveal">Tu patrimonio está protegido desde el primer momento con las máximas garantías de preventa.</p>
+    <h2 class="reveal">El fin de semana que<br><em>tu familia merece.</em></h2>
+    <p class="section-subtitle reveal">No vendemos solo metros cuadrados. Vendemos el lugar donde van a crecer tus hijos, descansar tus padres y reunirse los tuyos. A 25 minutos de Tuxtla, con todo incluido en tu plan de pagos.</p>
 
     <div class="value-grid">
       <div class="card value-card reveal">
@@ -1071,12 +1075,48 @@ section p, section li { text-align: center; }
 
 
 
+<!-- ═══════════════════ 4. UBICACIÓN/MAPA ═══════════════════ -->
+<section class="section" id="ubicacion">
+  <div class="container text-center">
+    <span class="section-tag reveal">Ubicación Estratégica</span>
+    <h2 class="reveal">A 25 minutos de Tuxtla.<br><em>A un mundo de distancia.</em></h2>
+    <p class="section-subtitle reveal">En las afueras de Ocozocoautla, rumbo a la Sima de las Cotorras. Carretera pavimentada, acceso todo el año, servicios a 10 minutos.</p>
+    
+    <div class="location-data reveal">
+      <div class="location-data__item">
+        <div class="location-data__icon">🚗</div>
+        <div class="location-data__value">25 min</div>
+        <div class="location-data__label">De Tuxtla Gutiérrez</div>
+      </div>
+      <div class="location-data__item">
+        <div class="location-data__icon">🛣️</div>
+        <div class="location-data__value">Pavimentada</div>
+        <div class="location-data__label">Carretera de acceso</div>
+      </div>
+      <div class="location-data__item">
+        <div class="location-data__icon">⛰️</div>
+        <div class="location-data__value">Sima de las Cotorras</div>
+        <div class="location-data__label">Ruta turística</div>
+      </div>
+      <div class="location-data__item">
+        <div class="location-data__icon">🛒</div>
+        <div class="location-data__value">10 min</div>
+        <div class="location-data__label">Servicios y comercios</div>
+      </div>
+    </div>
+    
+    <div class="map-embed reveal">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3820.5756306029584!2d-93.3857351!3d16.7480556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTbCsDQ0JzUzLjAiTiA5M8KwMjMnMDguNiJX!5e0!3m2!1ses!2smx!4v1717000000000!5m2!1ses!2smx" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════════ 5. AMENIDADES SLIDER ═══════════════════ -->
 <section class="section slider-section" id="galeria">
   <div class="container text-center">
     <span class="section-tag reveal">Explora cada espacio</span>
-    <h2 class="reveal">Amenidades <span class="text-gold-italic">en detalle</span></h2>
-    <p class="section-subtitle reveal">Desliza para explorar renders y visualizaciones de cada amenidad diseñada para tu descanso familiar.</p>
+    <h2 class="reveal">6 amenidades incluidas<br>en tu plan de pagos.</h2>
+    <p class="section-subtitle reveal">Sin cuotas extra. Sin sorpresas. Desde que apartas tu lote, ya tienes acceso.</p>
   </div>
 
   <div class="container">
@@ -1138,8 +1178,8 @@ section p, section li { text-align: center; }
   <div class="container text-center">
     <div class="video-section__content">
       <span class="section-tag reveal">Recorrido en video</span>
-      <h2 class="reveal">Dos minutos. Eso es todo lo que<br>necesitas para <span class="text-gold-italic">enamorarte de Bella Vista.</span></h2>
-      <p class="section-subtitle reveal">Un recorrido por las futuras amenidades, el terreno y el entorno natural de Ocozocoautla. Lo que ninguna foto puede transmitir.</p>
+      <h2 class="reveal">Dos minutos para que<br><em>te enamores del lugar.</em></h2>
+      <p class="section-subtitle reveal">Recorre el terreno, las montañas y el entorno que ninguna foto puede transmitir.</p>
 
       <div class="video-embed reveal">
         <img src="images/video-thumb.png" alt="Video Recorrido Bella Vista" style="width:100%; height:100%; object-fit:cover; display:block;">
@@ -1157,12 +1197,12 @@ section p, section li { text-align: center; }
   <div class="container">
     <div class="text-center">
       <span class="section-tag reveal">Master Plan</span>
-      <h2 class="reveal">Un desarrollo <span class="text-gold-italic">planeado al detalle</span><br>para tu tranquilidad.</h2>
+      <h2 class="reveal">Cada lote pensado<br>para que construyas<br><em>a tu ritmo.</em></h2>
     </div>
 
     <div class="masterplan-layout">
       <div class="masterplan-text reveal">
-        <p>Cada amenidad fue ubicada estratégicamente para que estés cerca de todo sin perder privacidad. Calles con terracería tratada de 4 capas, áreas verdes generosas y un trazo que respeta el entorno natural de Ocozocoautla, a 12 minutos de Coita.</p>
+        <p>200 m² de 10 × 20 metros. Uso habitacional. Construye tu cabaña, casa de campo o refugio familiar sin restricciones de diseño. Las calles tienen terracería tratada de 4 capas. Hay áreas verdes entre cada sección.</p>
         <a href="#formulario" class="btn btn--outline">Preguntar por lotes disponibles →</a>
       </div>
       <div class="masterplan-image reveal reveal-delay-1" style="min-height:auto; background:none; border:none;">
@@ -1298,24 +1338,24 @@ section p, section li { text-align: center; }
 <section class="section" id="visita">
   <div class="container text-center">
     <span class="section-tag reveal">Por qué visitarlo esta semana</span>
-    <h2 class="reveal">Los mejores lotes<br><span class="text-gold-italic">se eligen primero.</span></h2>
-    <p class="section-subtitle reveal" style="color:var(--muted-light)">El desarrollo está en preventa con lotes limitados en Ocozocoautla, Chiapas. Quienes visitan primero eligen ubicación y precio antes que nadie. La visita es sin costo y sin compromiso.</p>
+    <h2 class="reveal">Los mejores lotes<br><em>se apartan primero.</em></h2>
+    <p class="section-subtitle reveal" style="color:var(--muted-light)">El desarrollo está en preventa activa. Quienes visitan primero eligen su lote antes que nadie. La visita es sin costo y sin compromiso.</p>
 
     <div class="steps-grid">
       <div class="step-card reveal">
         <div class="step-card__number">01</div>
-        <h3>Reserva tu visita</h3>
-        <p>Escríbenos por WhatsApp con el día y horario que más te acomode. Te confirmamos en minutos.</p>
+        <h3>Escríbenos por WhatsApp</h3>
+        <p>Dinos qué día puedes venir. Te confirmamos en minutos.</p>
       </div>
       <div class="step-card reveal reveal-delay-1">
         <div class="step-card__number">02</div>
-        <h3>Te llevamos al lugar</h3>
-        <p>Recorrido guiado por el desarrollo, las amenidades y los lotes disponibles a 12 minutos de Coita. Tarda aproximadamente una hora.</p>
+        <h3>Te llevamos al terreno</h3>
+        <p>Recorrido guiado por las amenidades y los lotes disponibles. Tarda aproximadamente una hora.</p>
       </div>
       <div class="step-card reveal reveal-delay-2">
         <div class="step-card__number">03</div>
-        <h3>Decides sin presión</h3>
-        <p>Te entregamos toda la información, precios y plan de pagos. Tú decides cuándo y cómo. Sin compromisos.</p>
+        <h3>Apartas con tu primera mensualidad</h3>
+        <p>Sin enganche. Sin papeleo complicado. Tu lote queda separado ese mismo día.</p>
       </div>
     </div>
 
@@ -1335,8 +1375,8 @@ section p, section li { text-align: center; }
 <section class="section" id="formulario">
   <div class="container text-center">
     <span class="section-tag reveal">Agenda tu visita</span>
-    <h2 class="reveal">Tu próximo fin de semana<br><span class="text-gold-italic">puede empezar aquí.</span></h2>
-    <p class="section-subtitle reveal">Déjanos tus datos y te llamamos para agendar tu visita al desarrollo. Sin compromiso.</p>
+    <h2 class="reveal">Tu próximo fin de semana<br><em>puede empezar aquí.</em></h2>
+    <p class="section-subtitle reveal">Déjanos tus datos y te llamamos hoy para agendar tu visita.</p>
 
     <div class="form-wrapper reveal" id="lead-form-wrapper">
       <form id="lead-form" autocomplete="on">
@@ -1381,13 +1421,13 @@ section p, section li { text-align: center; }
     <div style="margin-bottom:12px;">
       <img src="images/logo.png" alt="Bella Vista Ocozocoautla Logo" style="max-width: 120px; height: auto; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
     </div>
-    <div class="footer__tagline">Fraccionamiento de Terrenos Campestres · Ocozocoautla, Chiapas</div>
+    <div class="footer__tagline">Bella Vista Ocozocoautla · Uso habitacional · Terrenos eco-campestres</div>
     <div class="footer__links">
       <a href="https://wa.me/529612466204" target="_blank" rel="noopener">WhatsApp</a>
       <a href="/privacidad">Aviso de Privacidad</a>
       <a href="/">Propiedades en Chiapas</a>
     </div>
-    <p class="footer__copy">© 2026 Bella Vista Ocozocoautla · IBR Agencia Digital</p>
+    <p class="footer__copy">Desarrollado por IBR Agencia Digital · Chiapas, México</p>
   </div>
 </footer>
 
