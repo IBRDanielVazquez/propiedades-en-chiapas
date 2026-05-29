@@ -19,21 +19,21 @@
 :root{
   /* Colors */
   --navy:#0D1B3E;
-  --navy-deep:#070E20;
-  --navy-mid:#0A1530;
-  --slate:#0F1A35;
-  --gold:#C9A84C;
-  --gold-light:#E8C97A;
-  --gold-glow:rgba(201,168,76,.15);
+  --navy-deep:#050F21;
+  --navy-mid:#0A162B;
+  --slate:#0D1F3D;
+  --gold:#D4AF37;
+  --gold-light:#F3C64F;
+  --gold-glow:rgba(212,175,55,.15);
   --white:#FFFFFF;
-  --cream:#F5F0E8;
-  --cream-dark:#E8DFD2;
-  --green-deep:#061A0F;
-  --green-mid:#0A2818;
+  --cream:#FDFBF7;
+  --cream-dark:#F3EBE0;
+  --green-deep:#062314;
+  --green-mid:#09331D;
   --green-accent:#10B981;
   --green-wa:#25D366;
-  --muted:#8B9BB4;
-  --muted-light:#A8B5C8;
+  --muted:#8596B0;
+  --muted-light:#A4B4CB;
   /* Spacing */
   --section-py:clamp(60px,10vw,100px);
   --container-px:clamp(16px,4vw,32px);
@@ -111,9 +111,15 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 .section--slate{background:var(--slate)}
 .section--green{background:var(--green-deep)}
 .section--green-mid{background:var(--green-mid)}
-.section--cream{background:var(--cream);color:var(--navy)}
-.section--cream .section-subtitle{color:#556073}
-.section--cream h2,.section--cream h3{color:var(--navy)}
+.section--cream{background:var(--cream);color:#1F2A44}
+.section--cream .section-tag{color:#8A6D25}
+.section--cream .section-subtitle{color:#475569}
+.section--cream h2,.section--cream h3{color:#1F2A44}
+.section--cream .terreno-text > p{color:#475569}
+.section--cream .check-list li{color:#475569}
+.section--cream .check-list strong{color:#1F2A44}
+.section--cream .check-list__icon{background:linear-gradient(135deg,#A5832E,#D0A63C)}
+.section--cream .check-list__icon svg{fill:var(--white)}
 
 /* Section dividers */
 .section--divider-top{border-top:1px solid rgba(201,168,76,.12)}
@@ -384,6 +390,29 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 .hero__price-period span{
   color:var(--gold-light);
   font-weight:400;
+}
+.hero__price-o{
+  font-size:clamp(1.1rem,2.5vw,1.4rem);
+  color:var(--white);
+  font-weight:800;
+  margin-top:12px;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.hero__logo-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:24px;
+}
+.hero__logo-img{
+  max-width:140px;
+  height:auto;
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,0.45));
+  transition:transform 0.3s var(--ease);
+}
+.hero__logo-img:hover{
+  transform:scale(1.05);
 }
 
 .hero h1{
@@ -884,7 +913,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 .faq-answer__inner{
   padding:0 24px 20px;
   font-size:.88rem;
-  color:#556073;
+  color:#334155;
   line-height:1.7;
 }
 
@@ -1145,8 +1174,9 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 <section class="hero" id="inicio">
   <canvas class="hero__particles" id="hero-particles"></canvas>
   <div class="hero__content">
-    <div class="hero__logo-text reveal">Bella Vista</div>
-    <div class="hero__logo-sub reveal reveal-delay-1">O C O Z O C O A U T L A</div>
+    <div class="hero__logo-container reveal">
+      <img src="images/logo.png" alt="Bella Vista Ocozocoautla Logo" class="hero__logo-img">
+    </div>
 
     <div class="hero__badge reveal reveal-delay-1">
       <span class="hero__badge-dot"></span>
@@ -1155,8 +1185,8 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 
     <div class="hero__price-hook reveal reveal-delay-2">
       <div class="hero__price-desde">Tu terreno desde</div>
-      <div class="hero__price-number">$450</div>
-      <div class="hero__price-period">semanales <span>· sin enganche · sin intereses</span></div>
+      <div class="hero__price-number">$450 <span style="font-size:0.32em; font-family:'Montserrat',sans-serif; font-weight:800; color:var(--white); text-transform:uppercase; letter-spacing:0.1em; vertical-align:middle; margin-left:8px;">semanales</span></div>
+      <div class="hero__price-o">o <span class="text-gold-italic">$1,800</span> mensuales</div>
     </div>
 
     <h1 class="reveal reveal-delay-3">Lotes de 200 m² en <span class="text-gold-italic">Bella Vista</span></h1>
@@ -1495,13 +1525,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
       <div class="faq-answer"><div class="faq-answer__inner">¡Por supuesto! Es lo que más recomendamos. Agenda tu visita por WhatsApp y te llevamos en un recorrido guiado gratuito por el desarrollo, las amenidades en proceso y los lotes disponibles. Sin costo, sin compromiso.</div></div>
     </div>
 
-    <div class="faq-item reveal reveal-delay-1">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Cuándo tengo mi escritura?
-        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="faq-answer"><div class="faq-answer__inner">Si compras de contado, la escrituración es inmediata. Si compras a plazos, recibes tu escritura pública ante Notario una vez que liquides el total del lote. Durante el proceso tienes un contrato de compraventa que respalda tu inversión.</div></div>
-    </div>
+
 
     <div class="faq-item reveal reveal-delay-2">
       <button class="faq-question" onclick="toggleFaq(this)">
@@ -1595,8 +1619,10 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 <!-- ═══════════════════ 13. FOOTER ═══════════════════ -->
 <footer class="footer section--navy-mid">
   <div class="container">
-    <div class="footer__logo">Bella Vista</div>
-    <div class="footer__tagline">Fraccionamiento de Terrenos Eco-Campestres · Ocozocoautla, Chiapas</div>
+    <div style="margin-bottom:12px;">
+      <img src="images/logo.png" alt="Bella Vista Ocozocoautla Logo" style="max-width: 120px; height: auto; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));">
+    </div>
+    <div class="footer__tagline">Fraccionamiento de Terrenos Campestres · Ocozocoautla, Chiapas</div>
     <div class="footer__links">
       <a href="https://wa.me/529612466204" target="_blank" rel="noopener">WhatsApp</a>
       <a href="/privacidad">Aviso de Privacidad</a>
@@ -1768,6 +1794,11 @@ document.getElementById('lead-form').addEventListener('submit', async (e) => {
   btn.textContent = 'Enviando...';
 
   const params = new URLSearchParams(window.location.search);
+  const waMessage = `Hola, me interesa agendar una visita a Bella Vista Ocozocoautla. Aquí están mis datos:\n` +
+                    `• Nombre: ${name}\n` +
+                    `• Teléfono/WhatsApp: ${phone}\n` +
+                    `• Cuándo quiero visitar: ${when}`;
+  const waUrl = `https://wa.me/529612466204?text=${encodeURIComponent(waMessage)}`;
 
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
@@ -1790,16 +1821,31 @@ document.getElementById('lead-form').addEventListener('submit', async (e) => {
       })
     });
 
-    if (!res.ok) throw new Error('Error del servidor');
-
     document.getElementById('lead-form-wrapper').style.display = 'none';
     document.getElementById('form-success').style.display = 'block';
 
+    // Update the button inside success state dynamically
+    const successBtn = document.querySelector('#form-success .btn--wa');
+    if (successBtn) {
+      successBtn.href = waUrl;
+    }
+
     if (typeof fbq === 'function') fbq('track', 'Lead');
+
+    // Smooth redirect to WhatsApp
+    setTimeout(() => {
+      window.open(waUrl, '_blank');
+    }, 600);
+
   } catch (err) {
-    showToast('Error al enviar. Intenta por WhatsApp.');
-    btn.disabled = false;
-    btn.textContent = '🏡 Quiero agendar mi visita →';
+    // If Supabase completely blocks, we still open WhatsApp so we don't lose the lead!
+    document.getElementById('lead-form-wrapper').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+    const successBtn = document.querySelector('#form-success .btn--wa');
+    if (successBtn) {
+      successBtn.href = waUrl;
+    }
+    window.open(waUrl, '_blank');
   }
 });
 </script>
