@@ -22,24 +22,24 @@
 :root{
   /* 
      COLOR PALETTE SYSTEM — Optimized for Real Estate & Land Sales
-     60% Organic Cream/Forest Green, 30% Moss Green/Charcoal, 10% Sun Gold/Leaf Green
+     60% Saturated Forest Green / Buttercream Sand, 30% Active Moss Green, 10% Radiant Sun Gold
   */
   --navy:#1E293B;
-  --navy-deep:#052213;
-  --navy-mid:#082E1B;
-  --slate:#0C3C24;
-  --gold:#D4AF37;
-  --gold-light:#F3C64F;
-  --gold-glow:rgba(212,175,55,.12);
+  --navy-deep:#0F4C2A;       /* Saturated forest green */
+  --navy-mid:#166E3E;        /* Active foliage green */
+  --slate:#1C854C;           /* Emerald moss green */
+  --gold:#E5B73C;            /* Luminous sun gold */
+  --gold-light:#F7D070;      /* Bright gold */
+  --gold-glow:rgba(229,183,60,.15);
   --white:#FFFFFF;
-  --cream:#FAF8F5;
-  --cream-dark:#EFECE6;
-  --green-deep:#052213;
-  --green-mid:#082E1B;
-  --green-accent:#10B981;
+  --cream:#FCF9F2;           /* Warm buttercream sand background */
+  --cream-dark:#F2EAD8;
+  --green-deep:#0F4C2A;      /* Matches --navy-deep for rich natural greens */
+  --green-mid:#166E3E;       /* Matches --navy-mid */
+  --green-accent:#25B86E;    /* Vibrant grass green */
   --green-wa:#25D366;
-  --muted:#64748B;
-  --muted-light:#94A3B8;
+  --muted:#5D7260;           /* Organic olive slate text */
+  --muted-light:#8DA391;
   /* Spacing */
   --section-py:clamp(60px,10vw,100px);
   --container-px:clamp(16px,4vw,32px);
@@ -414,6 +414,75 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 }
 .hero__logo-img:hover{
   transform:scale(1.05);
+}
+
+/* ── MASSIVE PRICE BANNER ── */
+.pricing-single-wrapper {
+  max-width: 620px;
+  margin: var(--gap-xl) auto 0;
+}
+.pricing-banner {
+  background: linear-gradient(135deg, #195433, #123E25);
+  border: 2px solid var(--gold);
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 6vw, 48px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lift);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pricing-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(229,183,60,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.pricing-banner__title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 6vw, 3.8rem);
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 4px;
+  text-shadow: 0 0 40px rgba(229,183,60,0.3);
+}
+.pricing-banner__sub {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--white);
+  font-weight: 700;
+  margin-bottom: var(--gap-md);
+}
+.pricing-banner__list {
+  list-style: none;
+  width: 100%;
+  text-align: left;
+  margin-top: var(--gap-lg);
+  padding-top: var(--gap-lg);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pricing-banner__list li {
+  font-size: 0.95rem;
+  color: var(--muted-light);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  line-height: 1.5;
+}
+.pricing-banner__list li strong {
+  color: var(--white);
+}
+.pricing-banner__icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: -2px;
 }
 
 .hero h1{
@@ -1200,8 +1269,8 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
       <span class="hero__tag">✓ 6 amenidades</span>
     </div>
 
-    <div class="img-placeholder hero__image reveal reveal-delay-4">
-      📸 Imagen: Render principal de cabaña en Bella Vista
+    <div class="hero__image-wrapper reveal reveal-delay-4" style="margin-top:28px;">
+      <img src="images/hero-bg.png" alt="Cabaña campestre en Bella Vista" style="width:100%; max-width:680px; height:auto; border-radius:var(--radius-lg); box-shadow:var(--shadow-lift); border:1px solid rgba(255,255,255,0.06); display:block; margin:0 auto;">
     </div>
 
     <div class="hero__ctas reveal reveal-delay-4">
@@ -1266,42 +1335,42 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     <div class="swiper amenidadesSwiper reveal">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img">📸 Render: Alberca y Chapoteadero</div>
+          <img src="images/amenidad-1.png" alt="Alberca y Chapoteadero" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block;">
           <div class="slide-body">
             <h3>Alberca y Chapoteadero</h3>
             <p>Alberca con cascada decorativa, área de chapoteo para niños y asoleaderos con vista al paisaje natural.</p>
           </div>
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img">📸 Render: Parque de Minigolf</div>
+          <img src="images/amenidad-2.png" alt="Parque de Minigolf" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block;">
           <div class="slide-body">
             <h3>Parque de Minigolf</h3>
             <p>Minigolf de 9 hoyos rodeado de jardines con zona de asadores para una experiencia completa.</p>
           </div>
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img">📸 Render: Terraza Club-Salón</div>
+          <img src="images/amenidad-3.png" alt="Terraza Club-Salón" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block;">
           <div class="slide-body">
             <h3>Terraza Club-Salón</h3>
             <p>Espacio techado con barra, regaderas y vista panorámica para fiestas y reuniones familiares.</p>
           </div>
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img">📸 Render: Parque Infantil</div>
+          <img src="images/amenidad-4.png" alt="Parque Infantil" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block;">
           <div class="slide-body">
             <h3>Parque Infantil</h3>
             <p>Juegos modernos y seguros con piso amortiguante y bancas perimetrales para los padres.</p>
           </div>
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img">📸 Render: Zona de Camping</div>
+          <img src="images/amenidad-5.png" alt="Zona de Camping" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block;">
           <div class="slide-body">
             <h3>Zona de Camping</h3>
             <p>Espacios para tiendas de campaña, fogatas y asadores bajo el cielo estrellado de Chiapas.</p>
           </div>
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img">📸 Render: Cancha de Fútbol</div>
+          <img src="images/amenidad-6.png" alt="Cancha de Fútbol" style="width:100%; aspect-ratio:16/9; object-fit:cover; display:block;">
           <div class="slide-body">
             <h3>Cancha de Fútbol</h3>
             <p>Cancha de pasto con dimensiones para partidos familiares, rodeada de áreas verdes.</p>
@@ -1324,9 +1393,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
       <p class="section-subtitle reveal">Un recorrido por las futuras amenidades, el terreno y el entorno natural de Ocozocoautla. Lo que ninguna foto puede transmitir.</p>
 
       <div class="video-embed reveal">
-        <div class="img-placeholder" style="min-height:100%;border:none;border-radius:0">
-          🎬 Video: Recorrido aéreo y terrestre por Bella Vista Ocozocoautla
-        </div>
+        <img src="images/video-thumb.png" alt="Video Recorrido Bella Vista" style="width:100%; height:100%; object-fit:cover; display:block;">
         <div class="video-embed__play">
           <svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19"/></svg>
         </div>
@@ -1348,8 +1415,8 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
         <p>Cada amenidad fue ubicada estratégicamente para que estés cerca de todo sin perder privacidad. Calles con terracería tratada de 4 capas, áreas verdes generosas y un trazo que respeta el entorno natural de Ocozocoautla, a 12 minutos de Coita.</p>
         <a href="#formulario" class="btn btn--outline">Preguntar por lotes disponibles →</a>
       </div>
-      <div class="img-placeholder masterplan-image reveal reveal-delay-1">
-        📸 Imagen: Plano / Master Plan de Bella Vista con distribución de lotes y amenidades
+      <div class="masterplan-image reveal reveal-delay-1" style="min-height:auto; background:none; border:none;">
+        <img src="images/master-plan.png" alt="Master Plan Bella Vista" style="width:100%; height:auto; border-radius:var(--radius-lg); box-shadow:var(--shadow-card); display:block;">
       </div>
     </div>
 
@@ -1390,16 +1457,16 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     <div class="swiper desarrolloSwiper reveal">
       <div class="swiper-wrapper">
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Vista Aérea: Terrenos planos rodeados de naturaleza en Ocozocoautla</div>
+          <img src="images/galeria-1.png" alt="Vista Aérea del Terreno" style="width:100%; aspect-ratio:16/10; object-fit:cover; display:block;">
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Calles y Accesos: Vialidades amplias y delimitadas en proceso de tratamiento</div>
+          <img src="images/galeria-2.png" alt="Calles y Accesos" style="width:100%; aspect-ratio:16/10; object-fit:cover; display:block;">
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Entorno Natural: Vegetación abundante y pinos autóctonos de Chiapas</div>
+          <img src="images/galeria-3.png" alt="Entorno Natural" style="width:100%; aspect-ratio:16/10; object-fit:cover; display:block;">
         </div>
         <div class="swiper-slide">
-          <div class="img-placeholder slide-img" style="aspect-ratio:16/10; min-height:300px;">📸 Render Cabaña Modelo: Tu futura casa de descanso perfectamente integrada al paisaje</div>
+          <img src="images/galeria-4.png" alt="Render de Cabaña Integrada" style="width:100%; aspect-ratio:16/10; object-fit:cover; display:block;">
         </div>
       </div>
       <div class="swiper-pagination" style="bottom:10px!important"></div>
@@ -1413,42 +1480,47 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
 <section class="section section--green section--divider-top" id="precios">
   <div class="container text-center">
     <span class="section-tag reveal">Único Plan de Financiamiento</span>
-    <h2 class="reveal">Invierte de forma <span class="text-gold-italic">fácil y directa</span></h2>
-    <p class="section-subtitle reveal">Sin revisiones bancarias ni trámites complicados. Un plan de pagos diseñado para tu tranquilidad financiera.</p>
+    <h2 class="reveal">Invierte en el futuro <span class="text-gold-italic">de tu familia</span></h2>
+    <p class="section-subtitle reveal">El plan de pagos más accesible del mercado, directo y diseñado para consolidar tu patrimonio sin esfuerzos.</p>
     
-    <div class="pricing-single-wrapper reveal" style="max-width: 600px; margin: var(--gap-xl) auto 0;">
-      <div class="pricing-card pricing-card--featured" style="transform:none; padding:var(--gap-lg) var(--gap-xl);">
-        <span class="pricing-badge">Plan de Pago Único</span>
-        <div class="pricing-card__type" style="color:var(--gold-light)">Financiamiento Directo · Sin Enganche</div>
-        <div class="pricing-card__price">$1,800</div>
-        <div class="pricing-card__period">al mes · 80 mensualidades</div>
-        <div style="font-size:1.15rem; font-weight:700; color:var(--white); margin:12px 0 20px;">Equivalente a solo <span class="text-gold-italic">$450 semanales</span></div>
+    <div class="pricing-single-wrapper reveal">
+      <div class="pricing-banner">
+        <span class="pricing-badge" style="background:linear-gradient(135deg, var(--gold), var(--gold-light)); color:var(--green-deep); margin-bottom:12px;">Plan de Pago Único</span>
+        <div class="pricing-banner__sub">Financiamiento Directo · Cero Trámites Bancarios</div>
+        <div class="pricing-banner__title">$1,800 <span style="font-size:0.35em; font-family:'Montserrat',sans-serif; font-weight:800; color:var(--white); text-transform:uppercase; letter-spacing:0.1em; vertical-align:middle; margin-left:6px;">mes</span></div>
+        <div style="font-size:1.4rem; font-weight:800; color:var(--gold-light); margin-top:8px;">equivalente a solo <span style="text-shadow:0 0 20px rgba(229,183,60,0.4)">$450 semanales</span></div>
+        <div style="font-size:0.85rem; color:var(--muted-light); margin-top:4px;">congelados durante 80 meses · sin intereses</div>
         
-        <ul class="pricing-card__details" style="text-align:left; border-top:1px solid rgba(255,255,255,.08); padding-top:20px;">
-          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <span style="color:var(--gold)">✓</span> <strong>Lotes de 200 m²</strong> (10x20 metros) listos para construir.
+        <ul class="pricing-banner__list">
+          <li>
+            <span class="pricing-banner__icon">🏡</span>
+            <span><strong>Lotes de 200 m²</strong> (10m frente × 20m fondo) listos para diseñar tu cabaña campestre ideal.</span>
           </li>
-          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <span style="color:var(--gold)">✓</span> <strong>Cero enganche</strong>: ingresas solo con tu primera mensualidad.
+          <li>
+            <span class="pricing-banner__icon">🌳</span>
+            <span><strong>Sin enganche obligatorio</strong>: ingresas de manera inmediata pagando tu primer mensualidad.</span>
           </li>
-          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <span style="color:var(--gold)">✓</span> <strong>Sin intereses</strong>: el precio total se congela desde el primer día.
+          <li>
+            <span class="pricing-banner__icon">🏊</span>
+            <span><strong>Acceso total a las 6 amenidades exclusivas</strong> (alberca, minigolf, terraza club) sin cuotas adicionales.</span>
           </li>
-          <li style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <span style="color:var(--gold)">✓</span> <strong>Acceso a las 6 amenidades exclusivas</strong> incluido sin costo extra.
+          <li>
+            <span class="pricing-banner__icon">⛺</span>
+            <span><strong>Disfrute campestre inmediato</strong>: área de camping y áreas verdes disponibles para tu familia desde hoy.</span>
           </li>
-          <li style="display:flex; align-items:center; gap:10px;">
-            <span style="color:var(--gold)">✓</span> <strong>Certeza jurídica total</strong>: documentos en regla respaldados ante Notario.
+          <li>
+            <span class="pricing-banner__icon">👨‍👩‍👧‍👦</span>
+            <span><strong>Certeza jurídica total</strong>: posesión garantizada y documentos listos para escrituración al finalizar.</span>
           </li>
         </ul>
         
-        <div style="margin-top:28px;">
-          <a href="#formulario" class="btn btn--gold" style="width:100%; justify-content:center;">📋 Apartar mi lote hoy →</a>
+        <div style="margin-top:32px; width:100%;">
+          <a href="#formulario" class="btn btn--gold" style="width:100%; justify-content:center; padding:18px; font-size:1.05rem;">🌳 ¡Quiero apartar mi lote ahora! →</a>
         </div>
       </div>
     </div>
     
-    <p class="pricing-note reveal" style="color:var(--muted)">El plan de pago incluye $100 mensuales de vigilancia y mantenimiento del desarrollo para proteger tu inversión.</p>
+    <p class="pricing-note reveal" style="color:var(--muted); margin-top:24px;">La mensualidad incluye $100 pesos de cuota de mantenimiento y vigilancia del fraccionamiento.</p>
   </div>
 </section>
 
@@ -1461,54 +1533,49 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
   </div>
 
   <div class="faq-list">
+    <!-- Pregunta 1 -->
     <div class="faq-item reveal">
       <button class="faq-question" onclick="toggleFaq(this)">
-        Sin enganche, sin banco… ¿cuál es el truco?
+        ¿Qué tipo de cabañas puedo construir en mi lote?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">No hay truco. El financiamiento es directo con nosotros, sin intermediarios bancarios. Esto nos permite ofrecerte pagos accesibles sin revisar tu buró de crédito. Solo necesitas tu INE y firmar un contrato de compraventa. Tu inversión está respaldada por documentos notariales.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">¡Tu creatividad es el límite! Puedes diseñar cabañas rústicas de madera o piedra, o estilos modernos campestres. Lo único que coordinamos en el reglamento interno es que se integre en armonía con el paisaje natural y respete las áreas verdes de tus vecinos.</div></div>
     </div>
 
+    <!-- Pregunta 2 -->
     <div class="faq-item reveal reveal-delay-1">
       <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Cómo sé que esto es legítimo y que mi dinero está seguro?
+        ¿Ya puedo venir a disfrutar de las amenidades con mi familia?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">Cada lote cuenta con carta de liberación garantizada, deslinde oficial y escritura pública definitiva ante Notario Público. Nuestro fraccionamiento cumple plenamente con toda la normativa municipal y estatal. Puedes verificar toda la documentación física antes de comprometerte.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">¡Claro que sí! Desde el momento en que realizas tu apartado de lote, tú y tu familia tienen acceso libre para venir a pasar el fin de semana, hacer una tarde de asados en la terraza, acampar bajo las estrellas o pasear por todo el desarrollo rodeados de aire puro.</div></div>
     </div>
 
+    <!-- Pregunta 3 -->
     <div class="faq-item reveal reveal-delay-2">
       <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Y si dejo de pagar? ¿Pierdo todo lo que ya di?
+        ¿El fraccionamiento es Pet Friendly / apto para mascotas?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">Entendemos que pueden haber meses difíciles. Antes de cualquier decisión, nos comunicamos contigo para buscar un ajuste flexible. Nuestro objetivo es que completes tu inversión, no que la pierdas.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">¡Amamos a los animales! Tus perritos y gatitos tendrán kilómetros de vegetación, prados y senderos arbolados para correr, jugar y disfrutar del campo en total libertad y seguridad.</div></div>
     </div>
 
+    <!-- Pregunta 4 -->
     <div class="faq-item reveal reveal-delay-3">
       <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Para qué comprar tierra que todavía no tiene nada construido?
+        ¿A qué distancia exacta está el fraccionamiento de la ciudad?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">Precisamente porque es preventa, el precio es el más bajo que tendrá. Conforme avancen las amenidades y la urbanización, la plusvalía del terreno crece significativamente. Comprar ahora es asegurar el mejor precio y la mejor ubicación.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">Bella Vista está ubicado en una zona estratégica a solo 12 minutos de la entrada de Ocozocoautla (Coita) y a unos 35 minutos de Tuxtla Gutiérrez, permitiéndote escapar del ruido urbano en un abrir y cerrar de ojos, pero sin perder la comodidad de tener comercios cerca.</div></div>
     </div>
 
+    <!-- Pregunta 5 -->
     <div class="faq-item reveal">
       <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Puedo ir a ver el terreno físicamente antes de decidir?
+        ¿Cómo puedo agendar un recorrido familiar para conocer el lugar?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">¡Por supuesto! Es lo que más recomendamos. Agenda tu visita por WhatsApp y te llevamos en un recorrido guiado gratuito por el desarrollo, las amenidades en proceso y los lotes disponibles. Sin costo, sin compromiso.</div></div>
-    </div>
-
-
-
-    <div class="faq-item reveal reveal-delay-2">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Qué garantía tengo de que las amenidades se van a construir?
-        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="faq-answer"><div class="faq-answer__inner">Las amenidades son parte del plan maestro del desarrollo y están contempladas en los costos de operación. Conforme se venden los lotes, se desarrollan las áreas comunes. Ya contamos con acceso, vialidades y delimitación de todas las zonas.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">¡Es facilísimo! Haz clic en el botón de WhatsApp o llena el formulario y programamos tu visita guiada gratuita de fin de semana. Te mostraremos los lotes disponibles con las mejores vistas panorámicas de la zona, sin ningún tipo de presión comercial.</div></div>
     </div>
   </div>
 </section>
