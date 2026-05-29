@@ -3,14 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bella Vista Ocozocoautla – Terrenos desde $450 semanales | Sin Enganche</title>
-<meta name="description" content="Terrenos en Ocozocoautla, Chiapas. Lotes de 200m² desde $450 semanales. Sin enganche, sin intereses, escritura pública. 6 amenidades exclusivas. Entrega inmediata.">
-<meta property="og:title" content="Bella Vista Ocozocoautla – Terrenos desde $450 Semanales">
-<meta property="og:description" content="Lotes de 200m² desde $450 semanales. Sin enganche, sin intereses. 6 amenidades exclusivas en Ocozocoautla, Chiapas.">
+<title>Bella Vista Ocozocoautla – Terrenos Eco-Campestres desde $450/semana</title>
+<meta name="description" content="Fraccionamiento eco-campestre en Ocozocoautla, Chiapas. Lotes de 200m² desde $450 semanales. Sin enganche, sin buró, escritura pública. 6 amenidades exclusivas. Entrega inmediata.">
+<meta name="keywords" content="terrenos Ocozocoautla, Bella Vista Chiapas, fraccionamiento eco campestre, terrenos Chiapas, lotes en venta Chiapas, inversión inmobiliaria Chiapas">
+
+<!-- Open Graph / Facebook -->
 <meta property="og:type" content="website">
-<meta property="og:image" content="images/og-image.png">
+<meta property="og:url" content="https://propiedadesenchiapas.com/bella-vista-terrenos-en-ocozocoautla-en-pagos/">
+<meta property="og:title" content="Bella Vista – Tu terreno eco-campestre desde $450/semana en Chiapas">
+<meta property="og:description" content="200m² con escritura pública, entrega inmediata y 6 amenidades. Sin enganche. Sin buró. Financiamiento directo en Ocozocoautla, Chiapas.">
+<meta property="og:image" content="https://propiedadesenchiapas.com/bella-vista/images/logo-bella-vista.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="es_MX">
+<meta property="og:site_name" content="Propiedades en Chiapas">
+
+<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="images/og-image.png">
+<meta name="twitter:title" content="Bella Vista – Terrenos eco-campestres desde $450/semana">
+<meta name="twitter:description" content="Lotes de 200m² en Ocozocoautla, Chiapas. Sin enganche. Sin buró. Escritura pública.">
+<meta name="twitter:image" content="https://propiedadesenchiapas.com/bella-vista/images/logo-bella-vista.png">
+
+<!-- WhatsApp y móvil -->
+<meta name="theme-color" content="#0A1628">
+<link rel="canonical" href="https://propiedadesenchiapas.com/bella-vista-terrenos-en-ocozocoautla-en-pagos/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
@@ -113,16 +129,12 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
    ═══════════════════════════════════════════ */
 .section{padding:var(--section-py) 0;position:relative}
 
-#inicio { background: var(--navy); }
-#beneficios { background: var(--dark); }
-#galeria { background: var(--navy2); }
-#video { background: #000000; }
-#masterplan { background: var(--forest); }
-#galeria-desarrollo { background: var(--dark); }
-#precios { background: linear-gradient(135deg, var(--navy), var(--forest)); }
-#faq { background: var(--navy2); }
-#visita { background: var(--dark); }
-#formulario { background: var(--navy); }
+/* ═══════════════════════════════════════════
+   SECTION BACKGROUNDS (Mandatory Alternation & Separators)
+   ═══════════════════════════════════════════ */
+section:nth-child(odd) { background: #0A1628; }
+section:nth-child(even) { background: #070D1A; }
+section { border-bottom: 1px solid rgba(201,168,76,0.12); }
 .footer { background: #040810; border-top: 1px solid rgba(201,168,76,0.1); }
 
 /* ═══════════════════════════════════════════
@@ -243,21 +255,21 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
   position:fixed;
   top:0;left:0;right:0;
   z-index:1000;
-  background:linear-gradient(90deg, #C9A84C, #E8C97A, #C9A84C, #E8C97A);
-  background-size:300% 100%;
-  animation:shimmer 4s linear infinite;
+  background: linear-gradient(90deg, #C9A84C, #E8C97A, #C9A84C);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+  color: #0A1628;
+  font-weight: 800;
   padding:10px 16px;
   text-align:center;
   font-size:.75rem;
-  font-weight:800;
   letter-spacing:.15em;
   text-transform:uppercase;
-  color:#070D1A;
   box-shadow:0 2px 10px rgba(0,0,0,0.3);
 }
-@keyframes shimmer{
-  0%{background-position:300% 0}
-  100%{background-position:0% 0}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ═══════════════════════════════════════════
@@ -1217,6 +1229,19 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
   border: 1px solid rgba(201,168,76,0.2);
 }
 .map-embed iframe{display:block}
+
+/* ═══════════════════════════════════════════
+   CENTRADO UNIVERSAL & CONTAINER LIMITS
+   ═══════════════════════════════════════════ */
+section { text-align: center; }
+section p, section li { text-align: center; }
+.container, [class*="container"], [class*="wrap"] {
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
 </style>
 </head>
 <body>
@@ -1239,11 +1264,15 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
       Preventa activa · Lotes limitados
     </div>
 
-    <div class="hero__price-hook reveal reveal-delay-2">
-      <div class="hero__price-desde">Tu terreno desde</div>
-      <div class="hero__price-number">$450 <span style="font-size:0.32em; font-family:'Montserrat',sans-serif; font-weight:800; color:var(--white); text-transform:uppercase; letter-spacing:0.1em; vertical-align:middle; margin-left:8px;">semanales</span></div>
-      <div class="hero__price-o">o <span class="text-gold-italic">$1,800</span> mensuales</div>
-    </div>
+<div style="text-align:center;padding:20px 0 10px">
+  <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#C9A84C;font-weight:700;margin-bottom:8px">TU TERRENO DESDE</div>
+  <div style="display:flex;align-items:flex-start;justify-content:center;gap:4px;line-height:1">
+    <span style="font-size:clamp(22px,5vw,32px);font-weight:900;color:#C9A84C;padding-top:8px">$</span>
+    <span style="font-size:clamp(90px,22vw,160px);font-weight:900;color:#FFFFFF;letter-spacing:-6px;font-family:'Georgia',serif">450</span>
+  </div>
+  <div style="font-size:clamp(18px,4vw,26px);font-weight:800;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;margin-top:-10px">SEMANALES</div>
+  <div style="font-size:15px;color:rgba(255,255,255,0.6);margin-top:12px">O <strong style="color:#E8C97A">$1,800</strong> mensuales · congelados 80 meses · sin intereses</div>
+</div>
 
     <h1 class="reveal reveal-delay-3">Lotes de 200 m² en <span class="text-gold-italic">Bella Vista</span></h1>
     <p class="hero__subtitle reveal reveal-delay-3">Naturaleza, plusvalía y estilo de vida. Escritura pública, entrega inmediata y 6 amenidades exclusivas en Ocozocoautla, Chiapas.</p>
@@ -1273,7 +1302,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     <div class="hero__scroll-line"></div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 3. PROPUESTA DE VALOR ═══════════════════ -->
 <section class="section" id="beneficios">
@@ -1307,7 +1336,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 
 
@@ -1371,7 +1400,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 6. VIDEO RECORRIDO ═══════════════════ -->
 <section class="section" id="video">
@@ -1390,7 +1419,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 7. MASTER PLAN ═══════════════════ -->
 <section class="section" id="masterplan">
@@ -1434,7 +1463,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 8. GALERÍA DEL DESARROLLO ═══════════════════ -->
 <section class="section" id="galeria-desarrollo">
@@ -1466,7 +1495,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 9. PRECIOS ═══════════════════ -->
 <section class="section" id="precios">
@@ -1515,7 +1544,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     <p class="pricing-note reveal" style="color:var(--muted); margin-top:24px;">La mensualidad incluye $100 pesos de cuota de mantenimiento y vigilancia del fraccionamiento.</p>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 10. FAQ ═══════════════════ -->
 <section class="section" id="faq">
@@ -1572,7 +1601,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 11. POR QUÉ VISITARLO ═══════════════════ -->
 <section class="section" id="visita">
@@ -1607,7 +1636,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 
 
@@ -1653,7 +1682,7 @@ h3{font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:700}
     </div>
   </div>
 </section>
-<div style="height:1px; background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent); margin:0"></div>
+
 
 <!-- ═══════════════════ 13. FOOTER ═══════════════════ -->
 <footer class="footer">
