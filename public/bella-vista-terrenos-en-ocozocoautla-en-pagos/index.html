@@ -967,6 +967,19 @@ section p, section li { text-align: center; }
   border: 1px solid rgba(184,146,74,0.2);
 }
 .map-embed iframe{display:block}
+
+/* Fix for step-cards in dark #visita section */
+#visita .step-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(184, 146, 74, 0.2) !important;
+  color: var(--white) !important;
+}
+#visita .step-card h3 {
+  color: var(--white) !important;
+}
+#visita .step-card p {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
 </style>
 </head>
 <body>
@@ -1117,7 +1130,7 @@ section p, section li { text-align: center; }
   <div class="container text-center">
     <span class="section-tag reveal">Ubicación Estratégica</span>
     <h2 class="reveal">A 25 minutos de Tuxtla.<br><em>A un mundo de distancia.</em></h2>
-    <p class="section-subtitle reveal">En las afueras de Ocozocoautla, rumbo a la Sima de las Cotorras. Carretera pavimentada, acceso todo el año, servicios a 10 minutos.</p>
+    <p class="section-subtitle reveal">En las afueras de Ocozocoautla, rumbo a la Sima de las Cotorras. Fácil acceso en vehículo, acceso todo el año, servicios a 10 minutos.</p>
     
     <div class="location-data reveal">
       <div class="location-data__item">
@@ -1127,8 +1140,8 @@ section p, section li { text-align: center; }
       </div>
       <div class="location-data__item">
         <div class="location-data__icon">🛣️</div>
-        <div class="location-data__value">Pavimentada</div>
-        <div class="location-data__label">Carretera de acceso</div>
+        <div class="location-data__value">En vehículo</div>
+        <div class="location-data__label">Fácil acceso</div>
       </div>
       <div class="location-data__item">
         <div class="location-data__icon">⛰️</div>
@@ -1215,8 +1228,8 @@ section p, section li { text-align: center; }
   <div class="container text-center">
     <div class="video-section__content">
       <span class="section-tag reveal">Recorrido en video</span>
-      <h2 class="reveal">Dos minutos para que<br><em>te enamores del lugar.</em></h2>
-      <p class="section-subtitle reveal">Recorre el terreno, las montañas y el entorno que ninguna foto puede transmitir.</p>
+      <h2 class="reveal">El lugar que soñaste,<br><em>en video.</em></h2>
+      <p class="section-subtitle reveal">Recorre el terreno, admira el paisaje de las montañas y visualiza tu futura cabaña campestre en un entorno natural único.</p>
 
       <div class="video-embed reveal">
         <img src="images/video-thumb.png" alt="Video Recorrido Bella Vista" style="width:100%; height:100%; object-fit:cover; display:block;">
@@ -1239,7 +1252,7 @@ section p, section li { text-align: center; }
 
     <div class="masterplan-layout">
       <div class="masterplan-text reveal">
-        <p>200 m² de 10 × 20 metros. Uso habitacional. Construye tu cabaña, casa de campo o refugio familiar sin restricciones de diseño. Las calles tienen terracería tratada de 4 capas. Hay áreas verdes entre cada sección.</p>
+        <p>Lotes de 200 m² (10 × 20 metros) de uso habitacional. Construye tu cabaña o casa de campo a tu propio ritmo y con total libertad de diseño.</p>
         <a href="#formulario" class="btn btn--outline">Preguntar por lotes disponibles →</a>
       </div>
       <div class="masterplan-image reveal reveal-delay-1" style="min-height:auto; background:none; border:none;">
@@ -1307,7 +1320,7 @@ section p, section li { text-align: center; }
 
 <!-- ═══════════════════ 9. PRECIOS ═══════════════════ -->
 <section id="precios" style="background:#F7F1E8;padding:80px 20px;text-align:center">
-  <div style="font-size:11px;letter-spacing:3px;font-weight:700;color:#B8924A;text-transform:uppercase;margin-bottom:16px">UNA SOLA FORMA DE INVERTIR</div>
+  <div style="font-size:11px;letter-spacing:3px;font-weight:700;color:#B8924A;text-transform:uppercase;margin-bottom:16px">PLAN MAESTRO DE FINANCIAMIENTO</div>
   <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(80px,18vw,140px);font-weight:700;color:#141414;line-height:1;letter-spacing:-4px">$450</div>
   <div style="font-size:clamp(18px,4vw,28px);font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B8924A;margin-top:4px">A LA SEMANA</div>
   <div style="font-size:15px;color:#6B6B6B;margin-top:16px;max-width:400px;margin-left:auto;margin-right:auto">Lote de 200 m² · 80 mensualidades · Sin enganche<br>Sin intereses · Sin buró · Con escritura pública</div>
