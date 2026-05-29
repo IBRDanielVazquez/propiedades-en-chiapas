@@ -990,45 +990,46 @@ section p, section li { text-align: center; }
 <section class="hero" id="inicio">
   <canvas class="hero__particles" id="hero-particles"></canvas>
   <div class="hero__content">
-    <div class="hero__logo-container reveal">
-      <img src="images/logo.png" alt="Bella Vista Ocozocoautla Logo" class="hero__logo-img">
+    <div style="text-align:left;max-width:640px;padding:0 24px;margin:0 auto">
+      <div style="font-size:11px;letter-spacing:3px;font-weight:700;
+        color:#B8924A;text-transform:uppercase;margin-bottom:20px">
+        BELLA VISTA · OCOZOCOAUTLA
+      </div>
+      <h1 style="font-family:'Cormorant Garamond',serif;
+        font-size:clamp(52px,10vw,88px);font-weight:700;
+        line-height:1.05;color:white;margin-bottom:24px">
+        200 m²<br>
+        <em style="color:#D4AF72">desde $450</em><br>
+        a la semana.
+      </h1>
+      <p style="font-size:16px;color:rgba(255,255,255,0.75);
+        max-width:480px;line-height:1.7;margin-bottom:32px">
+        Terreno eco-campestre en Ocozocoautla, Chiapas.<br>
+        Sin enganche · Sin buró · Escritura pública.<br>
+        <strong style="color:white">
+        Incluye vigilancia y mantenimiento.</strong>
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="https://wa.me/529612466204?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20Bella%20Vista"
+          target="_blank"
+          style="display:inline-flex;align-items:center;gap:8px;
+          background:#25D366;color:white;padding:16px 28px;
+          border-radius:999px;font-size:15px;font-weight:700;
+          text-decoration:none;box-shadow:0 6px 24px rgba(37,211,102,0.4)">
+          Quiero información →
+        </a>
+        <a href="#formulario"
+          style="display:inline-flex;align-items:center;gap:8px;
+          background:transparent;color:#D4AF72;padding:16px 28px;
+          border-radius:999px;font-size:15px;font-weight:600;
+          text-decoration:none;border:1.5px solid #B8924A">
+          Agendar visita
+        </a>
+      </div>
     </div>
-
-    <div class="hero__badge reveal reveal-delay-1">
-      <span class="hero__badge-dot"></span>
-      Preventa activa · Lotes limitados
-    </div>
-
-<div style="text-align:center;padding:20px 0 10px">
-  <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#C9A84C;font-weight:700;margin-bottom:8px">TU TERRENO DESDE</div>
-  <div style="display:flex;align-items:flex-start;justify-content:center;gap:4px;line-height:1">
-    <span style="font-size:clamp(22px,5vw,32px);font-weight:900;color:#C9A84C;padding-top:8px">$</span>
-    <span style="font-size:clamp(90px,22vw,160px);font-weight:900;color:#FFFFFF;letter-spacing:-6px;font-family:'Georgia',serif">450</span>
-  </div>
-  <div style="font-size:clamp(18px,4vw,26px);font-weight:800;color:#C9A84C;letter-spacing:4px;text-transform:uppercase;margin-top:-10px">SEMANALES</div>
-  <div style="font-size:15px;color:rgba(255,255,255,0.6);margin-top:12px">O <strong style="color:#E8C97A">$1,800</strong> mensuales · congelados 80 meses · sin intereses</div>
-</div>
-
-    <h1 class="reveal reveal-delay-3">Tu terreno en Chiapas.<br><em>Desde $450 a la semana.</em></h1>
-    <p class="hero__subtitle reveal reveal-delay-3">200 m² en Ocozocoautla, rodeados de montañas and naturaleza. Sin enganche. Sin buró. Con escritura pública desde el día uno.</p>
-
-    <div class="hero__tags reveal reveal-delay-3">
-      <span class="hero__tag">✓ Escritura pública</span>
-      <span class="hero__tag">✓ Entrega inmediata</span>
-      <span class="hero__tag">✓ Sin buró</span>
-      <span class="hero__tag">✓ 6 amenidades</span>
-    </div>
-
-    <div class="hero__image-wrapper reveal reveal-delay-4" style="margin-top:28px;">
+    
+    <div class="hero__image-wrapper reveal reveal-delay-4" style="margin-top:40px;">
       <img src="images/hero-bg.png" alt="Cabaña campestre en Bella Vista" style="width:100%; max-width:680px; height:auto; border-radius:var(--radius-lg); box-shadow:var(--shadow-lift); border:1px solid rgba(255,255,255,0.06); display:block; margin:0 auto;">
-    </div>
-
-    <div class="hero__ctas reveal reveal-delay-4">
-      <a href="https://wa.me/529612466204?text=Hola%2C%20me%20interesa%20un%20lote%20en%20Bella%20Vista%20Ocozocoautla%2C%20%C2%BFme%20dan%20informaci%C3%B3n%3F" target="_blank" rel="noopener" class="btn btn--wa">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.707-1.353A11.948 11.948 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.239 0-4.308-.724-5.993-1.953a.5.5 0 00-.404-.078l-3.384.973.904-3.265a.5.5 0 00-.064-.41A9.946 9.946 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
-        Quiero información
-      </a>
-      <a href="#formulario" class="btn btn--gold">📋 Agendar visita</a>
     </div>
   </div>
 
@@ -1037,6 +1038,42 @@ section p, section li { text-align: center; }
     <div class="hero__scroll-line"></div>
   </div>
 </section>
+
+<div style="background:#1C1C1C;padding:20px 24px;
+  display:flex;justify-content:center;
+  gap:40px;flex-wrap:wrap;
+  border-top:1px solid rgba(184,146,74,0.2)">
+  <div style="text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;
+      font-size:28px;font-weight:700;color:#D4AF72">200 m²</div>
+    <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
+      text-transform:uppercase;margin-top:2px">Por lote</div>
+  </div>
+  <div style="text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;
+      font-size:28px;font-weight:700;color:#D4AF72">10 × 20</div>
+    <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
+      text-transform:uppercase;margin-top:2px">Metros</div>
+  </div>
+  <div style="text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;
+      font-size:28px;font-weight:700;color:#D4AF72">$450</div>
+    <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
+      text-transform:uppercase;margin-top:2px">Por semana</div>
+  </div>
+  <div style="text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;
+      font-size:28px;font-weight:700;color:#D4AF72">6</div>
+    <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
+      text-transform:uppercase;margin-top:2px">Amenidades incluidas</div>
+  </div>
+  <div style="text-align:center">
+    <div style="font-family:'Cormorant Garamond',serif;
+      font-size:28px;font-weight:700;color:#D4AF72">✓</div>
+    <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
+      text-transform:uppercase;margin-top:2px">Vigilancia incluida</div>
+  </div>
+</div>
 
 
 <!-- ═══════════════════ 3. PROPUESTA DE VALOR ═══════════════════ -->
