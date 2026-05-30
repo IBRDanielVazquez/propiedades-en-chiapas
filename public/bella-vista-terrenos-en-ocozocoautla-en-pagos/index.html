@@ -51,7 +51,7 @@
   --green-wa:  #25D366;
 
   /* Spacing */
-  --section-py:clamp(60px,10vw,100px);
+  --section-py:clamp(40px,6vw,70px);
   --container-px:clamp(16px,4vw,32px);
   --gap-sm:12px;
   --gap-md:20px;
@@ -1221,6 +1221,61 @@ a[href*="wa.me"], button, .btn,
   display: block !important;
 }
 
+
+/* FIX 1: HERO - REDUCIR ESPACIOS */
+.hero__content { padding-top: 20px !important; padding-bottom: 0px !important; }
+.hero h1 { margin-top: 10px !important; margin-bottom: 8px !important; }
+.hero__subtitle { margin-top: 4px !important; margin-bottom: 8px !important; }
+.hero__tags { margin-top: 8px !important; margin-bottom: 12px !important; }
+.hero__ctas { margin-top: 12px !important; }
+
+/* FIX 3: SECCIONES MENOS ESPACIO */
+section, [class*="section"] { padding: 56px 24px !important; }
+@media (max-width: 768px) { section, [class*="section"] { padding: 40px 20px !important; } }
+p, li { font-size: 17px !important; line-height: 1.55 !important; }
+p, li, span, div { font-size: 17px !important; line-height: 1.55 !important; }
+
+/* FIX 4: PRECIO GIGANTE CSS */
+.precio-gigante {
+  font-size: clamp(88px, 24vw, 160px) !important;
+  line-height: 0.9 !important;
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  letter-spacing: -4px !important;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+.precio-gigante, .precio-gigante * { font-size: clamp(88px, 24vw, 160px) !important; }
+
+
+/* FIX 1: HERO - REDUCIR ESPACIOS */
+#inicio .hero__content > div { padding-top: 10px !important; }
+#inicio h1 { margin-bottom: 8px !important; }
+#inicio p { margin-bottom: 16px !important; line-height: 1.4 !important; }
+#inicio .hero__image-wrapper { margin-top: 16px !important; }
+
+/* FIX 3: SECCIONES MENOS ESPACIO */
+section, [class*="section"] { padding: 56px 24px !important; }
+@media (max-width: 768px) { section, [class*="section"] { padding: 40px 20px !important; } }
+p, li { font-size: 17px !important; line-height: 1.55 !important; }
+p, li, span, div { font-size: 17px !important; line-height: 1.55 !important; }
+
+/* FIX 4: PRECIO GIGANTE CSS */
+.precio-gigante {
+  font-size: clamp(88px, 24vw, 160px) !important;
+  line-height: 0.9 !important;
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-weight: 700 !important;
+  color: #FFFFFF !important;
+  letter-spacing: -4px !important;
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+.precio-gigante, .precio-gigante * { font-size: clamp(88px, 24vw, 160px) !important; }
+
 </style>
 </head>
 <body>
@@ -1235,9 +1290,7 @@ a[href*="wa.me"], button, .btn,
   <div class="navbar__logo">
     <img src="images/logo.png" alt="Bella Vista Logo" style="height: 38px; width: auto; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));">
   </div>
-  <a href="#formulario" style="background: #25D366; color: white; border-radius: 999px; padding: 10px 20px; font-size: 14px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.3); transition: all 0.2s;">
-    📋 Agenda tu visita
-  </a>
+  <a href="#formulario" style="background: #25D366; color: white; border-radius: 999px; padding: 10px 20px; font-size: 14px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,211,102,0.3); transition: all 0.2s;"> TERRENOS EN VENTA </a>
 </nav>
 
 <!-- ═══════════════════ 2. HERO — CINEMATIC ═══════════════════ -->
@@ -1310,7 +1363,7 @@ a[href*="wa.me"], button, .btn,
       text-transform:uppercase;margin-top:6px">Metros</div>
   </div>
   <div style="text-align:center">
-    <div style="font-family:'Cormorant Garamond',serif;
+    <div class="precio-gigante" style="font-family:'Cormorant Garamond',serif;
       font-size:38px;font-weight:700;color:#D4AF72;line-height:1">$450</div>
     <div style="font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.5);
       text-transform:uppercase;margin-top:6px">Por semana</div>
@@ -1565,7 +1618,7 @@ a[href*="wa.me"], button, .btn,
     ">UN SOLO PRECIO · UNA SOLA DECISIÓN</div>
 
     <!-- El número que roba TODO -->
-    <div style="
+    <div class="precio-gigante" style="
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-size: clamp(88px, 24vw, 160px);
       font-weight: 700;
