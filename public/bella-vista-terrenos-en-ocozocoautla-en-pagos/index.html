@@ -1131,6 +1131,70 @@ a[href*="wa.me"], button, .btn,
   min-height: 56px !important;
 }
 
+
+/* ═══════════════════════════════════════════
+   FIXES REQUERIDOS (Stats, Hero, Crema)
+   ═══════════════════════════════════════════ */
+
+/* FIX 1: STATS BAR HORIZONTAL */
+.top-stats-bar {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+.top-stats-bar > div {
+  padding: 16px 24px !important;
+  border-right: 1px solid rgba(255,255,255,0.1) !important;
+  text-align: center !important;
+  min-width: 80px !important;
+}
+.top-stats-bar > div:last-child {
+  border-right: none !important;
+}
+.top-stats-bar > div div:first-child {
+  font-size: clamp(28px,6vw,42px) !important;
+  display: block !important;
+}
+.top-stats-bar > div div:last-child {
+  font-size: 10px !important;
+  letter-spacing: 2px !important;
+  display: block !important;
+  margin-top: 4px !important;
+}
+
+/* FIX 2: BOTÓN DEL HERO VISIBLE */
+.hero, #inicio {
+  padding-bottom: 100px !important;
+}
+
+/* FIX 3: SECCIONES CREMA - TIPOGRAFÍA MÁS GRANDE, MENOS ESPACIO */
+#beneficios, #galeria, #masterplan, #formulario, #ubicacion, #galeria-desarrollo {
+  padding: 56px 24px !important;
+}
+#beneficios h2, #galeria h2, #masterplan h2, #formulario h2, #ubicacion h2, #galeria-desarrollo h2 {
+  font-size: clamp(44px,9vw,72px) !important;
+  margin-bottom: 16px !important;
+  line-height: 1.05 !important;
+}
+#beneficios p.section-subtitle, #galeria p.section-subtitle, #masterplan p.section-subtitle, #formulario p.section-subtitle, #ubicacion p.section-subtitle, #galeria-desarrollo p.section-subtitle {
+  font-size: clamp(16px,3vw,20px) !important;
+  line-height: 1.5 !important;
+  margin-top: 12px !important;
+  letter-spacing: 0.05em !important;
+  max-width: 560px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+#beneficios .section-tag, #galeria .section-tag, #masterplan .section-tag, #formulario .section-tag, #ubicacion .section-tag, #galeria-desarrollo .section-tag {
+  font-size: 12px !important;
+  letter-spacing: 3px !important;
+  margin-bottom: 12px !important;
+}
+
 </style>
 </head>
 <body>
@@ -1411,29 +1475,7 @@ a[href*="wa.me"], button, .btn,
       </div>
     </div>
 
-    <div class="stats-row reveal">
-      <div class="stat">
-        <div class="stat__number"><span class="counter" data-target="200">0</span></div>
-        <div class="stat__unit">m²</div>
-        <div class="stat__label">Por lote</div>
-      </div>
-      <div class="stat">
-        <div class="stat__number">10 × 20</div>
-        <div class="stat__unit"></div>
-        <div class="stat__label">Metros</div>
-      </div>
-      <div class="stat">
-        <div class="stat__number"><span class="counter" data-target="6">0</span></div>
-        <div class="stat__unit"></div>
-        <div class="stat__label">Amenidades</div>
-      </div>
-      <div class="stat">
-        <div class="stat__number"><span class="counter" data-target="1">0</span></div>
-        <div class="stat__unit"></div>
-        <div class="stat__label">Comunidad Privada</div>
-      </div>
     </div>
-  </div>
 </section>
 
 
@@ -1470,12 +1512,113 @@ a[href*="wa.me"], button, .btn,
 
 
 <!-- ═══════════════════ 9. PRECIOS ═══════════════════ -->
-<section id="precios" style="background:#F7F1E8;padding:80px 20px;text-align:center">
-  <div style="font-size:clamp(14px, 3vw, 18px);letter-spacing:4px;font-weight:800;color:#B8924A;text-transform:uppercase;margin-bottom:16px">PLAN MAESTRO DE FINANCIAMIENTO</div>
-  <div style="font-family:'Cormorant Garamond',serif;font-size:clamp(80px,18vw,140px);font-weight:700;color:#141414;line-height:1;letter-spacing:-4px">$450</div>
-  <div style="font-size:clamp(18px,4vw,28px);font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B8924A;margin-top:4px">A LA SEMANA</div>
-  <div style="font-size:15px;color:#6B6B6B;margin-top:16px;max-width:400px;margin-left:auto;margin-right:auto">Lote de 200 m² · 80 mensualidades · Sin enganche<br>Sin intereses · Sin buró · Con escritura pública</div>
-  <a href="https://wa.me/529612466204?text=Hola%2C%20quiero%20apartar%20mi%20lote%20en%20Bella%20Vista" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:white;padding:18px 36px;border-radius:999px;font-size:16px;font-weight:700;text-decoration:none;margin-top:32px;box-shadow:0 8px 30px rgba(37,211,102,0.3)">Quiero apartar mi lote →</a>
+<section style="
+  background: #141414;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  position: relative;
+  overflow: hidden;
+">
+  <!-- Fondo decorativo -->
+  <div style="
+    position:absolute;inset:0;
+    background: radial-gradient(ellipse at center, rgba(184,146,74,0.12) 0%, transparent 65%);
+    pointer-events:none;
+  "></div>
+
+  <div style="position:relative;z-index:2;max-width:600px;width:100%">
+    
+    <!-- Label -->
+    <div style="
+      font-size:12px;letter-spacing:4px;font-weight:700;
+      color:#B8924A;text-transform:uppercase;margin-bottom:32px;
+    ">UN SOLO PRECIO · UNA SOLA DECISIÓN</div>
+
+    <!-- El número que roba TODO -->
+    <div style="
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(100px,28vw,200px);
+      font-weight:700;
+      color:#FFFFFF;
+      line-height:0.85;
+      letter-spacing:-6px;
+    ">$450</div>
+
+    <!-- Frecuencia -->
+    <div style="
+      font-size:clamp(22px,5vw,36px);
+      font-weight:700;
+      letter-spacing:6px;
+      text-transform:uppercase;
+      color:#B8924A;
+      margin-top:16px;
+    ">A LA SEMANA</div>
+
+    <!-- Separador dorado -->
+    <div style="
+      width:60px;height:2px;
+      background:linear-gradient(90deg,transparent,#B8924A,transparent);
+      margin:28px auto;
+    "></div>
+
+    <!-- Detalles en 2 columnas -->
+    <div style="
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:32px;
+    ">
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(184,146,74,0.2);border-radius:12px;padding:16px">
+        <div style="font-size:22px;font-weight:700;color:#D4AF72;font-family:'Cormorant Garamond',serif">200 m²</div>
+        <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-top:4px">POR LOTE</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(184,146,74,0.2);border-radius:12px;padding:16px">
+        <div style="font-size:22px;font-weight:700;color:#D4AF72;font-family:'Cormorant Garamond',serif">80 meses</div>
+        <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-top:4px">SIN INTERESES</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(184,146,74,0.2);border-radius:12px;padding:16px">
+        <div style="font-size:22px;font-weight:700;color:#D4AF72;font-family:'Cormorant Garamond',serif">✓ Sin enganche</div>
+        <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-top:4px">NI UN PESO AL INICIO</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(184,146,74,0.2);border-radius:12px;padding:16px">
+        <div style="font-size:22px;font-weight:700;color:#D4AF72;font-family:'Cormorant Garamond',serif">✓ Escritura</div>
+        <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.5);margin-top:4px">PÚBLICA GARANTIZADA</div>
+      </div>
+    </div>
+
+    <!-- Incluye vigilancia -->
+    <div style="
+      font-size:14px;color:rgba(255,255,255,0.6);
+      margin-bottom:36px;letter-spacing:0.5px;
+    ">
+      ✓ Incluye vigilancia y mantenimiento del fraccionamiento
+    </div>
+
+    <!-- CTA PRINCIPAL -->
+    <a href="https://wa.me/529612466204?text=Hola%2C%20quiero%20apartar%20mi%20lote%20en%20Bella%20Vista%20desde%20%24450%20semanales"
+      target="_blank"
+      style="
+        display:inline-flex;align-items:center;justify-content:center;gap:10px;
+        background:#25D366;color:white;
+        padding:20px 40px;border-radius:999px;
+        font-size:18px;font-weight:800;
+        text-decoration:none;width:100%;
+        box-shadow:0 8px 40px rgba(37,211,102,0.4);
+        letter-spacing:0.5px;
+      ">
+      Quiero apartar mi lote ahora →
+    </a>
+
+    <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:16px">
+      Sin compromiso · Te contactamos hoy
+    </div>
+
+  </div>
 </section>
 
 <!-- ═══════════════════ 10. FAQ ═══════════════════ -->
