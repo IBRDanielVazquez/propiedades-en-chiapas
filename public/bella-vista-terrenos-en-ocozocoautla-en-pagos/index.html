@@ -1593,185 +1593,172 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 </section>
 
 
-<!-- ═══════════════════ 9. PRECIOS (LAS VEGAS DISRUPTIVE STYLE) ═══════════════════ -->
+<!-- ═══════════════════ 9. PRECIOS (LAS VEGAS ANIMATED FLYER - SINGLE SCREEN) ═══════════════════ -->
 <section id="precios" style="
   background: #000000;
-  background-image: radial-gradient(circle at 50% 50%, #150020 0%, #000000 100%);
-  min-height: 100vh;
+  background-image: radial-gradient(circle at 50% 50%, #1c002c 0%, #000000 100%);
+  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 80px 24px;
+  padding: 16px;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 ">
-  <!-- Estilos y animaciones Neon para Las Vegas -->
+  <!-- Estilos y animaciones Neon para Las Vegas Flyer -->
   <style>
-    @keyframes vegas-glow-text {
-      0%, 100% { text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f, 0 0 30px #ff007f, 0 0 40px #ff007f; color: #ffffff; }
-      33% { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; color: #ffffff; }
-      66% { text-shadow: 0 0 10px #ffff00, 0 0 20px #ffff00, 0 0 30px #ffff00, 0 0 40px #ffff00; color: #ffffff; }
+    @keyframes flyer-glow-text {
+      0%, 100% { text-shadow: 0 0 8px #ff007f, 0 0 15px #ff007f, 0 0 30px #ff007f; color: #ffffff; }
+      50% { text-shadow: 0 0 8px #00ffff, 0 0 15px #00ffff, 0 0 30px #00ffff; color: #ffffff; }
     }
-    @keyframes vegas-border-flash {
-      0%, 100% { border-color: #ff007f; box-shadow: 0 0 15px #ff007f, inset 0 0 15px #ff007f; }
-      50% { border-color: #00ffff; box-shadow: 0 0 25px #00ffff, inset 0 0 25px #00ffff; }
+    @keyframes flyer-border-flash {
+      0%, 100% { border-color: #ff007f; box-shadow: 0 0 12px #ff007f, inset 0 0 12px #ff007f; }
+      50% { border-color: #00ffff; box-shadow: 0 0 20px #00ffff, inset 0 0 20px #00ffff; }
     }
-    @keyframes vegas-badge-blink {
-      0%, 100% { background: #ff007f; color: #fff; box-shadow: 0 0 15px #ff007f; }
-      50% { background: #ffff00; color: #000; box-shadow: 0 0 20px #ffff00; }
+    @keyframes flyer-badge-blink {
+      0%, 100% { background: #ff007f; color: #fff; box-shadow: 0 0 12px #ff007f; }
+      50% { background: #ffff00; color: #000; box-shadow: 0 0 15px #ffff00; }
     }
-    @keyframes vegas-text-shimmer {
-      0% { color: #fff; text-shadow: 0 0 5px #fff; }
-      50% { color: #ff007f; text-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; }
-      100% { color: #00ffff; text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff; }
+    @keyframes flyer-text-shimmer {
+      0% { color: #fff; text-shadow: 0 0 4px #fff; }
+      50% { color: #ff007f; text-shadow: 0 0 15px #ff007f; }
+      100% { color: #00ffff; text-shadow: 0 0 15px #00ffff; }
     }
-    @keyframes pulse-neon-btn {
-      0% { transform: scale(1); box-shadow: 0 0 10px #25D366; }
-      50% { transform: scale(1.03); box-shadow: 0 0 30px #25D366, 0 0 40px #25D366; }
-      100% { transform: scale(1); box-shadow: 0 0 10px #25D366; }
+    @keyframes pulse-flyer-btn {
+      0% { transform: scale(1); box-shadow: 0 0 8px #25D366; }
+      50% { transform: scale(1.02); box-shadow: 0 0 25px #25D366, 0 0 35px #25D366; }
+      100% { transform: scale(1); box-shadow: 0 0 8px #25D366; }
     }
-    .vegas-title-shimmer {
-      animation: vegas-text-shimmer 4s linear infinite;
+    .flyer-title-shimmer {
+      animation: flyer-text-shimmer 3s linear infinite;
     }
-    .vegas-price-glow {
-      animation: vegas-glow-text 3s linear infinite;
+    .flyer-price-glow {
+      animation: flyer-glow-text 2.5s linear infinite;
     }
-    .vegas-box {
-      animation: vegas-border-flash 2.5s ease-in-out infinite;
+    .flyer-box {
+      animation: flyer-border-flash 2s ease-in-out infinite;
       border: 3px double #ff007f;
-      background: rgba(10, 0, 15, 0.85);
-      border-radius: 24px;
-      padding: 40px 30px;
+      background: rgba(8, 0, 12, 0.9);
+      border-radius: 20px;
+      padding: clamp(16px, 4vh, 28px) 20px;
       width: 100%;
-      max-width: 600px;
+      max-width: 440px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
-    .vegas-badge {
-      animation: vegas-badge-blink 1.2s steps(2, start) infinite;
+    .flyer-badge {
+      animation: flyer-badge-blink 1s steps(2, start) infinite;
       display: inline-block;
-      padding: 8px 20px;
-      font-size: 14px;
+      padding: 6px 16px;
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
       border-radius: 50px;
-      margin-bottom: 24px;
+      margin-bottom: clamp(12px, 3vh, 20px);
     }
-    .vegas-grid-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s;
-    }
-    .vegas-grid-card:hover {
-      border-color: #00ffff;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-      transform: translateY(-3px);
+    .flyer-feature-tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff !important;
+      font-size: clamp(11px, 1.8vh, 13px) !important;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: center;
     }
   </style>
 
-  <div style="position:relative; z-index:2; max-width:650px; width:100%">
+  <!-- Flyer Container (fits 100% mobile screen height) -->
+  <div class="flyer-box">
     
-    <!-- Las Vegas Box Container -->
-    <div class="vegas-box" style="margin: 0 auto;">
-      
-      <!-- Blinking Ribbon/Badge -->
-      <div class="vegas-badge">🔥 OPORTUNIDAD ÚNICA 🔥</div>
+    <!-- Blinking Badge -->
+    <div class="flyer-badge">🔥 OPORTUNIDAD ÚNICA 🔥</div>
 
-      <div class="vegas-title-shimmer" style="
-        font-size: 15px; letter-spacing: 5px; font-weight: 900;
-        text-transform: uppercase; margin-bottom: 16px;
-      ">
-        ADQUIERE TU LOTE RÚSTICO HOY MISMO
-      </div>
+    <!-- Subtitle -->
+    <div class="flyer-title-shimmer" style="
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(11px, 1.8vh, 13px);
+      letter-spacing: 3px;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-bottom: clamp(6px, 1.5vh, 12px);
+    ">
+      TU LOTE EN OCOZOCOAUTLA
+    </div>
 
-      <!-- El número súper masivo estilo Las Vegas -->
-      <div class="vegas-price-glow" style="
-        font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: clamp(100px, 28vw, 190px);
+    <!-- Súper masivo price in Inter Sans-Serif (thick, high contrast) -->
+    <div class="flyer-price-glow" style="
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(80px, 16vh, 120px);
+      font-weight: 950;
+      line-height: 0.85;
+      letter-spacing: -4px;
+      margin: clamp(4px, 1vh, 10px) 0;
+      color: #ffffff;
+    ">
+      $450
+    </div>
+
+    <!-- Frecuencia -->
+    <div style="
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(16px, 2.5vh, 22px);
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #ffff00;
+      text-shadow: 0 0 6px rgba(255, 255, 0, 0.6);
+      margin-bottom: clamp(12px, 3vh, 24px);
+    ">
+      PESOS SEMANALES
+    </div>
+
+    <!-- 4 Mini tags compactos en 2x2 para ahorrar espacio -->
+    <div style="
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: clamp(16px, 3.5vh, 28px);
+    ">
+      <div class="flyer-feature-tag" style="border-color: #ffff00;">📐 200 m²</div>
+      <div class="flyer-feature-tag" style="border-color: #00ffff;">📅 80 Meses S.I.</div>
+      <div class="flyer-feature-tag" style="border-color: #ff007f;">⚡ $0 Enganche</div>
+      <div class="flyer-feature-tag" style="border-color: #39ff14;">📜 Escritura Púb.</div>
+    </div>
+
+    <!-- Botón de WhatsApp vibrante y ultra compacto -->
+    <a href="https://wa.me/529612466204?text=Hola%2C%20quiero%20aprovechar%20la%20oportunidad%20de%20apartar%20mi%20lote%20en%20Bella%20Vista%20desde%20%24450%20semanales"
+      target="_blank"
+      style="
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        background: #25D366; color: white;
+        padding: clamp(14px, 2.2vh, 18px) 24px;
+        border-radius: 999px;
+        font-size: clamp(14px, 2.2vh, 16px);
         font-weight: 900;
-        line-height: 0.85;
-        letter-spacing: -6px;
-        margin: 10px 0;
-      ">
-        $450
-      </div>
-
-      <!-- Frecuencia -->
-      <div style="
-        font-family: 'Inter', sans-serif;
-        font-size: clamp(22px, 6vw, 36px);
-        font-weight: 900;
-        letter-spacing: 6px;
+        text-decoration: none; width: 100%;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
-        color: #ffff00;
-        text-shadow: 0 0 8px rgba(255, 255, 0, 0.6);
-        margin-bottom: 24px;
+        animation: pulse-flyer-btn 2.5s infinite;
+        box-shadow: 0 0 10px #25D366;
+        box-sizing: border-box;
       ">
-        PESOS SEMANALES
-      </div>
+      🎰 ¡Apartar mi lote ya! 🎰
+    </a>
 
-      <!-- Separador de Luces Led -->
-      <div style="
-        width: 100%; height: 3px;
-        background: linear-gradient(90deg, transparent, #00ffff, #ff007f, #ffff00, transparent);
-        margin: 32px 0;
-      "></div>
-
-      <!-- Grid de Beneficios en 2 columnas con bordes de Neon -->
-      <div style="
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-bottom: 36px;
-      ">
-        <div class="vegas-grid-card" style="border-radius: 16px; padding: 18px;">
-          <div style="font-size: 26px; font-weight: 900; color: #ffff00; font-family: 'Cormorant Garamond', serif;">200 m²</div>
-          <div style="font-size: 11px; letter-spacing: 2px; color: #ffffff; opacity: 0.8; margin-top: 4px; font-weight: 700; text-transform: uppercase;">Superficie Amplia</div>
-        </div>
-        <div class="vegas-grid-card" style="border-radius: 16px; padding: 18px;">
-          <div style="font-size: 26px; font-weight: 900; color: #00ffff; font-family: 'Cormorant Garamond', serif;">80 meses</div>
-          <div style="font-size: 11px; letter-spacing: 2px; color: #ffffff; opacity: 0.8; margin-top: 4px; font-weight: 700; text-transform: uppercase;">Sin Intereses</div>
-        </div>
-        <div class="vegas-grid-card" style="border-radius: 16px; padding: 18px;">
-          <div style="font-size: 24px; font-weight: 900; color: #ff007f; font-family: 'Cormorant Garamond', serif;">⚡ $0 Enganche</div>
-          <div style="font-size: 11px; letter-spacing: 2px; color: #ffffff; opacity: 0.8; margin-top: 4px; font-weight: 700; text-transform: uppercase;">Absolutamente Nada Inicial</div>
-        </div>
-        <div class="vegas-grid-card" style="border-radius: 16px; padding: 18px;">
-          <div style="font-size: 24px; font-weight: 900; color: #39ff14; font-family: 'Cormorant Garamond', serif;">📜 Escritura</div>
-          <div style="font-size: 11px; letter-spacing: 2px; color: #ffffff; opacity: 0.8; margin-top: 4px; font-weight: 700; text-transform: uppercase;">Pública Notariada</div>
-        </div>
-      </div>
-
-      <!-- Texto extra de vigilancia -->
-      <div style="
-        font-size: 15px; color: #ffffff; opacity: 0.9;
-        margin-bottom: 36px; font-weight: 600; letter-spacing: 0.5px;
-      ">
-        💎 ¡Mantenimiento y vigilancia las 24 horas ya incluidos! 💎
-      </div>
-
-      <!-- Botón de Acción Súper Vibrante Estilo Neon -->
-      <a href="https://wa.me/529612466204?text=Hola%2C%20quiero%20aprovechar%20la%20oportunidad%20de%20apartar%20mi%20lote%20en%20Bella%20Vista%20desde%20%24450%20semanales"
-        target="_blank"
-        style="
-          display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-          background: #25D366; color: white;
-          padding: 22px 40px; border-radius: 999px;
-          font-size: 20px; font-weight: 900;
-          text-decoration: none; width: 100%;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-          animation: pulse-neon-btn 2s infinite;
-          box-shadow: 0 0 15px #25D366;
-        ">
-        🎰 ¡Apartar mi lote hoy mismo! 🎰
-      </a>
-
-      <div style="font-size: 13px; color: #ffffff; opacity: 0.6; margin-top: 20px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
-        ⚡ Cupos limitados para preventa exclusiva ⚡
-      </div>
-
+    <div style="font-size: 10px; color: #ffffff; opacity: 0.5; margin-top: clamp(8px, 1.5vh, 14px); font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
+      ⚡ Preventa activa · Lotes limitados ⚡
     </div>
 
   </div>
