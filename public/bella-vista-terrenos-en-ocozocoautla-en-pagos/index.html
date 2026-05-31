@@ -1273,6 +1273,21 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
   color: #0A0A0A !important;
 }
 
+/* CENTRADO MOBILE Y DESKTOP FIX */
+.section { text-align: center; }
+.container { text-align: center; }
+
+@media(max-width: 768px) {
+  .container, .section, .value-grid, .steps-grid,
+  .location-data, .masterplan-layout, .masterplan-text,
+  .faq-list, .form-wrapper {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  h1, h2, h3, p, .section-tag { text-align: center; }
+}
+
 </style>
 </head>
 <body>
