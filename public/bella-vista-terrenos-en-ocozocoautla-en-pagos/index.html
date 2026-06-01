@@ -460,18 +460,17 @@ section p, section li { text-align: center; }
   position:relative;
   background:var(--dark);
   overflow:hidden;
+  background-image: url('images/hero-bg.png');
+  background-size: cover;
+  background-position: center;
 }
 /* Animated gradient orbs */
-.hero::before{
-  content:'';position:absolute;
-  inset:0;
-  background:
-    linear-gradient(to bottom, rgba(20, 20, 20, 0.45) 0%, rgba(20, 20, 20, 0.85) 100%),
-    url('images/Encabezado.png') no-repeat center center / cover;
-  filter:blur(20px);
-  transform:scale(1.15);
-  opacity:0.65;
-  pointer-events:none;
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1;
 }
 @keyframes hero-drift{
   0%{transform:translate(0,0) rotate(0deg)}
