@@ -11,6 +11,7 @@ import LandingViewer from './components/LandingViewer';
 import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLanding';
 import AvisoPrivacidad from './components/AvisoPrivacidad';
 import PropertyDetail from './components/PropertyDetail';
+import LeadsDashboard from './components/LeadsDashboard';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -48,10 +49,24 @@ export default function App() {
         <Route path="/bella-vista-ocozocoautla" element={<BellaVistaLanding />} />
         <Route path="/privacidad" element={<AvisoPrivacidad />} />
         <Route path="/propiedad/:id" element={<PropertyDetail />} />
+        <Route path="/preview/leads-crm" element={<LeadsPreviewRoute />} />
         <Route path="/crm/*" element={<CRMRoute session={session} />} />
         <Route path="*" element={<Home session={session} />} />
       </Routes>
     </HelmetProvider>
+  );
+}
+
+function LeadsPreviewRoute() {
+  const isMobile = window.innerWidth < 768;
+  return (
+    <div style={{ minHeight: '100vh', background: '#f8fafc', padding: isMobile ? '1rem' : '2rem' }}>
+      <LeadsDashboard
+        forcePreview
+        isMobile={isMobile}
+        currentUser={{ id: 'preview-admin', name: 'Admin demo', plan: 'admin' }}
+      />
+    </div>
   );
 }
 

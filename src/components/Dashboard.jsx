@@ -8,6 +8,7 @@ import AnalyticsView from './AnalyticsView';
 import UserManager from './UserManager';
 import AgencyManager from './AgencyManager';
 import DigitalCard from './DigitalCard';
+import LeadsDashboard from './LeadsDashboard';
 
 export default function Dashboard({ session, onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
@@ -171,7 +172,9 @@ export default function Dashboard({ session, onLogout }) {
     amenities: []
   });
 
-  const [currentView, setCurrentView] = useState('landings'); // vista inicial para admin
+  const [currentView, setCurrentView] = useState(() => (
+    window.location.pathname.includes('/crm/leads') ? 'leads' : 'landings'
+  )); // vista inicial para admin
 
   // Helper: overlay de feature bloqueada
   const LockedOverlay = ({ feature, label }) => {
@@ -515,6 +518,7 @@ export default function Dashboard({ session, onLogout }) {
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', padding: '0 0.75rem', flex: 1 }}>
           {[
             { view: 'landings',     icon: '🚀', label: 'Landing Pages',      admin: true },
+            { view: 'leads',        icon: '📩', label: 'Leads',              admin: false },
             { view: 'properties',   icon: '🏠', label: `Propiedades (${userProperties.length})`, admin: false },
             { view: 'add-property', icon: '➕', label: 'Agregar Propiedad',   admin: false },
             { view: 'users',        icon: '👥', label: 'Asesores',            admin: true },
@@ -642,19 +646,14 @@ export default function Dashboard({ session, onLogout }) {
 
               {activeTab === 'properties' && <PropertyManager properties={userProperties} onToggleActive={handleToggleActive} onEdit={handleEditProperty} plan={userPlan.id} />}
               {activeTab === 'analytics' && <AnalyticsView analytics={analyticsData} plan={userPlan} />}
-              {activeTab === 'leads' && (
-                <div style={{ textAlign: 'center', padding: '4rem 2rem', background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                  <span style={{ fontSize: '3rem' }}>📩</span>
-                  <h3 style={{ marginTop: '1rem', fontWeight: '800' }}>Gestión de Leads</h3>
-                  <p style={{ color: '#64748b' }}>Historial de prospectos para tus propiedades.</p>
-                </div>
-              )}
+              {activeTab === 'leads' && <LeadsDashboard currentUser={currentUser} isMobile={isMobile} />}
             </div>
           )}
 
           {currentView === 'users' && currentUser.plan === 'admin' && <UserManager />}
           {currentView === 'agencies' && currentUser.plan === 'admin' && <AgencyManager />}
           {currentView === 'landings' && currentUser.plan === 'admin' && <LandingManager />}
+          {currentView === 'leads' && <LeadsDashboard currentUser={currentUser} isMobile={isMobile} />}
           {currentView === 'categories' && currentUser.plan === 'admin' && (
             <div style={{ padding: '2rem', background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
               <h3 style={{ fontWeight: '800' }}>Categorías</h3>
@@ -676,7 +675,7 @@ export default function Dashboard({ session, onLogout }) {
           {[
             { id: 'profile', sub: 'description', label: 'Inicio', icon: '🏠' },
             { id: 'properties', sub: '', label: 'Propiedades', icon: '🏢' },
-            { id: 'profile', sub: 'leads', label: 'Leads', icon: '📩' },
+            { id: 'leads', sub: '', label: 'Leads', icon: '📩' },
             { id: 'profile', sub: 'description', label: 'Perfil', icon: '👤' }
           ].map((item, idx) => (
             <button
@@ -700,5 +699,3 @@ export default function Dashboard({ session, onLogout }) {
     </div>
   );
 }
-
-
