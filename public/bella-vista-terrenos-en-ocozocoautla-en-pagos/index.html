@@ -443,24 +443,6 @@ section p, section li { text-align: center; }
 }
 
 /* ═══════════════════════════════════════════
-   1. URGENCY BAR (Paso 6)
-   ═══════════════════════════════════════════ */
-.urgency-bar{
-  position:fixed;
-  top:0;left:0;right:0;
-  z-index:1000;
-  background: var(--gold);
-  color: var(--dark);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 10px;
-  text-align: center;
-  box-shadow:0 2px 10px rgba(0,0,0,0.3);
-}
-
-/* ═══════════════════════════════════════════
    2. HERO — Cinematic
    ═══════════════════════════════════════════ */
 .hero{
@@ -1154,9 +1136,10 @@ a[href*="wa.me"], button, .btn,
 
 /* FIX 1: STATS BAR HORIZONTAL */
 .top-stats-bar {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  max-width: 500px !important;
+  margin: 0 auto !important;
   justify-content: center !important;
   align-items: center !important;
   gap: 0 !important;
@@ -1211,7 +1194,7 @@ a[href*="wa.me"], button, .btn,
   line-height: 1.05 !important;
 }
 #beneficios h2, #ubicacion h2, #video h2, #masterplan h2, #galeria-desarrollo h2 {
-  font-size: clamp(36px, 6vw, 60px) !important;
+  font-size: clamp(36px, 7vw, 62px) !important;
   margin-bottom: 16px !important;
   line-height: 1.05 !important;
 }
@@ -1229,8 +1212,17 @@ a[href*="wa.me"], button, .btn,
   letter-spacing: 3px !important;
   margin-bottom: 12px !important;
 }
-#beneficios .value-card h3 {
-  font-size: clamp(20px, 3vw, 26px) !important;
+.value-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  max-width: 520px !important;
+  margin: 20px auto 0 !important;
+}
+.value-card { padding: 20px 14px !important; }
+.value-card h3 {
+  font-size: clamp(18px, 2.5vw, 22px) !important;
+  margin: 0 !important;
 }
 
 
@@ -1242,8 +1234,9 @@ a[href*="wa.me"], button, .btn,
 .float-wa {
   bottom: 90px !important;
   right: 16px !important;
-  width: 72px !important;
-  height: 72px !important;
+  width: 74px !important;
+  height: 74px !important;
+  flex-direction: column !important;
   text-align: center !important;
 }
 
@@ -1326,20 +1319,21 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 .steps-grid {
   display: flex !important;
   flex-direction: column !important;
-  gap: 16px !important;
-  max-width: 600px !important;
-  margin: 32px auto 0 !important;
+  gap: 12px !important;
+  max-width: 580px !important;
+  margin: 28px auto 0 !important;
 }
 .step-card {
   display: flex !important;
   align-items: center !important;
   gap: 20px !important;
   text-align: left !important;
-  padding: 20px 24px !important;
+  padding: 18px 22px !important;
 }
 .step-card__number {
-  font-size: 32px !important;
+  font-size: 36px !important;
   flex-shrink: 0 !important;
+  min-width: 44px !important;
 }
 
 </style>
@@ -1354,7 +1348,7 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 
       <h1 style="font-family:'Cormorant Garamond',serif;
         font-size:clamp(64px,11vw,110px);font-weight:800;
-        line-height:1;color:white;margin-bottom:12px;letter-spacing:-1px;">
+        line-height:1.0;color:white;margin-bottom:12px;letter-spacing:-1px;">
         10 × 20 m
         <em style="color:#D4AF72; margin:6px 0 !important; display:block !important;">desde $450</em>
         a la semana.
@@ -1379,7 +1373,6 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
     <div>6</div>
     <div>AMENIDADES EXCLUSIVAS</div>
   </div>
-  <p style="text-align:center; color:rgba(255,255,255,0.6); font-size:13px; letter-spacing:2px; margin-top:16px; width:100% !important; flex-basis:100% !important;">6 AMENIDADES EXCLUSIVAS INCLUIDAS EN TU PLAN DE PAGOS</p>
 </div>
 
 
@@ -1546,7 +1539,7 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 
     <div class="masterplan-layout">
       <div class="masterplan-text reveal">
-        <p>Lotes de 200 m² (10 × 20 metros) de uso habitacional. Construye lo que imagines: cabaña, casa de campo, residencia o tu hogar permanente a tu propio ritmo y con total libertad de diseño.</p>
+        <p>Lotes de 200 m² (10 × 20 metros) de uso habitacional. Construye lo que imagines: una cabaña de fin de semana, tu residencia permanente, o el espacio que tu familia necesita.</p>
         <a href="#formulario" class="btn btn--outline">Preguntar por lotes disponibles →</a>
       </div>
       <div class="masterplan-image reveal reveal-delay-1" style="min-height:auto; background:none; border:none; text-align:center;">
@@ -1800,7 +1793,7 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
         ¿Qué puedo construir en mi lote?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">¡Lo que imagines! Los lotes son de uso habitacional con total libertad de construcción. Puedes edificar una cabaña de fin de semana, una casa de campo, una residencia permanente o el espacio que mejor se adapte a tu estilo de vida y al de tu familia.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">Total libertad de construcción. Los lotes son de uso habitacional: cabaña de fin de semana, residencia permanente, o el espacio que tu familia necesite.</div></div>
     </div>
 
     <!-- Pregunta 2 -->
@@ -1930,8 +1923,8 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 </footer>
 
 <!-- ═══════════════════ FLOATING ELEMENTS ═══════════════════ -->
-<a href="https://wa.me/529612466204?text=Hola%2C%20vi%20la%20p%C3%A1gina%20de%20Bella%20Vista%20y%20me%20interesa%20un%20lote" target="_blank" rel="noopener" class="float-wa" id="float-wa" aria-label="WhatsApp">
-  <span style="color:white;font-weight:700;font-size:13px;letter-spacing:0.5px">Contactar<br>ahora</span>
+<a href="https://wa.me/529612466204?text=Hola%2C%20vi%20la%20p%C3%A1gina%20de%20Bella%20Vista%20Ocozocoautla%20y%20me%20interesa%20un%20lote.%20%C2%BFMe%20pueden%20dar%20m%C3%A1s%20informaci%C3%B3n%3F" target="_blank" rel="noopener" class="float-wa" id="float-wa" aria-label="WhatsApp">
+  <span style="color:white;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;line-height:1.3;text-align:center;display:block;">Contactar<br>ahora</span>
 </a>
 
 <div class="toast" id="toast"></div>
