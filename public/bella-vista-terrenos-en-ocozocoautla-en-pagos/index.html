@@ -892,7 +892,7 @@ section p, section li { text-align: center; }
   position:fixed;
   bottom:24px;right:24px;
   z-index:999;
-  width:60px;height:60px;
+  width:72px;height:72px;
   background:linear-gradient(135deg,#25D366,#1DB954);
   border-radius:50%;
   display:flex;align-items:center;justify-content:center;
@@ -1242,8 +1242,9 @@ a[href*="wa.me"], button, .btn,
 .float-wa {
   bottom: 90px !important;
   right: 16px !important;
-  width: 52px !important;
-  height: 52px !important;
+  width: 72px !important;
+  height: 72px !important;
+  text-align: center !important;
 }
 
 /* FIX 2: HERO - NÚMEROS MÁS IMPACTO */
@@ -1320,6 +1321,25 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
     margin-right: auto;
   }
   h1, h2, h3, p, .section-tag { text-align: center; }
+}
+
+.steps-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  max-width: 600px !important;
+  margin: 32px auto 0 !important;
+}
+.step-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  text-align: left !important;
+  padding: 20px 24px !important;
+}
+.step-card__number {
+  font-size: 32px !important;
+  flex-shrink: 0 !important;
 }
 
 </style>
@@ -1777,10 +1797,10 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
     <!-- Pregunta 1 -->
     <div class="faq-item reveal">
       <button class="faq-question" onclick="toggleFaq(this)">
-        ¿Qué tipo de cabañas puedo construir en mi lote?
+        ¿Qué puedo construir en mi lote?
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
-      <div class="faq-answer"><div class="faq-answer__inner">¡Tu creatividad es el límite! Lotes rústicos para uso habitacional. Construye tu cabaña, casa de campo o refugio familiar, siempre integrados en armonía con el paisaje natural y respetando el entorno de tus vecinos.</div></div>
+      <div class="faq-answer"><div class="faq-answer__inner">¡Lo que imagines! Los lotes son de uso habitacional con total libertad de construcción. Puedes edificar una cabaña de fin de semana, una casa de campo, una residencia permanente o el espacio que mejor se adapte a tu estilo de vida y al de tu familia.</div></div>
     </div>
 
     <!-- Pregunta 2 -->
@@ -1790,15 +1810,6 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
         <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="faq-answer"><div class="faq-answer__inner">¡Claro que sí! Desde el momento en que realizas tu apartado de lote, tú y tu familia tienen acceso libre para venir a pasar el fin de semana, hacer una tarde de asados en la terraza, acampar bajo las estrellas o pasear por todo el desarrollo rodeados de aire puro.</div></div>
-    </div>
-
-    <!-- Pregunta 3 -->
-    <div class="faq-item reveal reveal-delay-2">
-      <button class="faq-question" onclick="toggleFaq(this)">
-        ¿El fraccionamiento es Pet Friendly / apto para mascotas?
-        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="faq-answer"><div class="faq-answer__inner">¡Amamos a los animales! Tus perritos y gatitos tendrán kilómetros de vegetación, prados y senderos arbolados para correr, jugar y disfrutar del campo en total libertad y seguridad.</div></div>
     </div>
 
     <!-- Pregunta 4 -->
@@ -1915,13 +1926,12 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
       <a href="/privacidad">Aviso de Privacidad</a>
       <a href="/">Propiedades en Chiapas</a>
     </div>
-    <p class="footer__copy" style="text-align: center; width: 100%;">Desarrollado por Propiedades en Chiapas</p>
   </div>
 </footer>
 
 <!-- ═══════════════════ FLOATING ELEMENTS ═══════════════════ -->
-<a href="https://wa.me/529612466204?text=Hola%2C%20me%20interesa%20un%20lote%20en%20Bella%20Vista" target="_blank" rel="noopener" class="float-wa" id="float-wa" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24" style="width: 30px; height: 30px; fill: #FFFFFF; display: block; margin: auto;"><path fill="#FFFFFF" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="#FFFFFF" d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.707-1.353A11.948 11.948 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.239 0-4.308-.724-5.993-1.953a.5.5 0 00-.404-.078l-3.384.973.904-3.265a.5.5 0 00-.064-.41A9.946 9.946 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+<a href="https://wa.me/529612466204?text=Hola%2C%20vi%20la%20p%C3%A1gina%20de%20Bella%20Vista%20y%20me%20interesa%20un%20lote" target="_blank" rel="noopener" class="float-wa" id="float-wa" aria-label="WhatsApp">
+  <span style="color:white;font-weight:700;font-size:13px;letter-spacing:0.5px">Contactar<br>ahora</span>
 </a>
 
 <div class="toast" id="toast"></div>
