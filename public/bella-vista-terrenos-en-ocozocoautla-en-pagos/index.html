@@ -1199,15 +1199,23 @@ a[href*="wa.me"], button, .btn,
 }
 
 /* FIX 3: SECCIONES CREMA - TIPOGRAFÍA MÁS GRANDE, MENOS ESPACIO */
-#beneficios, #galeria, #masterplan, #formulario, #ubicacion, #galeria-desarrollo {
+#galeria, #formulario {
   padding: 56px 24px !important;
 }
-#beneficios h2, #galeria h2, #masterplan h2, #formulario h2, #ubicacion h2, #galeria-desarrollo h2 {
+#beneficios, #ubicacion, #video, #masterplan, #galeria-desarrollo {
+  padding: 40px 0 !important;
+}
+#galeria h2, #formulario h2 {
   font-size: clamp(44px,9vw,72px) !important;
   margin-bottom: 16px !important;
   line-height: 1.05 !important;
 }
-#beneficios p.section-subtitle, #galeria p.section-subtitle, #masterplan p.section-subtitle, #formulario p.section-subtitle, #ubicacion p.section-subtitle, #galeria-desarrollo p.section-subtitle {
+#beneficios h2, #ubicacion h2, #video h2, #masterplan h2, #galeria-desarrollo h2 {
+  font-size: clamp(36px, 6vw, 60px) !important;
+  margin-bottom: 16px !important;
+  line-height: 1.05 !important;
+}
+#beneficios p.section-subtitle, #galeria p.section-subtitle, #masterplan p.section-subtitle, #formulario p.section-subtitle, #ubicacion p.section-subtitle, #galeria-desarrollo p.section-subtitle, #video p.section-subtitle {
   font-size: clamp(16px,3vw,20px) !important;
   line-height: 1.5 !important;
   margin-top: 12px !important;
@@ -1216,10 +1224,13 @@ a[href*="wa.me"], button, .btn,
   margin-left: auto !important;
   margin-right: auto !important;
 }
-#beneficios .section-tag, #galeria .section-tag, #masterplan .section-tag, #formulario .section-tag, #ubicacion .section-tag, #galeria-desarrollo .section-tag {
+#beneficios .section-tag, #galeria .section-tag, #masterplan .section-tag, #formulario .section-tag, #ubicacion .section-tag, #galeria-desarrollo .section-tag, #video .section-tag {
   font-size: 12px !important;
   letter-spacing: 3px !important;
   margin-bottom: 12px !important;
+}
+#beneficios .value-card h3 {
+  font-size: clamp(20px, 3vw, 26px) !important;
 }
 
 
@@ -1363,22 +1374,18 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
       <div class="card value-card reveal">
         <span class="value-card__icon">📜</span>
         <h3>Escritura Pública</h3>
-        <p>Certeza jurídica total con documentos notariados desde el primer día.</p>
       </div>
       <div class="card value-card reveal reveal-delay-1">
         <span class="value-card__icon">🔑</span>
         <h3>Entrega Inmediata</h3>
-        <p>Tu lote listo para usar desde el día uno, sin esperas.</p>
       </div>
       <div class="card value-card reveal reveal-delay-2">
         <span class="value-card__icon">💳</span>
         <h3>Sin Buró de Crédito</h3>
-        <p>Financiamiento directo sin revisión de historial crediticio.</p>
       </div>
       <div class="card value-card reveal reveal-delay-3">
         <span class="value-card__icon">📈</span>
         <h3>Alta Plusvalía</h3>
-        <p>Zona de crecimiento acelerado en Ocozocoautla, Chiapas.</p>
       </div>
 
     </div>
@@ -1392,8 +1399,8 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 <section class="section" id="ubicacion">
   <div class="container text-center">
     <span class="section-tag reveal">Ubicación Estratégica</span>
-    <h2 class="reveal">A 38 minutos de Tuxtla.<br><em>A un mundo de distancia.</em></h2>
-    <p class="section-subtitle reveal">En las afueras de Ocozocoautla, rumbo a la Sima de las Cotorras. Fácil acceso en vehículo, acceso todo el año, servicios a 10 minutos.</p>
+    <h2 class="reveal">A 25 minutos de Tuxtla.</h2>
+    <p class="section-subtitle reveal">En las afueras de Ocozocoautla, rumbo a la Sima de las Cotorras. Fácil acceso en vehículo, servicios a 10 minutos.</p>
     
     <div class="location-data reveal">
       <div class="location-data__item">
@@ -1496,7 +1503,7 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
     <div class="video-section__content">
       <span class="section-tag reveal">Recorrido en video</span>
       <h2 class="reveal">El lugar que soñaste,<br><em>en video.</em></h2>
-      <p class="section-subtitle reveal">Recorre el terreno, admira el paisaje de las montañas y visualiza tu futura cabaña campestre en un entorno natural único.</p>
+      <p class="section-subtitle reveal">Recorre el terreno, admira el paisaje de las montañas y visualiza tu futuro espacio en un entorno natural único.</p>
 
       <div class="video-embed reveal">
         <img src="images/video-thumb.png" alt="Video Recorrido Bella Vista" style="width:100%; height:100%; object-fit:cover; display:block;">
@@ -1514,12 +1521,12 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
   <div class="container">
     <div class="text-center">
       <span class="section-tag reveal">Master Plan</span>
-      <h2 class="reveal" style="font-size:clamp(46px, 9vw, 84px); line-height:1.05; text-transform:uppercase; font-weight:800; letter-spacing:-1px;">Cada lote pensado<br>para que construyas<br><em style="color:var(--gold)">a tu ritmo.</em></h2>
+      <h2 class="reveal" style="font-size:clamp(36px, 6vw, 60px); line-height:1.05; text-transform:uppercase; font-weight:800; letter-spacing:-1px;">Cada lote pensado<br>para que construyas<br><em style="color:var(--gold)">a tu ritmo.</em></h2>
     </div>
 
     <div class="masterplan-layout">
       <div class="masterplan-text reveal">
-        <p>Lotes de 200 m² (10 × 20 metros) de uso habitacional. Construye tu cabaña o casa de campo a tu propio ritmo y con total libertad de diseño.</p>
+        <p>Lotes de 200 m² (10 × 20 metros) de uso habitacional. Construye lo que imagines: cabaña, casa de campo, residencia o tu hogar permanente a tu propio ritmo y con total libertad de diseño.</p>
         <a href="#formulario" class="btn btn--outline">Preguntar por lotes disponibles →</a>
       </div>
       <div class="masterplan-image reveal reveal-delay-1" style="min-height:auto; background:none; border:none; text-align:center;">
@@ -1539,8 +1546,8 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 <section class="section" id="galeria-desarrollo">
   <div class="container text-center">
     <span class="section-tag reveal">Fotografías del Desarrollo</span>
-    <h2 class="reveal">Explora Bella Vista<br><span class="text-gold-italic">con tus propios ojos</span></h2>
-    <p class="section-subtitle reveal">Desliza para ver vistas espectaculares del terreno, calles tratadas, la exuberante naturaleza y renders del plan maestro.</p>
+    <h2 class="reveal">Explora Bella Vista</h2>
+    <p class="section-subtitle reveal">Desliza para ver vistas espectaculares del terreno, calles tratadas y renders del plan maestro.</p>
   </div>
 
   <div class="container" style="margin-top:var(--gap-xl)">
