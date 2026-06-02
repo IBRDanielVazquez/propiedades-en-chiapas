@@ -1215,14 +1215,50 @@ a[href*="wa.me"], button, .btn,
 .value-grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
+  gap: 14px !important;
   max-width: 520px !important;
-  margin: 20px auto 0 !important;
+  margin: 18px auto 0 !important;
 }
-.value-card { padding: 20px 14px !important; }
+.value-card { padding: 22px 14px !important; }
+.value-card__icon {
+  display: block !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+  margin-bottom: 12px !important;
+}
 .value-card h3 {
-  font-size: clamp(18px, 2.5vw, 22px) !important;
+  font-size: clamp(24px, 5.6vw, 30px) !important;
+  line-height: 1.1 !important;
   margin: 0 !important;
+}
+
+#precios {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 34px 16px 28px !important;
+}
+
+#faq {
+  padding: 34px 16px !important;
+}
+#faq .container {
+  padding: 0 12px !important;
+}
+#faq h2 {
+  margin-bottom: 8px !important;
+}
+#faq h2 .text-gold-italic {
+  display: inline-block !important;
+  font-size: clamp(34px, 8vw, 48px) !important;
+  line-height: 1 !important;
+  margin-top: 8px !important;
+}
+#faq p.section-subtitle {
+  margin: 10px auto 0 !important;
+}
+#faq .faq-list {
+  margin: 22px auto 0 !important;
+  gap: 10px !important;
 }
 
 
@@ -1317,24 +1353,81 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
   h1, h2, h3, p, .section-tag { text-align: center; }
 }
 
+#visita {
+  overflow: hidden !important;
+  padding: 36px 0 !important;
+}
+#visita .container {
+  max-width: none !important;
+  padding: 0 0 0 20px !important;
+}
+#visita .section-tag,
+#visita h2,
+#visita .section-subtitle {
+  padding-right: 20px !important;
+}
 .steps-grid {
   display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  max-width: 580px !important;
-  margin: 28px auto 0 !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+  max-width: none !important;
+  width: 100% !important;
+  margin: 22px 0 0 !important;
+  overflow-x: auto !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 0 20px 14px 0 !important;
+}
+.steps-grid::-webkit-scrollbar {
+  display: none !important;
 }
 .step-card {
   display: flex !important;
+  flex: 0 0 min(82vw, 360px) !important;
+  min-height: 250px !important;
+  flex-direction: column !important;
   align-items: center !important;
-  gap: 20px !important;
-  text-align: left !important;
-  padding: 18px 22px !important;
+  justify-content: center !important;
+  gap: 18px !important;
+  scroll-snap-align: center !important;
+  text-align: center !important;
+  padding: 22px 20px !important;
+}
+.step-card h3 {
+  font-size: clamp(26px, 6vw, 32px) !important;
+  line-height: 1.12 !important;
+  margin: 0 !important;
+}
+.step-card p {
+  font-size: 18px !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
 }
 .step-card__number {
   font-size: 36px !important;
   flex-shrink: 0 !important;
-  min-width: 44px !important;
+  min-width: 56px !important;
+  margin: 0 !important;
+}
+@media (min-width: 900px) {
+  #visita .container {
+    max-width: 980px !important;
+    padding: 0 20px !important;
+  }
+  #visita .section-tag,
+  #visita h2,
+  #visita .section-subtitle {
+    padding-right: 0 !important;
+  }
+  .steps-grid {
+    justify-content: center !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+  .step-card {
+    flex: 0 1 300px !important;
+  }
 }
 
 </style>
@@ -1891,14 +1984,14 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
           </select>
         </div>
         <button type="submit" class="btn btn--gold form-submit">🏡 Quiero agendar mi visita →</button>
-        <p class="form-privacy">🔒 Tu información es confidencial. Solo la usamos para contactarte.</p>
+        <p class="form-privacy">Tus datos llegan al equipo de ventas por WhatsApp y se guardan para dar seguimiento. No los compartimos con terceros.</p>
       </form>
     </div>
 
     <div class="form-success" id="form-success">
       <div class="form-success__icon">🎉</div>
       <h3>¡Recibimos tu solicitud!</h3>
-      <p>Un asesor te contactará hoy para agendar tu visita a Bella Vista.</p>
+      <p>Tu solicitud llegó al equipo de ventas. Un asesor te contactará hoy para agendar tu visita a Bella Vista.</p>
       <a href="https://wa.me/529612466204?text=Hola%2C%20acabo%20de%20llenar%20el%20formulario%20de%20Bella%20Vista%2C%20me%20gustar%C3%ADa%20agendar%20mi%20visita" target="_blank" rel="noopener" class="btn btn--wa">
         <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.612.638l4.707-1.353A11.948 11.948 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.239 0-4.308-.724-5.993-1.953a.5.5 0 00-.404-.078l-3.384.973.904-3.265a.5.5 0 00-.064-.41A9.946 9.946 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
         También escríbenos por WhatsApp
