@@ -739,18 +739,14 @@ section p, section li { text-align: center; }
 /* ═══════════════════════════════════════════
    10. POR QUÉ VISITARLO
    ═══════════════════════════════════════════ */
-.step-card__number{
-  width:52px;height:52px;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 16px;
-  font-family:var(--serif);
-  font-size:1.4rem;
-  font-weight:800;
-  color:var(--dark);
+.step-card__number {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(52px, 8vw, 72px) !important;
+  font-weight: 700;
+  color: #B8924A;
+  flex-shrink: 0;
+  min-width: 60px;
+  line-height: 1;
 }
 .step-card h3{
   font-family:var(--sans);
@@ -1405,12 +1401,7 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
   line-height: 1.45 !important;
   margin: 0 !important;
 }
-.step-card__number {
-  font-size: 36px !important;
-  flex-shrink: 0 !important;
-  min-width: 56px !important;
-  margin: 0 !important;
-}
+
 @media (min-width: 900px) {
   #visita .container {
     max-width: 980px !important;
@@ -1460,10 +1451,6 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
         max-width:540px;line-height:1.35;margin:0 auto 20px">
         200 m² · Sin enganche · Sin buró · Escritura pública.
       </p>
-      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px;">
-        <a href="https://wa.me/529612466204?text=Hola%2C%20vi%20la%20p%C3%A1gina%20de%20Bella%20Vista%20y%20quiero%20informaci%C3%B3n%20sobre%20los%20lotes" target="_blank" style="background:#25D366;color:white;padding:18px 36px;border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;text-decoration:none;">Quiero mi lote →</a>
-        <a href="#precios-section" style="background:transparent;color:#B8924A;border:1.5px solid #B8924A;padding:18px 36px;border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;text-decoration:none;">Ver disponibilidad</a>
-      </div>
     </div>
   </div>
 
