@@ -454,16 +454,17 @@ section p, section li { text-align: center; }
   position:relative;
   background:var(--dark);
   overflow:hidden;
-  background-image: url('images/hero-bg.png');
+  background-image: url('images/bella-vista-03.png');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
 }
 /* Animated gradient orbs */
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   z-index: 1;
 }
 @keyframes hero-drift{
@@ -1450,14 +1451,19 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
       <h1 style="font-family:'Cormorant Garamond',serif;
         font-size:clamp(64px,11vw,110px);font-weight:800;
         line-height:1.0;color:white;margin-bottom:12px;letter-spacing:-1px;">
-        10 × 20 m
-        <em style="color:#D4AF72; margin:6px 0 !important; display:block !important;">desde $450</em>
+        <span style="font-size:clamp(14px,2vw,16px);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#B8924A;display:block;margin-bottom:16px;">BELLA VISTA · OCOZOCOAUTLA</span>
+        Tu terreno propio<br>
+        <em>desde $450</em><br>
         a la semana.
       </h1>
       <p style="font-size:17px;color:rgba(255,255,255,0.85);
         max-width:540px;line-height:1.35;margin:0 auto 20px">
-        Terrenos en venta en Ocozocoautla. Sin enganche, con escritura pública y crédito inmediato sin comprobante de ingresos.
+        200 m² · Sin enganche · Sin buró · Escritura pública.
       </p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px;">
+        <a href="https://wa.me/529612466204?text=Hola%2C%20vi%20la%20p%C3%A1gina%20de%20Bella%20Vista%20y%20quiero%20informaci%C3%B3n%20sobre%20los%20lotes" target="_blank" style="background:#25D366;color:white;padding:18px 36px;border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;text-decoration:none;">Quiero mi lote →</a>
+        <a href="#precios-section" style="background:transparent;color:#B8924A;border:1.5px solid #B8924A;padding:18px 36px;border-radius:999px;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;text-decoration:none;">Ver disponibilidad</a>
+      </div>
     </div>
   </div>
 
