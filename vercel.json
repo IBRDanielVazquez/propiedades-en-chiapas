@@ -12,6 +12,11 @@
       "statusCode": 404
     },
     {
+      "source": "/wp-admin/",
+      "destination": "/",
+      "statusCode": 404
+    },
+    {
       "source": "/wp-admin/:path*",
       "destination": "/",
       "statusCode": 404
