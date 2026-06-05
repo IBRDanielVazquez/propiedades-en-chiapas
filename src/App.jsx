@@ -12,6 +12,7 @@ import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLand
 import AvisoPrivacidad from './components/AvisoPrivacidad';
 import PropertyDetail from './components/PropertyDetail';
 import LeadsDashboard from './components/LeadsDashboard';
+import NotFound from './components/NotFound';
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -51,7 +52,8 @@ export default function App() {
         <Route path="/propiedad/:id" element={<PropertyDetail />} />
         <Route path="/preview/leads-crm" element={<LeadsPreviewRoute />} />
         <Route path="/crm/*" element={<CRMRoute session={session} />} />
-        <Route path="*" element={<Home session={session} />} />
+        <Route path="/" element={<Home session={session} />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </HelmetProvider>
   );

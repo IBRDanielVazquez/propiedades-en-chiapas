@@ -1,21 +1,72 @@
 {
-  "trailingSlash": true,
-  "headers": [
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
     {
-      "source": "/index.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
-      ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/:folder(monte-de-los-olivos|colinas-del-campestre|la-sima-park-terrenos-en-ocozocoautla|la-canada-desarrollo-eco-campestre|el-higo-copoya-terrenos-10x20-en-copoya|fraccionamiento-montecristo|quinta-en-berriozabal|cuauhtli-terrenos-en-venta-en-el-jobo|bella-vista-terrenos-en-ocozocoautla-en-pagos|carmen-jimenez-asesor-inmobiliario-de-ibr|luis-garcia-asesor-inmobiliario-de-ibr|lupyta-mendoza-asesor-inmobiliario-ibr)",
-      "destination": "/:folder/index.html"
+      "source": "/aviso-de-privacidad",
+      "destination": "/privacidad",
+      "permanent": true
     },
     {
-      "source": "/((?!.*\\.).*)",
-      "destination": "/index.html"
+      "source": "/wp-admin",
+      "destination": "/",
+      "statusCode": 404
+    },
+    {
+      "source": "/wp-admin/:path*",
+      "destination": "/",
+      "statusCode": 404
+    },
+    {
+      "source": "/wp-login.php",
+      "destination": "/",
+      "statusCode": 404
+    },
+    {
+      "source": "/wp-json/:path*",
+      "destination": "/",
+      "statusCode": 404
+    },
+    {
+      "source": "/xmlrpc.php",
+      "destination": "/",
+      "statusCode": 403
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self), payment=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    {
+      "source": "/preview/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }
