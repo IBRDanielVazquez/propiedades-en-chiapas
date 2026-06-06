@@ -4,52 +4,131 @@ import { supabase } from '../supabaseClient';
 export default function AgencyManager() {
   const [agencies, setAgencies] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchAgencies = async () => {
-    // Para no romper si la tabla no existe, intentamos leerla
-    const { data, error } = await supabase.from('agencies').select('*');
-    if (!error && data) {
-      setAgencies(data);
-    } else {
-      // Fallback: extraer agencias únicas del campo 'company' de los usuarios
-      const { data: users } = await supabase.from('users').select('company');
-      const uniqueAgencies = [...new Set(users?.map(u => u.company).filter(Boolean))];
-      setAgencies(uniqueAgencies.map((name, i) => ({ id: i, name, memberCount: users.filter(u => u.company === name).length })));
-    }
-    setLoading(false);
-  };
+  const [form, setForm] = useState({ name: '', slug: '' });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchAgencies();
+    const load = async () => {
+      setLoading(true);
+      try {
+        const { data } = await supabase
+          .from('agencies')
+          .select('*')
+          .order('name');
+        setAgencies(data || []);
+      } catch (err) {
+        console.warn('AgencyManager load error:', err.message);
+        setAgencies([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
+  const save = async () => {
+    if (!form.name.trim()) return;
+    setSaving(true);
+    try {
+      const slug = form.slug || form.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+      const { data, error } = await supabase
+        .from('agencies')
+        .insert({ name: form.name.trim(), slug })
+        .select()
+        .single();
+      if (error) throw error;
+      setAgencies(prev => [...prev, data]);
+      setForm({ name: '', slug: '' });
+    } catch (err) {
+      alert('Error al guardar: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const toggleActive = async (agency) => {
+    const newActive = !agency.active;
+    setAgencies(prev => prev.map(a => a.id === agency.id ? { ...a, active: newActive } : a));
+    await supabase.from('agencies').update({ active: newActive }).eq('id', agency.id);
+  };
+
+  if (loading) return (
+    <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
+      Cargando agencias...
+    </div>
+  );
+
   return (
-    <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2.25rem', fontWeight: '800', color: '#1e293b' }}>Gestión de Agencias</h1>
-        <p style={{ color: '#64748b' }}>Administra las inmobiliarias y grupos registrados en el portal.</p>
+    <div style={{ padding: '0' }}>
+      <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1e293b', margin: 0 }}>
+          🏢 Agencias
+        </h1>
+        <span style={{ background: '#e0f2fe', color: '#0284c7', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700' }}>
+          {agencies.length} agencias
+        </span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
-        {agencies.map(agency => (
-          <div key={agency.id} style={{
-            background: '#fff', borderRadius: '16px', padding: '1.5rem',
-            border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🏢</div>
-            <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.25rem', fontWeight: '700' }}>{agency.name}</h3>
-            <p style={{ color: '#64748b', fontSize: '0.9rem' }}>{agency.memberCount || 0} asesores activos</p>
-            <button style={{
-              marginTop: '1rem', width: '100%', padding: '0.65rem', borderRadius: '10px',
-              background: '#f1f5f9', border: 'none', color: '#1A1A6E', fontWeight: '700', cursor: 'pointer'
-            }}>Ver detalles</button>
-          </div>
-        ))}
+      {/* Formulario nueva agencia */}
+      <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '1.5rem', marginBottom: '2rem' }}>
+        <h3 style={{ fontWeight: '800', marginBottom: '1rem', fontSize: '1rem' }}>Nueva Agencia</h3>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <input
+            type="text"
+            value={form.name}
+            onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+            placeholder="Nombre de la agencia"
+            className="form-input"
+            style={{ flex: 1, minWidth: '200px' }}
+          />
+          <input
+            type="text"
+            value={form.slug}
+            onChange={e => setForm(p => ({ ...p, slug: e.target.value }))}
+            placeholder="Slug (opcional)"
+            className="form-input"
+            style={{ flex: 1, minWidth: '150px' }}
+          />
+          <button
+            onClick={save}
+            disabled={saving || !form.name.trim()}
+            className="btn-primary"
+            style={{ padding: '0.75rem 1.5rem', borderRadius: '10px', opacity: saving ? 0.7 : 1 }}
+          >
+            {saving ? 'Guardando...' : '+ Agregar'}
+          </button>
+        </div>
       </div>
 
-      {agencies.length === 0 && !loading && (
-        <div style={{ textAlign: 'center', padding: '4rem' }}>
-          <p>No se encontraron agencias registradas.</p>
+      {/* Lista de agencias */}
+      {agencies.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8', background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🏢</div>
+          <p style={{ fontWeight: '600' }}>No hay agencias registradas</p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          {agencies.map(agency => (
+            <div key={agency.id} style={{
+              background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0',
+              padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+            }}>
+              <div>
+                <p style={{ fontWeight: '700', margin: 0, color: '#1e293b' }}>{agency.name}</p>
+                <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '2px 0 0' }}>/{agency.slug}</p>
+              </div>
+              <button
+                onClick={() => toggleActive(agency)}
+                style={{
+                  padding: '6px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: '700', fontSize: '0.8rem',
+                  background: agency.active ? '#d1fae5' : '#fee2e2',
+                  color: agency.active ? '#065f46' : '#991b1b'
+                }}
+              >
+                {agency.active ? 'Activa' : 'Inactiva'}
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>
