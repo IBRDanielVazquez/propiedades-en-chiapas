@@ -73,7 +73,8 @@ function LeadsPreviewRoute() {
 }
 
 function CRMRoute({ session }) {
-  if (!session) return <Login onBack={() => window.location.href = '/'} />;
+  const isReset = window.location.hash.includes('access_token');
+  if (!session || isReset) return <Login onBack={() => window.location.href = '/'} />;
   return (
     <Dashboard 
       session={session} 
