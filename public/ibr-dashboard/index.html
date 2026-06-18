@@ -245,7 +245,12 @@
         <div id="preview-banner-container"></div>
         <div id="banners-container" class="px-4 pt-4"></div>
 
-
+        <!-- ACCESO RESTRINGIDO -->
+        <div id="tab-restricted" class="tab-content min-h-[70vh] flex flex-col items-center justify-center p-8">
+            <div class="text-6xl mb-6">🔒</div>
+            <h2 class="font-black text-2xl text-ibr-black mb-2">Acceso Restringido</h2>
+            <p class="text-sm text-gray-500 text-center font-bold">Esta sección no está disponible para tu rol.<br>Regresando a tu panel...</p>
+        </div>
 
         <!-- ADMIN: DASHBOARD -->
                 <div id="tab-dashboard-admin" class="tab-content p-4 space-y-4">
@@ -1086,14 +1091,23 @@
     const getVentasVisibles = () => esAdmin() ? getAllSales() : getAllSales().filter(esPropietario);
     const getLeadsVisibles = () => esAdmin() ? leads : leads.filter(l => l.advisor === currentUser);
 
-    function renderAdminContent() {
-        // En guardTab, retornar false permite que switchTab continúe y renderice la pestaña de admin
-    }
-
-
-
     function guardTab(tabId) {
-      return true;
+        // Admin tiene acceso a TODO — nunca mostrar Acceso Restringido
+        if(esAdmin()) return false;
+        let allowed = ASESOR_TABS;
+        if(!allowed.includes(tabId)) {
+            let fallback = 'dashboard-asesor';
+            let fb = document.getElementById('tab-restricted');
+            if(fb) {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                fb.classList.add('active');
+                setTimeout(() => switchTab(fallback), 2000);
+                return true;
+            }
+            switchTab(fallback);
+            return true;
+        }
+        return false;
     }
     
     let extUsers = JSON.parse(localStorage.getItem('ibr_externos')) || DEFAULT_EXT;
@@ -1242,18 +1256,6 @@
         };
 
         var usuario = usuarios[token];
-
-        // Si no hay token o no existe ese usuario, buscar el token por el PIN ingresado
-        if (!usuario && inputPin) {
-            var foundToken = Object.keys(usuarios).find(function(k) {
-                return getEffectivePin(k) === inputPin;
-            });
-            if (foundToken) {
-                token = foundToken;
-                usuario = usuarios[token];
-            }
-        }
-
         var errEl = document.getElementById('loginError');
 
         if (!usuario) {
@@ -1261,9 +1263,7 @@
             return;
         }
 
-        var correctPin = getEffectivePin(token);
-
-        if (inputPin === correctPin) {
+        if (inputPin === usuario.pin) {
             localStorage.setItem('ibr_token', token);
             localStorage.setItem('ibr_session', JSON.stringify({
                 token: token,
@@ -1555,18 +1555,31 @@
         window.open('https://wa.me/52' + phone + '?text=' + msg, '_blank');
     }
 
-    function mostrarLogin() {
-        // Mostrar pantalla de login estática
-        document.getElementById('loginScreen').style.display = 'flex';
-
+    function init() {
         var params = new URLSearchParams(window.location.search);
         var urlTokenRaw = params.get('token');
         var tokenToUse = urlTokenRaw
             ? decodeURIComponent(urlTokenRaw)
             : (localStorage.getItem('ibr_token') ? decodeURIComponent(localStorage.getItem('ibr_token')) : null);
 
+        // Guardar token en localStorage para que validarPin() lo encuentre
         if (tokenToUse) {
             localStorage.setItem('ibr_token', tokenToUse);
+        }
+
+        // Sesión activa válida → entrar directo
+        try {
+            var sess = JSON.parse(localStorage.getItem('ibr_session'));
+            if (sess && (Date.now() - (sess.ts || sess.timestamp || 0)) < SESSION_DURATION) {
+                var ud2 = resolveUserByToken(sess.token);
+                if (ud2) { applySession(sess.token, ud2, false); return; }
+            }
+        } catch(err) {}
+
+        // Mostrar pantalla de login estática
+        document.getElementById('loginScreen').style.display = 'flex';
+
+        if (tokenToUse) {
             var userData = resolveUserByToken(tokenToUse);
             if (userData) {
                 // Mostrar nombre del asesor en el saludo
@@ -1582,51 +1595,7 @@
             var errEl2 = document.getElementById('loginError');
             if (errEl2) { errEl2.style.display = 'block'; errEl2.textContent = 'Abre tu link personal para ingresar'; }
         }
-    }
-
-    function renderAdminDashboard(nombre) {
-        currentUser = nombre;
-        isAdmin = true;
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('headerUserName').textContent = currentUser;
-        document.getElementById('headerUserRole').textContent = 'Admin';
-        var sel = document.getElementById('userSelector');
-        if(sel) sel.value = currentUser;
-        bootApp();
-    }
-
-    function renderAsesorDashboard(nombre) {
-        currentUser = nombre;
-        isAdmin = false;
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('headerUserName').textContent = currentUser;
-        document.getElementById('headerUserRole').textContent = 'Asesor';
-        var sel = document.getElementById('userSelector');
-        if(sel) sel.value = currentUser;
-        bootApp();
-    }
-
-    function initDashboard() {
-      const session = JSON.parse(
-        localStorage.getItem('ibr_session') || '{}')
-      
-      // Si no hay sesión válida, login
-      if (!session.rol) { mostrarLogin(); return }
-      
-      window.ROL_ACTUAL = session.rol
-      window.NOMBRE_ACTUAL = session.nombre
-      
-      console.log("Sesión: " + session.nombre + " | Rol: " + session.rol);
-      
-      // Admin ve TODO sin restricciones
-      if (session.rol === 'admin') {
-        renderAdminDashboard(session.nombre)
-      } else {
-        renderAsesorDashboard(session.nombre)
-      }
-    }
-
-    function init() {
+        
         // Register accordions
         document.querySelectorAll('.accordion-header')
           .forEach(header => {
@@ -1639,8 +1608,6 @@
               if (arrow) arrow.textContent = isOpen ? '▼' : '▲';
             });
           });
-
-        initDashboard();
     }
 
 
