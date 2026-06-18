@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBR CRM Dashboard</title>
+    <title>IBR CRM Dashboard V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        ibr: {
-                            red: '#8B0000',
-                            black: '#000000',
-                            white: '#FFFFFF',
-                            gray: '#F5F5F5',
-                            green: '#16A34A',
-                            yellow: '#D97706'
-                        }
+                        ibr: { red: '#8B0000', black: '#000000', white: '#FFFFFF', green: '#16A34A', yellow: '#D97706' }
                     }
                 }
             }
@@ -26,305 +20,498 @@
     <style>
         body { background-color: #F5F5F5; font-family: system-ui, sans-serif; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .chip { @apply inline-block bg-ibr-red text-white rounded-full px-2 py-0.5 text-xs m-0.5 font-medium; }
+        .chip { @apply inline-block bg-ibr-red text-white rounded-full px-2 py-0.5 text-[10px] m-0.5 font-bold shadow-sm; }
         .nav-item.active { color: #8B0000; font-weight: bold; }
         .nav-item { color: #9ca3af; transition: color 0.2s; }
+        .badge { @apply px-2 py-1 rounded text-[10px] font-bold inline-block border; }
         .expandable-content { display: none; }
-        .expandable-content.active { display: block; animation: slideDown 0.3s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .badge { @apply px-2 py-1 rounded text-xs font-bold inline-block; }
+        .expandable-content.active { display: block; animation: slideDown 0.2s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        select, input, textarea { @apply border border-gray-300 rounded p-2 text-sm w-full outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red; }
+        label { @apply text-xs font-bold text-gray-600 block mb-1 uppercase tracking-wide; }
+        .btn-red { @apply bg-ibr-red text-white py-2 px-4 rounded font-bold shadow hover:bg-red-800 transition text-sm; }
+        .btn-green { @apply bg-ibr-green text-white py-2 px-4 rounded font-bold shadow hover:bg-green-700 transition text-sm; }
+        .btn-gray { @apply bg-gray-200 text-gray-700 py-2 px-4 rounded font-bold shadow hover:bg-gray-300 transition text-sm; }
     </style>
 </head>
 <body class="text-gray-800">
 
-<div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-xl">
+<div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-2xl">
     
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-ibr-black text-white p-4 shadow-md flex justify-between items-center">
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 bg-ibr-black text-white p-3 shadow-md flex justify-between items-center">
         <div>
-            <span class="text-ibr-red font-bold text-2xl tracking-tighter">IBR</span>
-            <span class="text-sm ml-2 font-semibold">Control de Ventas</span>
+            <div class="flex items-center gap-2">
+                <span class="text-ibr-red font-black text-2xl tracking-tighter leading-none">IBR</span>
+                <span class="text-xs font-bold leading-tight">Control<br>de Ventas</span>
+            </div>
         </div>
-        <select id="projectSelect" class="bg-gray-800 text-xs rounded p-1 text-white border-none outline-none">
-            <option>Bella Vista Ocozocoautla</option>
-            <option id="addProjectOption" class="hidden">+ Agregar</option>
-        </select>
+        <div class="flex flex-col items-end gap-1">
+            <select id="userSelector" class="bg-gray-800 text-white text-[10px] p-1 border-none rounded" onchange="changeUser(this.value)">
+                <option value="Daniel Vázquez">Daniel Vázquez (Admin)</option>
+                <option value="Lupyta Mendoza">Lupyta Mendoza (Asesor)</option>
+                <option value="Luis García">Luis García (Asesor)</option>
+                <option value="Carmen Jiménez">Carmen Jiménez (Asesor)</option>
+            </select>
+            <select id="projectSelect" class="bg-gray-800 text-white text-[10px] p-1 border-none rounded">
+                <option>Bella Vista</option>
+                <option class="admin-only hidden">+ Nuevo</option>
+            </select>
+        </div>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 overflow-y-auto pb-24">
+    <main class="flex-1 overflow-y-auto pb-24 bg-gray-50 relative">
         
-        <!-- TAB 1: DASHBOARD -->
-        <div id="tab-dashboard" class="tab-content active p-4 space-y-6">
-            <!-- KPIs -->
+        <!-- ADMIN: DASHBOARD -->
+        <div id="tab-dashboard-admin" class="tab-content p-4 space-y-4">
+            <h2 class="font-black text-lg text-ibr-black mb-2">Resumen General</h2>
+            
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center">
-                    <p class="text-xs text-gray-500 font-medium">Total Vendidos</p>
-                    <p class="text-2xl font-bold">160</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vendidos</p>
+                    <p class="text-3xl font-black text-ibr-black" id="dash-total">160</p>
                 </div>
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-red">
-                    <p class="text-xs text-gray-500 font-medium">Ventas IBR</p>
-                    <p class="text-2xl font-bold text-ibr-red">34</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ventas IBR</p>
+                    <p class="text-3xl font-black text-ibr-red" id="dash-ibr">34</p>
                 </div>
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-green">
-                    <p class="text-xs text-gray-500 font-medium">Ventas Externas</p>
-                    <p class="text-2xl font-bold text-ibr-green">126</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Externas</p>
+                    <p class="text-3xl font-black text-ibr-green" id="dash-ext">126</p>
                 </div>
-                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-black">
-                    <p class="text-xs text-gray-500 font-medium">Canceladas</p>
-                    <p class="text-2xl font-bold text-ibr-black">3</p>
-                </div>
-            </div>
-
-            <!-- Equipo IBR -->
-            <div>
-                <h2 class="text-ibr-red font-bold mb-3 border-b-2 border-ibr-red pb-1 inline-block">Equipo IBR</h2>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden" id="ibrTeamList">
-                    <!-- Injected by JS -->
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-gray-800">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Canceladas</p>
+                    <p class="text-3xl font-black text-gray-800" id="dash-canc">3</p>
                 </div>
             </div>
 
-            <!-- Externos -->
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-green-50 border border-green-200 p-2 rounded-xl text-center shadow-sm">
+                    <p class="text-[9px] font-bold text-green-600 uppercase">Comisiones Gen.</p>
+                    <p class="text-sm font-black text-green-800" id="dash-com-gen">$0</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl text-center shadow-sm">
+                    <p class="text-[9px] font-bold text-blue-600 uppercase">Pagadas</p>
+                    <p class="text-sm font-black text-blue-800" id="dash-com-pag">$0</p>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 p-2 rounded-xl text-center shadow-sm">
+                    <p class="text-[9px] font-bold text-yellow-600 uppercase">Pendientes</p>
+                    <p class="text-sm font-black text-yellow-800" id="dash-com-pen">$0</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Rendimiento Campañas</h3>
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">Inversión</p>
+                        <p class="text-lg font-black text-ibr-red" id="camp-inv">$0</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-gray-400 font-bold uppercase">ROI</p>
+                        <p class="text-lg font-black text-ibr-green" id="camp-roi">0%</p>
+                    </div>
+                </div>
+                <div class="bg-gray-100 rounded-lg p-3 text-xs flex justify-between items-center">
+                    <div>
+                        <span class="font-bold text-gray-600">Punto Eq:</span> <span id="camp-peq">0 lotes</span>
+                    </div>
+                    <div id="camp-status" class="font-black">✅ OK</div>
+                </div>
+            </div>
+
             <div>
-                <h2 class="text-ibr-green font-bold mb-3 border-b-2 border-ibr-green pb-1 inline-block">Top Externos</h2>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                    <ul class="space-y-3">
-                        <li class="flex justify-between text-sm"><span class="font-medium">1. Walter Moguel</span><span class="font-bold text-ibr-green">35</span></li>
-                        <li class="flex justify-between text-sm"><span class="font-medium">2. Martín Altamirano</span><span class="font-bold text-ibr-green">32</span></li>
-                        <li class="flex justify-between text-sm"><span class="font-medium">3. Luisa Rodríguez</span><span class="font-bold text-ibr-green">24</span></li>
-                        <li class="flex justify-between text-sm"><span class="font-medium">4. Eduardo Méndez</span><span class="font-bold text-ibr-green">21</span></li>
-                        <li class="flex justify-between text-sm"><span class="font-medium">5. Arturo Coutiño</span><span class="font-bold text-ibr-green">13</span></li>
+                <h3 class="text-ibr-red font-black text-sm uppercase tracking-wider border-b-2 border-ibr-red pb-1 inline-block mb-3">Equipo IBR</h3>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden" id="dash-team-list"></div>
+            </div>
+
+            <div>
+                <h3 class="text-ibr-green font-black text-sm uppercase tracking-wider border-b-2 border-ibr-green pb-1 inline-block mb-3">Top Externos</h3>
+                <div class="bg-white rounded-xl shadow-sm border p-4">
+                    <ul class="space-y-2" id="dash-top-ext">
+                        <!-- Filled by JS -->
                     </ul>
                 </div>
             </div>
-
-            <!-- Footer inside Dashboard only -->
-            <footer id="mainFooter" class="bg-ibr-gray border-t border-gray-200 p-4 mt-6 text-center text-xs text-gray-500 rounded-xl">
-                <p class="font-semibold text-ibr-black mb-1">IBR Marketing Digital &copy; 2026</p>
-                <div class="flex flex-wrap justify-center gap-2 font-medium bg-white py-2 rounded border mt-2">
-                    <span>Bella Vista: 513 lotes</span> <span class="text-ibr-red">Vendidos: 160</span> <span class="text-ibr-green">Disponibles: 353</span>
+            
+            <!-- Footer -->
+            <footer class="bg-ibr-gray border border-gray-200 p-4 rounded-xl text-center text-xs text-gray-500">
+                <p class="font-bold text-ibr-black mb-1">IBR Marketing Digital &copy; 2026</p>
+                <div class="flex justify-center gap-2 font-medium bg-white py-1 rounded border shadow-sm">
+                    <span>BV: 513</span> <span class="text-ibr-red">V: 160</span> <span class="text-ibr-green">D: 353</span>
                 </div>
             </footer>
         </div>
 
-        <!-- TAB 2: LEADS -->
-        <div id="tab-leads" class="tab-content bg-gray-50 min-h-full">
-            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
-                <h2 class="font-bold text-lg">Leads & Citas</h2>
-                <button id="btnNewLead" onclick="openLeadModal()" class="hidden bg-ibr-red text-white px-3 py-1.5 rounded text-sm font-medium shadow">+ Nueva Cita</button>
-            </div>
-            <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap text-sm border-b bg-white" id="leadFilters">
-                <button onclick="filterLeads('Todos')" class="px-3 py-1 bg-gray-200 rounded-full font-medium">Todos</button>
-                <button onclick="filterLeads('Programada')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">Hoy/Programada</button>
-                <button onclick="filterLeads('Seguimiento')" class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full font-medium">Pendientes</button>
-                <button onclick="filterLeads('Vendido')" class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-medium">Cerrados</button>
-            </div>
-            <div class="p-4 space-y-3" id="leadsContainer">
-                <!-- Injected by JS -->
-            </div>
-        </div>
-
-        <!-- TAB 3: VENTAS -->
-        <div id="tab-sales" class="tab-content bg-gray-50 min-h-full">
-            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
-                <h2 class="font-bold text-lg">Ventas Cerradas</h2>
-                <button id="btnNewSale" onclick="openSaleModal()" class="hidden bg-ibr-green text-white px-3 py-1.5 rounded text-sm font-medium shadow">+ Nueva Venta</button>
-            </div>
-            <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap text-sm border-b bg-white" id="saleFilters">
-                <button onclick="filterSales('Todas')" class="px-3 py-1 bg-gray-200 rounded-full font-medium">Todas</button>
-                <button onclick="filterSales('IBR')" class="px-3 py-1 bg-ibr-red text-white rounded-full font-medium">IBR</button>
-                <button onclick="filterSales('Externas')" class="px-3 py-1 bg-ibr-green text-white rounded-full font-medium">Externas</button>
-            </div>
-            <div class="p-4 space-y-3" id="salesContainer">
-                <!-- Injected by JS -->
-            </div>
-        </div>
-
-        <!-- TAB 4: PERFIL -->
-        <div id="tab-profile" class="tab-content p-4">
-            <div class="bg-white rounded-xl shadow border p-5 text-center mb-6">
-                <div class="w-16 h-16 bg-ibr-red text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-3 shadow" id="profileInitials">DV</div>
-                <h2 class="text-xl font-bold" id="profileName">Daniel Vázquez</h2>
-                <p class="text-sm text-gray-500 mb-4" id="profileRole">Team Leader (Admin)</p>
-                
-                <div class="grid grid-cols-2 gap-2 text-left mt-4 border-t pt-4">
-                    <div class="bg-gray-50 p-3 rounded">
-                        <p class="text-xs text-gray-500">Mis lotes vendidos</p>
-                        <p class="font-bold text-lg" id="profileLots">17</p>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <p class="text-xs text-gray-500">Leads del día</p>
-                        <p class="font-bold text-lg" id="profileLeads">0</p>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <p class="text-xs text-gray-500">Comisión generada</p>
-                        <p class="font-bold text-lg text-ibr-green">$0</p>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <p class="text-xs text-gray-500">Comisión pendiente</p>
-                        <p class="font-bold text-lg text-ibr-yellow">$0</p>
-                    </div>
+        <!-- ASESOR: MI DASHBOARD -->
+        <div id="tab-dashboard-asesor" class="tab-content p-4 space-y-4">
+            <h2 class="font-black text-2xl text-ibr-black" id="asesor-greeting">Hola 👋</h2>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-red">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Mis Lotes</p>
+                    <p class="text-3xl font-black" id="asesor-lotes">0</p>
+                </div>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-green">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Com. Generada</p>
+                    <p class="text-2xl font-black text-ibr-green" id="asesor-com-gen">$0</p>
+                </div>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Com. Cobrada</p>
+                    <p class="text-xl font-bold text-blue-700" id="asesor-com-cob">$0</p>
+                </div>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Pendiente</p>
+                    <p class="text-xl font-bold text-ibr-yellow" id="asesor-com-pen">$0</p>
                 </div>
             </div>
 
-            <div class="bg-gray-100 p-4 rounded-xl border border-gray-300">
-                <p class="text-xs font-bold text-gray-500 mb-2 uppercase">Selector de Demo (Testing)</p>
-                <select id="userSelector" class="w-full p-2 border rounded text-sm mb-2" onchange="changeUser(this.value)">
-                    <option value="Daniel Vázquez">Daniel Vázquez (Admin)</option>
-                    <option value="Lupyta Mendoza">Lupyta Mendoza (Asesor)</option>
-                    <option value="Luis García">Luis García (Asesor)</option>
-                    <option value="Carmen Jiménez">Carmen Jiménez (Asesor)</option>
-                </select>
-                <button onclick="clearData()" class="w-full mt-2 text-xs text-red-500 underline">Borrar datos locales</button>
+            <div class="bg-white border rounded-xl shadow-sm p-4">
+                <h3 class="text-xs font-bold text-gray-500 uppercase mb-3">Progreso Mensual</h3>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
+                    <div class="bg-ibr-red h-2.5 rounded-full" style="width: 45%"></div>
+                </div>
+                <p class="text-[10px] text-right font-bold text-gray-400">45% de meta</p>
+            </div>
+
+            <div>
+                <h3 class="text-ibr-black font-black text-sm uppercase mb-2">Leads del Día</h3>
+                <div class="space-y-2" id="asesor-leads-dia"></div>
+            </div>
+            
+            <div>
+                <h3 class="text-ibr-black font-black text-sm uppercase mb-2 mt-4">Últimas Ventas</h3>
+                <div class="space-y-2" id="asesor-ult-ventas"></div>
+            </div>
+        </div>
+
+        <!-- TAB LEADS -->
+        <div id="tab-leads" class="tab-content min-h-full">
+            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
+                <h2 class="font-black text-lg">Leads & Citas</h2>
+                <button onclick="openModal('leadModal')" class="admin-only hidden btn-red px-3 py-1.5 text-xs">+ Nueva Cita</button>
+            </div>
+            <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap border-b bg-white scrollbar-hide">
+                <button onclick="filterLeads('Todos')" class="px-3 py-1 bg-gray-200 rounded-full text-xs font-bold">Todos</button>
+                <button onclick="filterLeads('Hoy')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Hoy/Prog.</button>
+                <button onclick="filterLeads('Pendientes')" class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pendientes</button>
+                <button onclick="filterLeads('Cerrados')" class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Cerrados</button>
+            </div>
+            <div class="p-4 space-y-3" id="leadsContainer"></div>
+        </div>
+
+        <!-- TAB VENTAS -->
+        <div id="tab-sales" class="tab-content min-h-full">
+            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
+                <h2 class="font-black text-lg">Control de Ventas</h2>
+                <button onclick="openModal('saleModal')" class="admin-only hidden btn-green px-3 py-1.5 text-xs">+ Nueva Venta</button>
+            </div>
+            <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap border-b bg-white">
+                <button onclick="filterSales('Todas')" class="px-3 py-1 bg-gray-200 rounded-full text-xs font-bold">Todas</button>
+                <button onclick="filterSales('IBR')" class="px-3 py-1 bg-ibr-red text-white rounded-full text-xs font-bold">IBR</button>
+                <button onclick="filterSales('Externas')" class="px-3 py-1 bg-ibr-green text-white rounded-full text-xs font-bold">Externas</button>
+                <button onclick="filterSales('Canceladas')" class="px-3 py-1 bg-gray-800 text-white rounded-full text-xs font-bold">Canceladas</button>
+            </div>
+            <div class="p-4 space-y-3" id="salesContainer"></div>
+        </div>
+
+        <!-- TAB FINANZAS (Admin Only) -->
+        <div id="tab-finances" class="tab-content min-h-full p-4 space-y-6">
+            <h2 class="font-black text-2xl text-ibr-black border-b pb-2">Finanzas</h2>
+            
+            <!-- Comisiones -->
+            <div class="bg-white rounded-xl shadow-sm border p-4">
+                <h3 class="font-black text-sm uppercase text-gray-500 mb-3">Comisiones IBR</h3>
+                <div class="space-y-2" id="finances-com-list"></div>
+            </div>
+
+            <!-- Inversiones -->
+            <div class="bg-white rounded-xl shadow-sm border p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-black text-sm uppercase text-gray-500">Inversión Campañas</h3>
+                    <button onclick="openModal('invModal')" class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">+ Registrar</button>
+                </div>
+                <div class="space-y-2" id="finances-inv-list"></div>
+                <div class="mt-3 text-right font-black text-lg border-t pt-2" id="finances-inv-total">Total: $0</div>
+            </div>
+
+            <!-- Punto Eq -->
+            <div class="bg-red-50 border-2 border-ibr-red rounded-xl shadow-sm p-4 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 opacity-10 text-9xl">📈</div>
+                <h3 class="font-black text-sm uppercase text-ibr-red mb-3 relative z-10">Punto de Equilibrio</h3>
+                <div class="grid grid-cols-2 gap-2 text-sm relative z-10 font-medium">
+                    <p>Inversión: <span class="font-black" id="pe-inv">$0</span></p>
+                    <p>Com. Prom: <span class="font-black">$350</span></p>
+                    <p>Lotes req: <span class="font-black" id="pe-req">0</span></p>
+                    <p>Vendidos: <span class="font-black text-ibr-green" id="pe-vendidos">0</span></p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-red-200 flex justify-between items-center relative z-10">
+                    <span class="font-black text-lg" id="pe-estado">✅ SUPERADO</span>
+                    <span class="text-xs font-bold bg-white px-2 py-1 rounded text-ibr-red" id="pe-roi">ROI: 0%</span>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm border p-4">
+                <h3 class="font-black text-sm uppercase text-gray-500 mb-3">Historial Pagos</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-gray-100 text-gray-600 uppercase">
+                            <tr><th class="p-2">Fecha</th><th class="p-2">Asesor</th><th class="p-2">Monto</th></tr>
+                        </thead>
+                        <tbody id="finances-pagos-list"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB ADMIN SETTINGS -->
+        <div id="tab-admin" class="tab-content min-h-full p-4 space-y-6">
+            <h2 class="font-black text-2xl text-ibr-black border-b pb-2">Configuración</h2>
+            
+            <div class="bg-white rounded-xl shadow-sm border p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-black text-sm uppercase text-gray-500">Lotes</h3>
+                    <button class="bg-ibr-black text-white text-xs font-bold px-2 py-1 rounded">+ Agregar</button>
+                </div>
+                <input type="text" placeholder="Buscar por manzana/lote..." class="mb-3 text-xs p-2 bg-gray-50">
+                <p class="text-xs text-gray-400 italic text-center py-4">Módulo en construcción.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-black text-sm uppercase text-gray-500">Externos</h3>
+                    <button class="bg-ibr-green text-white text-xs font-bold px-2 py-1 rounded" onclick="alert('Usa nueva venta para agregar')">+ Agregar</button>
+                </div>
+                <div class="space-y-2" id="admin-ext-list"></div>
+            </div>
+            
+            <button onclick="clearData()" class="w-full btn-gray text-red-600 mt-4">⚠️ BORRAR TODOS LOS DATOS LOCALES</button>
+        </div>
+
+        <!-- TAB PERFIL (Asesor) -->
+        <div id="tab-profile" class="tab-content p-4">
+            <div class="bg-white rounded-xl shadow border p-6 text-center">
+                <div class="w-20 h-20 bg-ibr-red text-white rounded-full flex items-center justify-center text-3xl font-black mx-auto mb-4 shadow" id="prof-initials"></div>
+                <h2 class="text-2xl font-black text-ibr-black" id="prof-name">Nombre</h2>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6" id="prof-role">Rol</p>
+                
+                <div class="text-left space-y-3">
+                    <div class="flex justify-between border-b pb-2"><span class="font-bold text-gray-600">Teléfono</span><span class="font-medium">Pendiente</span></div>
+                    <div class="flex justify-between border-b pb-2"><span class="font-bold text-gray-600">Email</span><span class="font-medium">Pendiente</span></div>
+                    <div class="flex justify-between border-b pb-2"><span class="font-bold text-gray-600">Fecha Ingreso</span><span class="font-medium">2026</span></div>
+                </div>
+                <button class="w-full mt-6 btn-gray">Editar Perfil</button>
             </div>
         </div>
 
     </main>
 
-    <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 w-full max-w-[480px] bg-white border-t flex justify-around p-3 pb-6 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-        <button class="nav-item active flex flex-col items-center gap-1 w-1/4" onclick="switchTab('dashboard')">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-[10px]">Dashboard</span>
-        </button>
-        <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('leads')">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            <span class="text-[10px]">Leads</span>
-        </button>
-        <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('sales')">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-            <span class="text-[10px]">Ventas</span>
-        </button>
-        <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('profile')">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-            <span class="text-[10px]">Mi Perfil</span>
-        </button>
+    <!-- BOTTOM NAV -->
+    <nav id="bottomNav" class="fixed bottom-0 w-full max-w-[480px] bg-white border-t flex justify-around p-2 pb-6 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+        <!-- Injected via JS -->
     </nav>
 </div>
 
 <!-- MODALS -->
+
 <!-- Lead Modal -->
-<div id="leadModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl w-full max-w-[400px] p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-        <h3 class="font-bold text-lg mb-4">Nueva Cita</h3>
+<div id="leadModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-black text-xl text-ibr-black">Nueva Cita / Lead</h3>
+            <button onclick="closeModal('leadModal')" class="text-gray-400 font-bold text-xl">&times;</button>
+        </div>
         <form id="leadForm" class="space-y-3" onsubmit="saveLead(event)">
-            <div><label class="text-xs font-bold text-gray-600">Nombre *</label><input required id="lf-name" class="w-full border p-2 rounded text-sm"></div>
-            <div><label class="text-xs font-bold text-gray-600">Teléfono (+52) *</label><input required type="tel" id="lf-phone" class="w-full border p-2 rounded text-sm" placeholder="9611234567"></div>
-            <div><label class="text-xs font-bold text-gray-600">Proyecto *</label>
-                <select id="lf-project" class="w-full border p-2 rounded text-sm"><option>Bella Vista Ocozocoautla</option></select>
-            </div>
+            <div><label>Nombre Completo *</label><input required id="lf-name" placeholder="Ej. Juan Pérez"></div>
+            <div><label>Teléfono a 10 dígitos *</label><input required type="tel" pattern="[0-9]{10}" id="lf-phone" placeholder="9611234567"></div>
+            <div><label>Proyecto *</label><select id="lf-project"><option>Bella Vista Ocozocoautla</option></select></div>
             <div class="flex gap-2">
-                <div class="w-1/2"><label class="text-xs font-bold text-gray-600">Fecha *</label><input required type="date" id="lf-date" class="w-full border p-2 rounded text-sm"></div>
-                <div class="w-1/2"><label class="text-xs font-bold text-gray-600">Hora *</label><input required type="time" id="lf-time" class="w-full border p-2 rounded text-sm"></div>
+                <div class="w-1/2"><label>Fecha *</label><input required type="date" id="lf-date"></div>
+                <div class="w-1/2"><label>Hora *</label><input required type="time" id="lf-time"></div>
             </div>
-            <div><label class="text-xs font-bold text-gray-600">Asesor *</label>
-                <select id="lf-advisor" class="w-full border p-2 rounded text-sm">
-                    <option>Daniel Vázquez</option><option>Lupyta Mendoza</option><option>Luis García</option><option>Carmen Jiménez</option>
-                </select>
-            </div>
-            <div><label class="text-xs font-bold text-gray-600">Observaciones</label><textarea id="lf-obs" class="w-full border p-2 rounded text-sm" rows="2"></textarea></div>
-            <div class="flex gap-2 pt-2">
-                <button type="button" onclick="closeModal('leadModal')" class="w-1/2 bg-gray-200 py-2 rounded font-medium">Cancelar</button>
-                <button type="submit" class="w-1/2 bg-ibr-red text-white py-2 rounded font-medium">Guardar Cita</button>
-            </div>
+            <div><label>Asesor Asignado *</label><select id="lf-advisor" required></select></div>
+            <div><label>Observaciones</label><textarea id="lf-obs" rows="2"></textarea></div>
+            <button type="submit" class="w-full btn-red mt-2">Guardar Cita</button>
         </form>
     </div>
 </div>
 
 <!-- Result Modal -->
-<div id="resultModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl w-full max-w-[400px] p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-        <h3 class="font-bold text-lg mb-4">Resultado del Lead</h3>
+<div id="resultModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-black text-xl text-ibr-black">Resultado de Cita</h3>
+            <button onclick="closeModal('resultModal')" class="text-gray-400 font-bold text-xl">&times;</button>
+        </div>
         <form id="resultForm" class="space-y-3" onsubmit="saveResult(event)">
             <input type="hidden" id="rf-id">
-            <div><label class="text-xs font-bold text-gray-600">¿Qué pasó? *</label>
-                <select id="rf-status" required class="w-full border p-2 rounded text-sm" onchange="toggleBuyFields()">
-                    <option value="">Selecciona...</option>
-                    <option value="Vendido">✅ Compró</option>
+            <div><label>Estatus del Lead *</label>
+                <select id="rf-status" required onchange="toggleBuyFields()">
+                    <option value="">Selecciona qué pasó...</option>
+                    <option value="Vendido">✅ Compró (Genera Venta)</option>
                     <option value="Seguimiento">💬 Seguimiento / Interesado</option>
                     <option value="Reagendado">📅 Reagendar</option>
-                    <option value="Cancelado">❌ Canceló</option>
-                    <option value="No llegó">👻 No llegó</option>
+                    <option value="Cancelado">❌ Canceló definitivamente</option>
+                    <option value="No llegó">👻 No se presentó</option>
                 </select>
             </div>
-            <div><label class="text-xs font-bold text-gray-600">Fecha real visita</label><input type="date" id="rf-date" class="w-full border p-2 rounded text-sm"></div>
-            <div><label class="text-xs font-bold text-gray-600">Comentarios del recorrido</label><textarea id="rf-comments" class="w-full border p-2 rounded text-sm" rows="2"></textarea></div>
+            <div><label>Fecha real de atención</label><input type="date" id="rf-date"></div>
+            <div><label>Comentarios del recorrido *</label><textarea id="rf-comments" required rows="2" placeholder="Desarrollo de la visita..."></textarea></div>
             
-            <div id="buyFields" class="hidden space-y-3 border-t pt-3 mt-3">
-                <h4 class="font-bold text-ibr-green text-sm">Detalles de Venta</h4>
+            <div id="buyFields" class="hidden space-y-3 bg-gray-50 p-4 rounded-xl border border-ibr-green mt-4">
+                <h4 class="font-black text-ibr-green uppercase tracking-wider mb-2">🎉 ¡Venta Cerrada!</h4>
                 <div class="flex gap-2">
-                    <div class="w-1/2"><label class="text-xs font-bold text-gray-600">Manzana *</label><input type="text" id="rf-mz" class="w-full border p-2 rounded text-sm" placeholder="M5"></div>
-                    <div class="w-1/2"><label class="text-xs font-bold text-gray-600">Lote *</label><input type="text" id="rf-lote" class="w-full border p-2 rounded text-sm" placeholder="L10"></div>
+                    <div class="w-1/3"><label>Mz *</label><input type="number" id="rf-mz"></div>
+                    <div class="w-1/3"><label>Lt *</label><input type="number" id="rf-lote"></div>
+                    <div class="w-1/3"><label>Tipo *</label><select id="rf-type"><option>Contado</option><option>Financ.</option></select></div>
                 </div>
-                <div><label class="text-xs font-bold text-gray-600">Tipo Venta *</label>
-                    <select id="rf-type" class="w-full border p-2 rounded text-sm"><option>Contado</option><option>Financiado</option></select>
-                </div>
+                <div><label>Comisión Asegurada ($) *</label><input type="number" id="rf-com" value="350"></div>
             </div>
+            <button type="submit" class="w-full btn-red mt-4">Guardar Actualización</button>
+        </form>
+    </div>
+</div>
 
-            <div class="flex gap-2 pt-2">
-                <button type="button" onclick="closeModal('resultModal')" class="w-1/2 bg-gray-200 py-2 rounded font-medium">Cancelar</button>
-                <button type="submit" class="w-1/2 bg-ibr-red text-white py-2 rounded font-medium">Guardar Result.</button>
+<!-- Sale Modal (Admin) -->
+<div id="saleModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-black text-xl text-ibr-black">Nueva Venta Directa</h3>
+            <button onclick="closeModal('saleModal')" class="text-gray-400 font-bold text-xl">&times;</button>
+        </div>
+        <form id="saleForm" class="space-y-3" onsubmit="saveDirectSale(event)">
+            <div><label>Proyecto *</label><select id="sf-project"><option>Bella Vista Ocozocoautla</option></select></div>
+            <div class="flex gap-2">
+                <div class="w-1/3"><label>Mz *</label><input type="number" id="sf-mz" required></div>
+                <div class="w-1/3"><label>Lt *</label><input type="number" id="sf-lote" required></div>
+                <div class="w-1/3"><label>Tipo *</label><select id="sf-type"><option>Contado</option><option>Financ.</option></select></div>
             </div>
+            <div class="p-3 bg-gray-100 rounded-lg">
+                <label>Asesor 1 (Cierre principal) *</label>
+                <select id="sf-adv1" required class="mb-2" onchange="checkNewExt(this.value, 'sf-adv1-new')"></select>
+                <input type="text" id="sf-adv1-new" class="hidden mb-2" placeholder="Nombre completo del nuevo externo">
+                <label>Comisión Asesor 1 ($)</label><input type="number" id="sf-com1" value="350">
+            </div>
+            <div class="p-3 bg-gray-100 rounded-lg">
+                <label>Asesor 2 (Compartida / Opcional)</label>
+                <select id="sf-adv2" onchange="checkNewExt(this.value, 'sf-adv2-new')"><option value="">Ninguno</option></select>
+                <input type="text" id="sf-adv2-new" class="hidden mb-2" placeholder="Nombre completo del nuevo externo">
+                <label>Comisión Asesor 2 ($)</label><input type="number" id="sf-com2" value="0">
+            </div>
+            <div><label>Estatus *</label>
+                <select id="sf-status"><option>Activa</option><option>Cancelada</option></select>
+            </div>
+            <div><label>Observaciones</label><textarea id="sf-obs" rows="2"></textarea></div>
+            <button type="submit" class="w-full btn-green mt-2">Registrar Venta</button>
+        </form>
+    </div>
+</div>
+
+<!-- Investment Modal (Admin) -->
+<div id="invModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-black text-xl text-ibr-black">Registrar Inversión</h3>
+            <button onclick="closeModal('invModal')" class="text-gray-400 font-bold text-xl">&times;</button>
+        </div>
+        <form class="space-y-3" onsubmit="saveInv(event)">
+            <div><label>Concepto *</label>
+                <select id="if-concept"><option>Facebook Ads</option><option>Google Ads</option><option>Material Impreso</option><option>Eventos</option><option>Otros</option></select>
+            </div>
+            <div><label>Monto Invertido ($) *</label><input type="number" id="if-amount" required min="1"></div>
+            <div><label>Fecha *</label><input type="date" id="if-date" required></div>
+            <div><label>Observaciones</label><input type="text" id="if-obs"></div>
+            <button type="submit" class="w-full btn-red mt-2">Guardar Gasto</button>
         </form>
     </div>
 </div>
 
 <script>
-    // DATA
-    const INITIAL_TEAM = [
+    /* ================= DATA & STATE ================= */
+    const CORE_IBR = [
         { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19"] },
         { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8"] },
         { name: "Luis García", role: "Asesor", type: "Asesor", lots: ["M8L2","M6L9","M6L10","M7L1","M7L2"] },
         { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", lots: ["M12L13","M14L12","M14L19"] }
     ];
+    
+    // Fallback Initial Externals if not in localstorage
+    const DEFAULT_EXT = ["Walter Moguel", "Martín Altamirano", "Luisa Rodríguez", "Eduardo Méndez", "Arturo Coutiño", "Luis Miguel Coutiño", "Bernardo Cruz", "Antonio Ramírez", "Gabriel Zenteno", "Concepción Villarreal", "Eyra Fernández", "Koreicy López", "Vanessa Guzmán", "Sayani León", "Gabriela López", "Ángeles López", "Mario Ortega", "Javier Ballinas"];
 
     let currentUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
+    let isAdmin = currentUser === "Daniel Vázquez";
+    
+    // DB
+    let extUsers = JSON.parse(localStorage.getItem('ibr_externos')) || DEFAULT_EXT;
     let leads = JSON.parse(localStorage.getItem('ibr_leads')) || [];
     let sales = JSON.parse(localStorage.getItem('ibr_sales')) || [];
-    let currentTab = 'dashboard';
-    let leadFilter = 'Todos';
-    let saleFilter = 'Todas';
+    let investments = JSON.parse(localStorage.getItem('ibr_inversiones')) || [];
+    let payments = JSON.parse(localStorage.getItem('ibr_pagos')) || [];
 
+    // Filters
+    let filterL = 'Todos';
+    let filterS = 'Todas';
+
+    /* ================= INIT & UTILS ================= */
     function init() {
         document.getElementById('userSelector').value = currentUser;
-        updateUI();
-        renderTeam();
-        renderLeads();
-        renderSales();
+        populateAdvisors();
+        updateAuth();
+        switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
     }
 
-    // STATE MANAGEMENT
-    function changeUser(user) {
-        currentUser = user;
-        localStorage.setItem('ibr_user', user);
-        updateUI();
-        renderLeads();
+    function changeUser(val) {
+        currentUser = val;
+        localStorage.setItem('ibr_user', val);
+        isAdmin = currentUser === "Daniel Vázquez";
+        updateAuth();
+        switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
     }
 
     function clearData() {
-        if(confirm("¿Borrar todos los leads y ventas locales?")) {
-            localStorage.removeItem('ibr_leads');
-            localStorage.removeItem('ibr_sales');
+        if(confirm("ESTO BORRARÁ TODO (Leads, ventas, inversiones). ¿Seguro?")) {
+            localStorage.clear();
             location.reload();
         }
     }
 
-    // UI UPDATES
-    function updateUI() {
-        const isAdmin = currentUser === "Daniel Vázquez";
-        document.getElementById('addProjectOption').classList.toggle('hidden', !isAdmin);
-        document.getElementById('btnNewLead').classList.toggle('hidden', !isAdmin);
-        document.getElementById('btnNewSale').classList.toggle('hidden', !isAdmin);
+    function populateAdvisors() {
+        const teamOpts = CORE_IBR.map(u => `<option value="${u.name}">[IBR] ${u.name}</option>`).join('');
+        const extOpts = extUsers.map(n => `<option value="${n}">[EXT] ${n}</option>`).join('');
+        const fullOpts = teamOpts + `<option disabled>--- EXTERNOS ---</option>` + extOpts + `<option value="NEW">+ NUEVO EXTERNO</option>`;
         
-        // Update Profile
-        const userObj = INITIAL_TEAM.find(u => u.name === currentUser);
-        document.getElementById('profileInitials').innerText = currentUser.split(' ').map(n=>n[0]).join('');
-        document.getElementById('profileName').innerText = currentUser;
-        document.getElementById('profileRole').innerText = userObj.role + (isAdmin ? ' (Admin)' : '');
-        document.getElementById('profileLots').innerText = userObj.lots.length + sales.filter(s => s.advisor === currentUser).length;
-        document.getElementById('profileLeads').innerText = leads.filter(l => l.advisor === currentUser && ['Programada','Seguimiento','Reagendado'].includes(l.status)).length;
+        document.getElementById('lf-advisor').innerHTML = teamOpts; // solo IBR para leads
+        document.getElementById('sf-adv1').innerHTML = fullOpts;
+        document.getElementById('sf-adv2').innerHTML = `<option value="">Ninguno</option>` + fullOpts;
+    }
+
+    function getIbrTotal() { return CORE_IBR.reduce((acc, u) => acc + u.lots.length, 0) + sales.filter(s=>CORE_IBR.find(u=>u.name===s.adv1)).length; }
+    function getExtTotal() { return 126 + sales.filter(s=>!CORE_IBR.find(u=>u.name===s.adv1)).length; }
+
+    /* ================= ROUTING & LAYOUT ================= */
+    function updateAuth() {
+        document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
+        
+        const nav = document.getElementById('bottomNav');
+        if(isAdmin) {
+            nav.innerHTML = `
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-admin')"><span class="text-xl">🏠</span><span class="text-[9px] uppercase font-bold">Resumen</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[9px] uppercase font-bold">Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-xl">📋</span><span class="text-[9px] uppercase font-bold">Ventas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('finances')"><span class="text-xl">💰</span><span class="text-[9px] uppercase font-bold">Finanzas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('admin')"><span class="text-xl">⚙️</span><span class="text-[9px] uppercase font-bold">Config</span></button>
+            `;
+        } else {
+            nav.innerHTML = `
+                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('dashboard-asesor')"><span class="text-xl">🏠</span><span class="text-[9px] uppercase font-bold">Inicio</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[9px] uppercase font-bold">Mis Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('sales')"><span class="text-xl">📋</span><span class="text-[9px] uppercase font-bold">Mis Ventas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('profile')"><span class="text-xl">👤</span><span class="text-[9px] uppercase font-bold">Perfil</span></button>
+            `;
+        }
     }
 
     function switchTab(tabId) {
@@ -332,122 +519,235 @@
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         
         document.getElementById('tab-' + tabId).classList.add('active');
-        document.querySelector(`.nav-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
-        currentTab = tabId;
-    }
-
-    // DASHBOARD
-    function renderTeam() {
-        const html = INITIAL_TEAM.map((member, idx) => `
-            <div class="border-b border-gray-100">
-                <div class="p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="toggleDetails('det-${idx}')">
-                    <div class="flex items-center gap-3">
-                        <span class="font-bold text-gray-400">#${idx+1}</span>
-                        <div>
-                            <p class="font-bold text-sm text-ibr-black">${member.name}</p>
-                            <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded inline-block mt-1">${member.role}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-bold text-ibr-red text-lg">${member.lots.length} <span class="text-xs text-gray-500 font-normal">lotes</span></p>
-                    </div>
-                </div>
-                <div id="det-${idx}" class="expandable-content bg-gray-50 p-3 text-sm border-t border-gray-100">
-                    <div class="flex flex-wrap">
-                        ${member.lots.map(l => `<span class="chip">${l}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-        document.getElementById('ibrTeamList').innerHTML = html;
-    }
-
-    function toggleDetails(id) {
-        document.getElementById(id).classList.toggle('active');
-    }
-
-    // LEADS
-    function getStatusBadge(status) {
-        const m = {
-            'Programada': '<span class="badge bg-blue-100 text-blue-700 border border-blue-200">🔵 Programada</span>',
-            'Seguimiento': '<span class="badge bg-yellow-100 text-yellow-700 border border-yellow-200">🟡 Seguimiento</span>',
-            'Vendido': '<span class="badge bg-green-100 text-green-700 border border-green-200">✅ Vendido</span>',
-            'Cancelado': '<span class="badge bg-red-100 text-red-700 border border-red-200">❌ Cancelado</span>',
-            'No llegó': '<span class="badge bg-gray-200 text-gray-700 border border-gray-300">👻 No llegó</span>',
-            'Reagendado': '<span class="badge bg-purple-100 text-purple-700 border border-purple-200">📅 Reagendado</span>'
-        };
-        return m[status] || m['Programada'];
-    }
-
-    function filterLeads(f) { leadFilter = f; renderLeads(); }
-    
-    function renderLeads() {
-        const isAdmin = currentUser === "Daniel Vázquez";
-        let filtered = leads;
         
-        if(!isAdmin) filtered = filtered.filter(l => l.advisor === currentUser);
+        // Find matching nav
+        const btn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+        if(btn) btn.classList.add('active');
 
-        if(leadFilter !== 'Todos') {
-            if(leadFilter === 'Programada') filtered = filtered.filter(l => l.status === 'Programada');
-            if(leadFilter === 'Seguimiento') filtered = filtered.filter(l => l.status === 'Seguimiento' || l.status === 'Reagendado');
-            if(leadFilter === 'Vendido') filtered = filtered.filter(l => l.status === 'Vendido');
-        }
+        // Render contents based on tab
+        if(tabId === 'dashboard-admin') renderDashAdmin();
+        if(tabId === 'dashboard-asesor') renderDashAsesor();
+        if(tabId === 'leads') { filterL = isAdmin ? 'Todos' : 'Todos'; renderLeads(); }
+        if(tabId === 'sales') { filterS = 'Todas'; renderSales(); }
+        if(tabId === 'finances') renderFinances();
+        if(tabId === 'admin') renderAdmin();
+        if(tabId === 'profile') renderProfile();
+    }
 
-        const html = filtered.map(l => `
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 relative">
+    /* ================= RENDERERS ================= */
+    function renderDashAdmin() {
+        const v_ibr = getIbrTotal();
+        const v_ext = getExtTotal();
+        document.getElementById('dash-total').innerText = v_ibr + v_ext;
+        document.getElementById('dash-ibr').innerText = v_ibr;
+        document.getElementById('dash-ext').innerText = v_ext;
+        
+        let gen = 0; sales.forEach(s => gen += Number(s.com1||0) + Number(s.com2||0));
+        let pag = 0; payments.forEach(p => pag += Number(p.amount||0));
+        document.getElementById('dash-com-gen').innerText = `$${gen}`;
+        document.getElementById('dash-com-pag').innerText = `$${pag}`;
+        document.getElementById('dash-com-pen').innerText = `$${gen - pag}`;
+
+        let totalInv = investments.reduce((a, b) => a + Number(b.amount), 0);
+        document.getElementById('camp-inv').innerText = `$${totalInv}`;
+        
+        let roi = totalInv > 0 ? ((gen - totalInv) / totalInv * 100).toFixed(0) : 0;
+        document.getElementById('camp-roi').innerText = `${roi}%`;
+        
+        let req = Math.ceil(totalInv / 350);
+        document.getElementById('camp-peq').innerText = `${req} lotes`;
+        
+        let totV = v_ibr + v_ext;
+        let st = document.getElementById('camp-status');
+        if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "text-ibr-green font-black"; }
+        else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "text-ibr-yellow font-black"; }
+        else { st.innerHTML = "❌ PÉRDIDA"; st.className = "text-ibr-red font-black"; }
+
+        // IBR TEAM
+        const html = CORE_IBR.map((m, i) => {
+            let userSales = sales.filter(s => s.adv1 === m.name);
+            let totalL = m.lots.length + userSales.length;
+            let chips = m.lots.map(l => `<span class="chip">${l}</span>`);
+            userSales.forEach(s => chips.push(`<span class="chip bg-ibr-green">M${s.mz}L${s.lote}</span>`));
+            return `
+            <div class="border-b">
+                <div class="p-3 flex justify-between cursor-pointer" onclick="document.getElementById('det-${i}').classList.toggle('active')">
+                    <div><span class="font-bold text-gray-400 mr-2">#${i+1}</span><span class="font-bold text-sm">${m.name}</span></div>
+                    <span class="font-bold text-ibr-red text-lg">${totalL}</span>
+                </div>
+                <div id="det-${i}" class="expandable-content bg-gray-50 p-3 text-sm border-t">${chips.join('')}</div>
+            </div>`;
+        }).join('');
+        document.getElementById('dash-team-list').innerHTML = html;
+
+        // EXT
+        let topExtObj = {};
+        DEFAULT_EXT.forEach((n,i) => topExtObj[n] = [35,32,24,21,13,10,9,8,7,5,4,3,2,1,1,1,1,1][i] || 0);
+        sales.filter(s=>!CORE_IBR.find(u=>u.name===s.adv1)).forEach(s=>{
+            if(!topExtObj[s.adv1]) topExtObj[s.adv1]=0;
+            topExtObj[s.adv1]++;
+        });
+        const sortedExt = Object.keys(topExtObj).map(k=>({n:k, v:topExtObj[k]})).sort((a,b)=>b.v-a.v).slice(0,5);
+        document.getElementById('dash-top-ext').innerHTML = sortedExt.map((e,i) => `
+            <li class="flex justify-between text-sm border-b pb-1 last:border-0"><span class="font-medium">${i+1}. ${e.n}</span><span class="font-black text-ibr-green bg-green-50 px-2 rounded">${e.v}</span></li>
+        `).join('');
+    }
+
+    function renderDashAsesor() {
+        document.getElementById('asesor-greeting').innerText = `Hola ${currentUser.split(' ')[0]} 👋`;
+        const myCore = CORE_IBR.find(u => u.name === currentUser);
+        const coreLots = myCore ? myCore.lots.length : 0;
+        const mySales = sales.filter(s => s.adv1 === currentUser || s.adv2 === currentUser);
+        document.getElementById('asesor-lotes').innerText = coreLots + mySales.length;
+
+        let com = 0; mySales.forEach(s => { if(s.adv1 === currentUser) com+=Number(s.com1); if(s.adv2===currentUser) com+=Number(s.com2); });
+        document.getElementById('asesor-com-gen').innerText = `$${com}`;
+
+        const myLeads = leads.filter(l => l.advisor === currentUser && l.status!=='Cancelado' && l.status!=='Vendido');
+        document.getElementById('asesor-leads-dia').innerHTML = myLeads.slice(0,3).map(l => `
+            <div class="bg-white p-3 rounded-lg shadow-sm border border-l-4 border-l-blue-500 text-sm">
+                <p class="font-bold">${l.name}</p>
+                <p class="text-xs text-gray-500">${l.date} ${l.time}</p>
+            </div>
+        `).join('') || '<p class="text-xs text-gray-400">Sin leads pendientes</p>';
+    }
+
+    function getBadge(status) {
+        const cls = {
+            'Programada': 'bg-blue-100 text-blue-800',
+            'Seguimiento': 'bg-yellow-100 text-yellow-800',
+            'Vendido': 'bg-green-100 text-green-800',
+            'Cancelado': 'bg-red-100 text-red-800',
+            'No llegó': 'bg-gray-200 text-gray-800',
+            'Reagendado': 'bg-purple-100 text-purple-800',
+            'Activa': 'bg-green-100 text-green-800 border-green-300'
+        }[status] || 'bg-gray-100 text-gray-800';
+        return `<span class="badge ${cls}">${status}</span>`;
+    }
+
+    function renderLeads() {
+        let f = leads;
+        if(!isAdmin) f = f.filter(l => l.advisor === currentUser);
+        
+        if(filterL === 'Hoy') { const td = new Date().toISOString().split('T')[0]; f = f.filter(l => l.date === td || l.status === 'Programada'); }
+        if(filterL === 'Pendientes') f = f.filter(l => l.status === 'Seguimiento' || l.status === 'Reagendado');
+        if(filterL === 'Cerrados') f = f.filter(l => l.status === 'Vendido' || l.status === 'Cancelado');
+
+        const html = f.map(l => `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-start mb-2">
                     <div>
-                        <h3 class="font-bold text-ibr-black">${l.name}</h3>
-                        <p class="text-xs text-gray-500">${l.project} | ${l.date} ${l.time}</p>
+                        <h3 class="font-black text-sm text-ibr-black">${l.name}</h3>
+                        <p class="text-xs text-gray-500 font-medium">${l.project} | ${l.date} ${l.time}</p>
                     </div>
-                    ${getStatusBadge(l.status)}
+                    ${getBadge(l.status)}
                 </div>
-                <div class="flex justify-between items-center mt-4">
-                    <a href="https://wa.me/52${l.phone.replace(/\D/g,'')}" target="_blank" class="bg-[#25D366] text-white px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                ${l.lastComment ? `<p class="text-[10px] bg-gray-50 p-2 text-gray-600 mb-2 italic border-l-2 border-gray-300">"${l.lastComment}"</p>` : ''}
+                <div class="flex justify-between items-center mt-3 pt-3 border-t">
+                    <a href="https://wa.me/52${l.phone}" target="_blank" class="bg-[#25D366] text-white px-3 py-1.5 rounded-lg text-[10px] font-black flex items-center gap-1 shadow-sm uppercase tracking-wide">
                         WhatsApp
                     </a>
-                    ${isAdmin ? `<span class="text-[10px] text-gray-400">Asesor: ${l.advisor.split(' ')[0]}</span>` : ''}
-                    <button onclick="openResultModal('${l.id}')" class="text-ibr-red text-xs font-bold underline ${['Vendido','Cancelado'].includes(l.status) ? 'hidden' : ''}">Actualizar</button>
+                    ${isAdmin ? `<span class="text-[10px] font-bold text-gray-400">${l.advisor.split(' ')[0]}</span>` : ''}
+                    <button onclick="openResultModal('${l.id}')" class="text-ibr-red text-xs font-black uppercase tracking-wide ${['Vendido','Cancelado'].includes(l.status) ? 'hidden' : ''}">Actualizar</button>
                 </div>
             </div>
         `).join('');
-
-        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">No hay leads para mostrar</p>';
+        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">Sin registros</p>';
     }
 
-    // SALES
-    function filterSales(f) { saleFilter = f; renderSales(); }
-    
     function renderSales() {
-        let filtered = sales;
-        if(saleFilter === 'IBR') filtered = filtered.filter(s => INITIAL_TEAM.some(u => u.name === s.advisor));
-        if(saleFilter === 'Externas') filtered = filtered.filter(s => !INITIAL_TEAM.some(u => u.name === s.advisor));
+        let f = sales;
+        if(!isAdmin) f = f.filter(s => s.adv1 === currentUser || s.adv2 === currentUser);
+        
+        if(filterS === 'IBR') f = f.filter(s => CORE_IBR.find(u=>u.name===s.adv1));
+        if(filterS === 'Externas') f = f.filter(s => !CORE_IBR.find(u=>u.name===s.adv1));
+        if(filterS === 'Canceladas') f = f.filter(s => s.status === 'Cancelada');
 
-        const html = filtered.map(s => `
-            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
-                <div>
-                    <h3 class="font-bold text-ibr-black">${s.mz}-${s.lote}</h3>
-                    <p class="text-xs text-gray-500">${s.advisor} | ${s.date}</p>
+        const html = f.map(s => `
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-ibr-red text-white text-[10px] px-2 py-1 rounded font-black tracking-widest">${s.id}</span>
+                        <h3 class="font-black text-sm text-ibr-black">Mz${s.mz} Lt${s.lote}</h3>
+                    </div>
+                    ${getBadge(s.status || 'Activa')}
                 </div>
-                <div class="text-right">
-                    <span class="badge ${s.type === 'Contado' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}">${s.type}</span>
+                <div class="text-xs text-gray-600 mb-2">
+                    <p><span class="font-bold">A1:</span> ${s.adv1} <span class="text-ibr-green font-bold">($${s.com1})</span></p>
+                    ${s.adv2 ? `<p><span class="font-bold">A2:</span> ${s.adv2} <span class="text-ibr-green font-bold">($${s.com2})</span></p>` : ''}
+                </div>
+                <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 border-t pt-2 mt-2">
+                    <span class="uppercase">${s.type}</span>
+                    <span>${s.date}</span>
                 </div>
             </div>
         `).join('');
-        
-        document.getElementById('salesContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">No hay ventas registradas</p>';
+        document.getElementById('salesContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">Sin ventas</p>';
     }
 
-    // MODALS
-    function openLeadModal() { document.getElementById('leadModal').classList.remove('hidden'); }
-    function openSaleModal() { alert('Añadir venta externa próximamente.'); }
+    function renderFinances() {
+        // Comisiones IBR table
+        const ibrCom = CORE_IBR.map(u => {
+            let gen = 0;
+            sales.filter(s=>s.adv1===u.name).forEach(s=>gen+=Number(s.com1));
+            sales.filter(s=>s.adv2===u.name).forEach(s=>gen+=Number(s.com2));
+            return { name: u.name, gen: gen };
+        });
+        document.getElementById('finances-com-list').innerHTML = ibrCom.map(c => `
+            <div class="flex justify-between text-xs border-b pb-1"><span class="font-bold">${c.name}</span><span class="text-ibr-green font-black">$${c.gen}</span></div>
+        `).join('');
+
+        // Investments
+        let t = 0;
+        document.getElementById('finances-inv-list').innerHTML = investments.map(i => {
+            t += Number(i.amount);
+            return `<div class="flex justify-between text-xs border-b border-dashed pb-1"><span class="text-gray-500">${i.date} - ${i.concept}</span><span class="font-black text-ibr-red">$${i.amount}</span></div>`;
+        }).join('');
+        document.getElementById('finances-inv-total').innerText = `Total Inv: $${t}`;
+
+        // Punto de eq
+        let genAll = 0; sales.forEach(s => genAll += Number(s.com1||0) + Number(s.com2||0));
+        let req = Math.ceil(t / 350);
+        let totV = getIbrTotal() + getExtTotal();
+        let roi = t > 0 ? ((genAll - t) / t * 100).toFixed(0) : 0;
+        
+        document.getElementById('pe-inv').innerText = `$${t}`;
+        document.getElementById('pe-req').innerText = req;
+        document.getElementById('pe-vendidos').innerText = totV;
+        document.getElementById('pe-roi').innerText = `ROI: ${roi}%`;
+        
+        let st = document.getElementById('pe-estado');
+        if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "text-ibr-green font-black text-lg"; }
+        else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "text-ibr-yellow font-black text-lg"; }
+        else { st.innerHTML = "❌ PÉRDIDA"; st.className = "text-ibr-red font-black text-lg"; }
+    }
+
+    function renderAdmin() {
+        document.getElementById('admin-ext-list').innerHTML = extUsers.map(u => `<div class="text-xs font-bold border-b p-1">${u}</div>`).join('');
+    }
+
+    function renderProfile() {
+        const userObj = CORE_IBR.find(u => u.name === currentUser);
+        if(!userObj) return;
+        document.getElementById('prof-initials').innerText = currentUser.split(' ').map(n=>n[0]).join('');
+        document.getElementById('prof-name').innerText = currentUser;
+        document.getElementById('prof-role').innerText = userObj.role;
+    }
+
+    /* ================= FORMS & MODALS ================= */
+    function filterLeads(f) { filterL = f; renderLeads(); }
+    function filterSales(f) { filterS = f; renderSales(); }
+
+    function openModal(id) { 
+        if(id==='leadModal') document.getElementById('lf-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById(id).classList.remove('hidden'); 
+    }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
     function saveLead(e) {
         e.preventDefault();
-        const l = {
-            id: Date.now().toString(),
+        leads.unshift({
+            id: 'L'+Date.now(),
             name: document.getElementById('lf-name').value,
             phone: document.getElementById('lf-phone').value,
             project: document.getElementById('lf-project').value,
@@ -456,69 +756,108 @@
             advisor: document.getElementById('lf-advisor').value,
             obs: document.getElementById('lf-obs').value,
             status: 'Programada'
-        };
-        leads.unshift(l);
+        });
         localStorage.setItem('ibr_leads', JSON.stringify(leads));
-        closeModal('leadModal');
-        e.target.reset();
-        renderLeads();
-        updateUI();
+        closeModal('leadModal'); e.target.reset(); renderLeads();
     }
 
     function openResultModal(id) {
         document.getElementById('rf-id').value = id;
         document.getElementById('rf-status').value = '';
         document.getElementById('buyFields').classList.add('hidden');
-        document.getElementById('resultModal').classList.remove('hidden');
+        document.getElementById('rf-date').value = new Date().toISOString().split('T')[0];
+        openModal('resultModal');
     }
 
     function toggleBuyFields() {
-        const val = document.getElementById('rf-status').value;
-        const buyFields = document.getElementById('buyFields');
-        if(val === 'Vendido') {
-            buyFields.classList.remove('hidden');
-            document.getElementById('rf-mz').required = true;
-            document.getElementById('rf-lote').required = true;
-        } else {
-            buyFields.classList.add('hidden');
-            document.getElementById('rf-mz').required = false;
-            document.getElementById('rf-lote').required = false;
-        }
+        const isVendido = document.getElementById('rf-status').value === 'Vendido';
+        document.getElementById('buyFields').classList.toggle('hidden', !isVendido);
+        document.getElementById('rf-mz').required = isVendido;
+        document.getElementById('rf-lote').required = isVendido;
     }
 
     function saveResult(e) {
         e.preventDefault();
         const id = document.getElementById('rf-id').value;
         const stat = document.getElementById('rf-status').value;
+        const idx = leads.findIndex(l => l.id === id);
         
-        const leadIndex = leads.findIndex(l => l.id === id);
-        if(leadIndex > -1) {
-            leads[leadIndex].status = stat;
-            leads[leadIndex].lastComment = document.getElementById('rf-comments').value;
+        if(idx > -1) {
+            leads[idx].status = stat;
+            leads[idx].lastComment = document.getElementById('rf-comments').value;
             
             if(stat === 'Vendido') {
                 sales.unshift({
-                    id: 'S'+Date.now(),
+                    id: 'VTA-'+Math.floor(Math.random()*1000),
                     mz: document.getElementById('rf-mz').value,
                     lote: document.getElementById('rf-lote').value,
                     type: document.getElementById('rf-type').value,
-                    advisor: leads[leadIndex].advisor,
-                    date: document.getElementById('rf-date').value || new Date().toISOString().split('T')[0]
+                    adv1: leads[idx].advisor,
+                    com1: document.getElementById('rf-com').value,
+                    date: document.getElementById('rf-date').value || new Date().toISOString().split('T')[0],
+                    status: 'Activa'
                 });
                 localStorage.setItem('ibr_sales', JSON.stringify(sales));
                 renderSales();
             }
-            
             localStorage.setItem('ibr_leads', JSON.stringify(leads));
             renderLeads();
-            updateUI();
+            if(!isAdmin) renderDashAsesor();
         }
-        closeModal('resultModal');
-        e.target.reset();
+        closeModal('resultModal'); e.target.reset();
     }
 
-    // START
-    init();
+    function checkNewExt(val, inputId) {
+        document.getElementById(inputId).classList.toggle('hidden', val !== 'NEW');
+        document.getElementById(inputId).required = val === 'NEW';
+    }
+
+    function saveDirectSale(e) {
+        e.preventDefault();
+        let a1 = document.getElementById('sf-adv1').value;
+        if(a1 === 'NEW') {
+            a1 = document.getElementById('sf-adv1-new').value;
+            extUsers.push(a1);
+        }
+        let a2 = document.getElementById('sf-adv2').value;
+        if(a2 === 'NEW') {
+            a2 = document.getElementById('sf-adv2-new').value;
+            extUsers.push(a2);
+        }
+        localStorage.setItem('ibr_externos', JSON.stringify(extUsers));
+        populateAdvisors();
+
+        sales.unshift({
+            id: 'VTA-'+Math.floor(1000+Math.random()*9000),
+            mz: document.getElementById('sf-mz').value,
+            lote: document.getElementById('sf-lote').value,
+            type: document.getElementById('sf-type').value,
+            adv1: a1, com1: document.getElementById('sf-com1').value,
+            adv2: a2, com2: document.getElementById('sf-com2').value,
+            status: document.getElementById('sf-status').value,
+            date: new Date().toISOString().split('T')[0]
+        });
+        localStorage.setItem('ibr_sales', JSON.stringify(sales));
+        closeModal('saleModal'); e.target.reset();
+        renderSales();
+        if(isAdmin) renderDashAdmin();
+    }
+
+    function saveInv(e) {
+        e.preventDefault();
+        investments.push({
+            concept: document.getElementById('if-concept').value,
+            amount: document.getElementById('if-amount').value,
+            date: document.getElementById('if-date').value
+        });
+        localStorage.setItem('ibr_inversiones', JSON.stringify(investments));
+        closeModal('invModal'); e.target.reset();
+        renderFinances();
+        renderDashAdmin();
+    }
+
+    // FIRE
+    document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
 </html>
