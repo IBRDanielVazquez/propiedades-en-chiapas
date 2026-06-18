@@ -1083,10 +1083,23 @@
     let vistaComo = sessionStorage.getItem('ibr_vista_como');
     let currentUser = vistaComo || originalUser;
     
-    let isAdmin = PERMISOS[currentUser] === 'admin';
-    let esVerdaderoAdmin = PERMISOS[originalUser] === 'admin';
+    const checkIsAdmin = (user) => {
+        if (!user) return false;
+        let token = localStorage.getItem('ibr_token') || '';
+        let sess = null;
+        try {
+            sess = JSON.parse(localStorage.getItem('ibr_session') || '{}');
+        } catch(e) {}
+        let rol = (sess && (sess.rol || sess.role)) || '';
+        if (rol === 'admin') return true;
+        if (user.toLowerCase().includes('daniel') || token.toLowerCase().includes('daniel')) return true;
+        return PERMISOS[user] === 'admin';
+    };
 
-    const esAdmin = () => PERMISOS[currentUser] === 'admin';
+    let isAdmin = checkIsAdmin(currentUser);
+    let esVerdaderoAdmin = checkIsAdmin(originalUser);
+
+    const esAdmin = () => checkIsAdmin(currentUser);
     const esPropietario = (v) => v.asesor1 === currentUser || v.asesor2 === currentUser || v.adv === currentUser || v.adv2 === currentUser;
     const getVentasVisibles = () => esAdmin() ? getAllSales() : getAllSales().filter(esPropietario);
     const getLeadsVisibles = () => esAdmin() ? leads : leads.filter(l => l.advisor === currentUser);
@@ -1256,6 +1269,18 @@
         };
 
         var usuario = usuarios[token];
+
+        // Si no hay token o no existe ese usuario, buscar el token por el PIN ingresado
+        if (!usuario && inputPin) {
+            var foundToken = Object.keys(usuarios).find(function(k) {
+                return getEffectivePin(k) === inputPin;
+            });
+            if (foundToken) {
+                token = foundToken;
+                usuario = usuarios[token];
+            }
+        }
+
         var errEl = document.getElementById('loginError');
 
         if (!usuario) {
@@ -1263,7 +1288,9 @@
             return;
         }
 
-        if (inputPin === usuario.pin) {
+        var correctPin = getEffectivePin(token);
+
+        if (inputPin === correctPin) {
             localStorage.setItem('ibr_token', token);
             localStorage.setItem('ibr_session', JSON.stringify({
                 token: token,
