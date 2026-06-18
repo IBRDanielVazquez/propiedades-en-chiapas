@@ -675,8 +675,54 @@
     </main>
 
     <!-- BOTTOM NAV -->
-    <nav id="bottomNav" class="fixed bottom-0 w-full max-w-[480px] bg-black border-t border-gray-800 flex justify-around items-center px-2 py-2 pb-6 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.2)] min-h-[64px]">
-        <!-- Injected via JS -->
+    <nav id="bottomNav" style="
+      position:fixed;bottom:0;left:0;
+      width:100%;background:#000;
+      display:flex;justify-content:space-around;
+      padding:8px 0 12px;z-index:999;
+      border-top:1px solid #333">
+      <button onclick="switchTab('resumen')" 
+        style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        🏠<span>RESUMEN</span>
+      </button>
+      <button onclick="switchTab('proyectos')"
+        style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        🏘️<span>PROYECTOS</span>
+      </button>
+      <button onclick="switchTab('leads')"
+        style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        👥<span>LEADS</span>
+      </button>
+      <button onclick="switchTab('pagos')"
+        style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        💳<span>PAGOS</span>
+      </button>
+      <button onclick="switchTab('finanzas')"
+        style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        💰<span>FINANZAS</span>
+      </button>
+      <button onclick="switchTab('config')"
+        style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        ⚙️<span>CONFIG</span>
+      </button>
     </nav>
 </div>
 
@@ -1948,24 +1994,46 @@ function populateSelects() {
     }
 
     function switchTab(tabId) {
-        if(guardTab(tabId)) return;
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        let tabEl = document.getElementById('tab-' + tabId);
-        if(!tabEl) return;
-        tabEl.classList.add('active');
-        const btn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
-        if(btn) btn.classList.add('active');
+        // Translate incoming tabId to match the actual HTML tab IDs
+        let targetId = tabId;
+        const isCurrentlyAdmin = (window.currentUser?.rol === 'admin') || 
+            (JSON.parse(localStorage.getItem('ibr_session')||'{}').rol === 'admin');
 
-        if(tabId === 'dashboard-admin' && esAdmin()) renderDashAdmin();
-        if(tabId === 'dashboard-asesor') renderDashAsesor();
-        if(tabId === 'leads') { filterL = 'Todos'; loadCalendarLeads(); }
-        if(tabId === 'sales') renderSales();
-        if(tabId === 'finances' && esAdmin()) renderFinances();
-        if(tabId === 'pagos' && esAdmin()) { renderPagos(); renderCobranzaAdmin(currentCobFilter); }
-        if(tabId === 'config' && esAdmin()) renderConfig();
-        if(tabId === 'profile') renderProfile();
-        if(tabId === 'projects') renderProyectos();
+        if (tabId === 'resumen') {
+            targetId = isCurrentlyAdmin ? 'dashboard-admin' : 'dashboard-asesor';
+        } else if (tabId === 'proyectos') {
+            targetId = 'projects';
+        } else if (tabId === 'finanzas') {
+            targetId = 'finances';
+        }
+
+        const rol = window.currentUser?.rol || 
+            JSON.parse(localStorage.getItem('ibr_session')||'{}').rol
+        
+        // Admin pasa siempre
+        if (rol !== 'admin') {
+            const tabsAdmin = ['pagos','finanzas','config']
+            if (tabsAdmin.includes(tabId)) {
+                return // asesor no puede
+            }
+        }
+        
+        document.querySelectorAll('[id^="tab-"]')
+            .forEach(t => t.style.display='none')
+        
+        const tab = document.getElementById('tab-'+targetId)
+        if(tab) tab.style.display='block'
+
+        // Trigger content renderers
+        if(targetId === 'dashboard-admin' && esAdmin()) renderDashAdmin();
+        if(targetId === 'dashboard-asesor') renderDashAsesor();
+        if(targetId === 'leads') { filterL = 'Todos'; loadCalendarLeads(); }
+        if(targetId === 'sales') renderSales();
+        if(targetId === 'finances' && esAdmin()) renderFinances();
+        if(targetId === 'pagos' && esAdmin()) { renderPagos(); renderCobranzaAdmin(currentCobFilter); }
+        if(targetId === 'config' && esAdmin()) renderConfig();
+        if(targetId === 'profile') renderProfile();
+        if(targetId === 'projects') renderProyectos();
     }
 
     /* ================= RENDERERS ================= */
