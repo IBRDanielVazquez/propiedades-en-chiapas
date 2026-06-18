@@ -997,42 +997,19 @@
         var content = document.getElementById('loginContent');
         if(!content) return;
 
-        var pinInputHtml = isAdminUser
-            ? '<input type="text" id="pin-admin" placeholder="Ingresa tu PIN" autocomplete="off" spellcheck="false" class="w-full bg-gray-900 text-white border border-gray-700 rounded-xl px-4 py-4 text-sm font-bold outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red placeholder-gray-600 tracking-widest transition">'
-            : '<div class="flex gap-3 justify-center" id="pin-boxes">' +
-              '<input type="password" maxlength="1" pattern="[0-9]" inputmode="numeric" class="pin-box w-14 h-16 bg-gray-900 text-white border-2 border-gray-700 rounded-xl text-2xl font-black text-center outline-none focus:border-ibr-red transition" />'.repeat(4) +
-              '</div>';
+        content.innerHTML = `
+<div class="text-center mb-2">
+  <p class="text-white font-black text-xl">Bienvenido,</p>
+  <p class="text-ibr-red font-black text-2xl mt-1">${userData.nombre.split(' ')[0]}</p>
+  <p class="text-gray-500 text-[10px] font-bold mt-1 uppercase tracking-widest">${isAdminUser ? 'Administrador' : 'Asesor'}</p>
+</div>
+<div style="background:#1a1a1a; border-radius:16px; padding:24px; margin:32px 16px; border:1px solid #8B0000">
+  <p style="color:#999;font-size:13px; text-align:center;margin-bottom:16px">Ingresa tu PIN</p>
+  <input type="password" id="pinInput" placeholder="••••••" style="width:100%; background:#fff; color:#000; font-size:24px; text-align:center; letter-spacing:8px; padding:16px; border-radius:8px; border:2px solid #8B0000; box-sizing:border-box">
+  <button onclick="handlePinSubmit(event)" style="width:100%; background:#8B0000; color:#fff; font-size:16px; font-weight:bold; padding:16px; border-radius:8px; border:none; margin-top:12px; cursor:pointer">ENTRAR →</button>
+</div>`;
 
-        content.innerHTML =
-            '<div class="text-center mb-6">' +
-              '<p class="text-white font-black text-xl">Bienvenido,</p>' +
-              '<p class="text-ibr-red font-black text-2xl mt-1">' + userData.nombre.split(' ')[0] + '</p>' +
-              '<p class="text-gray-500 text-[10px] font-bold mt-1 uppercase tracking-widest">' + (isAdminUser ? 'Administrador' : 'Asesor') + '</p>' +
-            '</div>' +
-            '<form onsubmit="handlePinSubmit(event)" class="w-full space-y-4">' +
-              '<div class="flex flex-col items-center">' +
-                '<label class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-3">' + (isAdminUser ? 'PIN de Administrador' : 'Tu PIN de 4 dígitos') + '</label>' +
-                pinInputHtml +
-              '</div>' +
-              '<button type="submit" class="w-full bg-ibr-red text-white font-black py-4 rounded-xl text-sm uppercase tracking-widest shadow-lg hover:bg-red-800 transition active:scale-95 mt-2">ENTRAR</button>' +
-            '</form>';
-
-        if(!isAdminUser) {
-            var boxes = document.querySelectorAll('.pin-box');
-            boxes.forEach(function(box, i) {
-                box.addEventListener('input', function() {
-                    box.value = box.value.replace(/[^0-9]/g, '');
-                    if(box.value && i < boxes.length - 1) boxes[i + 1].focus();
-                    if(box.value && i === boxes.length - 1) handlePinSubmit();
-                });
-                box.addEventListener('keydown', function(e) {
-                    if(e.key === 'Backspace' && !box.value && i > 0) boxes[i - 1].focus();
-                });
-            });
-            setTimeout(function() { var f = document.querySelector('.pin-box'); if(f) f.focus(); }, 100);
-        } else {
-            setTimeout(function() { var f = document.getElementById('pin-admin'); if(f) f.focus(); }, 100);
-        }
+        setTimeout(function() { var f = document.getElementById('pinInput'); if(f) f.focus(); }, 100);
     }
 
     function handlePinSubmit(e) {
@@ -1046,12 +1023,7 @@
 
         var userData = USUARIOS[pendingToken];
         var isAdminUser = userData.rol === 'admin';
-        var enteredPin;
-        if(isAdminUser) {
-            enteredPin = (document.getElementById('pin-admin') ? document.getElementById('pin-admin').value : '').trim();
-        } else {
-            enteredPin = Array.from(document.querySelectorAll('.pin-box')).map(function(b) { return b.value; }).join('');
-        }
+        var enteredPin = (document.getElementById('pinInput') ? document.getElementById('pinInput').value : '').trim();
 
         var correctPin = getEffectivePin(pendingToken);
 
