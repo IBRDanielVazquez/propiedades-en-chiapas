@@ -1676,7 +1676,7 @@
 
         if(tabId === 'dashboard-admin' && esAdmin()) renderDashAdmin();
         if(tabId === 'dashboard-asesor') renderDashAsesor();
-        if(tabId === 'leads') { filterL = 'Todos'; renderLeads(); }
+        if(tabId === 'leads') { filterL = 'Todos'; loadCalendarLeads(); }
         if(tabId === 'sales') renderSales();
         if(tabId === 'finances' && esAdmin()) renderFinances();
         if(tabId === 'pagos' && esAdmin()) { renderPagos(); renderCobranzaAdmin(currentCobFilter); }
@@ -1918,6 +1918,54 @@
     function getLeadBadge(status) {
         const cls = { 'Programada': 'bg-blue-100 text-blue-800', 'Seguimiento': 'bg-yellow-100 text-yellow-800', 'Vendido': 'bg-green-100 text-green-800', 'Cancelado': 'bg-red-100 text-red-800', 'No llegó': 'bg-gray-200 text-gray-800', 'Reagendado': 'bg-purple-100 text-purple-800' }[status] || 'bg-gray-100 text-gray-800';
         return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${cls}">${status}</span>`;
+    }
+
+    const CALENDAR_API_URL = "https://script.google.com/macros/s/AKfycbyEDY_uepSq4SRBMJL1HFpJorXeDeRMe22hBzwjaR_f3OPS2g5H9jGgAct4AQ0FqGJ1/exec";
+
+    async function loadCalendarLeads() {
+        document.getElementById('leadsContainer').innerHTML = '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest animate-pulse">🔄 Sincronizando con Google Calendar...</p>';
+        try {
+            let res = await fetch(CALENDAR_API_URL);
+            let data = await res.json();
+            if(data.ok) {
+                let mappedLeads = data.eventos.map(e => ({
+                    id: e.id,
+                    name: e.titulo,
+                    phone: e.telefono ? e.telefono.replace(/\\D/g,'') : '0000000000',
+                    project: e.ubicacion || 'Por definir',
+                    advisor: e.asesor,
+                    date: new Date(e.fecha).toISOString().split('T')[0],
+                    time: e.hora,
+                    status: e.estatus,
+                    lastComment: e.descripcion
+                }));
+                
+                let localLeads = JSON.parse(localStorage.getItem('ibr_leads')) || [];
+                let localLeadsMap = {};
+                localLeads.forEach(l => localLeadsMap[l.id] = l);
+                
+                mappedLeads.forEach(ml => {
+                    if(localLeadsMap[ml.id]) {
+                        ml.status = localLeadsMap[ml.id].status;
+                        if(localLeadsMap[ml.id].lastComment && localLeadsMap[ml.id].lastComment !== ml.lastComment) {
+                           ml.lastComment = localLeadsMap[ml.id].lastComment;
+                        }
+                    }
+                    localLeadsMap[ml.id] = ml; 
+                });
+                
+                leads = Object.values(localLeadsMap);
+                leads.sort((a,b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem('ibr_leads', JSON.stringify(leads));
+                renderLeads();
+            } else {
+                throw new Error("API not ok");
+            }
+        } catch(err) {
+            console.error('Error fetching calendar:', err);
+            renderLeads();
+            showToast('⚠️ Error de conexión. Mostrando datos offline.');
+        }
     }
 
     function renderLeads() {
