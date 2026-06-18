@@ -1112,7 +1112,9 @@
           localStorage.getItem('ibr_session') || '{}')
         const rol = session.rol || 'asesor'
 
-        if (rol === 'admin') {
+        console.log("guardTab check: tabId=" + tabId + " | session.rol=" + session.rol + " | rol=" + rol + " | esAdmin()=" + esAdmin());
+
+        if (rol === 'admin' || esAdmin()) {
           // Admin nunca ve Acceso Restringido
           // Renderizar contenido de admin directo
           renderAdminContent()
@@ -1122,7 +1124,7 @@
         const tabEsDeAdmin = !ASESOR_TABS.includes(tabId);
 
         // Solo asesores pueden ver esto bloqueado:
-        if (tabEsDeAdmin && rol !== 'admin') {
+        if (tabEsDeAdmin && rol !== 'admin' && !esAdmin()) {
           mostrarRestringido()
           return true;
         }
