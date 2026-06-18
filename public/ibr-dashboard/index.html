@@ -66,15 +66,15 @@
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-black text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Vendidos</p>
-                    <p class="text-4xl font-black">160</p>
+                    <p class="text-4xl font-black">193</p>
                 </div>
                 <div class="bg-ibr-red text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
                     <p class="text-[9px] font-bold text-red-200 uppercase tracking-widest mb-1">Ventas IBR</p>
-                    <p class="text-4xl font-black">17</p>
+                    <p class="text-4xl font-black">23</p>
                 </div>
                 <div class="bg-ibr-blue text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
                     <p class="text-[9px] font-bold text-blue-200 uppercase tracking-widest mb-1">Ventas Externas</p>
-                    <p class="text-4xl font-black">143</p>
+                    <p class="text-4xl font-black">170</p>
                 </div>
                 <div class="bg-ibr-yellow text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
                     <p class="text-[9px] font-bold text-yellow-100 uppercase tracking-widest mb-1">Canceladas</p>
@@ -182,14 +182,14 @@
                         </div>
                         
                         <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
-                            <span class="text-ibr-green">✅ Vend: 160</span>
-                            <span class="text-blue-400">🟢 Disp: 353</span>
+                            <span class="text-ibr-green">✅ Vend: 193</span>
+                            <span class="text-blue-400">🟢 Disp: 320</span>
                             <span class="text-ibr-red">❌ Canc: 3</span>
                         </div>
                         <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
-                            <div class="bg-gradient-to-r from-ibr-red to-ibr-green h-1.5 rounded-full" style="width: 31%"></div>
+                            <div class="bg-gradient-to-r from-ibr-red to-ibr-green h-1.5 rounded-full" style="width: 38%"></div>
                         </div>
-                        <p class="text-[9px] text-right mt-1 font-bold text-gray-500">31% Vendido</p>
+                        <p class="text-[9px] text-right mt-1 font-bold text-gray-500">38% Vendido</p>
                         
                         <div class="absolute top-4 right-4 text-white opacity-50">▼</div>
                     </div>
@@ -334,7 +334,7 @@
 
         <footer class="mt-8 text-center text-[10px] text-gray-400 pb-10 uppercase tracking-widest font-bold">
             <p class="text-gray-500 mb-1">IBR Marketing Digital &copy; 2026</p>
-            <p>Control de Ventas | Bella Vista: 513 lotes</p>
+            <p>Bella Vista: 513 lotes | Vendidos: 193 | Disponibles: 320</p>
         </footer>
 
     </main>
@@ -440,13 +440,13 @@
 <script>
     /* ================= DATA & STATE ================= */
     const IBR_USERS = [
-        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", email: "realstatechiapas@gmail.com", link: "/card/daniel", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19"] },
-        { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", email: "gabryelatgz@gmail.com", link: "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8"] },
+        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", email: "realstatechiapas@gmail.com", link: "/card/daniel", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19","M14L20","M14L03","M15L11","M9L21","M9L22","M9L23"] },
+        { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", email: "gabryelatgz@gmail.com", link: "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8","M15L11"] },
         { name: "Luis García", role: "Asesor", type: "Asesor", email: "lord.garcia.0205@gmail.com", link: "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/", lots: ["M8L2","M6L9","M6L10","M7L1","M7L2"] },
-        { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", email: "jose0208.cj@gmail.com", link: "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/", lots: ["M12L13","M14L12","M14L19"] }
+        { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", email: "jose0208.cj@gmail.com", link: "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/", lots: ["M12L13","M14L12","M14L19","M14L20","M14L03"] }
     ];
     
-    const DEFAULT_EXT = ["Walter Moguel", "Martín Altamirano", "Luisa Rodríguez", "Eduardo Méndez", "Arturo Coutiño", "Luis Miguel Coutiño", "Bernardo Cruz", "Antonio Ramírez", "Gabriel Zenteno", "Concepción Villarreal", "Eyra Fernández", "Koreicy López", "Vanessa Guzmán", "Sayani León", "Gabriela López", "Ángeles López", "Mario Ortega", "Javier Ballinas"];
+    const DEFAULT_EXT = ["Walter Moguel", "Martín Altamirano", "Luisa Rodríguez", "Eduardo Méndez", "Arturo Coutiño", "Luis Miguel Coutiño", "Bernardo Cruz", "Antonio Ramírez", "Gabriel Zenteno", "Concepción Villarreal", "Eyra Fernández", "Koreicy López", "Vanessa Guzmán", "Sayani León", "Gabriela López", "Ángeles López", "Mario Ortega", "Javier Ballinas", "Manuel Hipólito", "Cecilia Ramírez"];
 
     const MANZANAS_DATA = [
         {m:1, t:9, v:4, d:5, av:'L3'}, {m:2, t:20, v:20, d:0}, {m:3, t:10, v:10, d:0}, {m:4, t:3, v:2, d:1, av:'L2'},
@@ -474,7 +474,13 @@
         {id:"VTA-144",lote:"BV-M14-L13",manzana:14,lote_num:13,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
         {id:"VTA-145",lote:"BV-M13-L07",manzana:13,lote_num:7,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
         {id:"VTA-146",lote:"BV-M13-L08",manzana:13,lote_num:8,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
-        {id:"VTA-149",lote:"BV-M14-L19",manzana:14,lote_num:19,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0}
+        {id:"VTA-149",lote:"BV-M14-L19",manzana:14,lote_num:19,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
+        {id:"VTA-166",lote:"BV-M14-L20",manzana:14,lote_num:20,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
+        {id:"VTA-167",lote:"BV-M14-L03",manzana:14,lote_num:3,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
+        {id:"VTA-190",lote:"BV-M15-L11",manzana:15,lote_num:11,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
+        {id:"VTA-194",lote:"BV-M09-L21",manzana:9,lote_num:21,asesor1:"Eduardo Méndez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
+        {id:"VTA-195",lote:"BV-M09-L22",manzana:9,lote_num:22,asesor1:"Eduardo Méndez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0},
+        {id:"VTA-196",lote:"BV-M09-L23",manzana:9,lote_num:23,asesor1:"Eduardo Méndez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Reportada",comision:0}
     ];
 
     let currentUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
@@ -770,7 +776,7 @@
         
         let genAll = 0; allS.forEach(s => genAll += Number(s.com||0));
         let req = Math.ceil(t / 350);
-        let totV = 160;
+        let totV = 193;
         let roi = t > 0 ? ((genAll - t) / t * 100).toFixed(0) : 0;
         document.getElementById('pe-inv').innerText = `$${t}`;
         document.getElementById('pe-req').innerText = req;
