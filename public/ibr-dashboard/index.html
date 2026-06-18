@@ -245,12 +245,7 @@
         <div id="preview-banner-container"></div>
         <div id="banners-container" class="px-4 pt-4"></div>
 
-        <!-- ACCESO RESTRINGIDO -->
-        <div id="tab-restricted" class="tab-content min-h-[70vh] flex flex-col items-center justify-center p-8">
-            <div class="text-6xl mb-6">🔒</div>
-            <h2 class="font-black text-2xl text-ibr-black mb-2">Acceso Restringido</h2>
-            <p class="text-sm text-gray-500 text-center font-bold">Esta sección no está disponible para tu rol.<br>Regresando a tu panel...</p>
-        </div>
+
 
         <!-- ADMIN: DASHBOARD -->
                 <div id="tab-dashboard-admin" class="tab-content p-4 space-y-4">
@@ -1095,24 +1090,7 @@
         // En guardTab, retornar false permite que switchTab continúe y renderice la pestaña de admin
     }
 
-    function mostrarRestringido() {
-        // NUCLEAR OVERRIDE - Admin siempre pasa
-        const _s = JSON.parse(localStorage.getItem('ibr_session')||'{}')
-        const _u = new URLSearchParams(window.location.search).get('token')||''
-        if (_s.rol==='admin' || _u==='Daniel-Vazquez' || _u==='Daniel-V%C3%A1zquez') {
-          return; // Admin nunca ve esto
-        }
 
-        let fallback = 'dashboard-asesor';
-        let fb = document.getElementById('tab-restricted');
-        if(fb) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            fb.classList.add('active');
-            setTimeout(() => switchTab(fallback), 2000);
-        } else {
-            switchTab(fallback);
-        }
-    }
 
     function guardTab(tabId) {
       return true;
