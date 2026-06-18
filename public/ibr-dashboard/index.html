@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IBR CRM Dashboard V2</title>
+    <title>IBR CRM Dashboard V3</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        ibr: { red: '#8B0000', black: '#000000', white: '#FFFFFF', green: '#16A34A', yellow: '#D97706' }
+                        ibr: { red: '#8B0000', black: '#000000', white: '#FFFFFF', green: '#16A34A', yellow: '#D97706', gray: '#F5F5F5' }
                     }
                 }
             }
@@ -34,11 +33,12 @@
         .btn-red { @apply bg-ibr-red text-white py-2 px-4 rounded font-bold shadow hover:bg-red-800 transition text-sm; }
         .btn-green { @apply bg-ibr-green text-white py-2 px-4 rounded font-bold shadow hover:bg-green-700 transition text-sm; }
         .btn-gray { @apply bg-gray-200 text-gray-700 py-2 px-4 rounded font-bold shadow hover:bg-gray-300 transition text-sm; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="text-gray-800">
 
-<div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-2xl">
+<div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-2xl pb-20">
     
     <!-- HEADER -->
     <header class="sticky top-0 z-40 bg-ibr-black text-white p-3 shadow-md flex justify-between items-center">
@@ -48,124 +48,106 @@
                 <span class="text-xs font-bold leading-tight">Control<br>de Ventas</span>
             </div>
         </div>
-        <div class="flex flex-col items-end gap-1">
-            <select id="userSelector" class="bg-gray-800 text-white text-[10px] p-1 border-none rounded" onchange="changeUser(this.value)">
-                <option value="Daniel Vázquez">Daniel Vázquez (Admin)</option>
-                <option value="Lupyta Mendoza">Lupyta Mendoza (Asesor)</option>
-                <option value="Luis García">Luis García (Asesor)</option>
-                <option value="Carmen Jiménez">Carmen Jiménez (Asesor)</option>
-            </select>
-            <select id="projectSelect" class="bg-gray-800 text-white text-[10px] p-1 border-none rounded">
-                <option>Bella Vista</option>
-                <option class="admin-only hidden">+ Nuevo</option>
-            </select>
-        </div>
+        <select id="userSelector" class="bg-gray-800 text-white text-[10px] p-2 border-none rounded max-w-[150px] outline-none" onchange="changeUser(this.value)">
+            <option value="Daniel Vázquez">Daniel Vázquez(Admin)</option>
+            <option value="Lupyta Mendoza">Lupyta Mendoza</option>
+            <option value="Luis García">Luis García</option>
+            <option value="Carmen Jiménez">Carmen Jiménez</option>
+        </select>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="flex-1 overflow-y-auto pb-24 bg-gray-50 relative">
+    <main class="flex-1 overflow-y-auto bg-gray-50 relative pb-10">
         
         <!-- ADMIN: DASHBOARD -->
         <div id="tab-dashboard-admin" class="tab-content p-4 space-y-4">
-            <h2 class="font-black text-lg text-ibr-black mb-2">Resumen General</h2>
-            
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-white border p-3 rounded-xl shadow-sm text-center">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vendidos</p>
-                    <p class="text-3xl font-black text-ibr-black" id="dash-total">160</p>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-black">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Total Vendidos</p>
+                    <p class="text-3xl font-black">160</p>
                 </div>
-                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-red">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ventas IBR</p>
-                    <p class="text-3xl font-black text-ibr-red" id="dash-ibr">34</p>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-red">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Ventas IBR</p>
+                    <p class="text-3xl font-black text-ibr-red">17</p>
                 </div>
-                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-green">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Externas</p>
-                    <p class="text-3xl font-black text-ibr-green" id="dash-ext">126</p>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-green">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Externas</p>
+                    <p class="text-3xl font-black text-ibr-green">143</p>
                 </div>
-                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-b-4 border-b-gray-800">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Canceladas</p>
-                    <p class="text-3xl font-black text-gray-800" id="dash-canc">3</p>
+                <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-gray-500">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Canceladas</p>
+                    <p class="text-3xl font-black text-gray-600">3</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-green-50 border border-green-200 p-2 rounded-xl text-center shadow-sm">
-                    <p class="text-[9px] font-bold text-green-600 uppercase">Comisiones Gen.</p>
-                    <p class="text-sm font-black text-green-800" id="dash-com-gen">$0</p>
+                    <p class="text-[9px] font-bold text-green-600 uppercase">Gen.</p>
+                    <p class="text-sm font-black text-green-800" id="ad-com-gen">$0</p>
                 </div>
                 <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl text-center shadow-sm">
-                    <p class="text-[9px] font-bold text-blue-600 uppercase">Pagadas</p>
-                    <p class="text-sm font-black text-blue-800" id="dash-com-pag">$0</p>
+                    <p class="text-[9px] font-bold text-blue-600 uppercase">Pag.</p>
+                    <p class="text-sm font-black text-blue-800" id="ad-com-pag">$0</p>
                 </div>
                 <div class="bg-yellow-50 border border-yellow-200 p-2 rounded-xl text-center shadow-sm">
-                    <p class="text-[9px] font-bold text-yellow-600 uppercase">Pendientes</p>
-                    <p class="text-sm font-black text-yellow-800" id="dash-com-pen">$0</p>
+                    <p class="text-[9px] font-bold text-yellow-600 uppercase">Pend.</p>
+                    <p class="text-sm font-black text-yellow-800" id="ad-com-pen">$0</p>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Rendimiento Campañas</h3>
+                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Campañas</h3>
                 <div class="flex justify-between items-center mb-3">
-                    <div>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">Inversión</p>
-                        <p class="text-lg font-black text-ibr-red" id="camp-inv">$0</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">ROI</p>
-                        <p class="text-lg font-black text-ibr-green" id="camp-roi">0%</p>
-                    </div>
+                    <div><p class="text-[10px] text-gray-400 font-bold uppercase">Inversión</p><p class="text-lg font-black text-ibr-red" id="ad-camp-inv">$0</p></div>
+                    <div class="text-right"><p class="text-[10px] text-gray-400 font-bold uppercase">ROI</p><p class="text-lg font-black text-ibr-green" id="ad-camp-roi">0%</p></div>
                 </div>
                 <div class="bg-gray-100 rounded-lg p-3 text-xs flex justify-between items-center">
-                    <div>
-                        <span class="font-bold text-gray-600">Punto Eq:</span> <span id="camp-peq">0 lotes</span>
-                    </div>
-                    <div id="camp-status" class="font-black">✅ OK</div>
+                    <div id="ad-camp-status" class="font-black">✅ OK</div>
                 </div>
             </div>
 
             <div>
-                <h3 class="text-ibr-red font-black text-sm uppercase tracking-wider border-b-2 border-ibr-red pb-1 inline-block mb-3">Equipo IBR</h3>
-                <div class="bg-white rounded-xl shadow-sm border overflow-hidden" id="dash-team-list"></div>
+                <h3 class="text-ibr-red font-black text-sm uppercase border-b-2 border-ibr-red pb-1 inline-block mb-3">Equipo IBR</h3>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden" id="ad-team-list"></div>
             </div>
 
             <div>
-                <h3 class="text-ibr-green font-black text-sm uppercase tracking-wider border-b-2 border-ibr-green pb-1 inline-block mb-3">Top Externos</h3>
+                <h3 class="text-ibr-green font-black text-sm uppercase border-b-2 border-ibr-green pb-1 inline-block mb-3">Top 5 Externos</h3>
                 <div class="bg-white rounded-xl shadow-sm border p-4">
-                    <ul class="space-y-2" id="dash-top-ext">
-                        <!-- Filled by JS -->
+                    <ul class="space-y-2 text-sm font-medium">
+                        <li class="flex justify-between border-b pb-1"><span>1. Walter Moguel</span><span class="font-black text-ibr-green">35</span></li>
+                        <li class="flex justify-between border-b pb-1"><span>2. Martín Altamirano</span><span class="font-black text-ibr-green">32</span></li>
+                        <li class="flex justify-between border-b pb-1"><span>3. Luisa Rodríguez</span><span class="font-black text-ibr-green">24</span></li>
+                        <li class="flex justify-between border-b pb-1"><span>4. Eduardo Méndez</span><span class="font-black text-ibr-green">21</span></li>
+                        <li class="flex justify-between"><span>5. Arturo Coutiño</span><span class="font-black text-ibr-green">13</span></li>
                     </ul>
                 </div>
             </div>
-            
-            <!-- Footer -->
-            <footer class="bg-ibr-gray border border-gray-200 p-4 rounded-xl text-center text-xs text-gray-500">
-                <p class="font-bold text-ibr-black mb-1">IBR Marketing Digital &copy; 2026</p>
-                <div class="flex justify-center gap-2 font-medium bg-white py-1 rounded border shadow-sm">
-                    <span>BV: 513</span> <span class="text-ibr-red">V: 160</span> <span class="text-ibr-green">D: 353</span>
-                </div>
-            </footer>
         </div>
 
-        <!-- ASESOR: MI DASHBOARD -->
+        <!-- ASESOR: MI PANEL -->
         <div id="tab-dashboard-asesor" class="tab-content p-4 space-y-4">
-            <h2 class="font-black text-2xl text-ibr-black" id="asesor-greeting">Hola 👋</h2>
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="font-black text-2xl text-ibr-black" id="as-greeting">Hola 👋</h2>
+                <a id="as-card-btn" href="#" target="_blank" class="bg-ibr-black text-white px-3 py-2 rounded-xl text-xs font-bold shadow-md">Mi Tarjeta Digital →</a>
+            </div>
             
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-red">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase">Mis Lotes</p>
-                    <p class="text-3xl font-black" id="asesor-lotes">0</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Mis Part.</p>
+                    <p class="text-3xl font-black" id="as-lotes">0</p>
                 </div>
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center border-t-4 border-t-ibr-green">
                     <p class="text-[10px] font-bold text-gray-400 uppercase">Com. Generada</p>
-                    <p class="text-2xl font-black text-ibr-green" id="asesor-com-gen">$0</p>
+                    <p class="text-2xl font-black text-ibr-green" id="as-com-gen">$0</p>
                 </div>
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center">
-                    <p class="text-[10px] font-bold text-gray-400 uppercase">Com. Cobrada</p>
-                    <p class="text-xl font-bold text-blue-700" id="asesor-com-cob">$0</p>
+                    <p class="text-[10px] font-bold text-gray-400 uppercase">Cobrada</p>
+                    <p class="text-xl font-bold text-blue-700" id="as-com-cob">$0</p>
                 </div>
                 <div class="bg-white border p-3 rounded-xl shadow-sm text-center">
                     <p class="text-[10px] font-bold text-gray-400 uppercase">Pendiente</p>
-                    <p class="text-xl font-bold text-ibr-yellow" id="asesor-com-pen">$0</p>
+                    <p class="text-xl font-bold text-ibr-yellow" id="as-com-pen">$0</p>
                 </div>
             </div>
 
@@ -174,21 +156,62 @@
                 <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1">
                     <div class="bg-ibr-red h-2.5 rounded-full" style="width: 45%"></div>
                 </div>
-                <p class="text-[10px] text-right font-bold text-gray-400">45% de meta</p>
+                <p class="text-[10px] text-right font-bold text-gray-400">Promedio: <span id="as-prom"></span> lotes/mes</p>
             </div>
 
-            <div>
-                <h3 class="text-ibr-black font-black text-sm uppercase mb-2">Leads del Día</h3>
-                <div class="space-y-2" id="asesor-leads-dia"></div>
+            <div><h3 class="text-ibr-black font-black text-sm uppercase mb-2">Leads de Hoy</h3><div class="space-y-2" id="as-leads"></div></div>
+            <div><h3 class="text-ibr-black font-black text-sm uppercase mb-2 mt-4">Últimas 5 Ventas</h3><div class="space-y-2" id="as-sales"></div></div>
+        </div>
+
+        <!-- SHARED: PROYECTOS -->
+        <div id="tab-projects" class="tab-content min-h-full">
+            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
+                <h2 class="font-black text-lg">Mis Desarrollos</h2>
+                <button onclick="alert('Módulo de Nuevo Desarrollo en construcción')" class="admin-only hidden btn-red px-2 py-1 text-[10px]">+ Nuevo</button>
             </div>
-            
-            <div>
-                <h3 class="text-ibr-black font-black text-sm uppercase mb-2 mt-4">Últimas Ventas</h3>
-                <div class="space-y-2" id="asesor-ult-ventas"></div>
+            <div class="p-4">
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-4">
+                    <div class="bg-ibr-black text-white p-4 cursor-pointer" onclick="document.getElementById('proj-1').classList.toggle('active')">
+                        <h3 class="font-black text-lg">BELLA VISTA OCOZOCOAUTLA</h3>
+                        <p class="text-xs text-gray-300">📍 Ocozocoautla, Chiapas</p>
+                        <div class="flex gap-2 text-xs mt-2 font-bold">
+                            <span class="bg-white text-ibr-black px-2 py-0.5 rounded">22 Mz</span>
+                            <span class="bg-white text-ibr-black px-2 py-0.5 rounded">513 Lotes</span>
+                            <span class="bg-ibr-green text-white px-2 py-0.5 rounded">$350/lote base</span>
+                        </div>
+                        <div class="mt-3 flex justify-between text-[10px] font-bold uppercase tracking-widest">
+                            <span class="text-ibr-green">✅ Vend: 160</span>
+                            <span class="text-blue-300">🟢 Disp: 353</span>
+                            <span class="text-ibr-red">❌ Canc: 3</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-1.5 mt-2 overflow-hidden">
+                            <div class="bg-ibr-green h-1.5 rounded-full" style="width: 31%"></div>
+                        </div>
+                        <p class="text-[9px] text-right mt-1 font-medium text-gray-400">31% Vendido</p>
+                    </div>
+                    
+                    <div id="proj-1" class="expandable-content bg-white">
+                        <div class="p-2 overflow-x-auto">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100 text-gray-600 border-b border-gray-200">
+                                        <th class="p-2 text-left">Mz</th><th class="p-2">Lotes</th><th class="p-2 text-ibr-green">V</th><th class="p-2 text-blue-600">D</th><th class="p-2">Área Verde</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mz-table-body" class="divide-y divide-gray-100">
+                                    <!-- Injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-3 bg-gray-50 text-center border-t admin-only">
+                            <button onclick="alert('Edición de lotes en construcción')" class="btn-gray text-xs w-full">Editar Lotes y Estatus</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- TAB LEADS -->
+        <!-- SHARED: LEADS -->
         <div id="tab-leads" class="tab-content min-h-full">
             <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
                 <h2 class="font-black text-lg">Leads & Citas</h2>
@@ -196,54 +219,40 @@
             </div>
             <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap border-b bg-white scrollbar-hide">
                 <button onclick="filterLeads('Todos')" class="px-3 py-1 bg-gray-200 rounded-full text-xs font-bold">Todos</button>
-                <button onclick="filterLeads('Hoy')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Hoy/Prog.</button>
+                <button onclick="filterLeads('Hoy')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Hoy</button>
                 <button onclick="filterLeads('Pendientes')" class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pendientes</button>
                 <button onclick="filterLeads('Cerrados')" class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Cerrados</button>
             </div>
             <div class="p-4 space-y-3" id="leadsContainer"></div>
         </div>
 
-        <!-- TAB VENTAS -->
+        <!-- SHARED: VENTAS -->
         <div id="tab-sales" class="tab-content min-h-full">
             <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
-                <h2 class="font-black text-lg">Control de Ventas</h2>
-                <button onclick="openModal('saleModal')" class="admin-only hidden btn-green px-3 py-1.5 text-xs">+ Nueva Venta</button>
-            </div>
-            <div class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap border-b bg-white">
-                <button onclick="filterSales('Todas')" class="px-3 py-1 bg-gray-200 rounded-full text-xs font-bold">Todas</button>
-                <button onclick="filterSales('IBR')" class="px-3 py-1 bg-ibr-red text-white rounded-full text-xs font-bold">IBR</button>
-                <button onclick="filterSales('Externas')" class="px-3 py-1 bg-ibr-green text-white rounded-full text-xs font-bold">Externas</button>
-                <button onclick="filterSales('Canceladas')" class="px-3 py-1 bg-gray-800 text-white rounded-full text-xs font-bold">Canceladas</button>
+                <h2 class="font-black text-lg">Mis Ventas</h2>
             </div>
             <div class="p-4 space-y-3" id="salesContainer"></div>
         </div>
 
-        <!-- TAB FINANZAS (Admin Only) -->
+        <!-- ADMIN: FINANZAS -->
         <div id="tab-finances" class="tab-content min-h-full p-4 space-y-6">
             <h2 class="font-black text-2xl text-ibr-black border-b pb-2">Finanzas</h2>
             
-            <!-- Comisiones -->
             <div class="bg-white rounded-xl shadow-sm border p-4">
-                <h3 class="font-black text-sm uppercase text-gray-500 mb-3">Comisiones IBR</h3>
-                <div class="space-y-2" id="finances-com-list"></div>
-            </div>
-
-            <!-- Inversiones -->
-            <div class="bg-white rounded-xl shadow-sm border p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-black text-sm uppercase text-gray-500">Inversión Campañas</h3>
-                    <button onclick="openModal('invModal')" class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">+ Registrar</button>
+                <h3 class="font-black text-sm uppercase text-gray-500 mb-2">Comisiones Bella Vista</h3>
+                <div class="flex gap-2 text-xs font-bold mb-3 bg-gray-100 p-2 rounded justify-between text-center">
+                    <div><p class="text-gray-400 text-[9px] uppercase">Generadas</p><p class="text-green-600" id="fin-gen">$0</p></div>
+                    <div><p class="text-gray-400 text-[9px] uppercase">Pagadas</p><p class="text-blue-600" id="fin-pag">$0</p></div>
+                    <div><p class="text-gray-400 text-[9px] uppercase">Pendientes</p><p class="text-yellow-600" id="fin-pen">$0</p></div>
                 </div>
-                <div class="space-y-2" id="finances-inv-list"></div>
-                <div class="mt-3 text-right font-black text-lg border-t pt-2" id="finances-inv-total">Total: $0</div>
+                <div class="space-y-2" id="fin-com-list"></div>
+                <button onclick="openModal('pagoModal')" class="w-full mt-3 btn-green text-xs py-1">+ Registrar Pago</button>
             </div>
 
-            <!-- Punto Eq -->
             <div class="bg-red-50 border-2 border-ibr-red rounded-xl shadow-sm p-4 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 opacity-10 text-9xl">📈</div>
                 <h3 class="font-black text-sm uppercase text-ibr-red mb-3 relative z-10">Punto de Equilibrio</h3>
                 <div class="grid grid-cols-2 gap-2 text-sm relative z-10 font-medium">
-                    <p>Inversión: <span class="font-black" id="pe-inv">$0</span></p>
+                    <p>Inv. Campañas: <span class="font-black" id="pe-inv">$0</span></p>
                     <p>Com. Prom: <span class="font-black">$350</span></p>
                     <p>Lotes req: <span class="font-black" id="pe-req">0</span></p>
                     <p>Vendidos: <span class="font-black text-ibr-green" id="pe-vendidos">0</span></p>
@@ -253,59 +262,64 @@
                     <span class="text-xs font-bold bg-white px-2 py-1 rounded text-ibr-red" id="pe-roi">ROI: 0%</span>
                 </div>
             </div>
-            
+
+            <div class="bg-white rounded-xl shadow-sm border p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-black text-sm uppercase text-gray-500">Inversión Campañas</h3>
+                    <button onclick="openModal('invModal')" class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">+ Registrar</button>
+                </div>
+                <div class="space-y-2" id="fin-inv-list"></div>
+            </div>
+
             <div class="bg-white rounded-xl shadow-sm border p-4">
                 <h3 class="font-black text-sm uppercase text-gray-500 mb-3">Historial Pagos</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left">
-                        <thead class="bg-gray-100 text-gray-600 uppercase">
-                            <tr><th class="p-2">Fecha</th><th class="p-2">Asesor</th><th class="p-2">Monto</th></tr>
-                        </thead>
-                        <tbody id="finances-pagos-list"></tbody>
-                    </table>
+                    <table class="w-full text-xs text-left"><thead class="bg-gray-100 uppercase"><tr><th class="p-1">Fec</th><th class="p-1">Asesor</th><th class="p-1">Monto</th></tr></thead><tbody id="fin-pagos-list"></tbody></table>
                 </div>
             </div>
         </div>
 
-        <!-- TAB ADMIN SETTINGS -->
-        <div id="tab-admin" class="tab-content min-h-full p-4 space-y-6">
+        <!-- ADMIN: CONFIG -->
+        <div id="tab-config" class="tab-content min-h-full p-4 space-y-6">
             <h2 class="font-black text-2xl text-ibr-black border-b pb-2">Configuración</h2>
             
             <div class="bg-white rounded-xl shadow-sm border p-4">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-black text-sm uppercase text-gray-500">Lotes</h3>
-                    <button class="bg-ibr-black text-white text-xs font-bold px-2 py-1 rounded">+ Agregar</button>
-                </div>
-                <input type="text" placeholder="Buscar por manzana/lote..." class="mb-3 text-xs p-2 bg-gray-50">
-                <p class="text-xs text-gray-400 italic text-center py-4">Módulo en construcción.</p>
+                <h3 class="font-black text-sm uppercase text-gray-500 mb-3">Usuarios IBR</h3>
+                <div class="space-y-3 text-xs" id="conf-users"></div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border p-4">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="font-black text-sm uppercase text-gray-500">Externos</h3>
-                    <button class="bg-ibr-green text-white text-xs font-bold px-2 py-1 rounded" onclick="alert('Usa nueva venta para agregar')">+ Agregar</button>
+                    <button onclick="openModal('extModal')" class="bg-ibr-green text-white text-xs font-bold px-2 py-1 rounded">+ Agregar</button>
                 </div>
-                <div class="space-y-2" id="admin-ext-list"></div>
+                <div class="space-y-2" id="conf-ext"></div>
             </div>
             
-            <button onclick="clearData()" class="w-full btn-gray text-red-600 mt-4">⚠️ BORRAR TODOS LOS DATOS LOCALES</button>
+            <button onclick="clearData()" class="w-full btn-gray text-red-600 mt-4 border border-red-200">⚠️ BORRAR TODOS LOS DATOS LOCALES</button>
         </div>
 
-        <!-- TAB PERFIL (Asesor) -->
+        <!-- ASESOR: PERFIL -->
         <div id="tab-profile" class="tab-content p-4">
             <div class="bg-white rounded-xl shadow border p-6 text-center">
                 <div class="w-20 h-20 bg-ibr-red text-white rounded-full flex items-center justify-center text-3xl font-black mx-auto mb-4 shadow" id="prof-initials"></div>
                 <h2 class="text-2xl font-black text-ibr-black" id="prof-name">Nombre</h2>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-6" id="prof-role">Rol</p>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4" id="prof-role">Rol</p>
+                <a id="prof-card-btn" href="#" target="_blank" class="inline-block bg-ibr-black text-white px-6 py-3 rounded-xl font-black shadow-md w-full mb-6 text-sm">🪪 Ver mi Tarjeta Digital →</a>
                 
-                <div class="text-left space-y-3">
-                    <div class="flex justify-between border-b pb-2"><span class="font-bold text-gray-600">Teléfono</span><span class="font-medium">Pendiente</span></div>
-                    <div class="flex justify-between border-b pb-2"><span class="font-bold text-gray-600">Email</span><span class="font-medium">Pendiente</span></div>
-                    <div class="flex justify-between border-b pb-2"><span class="font-bold text-gray-600">Fecha Ingreso</span><span class="font-medium">2026</span></div>
+                <div class="grid grid-cols-3 gap-2 border-t pt-4 border-b pb-4 mb-4">
+                    <div class="text-center"><p class="text-2xl font-black" id="prof-part">0</p><p class="text-[9px] uppercase font-bold text-gray-400">Partic.</p></div>
+                    <div class="text-center"><p class="text-xl font-black text-ibr-green" id="prof-gen">$0</p><p class="text-[9px] uppercase font-bold text-gray-400">Generado</p></div>
+                    <div class="text-center"><p class="text-xl font-black text-ibr-yellow" id="prof-pen">$0</p><p class="text-[9px] uppercase font-bold text-gray-400">Pendiente</p></div>
                 </div>
-                <button class="w-full mt-6 btn-gray">Editar Perfil</button>
+                <div class="text-left"><p class="font-black text-sm mb-2">Detalle Ventas</p><div class="space-y-2 text-xs" id="prof-sales"></div></div>
             </div>
         </div>
+
+        <footer class="mt-8 text-center text-xs text-gray-400 pb-10">
+            <p class="font-bold text-gray-500">IBR Marketing Digital &copy; 2026</p>
+            <p>Control de Ventas | Bella Vista: 513 lotes</p>
+        </footer>
 
     </main>
 
@@ -320,19 +334,13 @@
 <!-- Lead Modal -->
 <div id="leadModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
     <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-black text-xl text-ibr-black">Nueva Cita / Lead</h3>
-            <button onclick="closeModal('leadModal')" class="text-gray-400 font-bold text-xl">&times;</button>
-        </div>
+        <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl">Nueva Cita</h3><button onclick="closeModal('leadModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
         <form id="leadForm" class="space-y-3" onsubmit="saveLead(event)">
-            <div><label>Nombre Completo *</label><input required id="lf-name" placeholder="Ej. Juan Pérez"></div>
-            <div><label>Teléfono a 10 dígitos *</label><input required type="tel" pattern="[0-9]{10}" id="lf-phone" placeholder="9611234567"></div>
-            <div><label>Proyecto *</label><select id="lf-project"><option>Bella Vista Ocozocoautla</option></select></div>
-            <div class="flex gap-2">
-                <div class="w-1/2"><label>Fecha *</label><input required type="date" id="lf-date"></div>
-                <div class="w-1/2"><label>Hora *</label><input required type="time" id="lf-time"></div>
-            </div>
-            <div><label>Asesor Asignado *</label><select id="lf-advisor" required></select></div>
+            <div><label>Nombre*</label><input required id="lf-name"></div>
+            <div><label>Teléfono 10 dígitos*</label><input required type="tel" pattern="[0-9]{10}" id="lf-phone" placeholder="9611234567"></div>
+            <div><label>Proyecto*</label><select id="lf-project"><option>Bella Vista Ocozocoautla</option></select></div>
+            <div class="flex gap-2"><div class="w-1/2"><label>Fecha*</label><input required type="date" id="lf-date"></div><div class="w-1/2"><label>Hora*</label><input required type="time" id="lf-time"></div></div>
+            <div><label>Asesor*</label><select id="lf-advisor" required></select></div>
             <div><label>Observaciones</label><textarea id="lf-obs" rows="2"></textarea></div>
             <button type="submit" class="w-full btn-red mt-2">Guardar Cita</button>
         </form>
@@ -342,174 +350,159 @@
 <!-- Result Modal -->
 <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
     <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-black text-xl text-ibr-black">Resultado de Cita</h3>
-            <button onclick="closeModal('resultModal')" class="text-gray-400 font-bold text-xl">&times;</button>
-        </div>
+        <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl">Resultado Cita</h3><button onclick="closeModal('resultModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
         <form id="resultForm" class="space-y-3" onsubmit="saveResult(event)">
             <input type="hidden" id="rf-id">
-            <div><label>Estatus del Lead *</label>
+            <div><label>¿Qué pasó?*</label>
                 <select id="rf-status" required onchange="toggleBuyFields()">
-                    <option value="">Selecciona qué pasó...</option>
-                    <option value="Vendido">✅ Compró (Genera Venta)</option>
-                    <option value="Seguimiento">💬 Seguimiento / Interesado</option>
+                    <option value="">Selecciona...</option>
+                    <option value="Vendido">✅ Compró</option>
+                    <option value="Seguimiento">💬 Seguimiento</option>
                     <option value="Reagendado">📅 Reagendar</option>
-                    <option value="Cancelado">❌ Canceló definitivamente</option>
-                    <option value="No llegó">👻 No se presentó</option>
+                    <option value="Cancelado">❌ Canceló</option>
+                    <option value="No llegó">👻 No llegó</option>
                 </select>
             </div>
-            <div><label>Fecha real de atención</label><input type="date" id="rf-date"></div>
-            <div><label>Comentarios del recorrido *</label><textarea id="rf-comments" required rows="2" placeholder="Desarrollo de la visita..."></textarea></div>
+            <div><label>Fecha visita real</label><input type="date" id="rf-date"></div>
+            <div><label>Comentarios*</label><textarea id="rf-comments" required rows="2"></textarea></div>
             
             <div id="buyFields" class="hidden space-y-3 bg-gray-50 p-4 rounded-xl border border-ibr-green mt-4">
-                <h4 class="font-black text-ibr-green uppercase tracking-wider mb-2">🎉 ¡Venta Cerrada!</h4>
+                <h4 class="font-black text-ibr-green uppercase">¡Venta Cerrada!</h4>
+                <div><label>Proyecto*</label><select id="rf-proj"><option>Bella Vista Ocozocoautla</option></select></div>
                 <div class="flex gap-2">
-                    <div class="w-1/3"><label>Mz *</label><input type="number" id="rf-mz"></div>
-                    <div class="w-1/3"><label>Lt *</label><input type="number" id="rf-lote"></div>
-                    <div class="w-1/3"><label>Tipo *</label><select id="rf-type"><option>Contado</option><option>Financ.</option></select></div>
+                    <div class="w-1/2"><label>Mz*</label><input type="number" id="rf-mz"></div>
+                    <div class="w-1/2"><label>Lt*</label><input type="number" id="rf-lote"></div>
                 </div>
-                <div><label>Comisión Asegurada ($) *</label><input type="number" id="rf-com" value="350"></div>
+                <div class="flex gap-2">
+                    <div class="w-1/2"><label>Tipo*</label><select id="rf-type"><option>Contado</option><option>Financiado</option></select></div>
+                    <div class="w-1/2"><label>Comisión($)*</label><input type="number" id="rf-com" value="350"></div>
+                </div>
+                <div><label>Observaciones Venta</label><textarea id="rf-vobs" rows="1"></textarea></div>
             </div>
-            <button type="submit" class="w-full btn-red mt-4">Guardar Actualización</button>
+            <button type="submit" class="w-full btn-red mt-4">Guardar</button>
         </form>
     </div>
 </div>
 
-<!-- Sale Modal (Admin) -->
-<div id="saleModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
-    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-black text-xl text-ibr-black">Nueva Venta Directa</h3>
-            <button onclick="closeModal('saleModal')" class="text-gray-400 font-bold text-xl">&times;</button>
-        </div>
-        <form id="saleForm" class="space-y-3" onsubmit="saveDirectSale(event)">
-            <div><label>Proyecto *</label><select id="sf-project"><option>Bella Vista Ocozocoautla</option></select></div>
-            <div class="flex gap-2">
-                <div class="w-1/3"><label>Mz *</label><input type="number" id="sf-mz" required></div>
-                <div class="w-1/3"><label>Lt *</label><input type="number" id="sf-lote" required></div>
-                <div class="w-1/3"><label>Tipo *</label><select id="sf-type"><option>Contado</option><option>Financ.</option></select></div>
-            </div>
-            <div class="p-3 bg-gray-100 rounded-lg">
-                <label>Asesor 1 (Cierre principal) *</label>
-                <select id="sf-adv1" required class="mb-2" onchange="checkNewExt(this.value, 'sf-adv1-new')"></select>
-                <input type="text" id="sf-adv1-new" class="hidden mb-2" placeholder="Nombre completo del nuevo externo">
-                <label>Comisión Asesor 1 ($)</label><input type="number" id="sf-com1" value="350">
-            </div>
-            <div class="p-3 bg-gray-100 rounded-lg">
-                <label>Asesor 2 (Compartida / Opcional)</label>
-                <select id="sf-adv2" onchange="checkNewExt(this.value, 'sf-adv2-new')"><option value="">Ninguno</option></select>
-                <input type="text" id="sf-adv2-new" class="hidden mb-2" placeholder="Nombre completo del nuevo externo">
-                <label>Comisión Asesor 2 ($)</label><input type="number" id="sf-com2" value="0">
-            </div>
-            <div><label>Estatus *</label>
-                <select id="sf-status"><option>Activa</option><option>Cancelada</option></select>
-            </div>
-            <div><label>Observaciones</label><textarea id="sf-obs" rows="2"></textarea></div>
-            <button type="submit" class="w-full btn-green mt-2">Registrar Venta</button>
-        </form>
-    </div>
-</div>
-
-<!-- Investment Modal (Admin) -->
+<!-- Inv Modal (Admin) -->
 <div id="invModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
     <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="font-black text-xl text-ibr-black">Registrar Inversión</h3>
-            <button onclick="closeModal('invModal')" class="text-gray-400 font-bold text-xl">&times;</button>
-        </div>
+        <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl">Registrar Gasto</h3><button onclick="closeModal('invModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
         <form class="space-y-3" onsubmit="saveInv(event)">
-            <div><label>Concepto *</label>
-                <select id="if-concept"><option>Facebook Ads</option><option>Google Ads</option><option>Material Impreso</option><option>Eventos</option><option>Otros</option></select>
-            </div>
-            <div><label>Monto Invertido ($) *</label><input type="number" id="if-amount" required min="1"></div>
-            <div><label>Fecha *</label><input type="date" id="if-date" required></div>
-            <div><label>Observaciones</label><input type="text" id="if-obs"></div>
-            <button type="submit" class="w-full btn-red mt-2">Guardar Gasto</button>
+            <div><label>Proyecto*</label><select id="if-proj"><option>Bella Vista Ocozocoautla</option></select></div>
+            <div><label>Concepto*</label><select id="if-concept"><option>Facebook Ads</option><option>Google Ads</option><option>Impresión</option><option>Eventos</option><option>Otros</option></select></div>
+            <div><label>Monto($)*</label><input type="number" id="if-amount" required min="1"></div>
+            <div><label>Fecha*</label><input type="date" id="if-date" required></div>
+            <div><label>Obs</label><input type="text" id="if-obs"></div>
+            <button type="submit" class="w-full btn-red mt-2">Guardar</button>
+        </form>
+    </div>
+</div>
+
+<!-- Pago Modal (Admin) -->
+<div id="pagoModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8">
+        <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl">Registrar Pago</h3><button onclick="closeModal('pagoModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form class="space-y-3" onsubmit="savePago(event)">
+            <div><label>Asesor IBR*</label><select id="pf-adv" required></select></div>
+            <div><label>Monto($)*</label><input type="number" id="pf-amount" required min="1"></div>
+            <div><label>Lotes Cubiertos (Obs)</label><input type="text" id="pf-obs" placeholder="Ej. Lotes de M5 y M8"></div>
+            <div><label>Fecha*</label><input type="date" id="pf-date" required></div>
+            <button type="submit" class="w-full btn-green mt-2">Guardar Pago</button>
+        </form>
+    </div>
+</div>
+
+<!-- Ext Modal (Admin) -->
+<div id="extModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-2xl w-full max-w-[480px] mx-auto p-5 pb-8">
+        <div class="flex justify-between items-center mb-4"><h3 class="font-black text-xl">Nuevo Externo</h3><button onclick="closeModal('extModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form class="space-y-3" onsubmit="saveExt(event)">
+            <div><label>Nombre*</label><input type="text" id="ef-name" required></div>
+            <div><label>Teléfono</label><input type="tel" id="ef-phone"></div>
+            <div><label>Obs</label><input type="text" id="ef-obs"></div>
+            <button type="submit" class="w-full btn-green mt-2">Guardar Externo</button>
         </form>
     </div>
 </div>
 
 <script>
     /* ================= DATA & STATE ================= */
-    const CORE_IBR = [
-        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19"] },
-        { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8"] },
-        { name: "Luis García", role: "Asesor", type: "Asesor", lots: ["M8L2","M6L9","M6L10","M7L1","M7L2"] },
-        { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", lots: ["M12L13","M14L12","M14L19"] }
+    const IBR_USERS = [
+        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", email: "realstatechiapas@gmail.com", link: "/card/daniel", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19"] },
+        { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", email: "gabryelatgz@gmail.com", link: "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8"] },
+        { name: "Luis García", role: "Asesor", type: "Asesor", email: "lord.garcia.0205@gmail.com", link: "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/", lots: ["M8L2","M6L9","M6L10","M7L1","M7L2"] },
+        { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", email: "jose0208.cj@gmail.com", link: "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/", lots: ["M12L13","M14L12","M14L19"] }
     ];
     
-    // Fallback Initial Externals if not in localstorage
     const DEFAULT_EXT = ["Walter Moguel", "Martín Altamirano", "Luisa Rodríguez", "Eduardo Méndez", "Arturo Coutiño", "Luis Miguel Coutiño", "Bernardo Cruz", "Antonio Ramírez", "Gabriel Zenteno", "Concepción Villarreal", "Eyra Fernández", "Koreicy López", "Vanessa Guzmán", "Sayani León", "Gabriela López", "Ángeles López", "Mario Ortega", "Javier Ballinas"];
 
+    const MANZANAS_DATA = [
+        {m:1, t:9, v:4, d:5, av:'L3'}, {m:2, t:20, v:20, d:0}, {m:3, t:10, v:10, d:0}, {m:4, t:3, v:2, d:1, av:'L2'},
+        {m:5, t:22, v:22, d:0}, {m:6, t:88, v:21, d:67, av:'L84'}, {m:7, t:13, v:10, d:3}, {m:8, t:22, v:20, d:2},
+        {m:9, t:76, v:11, d:65}, {m:10, t:9, v:7, d:2}, {m:11, t:22, v:5, d:17}, {m:12, t:22, v:4, d:18},
+        {m:13, t:17, v:8, d:9, av:'L5'}, {m:14, t:20, v:7, d:13}, {m:15, t:20, v:2, d:18}, {m:16, t:20, v:2, d:18},
+        {m:17, t:20, v:0, d:20}, {m:18, t:20, v:0, d:20}, {m:19, t:21, v:5, d:16}, {m:20, t:20, v:0, d:20},
+        {m:21, t:20, v:0, d:20}, {m:22, t:20, v:0, d:20}
+    ];
+
     let currentUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
-    let isAdmin = currentUser === "Daniel Vázquez";
+    let isAdmin = currentUser.includes("Daniel");
     
-    // DB
     let extUsers = JSON.parse(localStorage.getItem('ibr_externos')) || DEFAULT_EXT;
     let leads = JSON.parse(localStorage.getItem('ibr_leads')) || [];
-    let sales = JSON.parse(localStorage.getItem('ibr_sales')) || [];
+    let sales = JSON.parse(localStorage.getItem('ibr_ventas')) || [];
     let investments = JSON.parse(localStorage.getItem('ibr_inversiones')) || [];
     let payments = JSON.parse(localStorage.getItem('ibr_pagos')) || [];
 
-    // Filters
     let filterL = 'Todos';
-    let filterS = 'Todas';
 
-    /* ================= INIT & UTILS ================= */
     function init() {
         document.getElementById('userSelector').value = currentUser;
-        populateAdvisors();
+        populateSelects();
         updateAuth();
         switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
+        renderProyectos();
     }
 
     function changeUser(val) {
         currentUser = val;
         localStorage.setItem('ibr_user', val);
-        isAdmin = currentUser === "Daniel Vázquez";
+        isAdmin = currentUser.includes("Daniel");
         updateAuth();
         switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
     }
 
     function clearData() {
         if(confirm("ESTO BORRARÁ TODO (Leads, ventas, inversiones). ¿Seguro?")) {
-            localStorage.clear();
-            location.reload();
+            localStorage.clear(); location.reload();
         }
     }
 
-    function populateAdvisors() {
-        const teamOpts = CORE_IBR.map(u => `<option value="${u.name}">[IBR] ${u.name}</option>`).join('');
-        const extOpts = extUsers.map(n => `<option value="${n}">[EXT] ${n}</option>`).join('');
-        const fullOpts = teamOpts + `<option disabled>--- EXTERNOS ---</option>` + extOpts + `<option value="NEW">+ NUEVO EXTERNO</option>`;
-        
-        document.getElementById('lf-advisor').innerHTML = teamOpts; // solo IBR para leads
-        document.getElementById('sf-adv1').innerHTML = fullOpts;
-        document.getElementById('sf-adv2').innerHTML = `<option value="">Ninguno</option>` + fullOpts;
+    function populateSelects() {
+        const teamOpts = IBR_USERS.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+        document.getElementById('lf-advisor').innerHTML = teamOpts;
+        document.getElementById('pf-adv').innerHTML = teamOpts;
     }
 
-    function getIbrTotal() { return CORE_IBR.reduce((acc, u) => acc + u.lots.length, 0) + sales.filter(s=>CORE_IBR.find(u=>u.name===s.adv1)).length; }
-    function getExtTotal() { return 126 + sales.filter(s=>!CORE_IBR.find(u=>u.name===s.adv1)).length; }
-
-    /* ================= ROUTING & LAYOUT ================= */
     function updateAuth() {
         document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
-        
         const nav = document.getElementById('bottomNav');
         if(isAdmin) {
             nav.innerHTML = `
                 <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-admin')"><span class="text-xl">🏠</span><span class="text-[9px] uppercase font-bold">Resumen</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('projects')"><span class="text-xl">🏘️</span><span class="text-[9px] uppercase font-bold">Proyectos</span></button>
                 <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[9px] uppercase font-bold">Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-xl">📋</span><span class="text-[9px] uppercase font-bold">Ventas</span></button>
                 <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('finances')"><span class="text-xl">💰</span><span class="text-[9px] uppercase font-bold">Finanzas</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('admin')"><span class="text-xl">⚙️</span><span class="text-[9px] uppercase font-bold">Config</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('config')"><span class="text-xl">⚙️</span><span class="text-[9px] uppercase font-bold">Config</span></button>
             `;
         } else {
             nav.innerHTML = `
-                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('dashboard-asesor')"><span class="text-xl">🏠</span><span class="text-[9px] uppercase font-bold">Inicio</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[9px] uppercase font-bold">Mis Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('sales')"><span class="text-xl">📋</span><span class="text-[9px] uppercase font-bold">Mis Ventas</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/4" onclick="switchTab('profile')"><span class="text-xl">👤</span><span class="text-[9px] uppercase font-bold">Perfil</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-asesor')"><span class="text-xl">🏠</span><span class="text-[9px] uppercase font-bold">Inicio</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('projects')"><span class="text-xl">🏘️</span><span class="text-[9px] uppercase font-bold">Proyectos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[9px] uppercase font-bold">Mis Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-xl">📋</span><span class="text-[9px] uppercase font-bold">Mis Ventas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('profile')"><span class="text-xl">👤</span><span class="text-[9px] uppercase font-bold">Perfil</span></button>
             `;
         }
     }
@@ -517,118 +510,96 @@
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        
         document.getElementById('tab-' + tabId).classList.add('active');
-        
-        // Find matching nav
         const btn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
         if(btn) btn.classList.add('active');
 
-        // Render contents based on tab
         if(tabId === 'dashboard-admin') renderDashAdmin();
         if(tabId === 'dashboard-asesor') renderDashAsesor();
-        if(tabId === 'leads') { filterL = isAdmin ? 'Todos' : 'Todos'; renderLeads(); }
-        if(tabId === 'sales') { filterS = 'Todas'; renderSales(); }
+        if(tabId === 'leads') { filterL = 'Todos'; renderLeads(); }
+        if(tabId === 'sales') renderSales();
         if(tabId === 'finances') renderFinances();
-        if(tabId === 'admin') renderAdmin();
+        if(tabId === 'config') renderConfig();
         if(tabId === 'profile') renderProfile();
     }
 
     /* ================= RENDERERS ================= */
     function renderDashAdmin() {
-        const v_ibr = getIbrTotal();
-        const v_ext = getExtTotal();
-        document.getElementById('dash-total').innerText = v_ibr + v_ext;
-        document.getElementById('dash-ibr').innerText = v_ibr;
-        document.getElementById('dash-ext').innerText = v_ext;
-        
-        let gen = 0; sales.forEach(s => gen += Number(s.com1||0) + Number(s.com2||0));
+        let gen = 0; sales.forEach(s => gen += Number(s.com||0));
         let pag = 0; payments.forEach(p => pag += Number(p.amount||0));
-        document.getElementById('dash-com-gen').innerText = `$${gen}`;
-        document.getElementById('dash-com-pag').innerText = `$${pag}`;
-        document.getElementById('dash-com-pen').innerText = `$${gen - pag}`;
+        document.getElementById('ad-com-gen').innerText = `$${gen}`;
+        document.getElementById('ad-com-pag').innerText = `$${pag}`;
+        document.getElementById('ad-com-pen').innerText = `$${gen - pag}`;
 
         let totalInv = investments.reduce((a, b) => a + Number(b.amount), 0);
-        document.getElementById('camp-inv').innerText = `$${totalInv}`;
-        
+        document.getElementById('ad-camp-inv').innerText = `$${totalInv}`;
         let roi = totalInv > 0 ? ((gen - totalInv) / totalInv * 100).toFixed(0) : 0;
-        document.getElementById('camp-roi').innerText = `${roi}%`;
+        document.getElementById('ad-camp-roi').innerText = `${roi}%`;
         
-        let req = Math.ceil(totalInv / 350);
-        document.getElementById('camp-peq').innerText = `${req} lotes`;
-        
-        let totV = v_ibr + v_ext;
-        let st = document.getElementById('camp-status');
-        if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "text-ibr-green font-black"; }
-        else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "text-ibr-yellow font-black"; }
-        else { st.innerHTML = "❌ PÉRDIDA"; st.className = "text-ibr-red font-black"; }
-
-        // IBR TEAM
-        const html = CORE_IBR.map((m, i) => {
-            let userSales = sales.filter(s => s.adv1 === m.name);
+        // Equipo IBR
+        const html = IBR_USERS.map((m, i) => {
+            let userSales = sales.filter(s => s.adv === m.name);
             let totalL = m.lots.length + userSales.length;
             let chips = m.lots.map(l => `<span class="chip">${l}</span>`);
             userSales.forEach(s => chips.push(`<span class="chip bg-ibr-green">M${s.mz}L${s.lote}</span>`));
+            let prom = (totalL/5.7).toFixed(1); // dummy calc for average
             return `
             <div class="border-b">
-                <div class="p-3 flex justify-between cursor-pointer" onclick="document.getElementById('det-${i}').classList.toggle('active')">
-                    <div><span class="font-bold text-gray-400 mr-2">#${i+1}</span><span class="font-bold text-sm">${m.name}</span></div>
-                    <span class="font-bold text-ibr-red text-lg">${totalL}</span>
+                <div class="p-3 cursor-pointer" onclick="document.getElementById('det-${i}').classList.toggle('active')">
+                    <div class="flex justify-between items-center mb-1">
+                        <div><span class="font-bold text-gray-400 mr-2">#${i+1}</span><span class="font-black text-sm">${m.name}</span> <span class="text-[10px] text-gray-500">- ${m.role}</span></div>
+                        <span class="font-black text-ibr-red text-lg">${totalL}</span>
+                    </div>
+                    <div class="text-[10px] text-gray-500 flex justify-between"><a href="${m.link}" target="_blank" class="text-blue-600 font-bold hover:underline">Ver Tarjeta Digital →</a><span>Promedio: ${prom}</span></div>
                 </div>
                 <div id="det-${i}" class="expandable-content bg-gray-50 p-3 text-sm border-t">${chips.join('')}</div>
             </div>`;
         }).join('');
-        document.getElementById('dash-team-list').innerHTML = html;
-
-        // EXT
-        let topExtObj = {};
-        DEFAULT_EXT.forEach((n,i) => topExtObj[n] = [35,32,24,21,13,10,9,8,7,5,4,3,2,1,1,1,1,1][i] || 0);
-        sales.filter(s=>!CORE_IBR.find(u=>u.name===s.adv1)).forEach(s=>{
-            if(!topExtObj[s.adv1]) topExtObj[s.adv1]=0;
-            topExtObj[s.adv1]++;
-        });
-        const sortedExt = Object.keys(topExtObj).map(k=>({n:k, v:topExtObj[k]})).sort((a,b)=>b.v-a.v).slice(0,5);
-        document.getElementById('dash-top-ext').innerHTML = sortedExt.map((e,i) => `
-            <li class="flex justify-between text-sm border-b pb-1 last:border-0"><span class="font-medium">${i+1}. ${e.n}</span><span class="font-black text-ibr-green bg-green-50 px-2 rounded">${e.v}</span></li>
-        `).join('');
+        document.getElementById('ad-team-list').innerHTML = html;
     }
 
     function renderDashAsesor() {
-        document.getElementById('asesor-greeting').innerText = `Hola ${currentUser.split(' ')[0]} 👋`;
-        const myCore = CORE_IBR.find(u => u.name === currentUser);
-        const coreLots = myCore ? myCore.lots.length : 0;
-        const mySales = sales.filter(s => s.adv1 === currentUser || s.adv2 === currentUser);
-        document.getElementById('asesor-lotes').innerText = coreLots + mySales.length;
+        const u = IBR_USERS.find(x => x.name === currentUser);
+        document.getElementById('as-greeting').innerText = `Hola ${currentUser.split(' ')[0]} 👋`;
+        document.getElementById('as-card-btn').href = u ? u.link : '#';
+        
+        let mySales = sales.filter(s => s.adv === currentUser);
+        let myPart = (u ? u.lots.length : 0) + mySales.length;
+        document.getElementById('as-lotes').innerText = myPart;
+        
+        let com = 0; mySales.forEach(s => com+=Number(s.com));
+        let pag = 0; payments.filter(p=>p.adv===currentUser).forEach(p=>pag+=Number(p.amount));
+        document.getElementById('as-com-gen').innerText = `$${com}`;
+        document.getElementById('as-com-cob').innerText = `$${pag}`;
+        document.getElementById('as-com-pen').innerText = `$${com-pag}`;
+        document.getElementById('as-prom').innerText = (myPart/6).toFixed(1);
 
-        let com = 0; mySales.forEach(s => { if(s.adv1 === currentUser) com+=Number(s.com1); if(s.adv2===currentUser) com+=Number(s.com2); });
-        document.getElementById('asesor-com-gen').innerText = `$${com}`;
+        const myLeads = leads.filter(l => l.advisor === currentUser && l.date === new Date().toISOString().split('T')[0]);
+        document.getElementById('as-leads').innerHTML = myLeads.map(l => `<div class="bg-white p-2 rounded shadow-sm border text-sm font-bold">${l.name}</div>`).join('') || '<p class="text-xs text-gray-400">Sin leads hoy</p>';
+        document.getElementById('as-sales').innerHTML = mySales.slice(0,5).map(s => `<div class="bg-white p-2 rounded shadow-sm border text-sm">M${s.mz} L${s.lote} - <span class="text-ibr-green font-bold">$${s.com}</span></div>`).join('') || '<p class="text-xs text-gray-400">Sin ventas aún</p>';
+    }
 
-        const myLeads = leads.filter(l => l.advisor === currentUser && l.status!=='Cancelado' && l.status!=='Vendido');
-        document.getElementById('asesor-leads-dia').innerHTML = myLeads.slice(0,3).map(l => `
-            <div class="bg-white p-3 rounded-lg shadow-sm border border-l-4 border-l-blue-500 text-sm">
-                <p class="font-bold">${l.name}</p>
-                <p class="text-xs text-gray-500">${l.date} ${l.time}</p>
-            </div>
-        `).join('') || '<p class="text-xs text-gray-400">Sin leads pendientes</p>';
+    function renderProyectos() {
+        const html = MANZANAS_DATA.map(m => `
+            <tr>
+                <td class="p-2 font-black border-r">Mz ${m.m}</td>
+                <td class="p-2 text-gray-500">${m.t}</td>
+                <td class="p-2 text-ibr-green font-bold">${m.v}</td>
+                <td class="p-2 text-blue-600 font-bold">${m.d}</td>
+                <td class="p-2 text-[10px] text-gray-400">${m.av || '-'}</td>
+            </tr>
+        `).join('');
+        document.getElementById('mz-table-body').innerHTML = html;
     }
 
     function getBadge(status) {
-        const cls = {
-            'Programada': 'bg-blue-100 text-blue-800',
-            'Seguimiento': 'bg-yellow-100 text-yellow-800',
-            'Vendido': 'bg-green-100 text-green-800',
-            'Cancelado': 'bg-red-100 text-red-800',
-            'No llegó': 'bg-gray-200 text-gray-800',
-            'Reagendado': 'bg-purple-100 text-purple-800',
-            'Activa': 'bg-green-100 text-green-800 border-green-300'
-        }[status] || 'bg-gray-100 text-gray-800';
+        const cls = { 'Programada': 'bg-blue-100 text-blue-800', 'Seguimiento': 'bg-yellow-100 text-yellow-800', 'Vendido': 'bg-green-100 text-green-800', 'Cancelado': 'bg-red-100 text-red-800', 'No llegó': 'bg-gray-200 text-gray-800', 'Reagendado': 'bg-purple-100 text-purple-800' }[status] || 'bg-gray-100 text-gray-800';
         return `<span class="badge ${cls}">${status}</span>`;
     }
 
     function renderLeads() {
         let f = leads;
         if(!isAdmin) f = f.filter(l => l.advisor === currentUser);
-        
         if(filterL === 'Hoy') { const td = new Date().toISOString().split('T')[0]; f = f.filter(l => l.date === td || l.status === 'Programada'); }
         if(filterL === 'Pendientes') f = f.filter(l => l.status === 'Seguimiento' || l.status === 'Reagendado');
         if(filterL === 'Cerrados') f = f.filter(l => l.status === 'Vendido' || l.status === 'Cancelado');
@@ -636,107 +607,99 @@
         const html = f.map(l => `
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                 <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <h3 class="font-black text-sm text-ibr-black">${l.name}</h3>
-                        <p class="text-xs text-gray-500 font-medium">${l.project} | ${l.date} ${l.time}</p>
-                    </div>
+                    <div><h3 class="font-black text-sm text-ibr-black">${l.name}</h3><p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">${l.project} | ${l.date} ${l.time}</p></div>
                     ${getBadge(l.status)}
                 </div>
                 ${l.lastComment ? `<p class="text-[10px] bg-gray-50 p-2 text-gray-600 mb-2 italic border-l-2 border-gray-300">"${l.lastComment}"</p>` : ''}
                 <div class="flex justify-between items-center mt-3 pt-3 border-t">
-                    <a href="https://wa.me/52${l.phone}" target="_blank" class="bg-[#25D366] text-white px-3 py-1.5 rounded-lg text-[10px] font-black flex items-center gap-1 shadow-sm uppercase tracking-wide">
-                        WhatsApp
-                    </a>
+                    <a href="https://wa.me/52${l.phone}" target="_blank" class="bg-[#25D366] text-white px-3 py-1.5 rounded-lg text-[10px] font-black flex items-center gap-1 shadow-sm uppercase tracking-wide">WhatsApp</a>
                     ${isAdmin ? `<span class="text-[10px] font-bold text-gray-400">${l.advisor.split(' ')[0]}</span>` : ''}
                     <button onclick="openResultModal('${l.id}')" class="text-ibr-red text-xs font-black uppercase tracking-wide ${['Vendido','Cancelado'].includes(l.status) ? 'hidden' : ''}">Actualizar</button>
                 </div>
             </div>
         `).join('');
-        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">Sin registros</p>';
+        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">Sin leads</p>';
     }
 
     function renderSales() {
         let f = sales;
-        if(!isAdmin) f = f.filter(s => s.adv1 === currentUser || s.adv2 === currentUser);
-        
-        if(filterS === 'IBR') f = f.filter(s => CORE_IBR.find(u=>u.name===s.adv1));
-        if(filterS === 'Externas') f = f.filter(s => !CORE_IBR.find(u=>u.name===s.adv1));
-        if(filterS === 'Canceladas') f = f.filter(s => s.status === 'Cancelada');
-
+        if(!isAdmin) f = f.filter(s => s.adv === currentUser);
         const html = f.map(s => `
-            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 mb-3">
                 <div class="flex justify-between items-center mb-2">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-ibr-red text-white text-[10px] px-2 py-1 rounded font-black tracking-widest">${s.id}</span>
-                        <h3 class="font-black text-sm text-ibr-black">Mz${s.mz} Lt${s.lote}</h3>
-                    </div>
-                    ${getBadge(s.status || 'Activa')}
+                    <h3 class="font-black text-sm text-ibr-black">Mz${s.mz} Lt${s.lote}</h3>
+                    <span class="text-[10px] font-bold text-gray-400">${s.date}</span>
                 </div>
-                <div class="text-xs text-gray-600 mb-2">
-                    <p><span class="font-bold">A1:</span> ${s.adv1} <span class="text-ibr-green font-bold">($${s.com1})</span></p>
-                    ${s.adv2 ? `<p><span class="font-bold">A2:</span> ${s.adv2} <span class="text-ibr-green font-bold">($${s.com2})</span></p>` : ''}
-                </div>
-                <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 border-t pt-2 mt-2">
-                    <span class="uppercase">${s.type}</span>
-                    <span>${s.date}</span>
-                </div>
+                <div class="text-xs text-gray-600 mb-2 font-medium">Asesor: ${s.adv} <span class="text-ibr-green font-bold ml-2">Com: $${s.com}</span></div>
+                <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 border-t pt-2"><span class="uppercase">${s.type}</span></div>
             </div>
         `).join('');
-        document.getElementById('salesContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">Sin ventas</p>';
+        document.getElementById('salesContainer').innerHTML = html || '<p class="text-center text-gray-400 text-sm py-10">Sin ventas registradas</p>';
     }
 
     function renderFinances() {
-        // Comisiones IBR table
-        const ibrCom = CORE_IBR.map(u => {
-            let gen = 0;
-            sales.filter(s=>s.adv1===u.name).forEach(s=>gen+=Number(s.com1));
-            sales.filter(s=>s.adv2===u.name).forEach(s=>gen+=Number(s.com2));
-            return { name: u.name, gen: gen };
+        const ibrCom = IBR_USERS.map(u => {
+            let gen = 0; sales.filter(s=>s.adv===u.name).forEach(s=>gen+=Number(s.com));
+            let pag = 0; payments.filter(p=>p.adv===u.name).forEach(p=>pag+=Number(p.amount));
+            return { name: u.name, gen: gen, pag: pag };
         });
-        document.getElementById('finances-com-list').innerHTML = ibrCom.map(c => `
-            <div class="flex justify-between text-xs border-b pb-1"><span class="font-bold">${c.name}</span><span class="text-ibr-green font-black">$${c.gen}</span></div>
+        document.getElementById('fin-com-list').innerHTML = ibrCom.map(c => `
+            <div class="flex justify-between text-xs border-b pb-1">
+                <span class="font-bold w-1/3 truncate">${c.name}</span><span class="text-ibr-green font-black w-1/3 text-center">$${c.gen}</span><span class="text-blue-600 font-black w-1/3 text-right">$${c.pag}</span>
+            </div>
         `).join('');
 
-        // Investments
         let t = 0;
-        document.getElementById('finances-inv-list').innerHTML = investments.map(i => {
-            t += Number(i.amount);
-            return `<div class="flex justify-between text-xs border-b border-dashed pb-1"><span class="text-gray-500">${i.date} - ${i.concept}</span><span class="font-black text-ibr-red">$${i.amount}</span></div>`;
-        }).join('');
-        document.getElementById('finances-inv-total').innerText = `Total Inv: $${t}`;
-
-        // Punto de eq
-        let genAll = 0; sales.forEach(s => genAll += Number(s.com1||0) + Number(s.com2||0));
-        let req = Math.ceil(t / 350);
-        let totV = getIbrTotal() + getExtTotal();
-        let roi = t > 0 ? ((genAll - t) / t * 100).toFixed(0) : 0;
+        document.getElementById('fin-inv-list').innerHTML = investments.map(i => { t += Number(i.amount); return `<div class="flex justify-between text-xs border-b pb-1"><span class="text-gray-500">${i.date} - ${i.concept}</span><span class="font-black text-ibr-red">$${i.amount}</span></div>`; }).join('');
         
+        let genAll = 0; sales.forEach(s => genAll += Number(s.com||0));
+        let req = Math.ceil(t / 350);
+        let totV = 160 + sales.length; // 160 hardcoded + new local ones
+        let roi = t > 0 ? ((genAll - t) / t * 100).toFixed(0) : 0;
         document.getElementById('pe-inv').innerText = `$${t}`;
         document.getElementById('pe-req').innerText = req;
         document.getElementById('pe-vendidos').innerText = totV;
         document.getElementById('pe-roi').innerText = `ROI: ${roi}%`;
-        
         let st = document.getElementById('pe-estado');
         if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "text-ibr-green font-black text-lg"; }
         else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "text-ibr-yellow font-black text-lg"; }
         else { st.innerHTML = "❌ PÉRDIDA"; st.className = "text-ibr-red font-black text-lg"; }
+
+        document.getElementById('fin-pagos-list').innerHTML = payments.map(p => `
+            <tr class="border-b"><td class="p-1 text-gray-500">${p.date}</td><td class="p-1 font-bold">${p.adv.split(' ')[0]}</td><td class="p-1 font-black text-ibr-green">$${p.amount}</td></tr>
+        `).join('');
     }
 
-    function renderAdmin() {
-        document.getElementById('admin-ext-list').innerHTML = extUsers.map(u => `<div class="text-xs font-bold border-b p-1">${u}</div>`).join('');
+    function renderConfig() {
+        document.getElementById('conf-users').innerHTML = IBR_USERS.map(u => `
+            <div class="border-b pb-2"><p class="font-black">${u.name}</p><p class="text-[10px] text-gray-500">${u.role} | ${u.email}</p></div>
+        `).join('');
+        document.getElementById('conf-ext').innerHTML = extUsers.map(u => `<div class="text-xs font-bold border-b p-2 bg-gray-50">${u}</div>`).join('');
     }
 
     function renderProfile() {
-        const userObj = CORE_IBR.find(u => u.name === currentUser);
-        if(!userObj) return;
+        const u = IBR_USERS.find(x => x.name === currentUser);
+        if(!u) return;
         document.getElementById('prof-initials').innerText = currentUser.split(' ').map(n=>n[0]).join('');
         document.getElementById('prof-name').innerText = currentUser;
-        document.getElementById('prof-role').innerText = userObj.role;
+        document.getElementById('prof-role').innerText = u.role;
+        document.getElementById('prof-card-btn').href = u.link;
+        
+        let mySales = sales.filter(s => s.adv === currentUser);
+        let part = u.lots.length + mySales.length;
+        document.getElementById('prof-part').innerText = part;
+        let gen = 0; mySales.forEach(s=>gen+=Number(s.com));
+        let pag = 0; payments.filter(p=>p.adv===currentUser).forEach(p=>pag+=Number(p.amount));
+        document.getElementById('prof-gen').innerText = `$${gen}`;
+        document.getElementById('prof-pen').innerText = `$${gen-pag}`;
+
+        document.getElementById('prof-sales').innerHTML = mySales.map(s => `
+            <div class="bg-gray-50 p-2 rounded border flex justify-between"><span class="font-bold">M${s.mz} L${s.lote}</span><span class="text-ibr-green font-bold">$${s.com}</span></div>
+        `).join('');
     }
 
     /* ================= FORMS & MODALS ================= */
     function filterLeads(f) { filterL = f; renderLeads(); }
-    function filterSales(f) { filterS = f; renderSales(); }
 
     function openModal(id) { 
         if(id==='leadModal') document.getElementById('lf-date').value = new Date().toISOString().split('T')[0];
@@ -747,15 +710,10 @@
     function saveLead(e) {
         e.preventDefault();
         leads.unshift({
-            id: 'L'+Date.now(),
-            name: document.getElementById('lf-name').value,
-            phone: document.getElementById('lf-phone').value,
-            project: document.getElementById('lf-project').value,
-            date: document.getElementById('lf-date').value,
-            time: document.getElementById('lf-time').value,
-            advisor: document.getElementById('lf-advisor').value,
-            obs: document.getElementById('lf-obs').value,
-            status: 'Programada'
+            id: 'L'+Date.now(), name: document.getElementById('lf-name').value, phone: document.getElementById('lf-phone').value,
+            project: document.getElementById('lf-project').value, date: document.getElementById('lf-date').value,
+            time: document.getElementById('lf-time').value, advisor: document.getElementById('lf-advisor').value,
+            obs: document.getElementById('lf-obs').value, status: 'Programada'
         });
         localStorage.setItem('ibr_leads', JSON.stringify(leads));
         closeModal('leadModal'); e.target.reset(); renderLeads();
@@ -763,100 +721,63 @@
 
     function openResultModal(id) {
         document.getElementById('rf-id').value = id;
-        document.getElementById('rf-status').value = '';
         document.getElementById('buyFields').classList.add('hidden');
         document.getElementById('rf-date').value = new Date().toISOString().split('T')[0];
         openModal('resultModal');
     }
 
     function toggleBuyFields() {
-        const isVendido = document.getElementById('rf-status').value === 'Vendido';
-        document.getElementById('buyFields').classList.toggle('hidden', !isVendido);
-        document.getElementById('rf-mz').required = isVendido;
-        document.getElementById('rf-lote').required = isVendido;
+        const v = document.getElementById('rf-status').value === 'Vendido';
+        document.getElementById('buyFields').classList.toggle('hidden', !v);
+        document.getElementById('rf-mz').required = v;
+        document.getElementById('rf-lote').required = v;
     }
 
     function saveResult(e) {
         e.preventDefault();
-        const id = document.getElementById('rf-id').value;
         const stat = document.getElementById('rf-status').value;
-        const idx = leads.findIndex(l => l.id === id);
-        
+        const idx = leads.findIndex(l => l.id === document.getElementById('rf-id').value);
         if(idx > -1) {
             leads[idx].status = stat;
             leads[idx].lastComment = document.getElementById('rf-comments').value;
-            
             if(stat === 'Vendido') {
                 sales.unshift({
-                    id: 'VTA-'+Math.floor(Math.random()*1000),
-                    mz: document.getElementById('rf-mz').value,
-                    lote: document.getElementById('rf-lote').value,
-                    type: document.getElementById('rf-type').value,
-                    adv1: leads[idx].advisor,
-                    com1: document.getElementById('rf-com').value,
+                    id: 'VTA-'+Math.floor(Math.random()*1000), mz: document.getElementById('rf-mz').value,
+                    lote: document.getElementById('rf-lote').value, type: document.getElementById('rf-type').value,
+                    adv: leads[idx].advisor, com: document.getElementById('rf-com').value,
                     date: document.getElementById('rf-date').value || new Date().toISOString().split('T')[0],
-                    status: 'Activa'
+                    obs: document.getElementById('rf-vobs').value
                 });
-                localStorage.setItem('ibr_sales', JSON.stringify(sales));
-                renderSales();
+                localStorage.setItem('ibr_ventas', JSON.stringify(sales));
+                if(isAdmin) renderDashAdmin(); else renderDashAsesor();
             }
             localStorage.setItem('ibr_leads', JSON.stringify(leads));
             renderLeads();
-            if(!isAdmin) renderDashAsesor();
         }
         closeModal('resultModal'); e.target.reset();
     }
 
-    function checkNewExt(val, inputId) {
-        document.getElementById(inputId).classList.toggle('hidden', val !== 'NEW');
-        document.getElementById(inputId).required = val === 'NEW';
-    }
-
-    function saveDirectSale(e) {
-        e.preventDefault();
-        let a1 = document.getElementById('sf-adv1').value;
-        if(a1 === 'NEW') {
-            a1 = document.getElementById('sf-adv1-new').value;
-            extUsers.push(a1);
-        }
-        let a2 = document.getElementById('sf-adv2').value;
-        if(a2 === 'NEW') {
-            a2 = document.getElementById('sf-adv2-new').value;
-            extUsers.push(a2);
-        }
-        localStorage.setItem('ibr_externos', JSON.stringify(extUsers));
-        populateAdvisors();
-
-        sales.unshift({
-            id: 'VTA-'+Math.floor(1000+Math.random()*9000),
-            mz: document.getElementById('sf-mz').value,
-            lote: document.getElementById('sf-lote').value,
-            type: document.getElementById('sf-type').value,
-            adv1: a1, com1: document.getElementById('sf-com1').value,
-            adv2: a2, com2: document.getElementById('sf-com2').value,
-            status: document.getElementById('sf-status').value,
-            date: new Date().toISOString().split('T')[0]
-        });
-        localStorage.setItem('ibr_sales', JSON.stringify(sales));
-        closeModal('saleModal'); e.target.reset();
-        renderSales();
-        if(isAdmin) renderDashAdmin();
-    }
-
     function saveInv(e) {
         e.preventDefault();
-        investments.push({
-            concept: document.getElementById('if-concept').value,
-            amount: document.getElementById('if-amount').value,
-            date: document.getElementById('if-date').value
-        });
+        investments.push({ concept: document.getElementById('if-concept').value, amount: document.getElementById('if-amount').value, date: document.getElementById('if-date').value });
         localStorage.setItem('ibr_inversiones', JSON.stringify(investments));
-        closeModal('invModal'); e.target.reset();
-        renderFinances();
-        renderDashAdmin();
+        closeModal('invModal'); e.target.reset(); renderFinances(); renderDashAdmin();
     }
 
-    // FIRE
+    function savePago(e) {
+        e.preventDefault();
+        payments.push({ adv: document.getElementById('pf-adv').value, amount: document.getElementById('pf-amount').value, date: document.getElementById('pf-date').value, obs: document.getElementById('pf-obs').value });
+        localStorage.setItem('ibr_pagos', JSON.stringify(payments));
+        closeModal('pagoModal'); e.target.reset(); renderFinances(); renderDashAdmin();
+    }
+
+    function saveExt(e) {
+        e.preventDefault();
+        extUsers.push(document.getElementById('ef-name').value);
+        localStorage.setItem('ibr_externos', JSON.stringify(extUsers));
+        closeModal('extModal'); e.target.reset(); renderConfig();
+    }
+
     document.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
