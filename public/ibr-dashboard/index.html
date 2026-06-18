@@ -139,6 +139,7 @@
 
     <!-- MAIN CONTENT -->
     <main class="flex-1 overflow-y-auto pb-24 bg-gray-100">
+        <div id="preview-banner-container"></div>
         <div id="banners-container" class="px-4 pt-4"></div>
 
         <!-- ACCESO RESTRINGIDO -->
@@ -572,7 +573,7 @@
                 <h2 class="text-3xl font-black text-ibr-black mb-1" id="prof-name">Nombre</h2>
                 <div class="inline-block bg-black text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6" id="prof-role">Rol</div>
                 
-                <a id="prof-card-btn" href="#" target="_blank" class="bg-black text-white px-6 py-3 rounded-xl font-black shadow-md w-full mb-8 text-sm flex items-center justify-center gap-2 hover:bg-gray-800 transition">🪪 Ver mi Tarjeta Digital</a>
+                <a id="prof-card-btn" href="#" target="_blank" class="bg-black text-white px-6 py-3 rounded-xl font-black shadow-md w-full mb-8 text-[14px] flex items-center justify-center gap-2 hover:bg-gray-800 transition">🪪 Ver mi Tarjeta Digital →</a>
                 
                 <div class="border-t border-gray-100 pt-6 border-b pb-6 mb-6">
                     <p class="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Participaciones Activas: <span class="text-ibr-red font-black text-lg" id="prof-part">0</span></p>
@@ -873,11 +874,18 @@
 <script>
     /* ================= DATA & STATE ================= */
     const IBR_USERS = [
-        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", email: "realstatechiapas@gmail.com", link: "/card/daniel", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19","M14L20","M14L03","M15L11","M9L21","M9L22","M9L23"] },
+        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", email: "realstatechiapas@gmail.com", link: "https://propiedadesenchiapas.com/daniel-vazquez/", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19","M14L20","M14L03","M15L11","M9L21","M9L22","M9L23"] },
         { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", email: "gabryelatgz@gmail.com", link: "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8","M15L11"] },
         { name: "Luis García", role: "Asesor", type: "Asesor", email: "lord.garcia.0205@gmail.com", link: "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/", lots: ["M8L2","M6L9","M6L10","M7L1","M7L2"] },
         { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", email: "jose0208.cj@gmail.com", link: "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/", lots: ["M12L13","M14L12","M14L19","M14L20","M14L03"] }
     ];
+    
+    const TARJETAS_DIGITALES = {
+        "Lupyta Mendoza": "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/",
+        "Carmen Jiménez": "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/",
+        "Luis García": "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/",
+        "Daniel Vázquez": "https://propiedadesenchiapas.com/daniel-vazquez/"
+    };
     
     const DEFAULT_EXT = ["Walter Moguel", "Martín Altamirano", "Luisa Rodríguez", "Eduardo Méndez", "Arturo Coutiño", "Luis Miguel Coutiño", "Bernardo Cruz", "Antonio Ramírez", "Gabriel Zenteno", "Concepción Villarreal", "Eyra Fernández", "Koreicy López", "Vanessa Guzmán", "Sayani León", "Gabriela López", "Ángeles López", "Mario Ortega", "Javier Ballinas", "Manuel Hipólito", "Cecilia Ramírez"];
 
@@ -958,8 +966,12 @@
     const ADMIN_TABS    = ['dashboard-admin','projects','leads','pagos','finances','config'];
     const ASESOR_TABS   = ['dashboard-asesor','projects','leads','sales','profile'];
 
-    let currentUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
+    let originalUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
+    let vistaComo = sessionStorage.getItem('ibr_vista_como');
+    let currentUser = vistaComo || originalUser;
+    
     let isAdmin = PERMISOS[currentUser] === 'admin';
+    let esVerdaderoAdmin = PERMISOS[originalUser] === 'admin';
 
     const esAdmin = () => PERMISOS[currentUser] === 'admin';
     const esPropietario = (v) => v.asesor1 === currentUser || v.asesor2 === currentUser || v.adv === currentUser || v.adv2 === currentUser;
@@ -1206,6 +1218,21 @@
     }
 
     function bootApp() {
+        let vistaComo = sessionStorage.getItem('ibr_vista_como');
+        if (vistaComo) {
+            currentUser = vistaComo;
+            isAdmin = PERMISOS[currentUser] === 'admin';
+            document.getElementById('headerUserName').textContent = currentUser;
+            document.getElementById('headerUserRole').textContent = 'Asesor (Preview)';
+            document.getElementById('preview-banner-container').innerHTML = `
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 m-4 rounded shadow-sm">
+                    <p class="font-black text-[14px]">👁️ Viendo como: ${vistaComo} [Asesor]</p>
+                    <button onclick="volverAdmin()" class="mt-2 bg-yellow-200 hover:bg-yellow-300 text-yellow-900 font-bold py-1.5 px-3 rounded text-[12px] transition">
+                        ← Volver a mi Admin
+                    </button>
+                </div>
+            `;
+        }
         populateSelects();
         updateAuth();
         switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
@@ -1216,6 +1243,7 @@
     function logout() {
         if(!confirm('Cerrar sesión ¿Seguro?')) return;
         localStorage.removeItem('ibr_session');
+        sessionStorage.removeItem('ibr_vista_como');
         localStorage.removeItem('ibr_user');
         currentUser = '';
         isAdmin = false;
@@ -1317,6 +1345,16 @@
 
     let pendingResetToken = '';
     
+    window.verComoAsesor = function(nombre) {
+        sessionStorage.setItem('ibr_vista_como', nombre);
+        location.reload();
+    };
+
+    window.volverAdmin = function() {
+        sessionStorage.removeItem('ibr_vista_como');
+        location.reload();
+    };
+
     function openResetPinModal(token) {
         var u = USUARIOS[token];
         if(!u) return;
@@ -2107,6 +2145,13 @@
                                </button>`
                         }
                     </div>
+                    <div class="flex gap-2 pt-2 border-t border-gray-100 mt-2">
+                        <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" style="background:#000;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;width:100%; font-weight:bold;">🪪 Ver Tarjeta Digital →</button>
+                    </div>
+                    ${u.rol !== 'admin' && esVerdaderoAdmin ? `
+                    <div class="flex gap-2 pt-2 border-t border-gray-100 mt-2">
+                        <button onclick="verComoAsesor('${u.nombre}')" class="bg-blue-50 text-blue-600 border border-blue-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-blue-100 transition w-full">👁️ Ver su dashboard</button>
+                    </div>` : ''}
                 </div>`;
             }).join('');
         }
@@ -2122,9 +2167,15 @@
                 
                 let actionButtons = u.rol === 'admin'
                     ? `<span class="text-gray-400 italic font-bold">No se puede resetear</span>`
-                    : `<div class="flex justify-end gap-2">
-                        <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre.split(' ')[0]}')" class="bg-[#16A34A] text-white text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-green-700 transition">📲 Enviar link</button>
-                        <button onclick="openResetPinModal('${token}')" class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-red-100 transition">🔄 Resetear PIN</button>
+                    : `<div class="flex flex-col gap-2 justify-end">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre.split(' ')[0]}')" class="bg-[#16A34A] text-white text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-green-700 transition">📲 Enviar link</button>
+                            <button onclick="openResetPinModal('${token}')" class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-red-100 transition">🔄 Resetear PIN</button>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" class="bg-black text-white text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-gray-800 transition">🪪 Tarjeta Digital</button>
+                            ${u.rol !== 'admin' && esVerdaderoAdmin ? `<button onclick="verComoAsesor('${u.nombre}')" class="bg-blue-50 text-blue-600 border border-blue-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-blue-100 transition">👁️ Dashboard</button>` : ''}
+                        </div>
                        </div>`;
                        
                 return `
