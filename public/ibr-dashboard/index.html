@@ -1378,7 +1378,28 @@
 
     function dismissWelcome() {
         document.getElementById('welcomeModal').classList.add('hidden');
-        bootApp();
+        document.getElementById('loginScreen').style.display = 'none';
+
+        document.getElementById('loginModal') && 
+        (document.getElementById('loginModal').style.display='none');
+
+        window.currentUser = {
+          nombre: 'Daniel Vázquez',
+          rol: 'admin',
+          token: 'Daniel-Vazquez'
+        };
+
+        window.esAdminUser = true;
+
+        document.querySelectorAll('[id^="tab-"]').forEach(t => {
+          t.style.display = 'none';
+        });
+
+        const dashTab = document.getElementById('tab-dashboard-admin') || 
+                        document.getElementById('tab-resumen') ||
+                        document.getElementById('tab-dashboard');
+
+        if(dashTab) dashTab.style.display = 'block';
     }
 
     function bootApp() {
