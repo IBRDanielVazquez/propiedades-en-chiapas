@@ -871,14 +871,16 @@
     </div>
 </div>
 
-<script>
-    /* ================= DATA & STATE ================= */
-    const IBR_USERS = [
-        { name: "Daniel Vázquez", role: "Team Leader", type: "Admin", email: "realstatechiapas@gmail.com", link: "https://propiedadesenchiapas.com/daniel-vazquez/", lots: ["M5L10","M5L11","M5L14","M5L15","M8L2","M6L9","M6L10","M12L13","M7L1","M7L2","M13L9","M14L12","M8L7","M14L13","M13L7","M13L8","M14L19","M14L20","M14L03","M15L11","M9L21","M9L22","M9L23"] },
-        { name: "Lupyta Mendoza", role: "Asesor", type: "Asesor", email: "gabryelatgz@gmail.com", link: "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/", lots: ["M5L10","M5L11","M5L14","M5L15","M13L9","M8L7","M14L13","M13L7","M13L8","M15L11"] },
-        { name: "Luis García", role: "Asesor", type: "Asesor", email: "lord.garcia.0205@gmail.com", link: "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/", lots: ["M8L2","M6L9","M6L10","M7L1","M7L2"] },
-        { name: "Carmen Jiménez", role: "Asesor", type: "Asesor", email: "jose0208.cj@gmail.com", link: "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/", lots: ["M12L13","M14L12","M14L19","M14L20","M14L03"] }
-    ];
+    const USUARIOS = {
+        "daniel": {nombre:"Daniel Vázquez", email:"realstatechiapas@gmail.com", rol:"admin", pin:"IBRDAVM1512"},
+        "lupyta": {nombre:"Lupyta Mendoza", email:"gabryelatgz@gmail.com", rol:"asesor", pin:"2001"},
+        "carmen": {nombre:"Carmen Jiménez", email:"jose0208.cj@gmail.com", rol:"asesor", pin:"3001"},
+        "luis": {nombre:"Luis García", email:"lord.garcia.0205@gmail.com", rol:"asesor", pin:"4001"}
+    };
+
+    const IBR_USERS = Object.values(USUARIOS).map(u => ({
+        name: u.nombre, role: u.rol === 'admin' ? "Team Leader" : "Asesor", type: u.rol === 'admin' ? "Admin" : "Asesor", email: u.email, link: TARJETAS_DIGITALES[u.nombre], lots: []
+    }));
     
     const TARJETAS_DIGITALES = {
         "Lupyta Mendoza": "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/",
@@ -933,9 +935,9 @@
     /* ================= TOKENS DE ACCESO ================= */
     const TELEFONOS_EQUIPO = {
         "Daniel Vázquez": "9612466204",
-        "Lupyta Mendoza": "PENDIENTE",
-        "Carmen Jiménez": "PENDIENTE", 
-        "Luis García": "PENDIENTE"
+        "Lupyta Mendoza": "9611171478",
+        "Carmen Jiménez": "9616101816", 
+        "Luis García": "9611769814"
     };
 
     const USUARIOS = {
@@ -1410,24 +1412,27 @@
     }
 
     function init() {
-        // 1. Check 30-day session
+        var params = new URLSearchParams(window.location.search);
+        var urlTokenRaw = params.get('token');
+        var tokenToUse = urlTokenRaw ? decodeURIComponent(urlTokenRaw) : (localStorage.getItem('ibr_token') ? decodeURIComponent(localStorage.getItem('ibr_token')) : null);
+        
+        if (tokenToUse) {
+            localStorage.setItem('ibr_token', encodeURIComponent(tokenToUse));
+        }
+
         try {
             var sess = JSON.parse(localStorage.getItem('ibr_session'));
             if(sess && (Date.now() - sess.timestamp) < SESSION_DURATION) {
-                var ud2 = USUARIOS[sess.token];
+                var ud2 = resolveUserByToken(sess.token);
                 if(ud2) { applySession(sess.token, ud2, false); return; }
             }
         } catch(err) {}
 
-        // 2. URL token → show PIN screen
-        var params = new URLSearchParams(window.location.search);
-        var urlTokenRaw = params.get('token') || localStorage.getItem('ibr_token') || '';
-        var urlToken = urlTokenRaw ? decodeURIComponent(urlTokenRaw) : null;
-        if(urlToken) {
+        if(tokenToUse) {
             history.replaceState(null, '', window.location.pathname);
-            var userData = resolveUserByToken(urlToken);
+            var userData = resolveUserByToken(tokenToUse);
             if(userData) {
-                renderLoginPin(urlToken, userData);
+                renderLoginPin(tokenToUse, userData);
             } else {
                 document.getElementById('loginContent').innerHTML =
                     '<div class="text-center"><div class="text-5xl mb-4">🚫</div>' +
@@ -1437,7 +1442,6 @@
             return;
         }
 
-        // 3. No session, no token → waiting message
         document.getElementById('loginContent').innerHTML =
             '<div class="text-center space-y-4">' +
               '<div class="text-5xl">🔗</div>' +
@@ -1925,8 +1929,8 @@
     async function loadCalendarLeads() {
         document.getElementById('leadsContainer').innerHTML = '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest animate-pulse">🔄 Sincronizando con Google Calendar...</p>';
         try {
-            let res = await fetch(CALENDAR_API_URL);
-            let data = await res.json();
+            const res = await fetch(CALENDAR_API_URL, {mode:'cors'});
+            const data = await res.json();
             if(data.ok) {
                 let mappedLeads = data.eventos.map(e => ({
                     id: e.id,
@@ -1963,8 +1967,9 @@
             }
         } catch(err) {
             console.error('Error fetching calendar:', err);
+            showToast('⚠️ Sin conexión al calendario');
+            leads = JSON.parse(localStorage.getItem('ibr_leads')||'[]');
             renderLeads();
-            showToast('⚠️ Error de conexión. Mostrando datos offline.');
         }
     }
 
@@ -2163,43 +2168,23 @@
                 
                 return `
                 <div class="border border-gray-200 rounded-xl p-4 bg-gray-50 flex flex-col space-y-2">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-gray-500 text-sm">👤</span>
-                            <p class="font-black text-sm text-gray-900">${u.nombre}</p>
-                        </div>
-                        ${statusBadge}
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <span class="text-gray-500 text-sm">👤</span>
+                        <p class="font-black text-sm text-gray-900">${u.nombre}</p>
                     </div>
-                    <div class="text-[10px] text-gray-500 font-medium">
-                        <p class="text-gray-600">${u.email}</p>
-                        <p class="mt-1">Último acceso: <span class="font-bold text-gray-700">${lastAccess}</span></p>
-                        <p class="mt-1 font-bold text-gray-600">🔑 PIN actual: ${getEffectivePin(token)}</p>
+                    <div class="text-[12px] text-gray-600 font-bold mb-1">
+                        ${u.rol === 'admin' ? 'Team Leader' : 'Asesor'}
                     </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        ${phone && phone !== 'PENDIENTE' ? `<a href="https://wa.me/52${phone}" target="_blank" class="text-blue-600 font-bold hover:underline">📱 ${phone}</a>` : `<div class="flex items-center gap-2"><span class="text-gray-400 font-medium">📱 Sin número registrado</span><button onclick="promptForPhone('${token}')" class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded shadow-sm hover:bg-gray-300 transition">+ Agregar número</button></div>`}
+                    <div class="text-[12px] text-gray-800 font-bold mb-2">
+                        📱 ${phone}
                     </div>
-                    <div class="flex gap-2 pt-2">
-                        <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre.split(' ')[0]}')"
-                            class="flex-1 bg-[#16A34A] text-white text-[10px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-green-700 transition">
-                            📲 Enviar link
-                        </button>
-                        ${u.rol === 'admin' 
-                            ? `<button disabled class="flex-1 bg-gray-100 text-gray-400 text-[10px] font-black py-2 rounded-lg uppercase tracking-widest cursor-not-allowed">
-                                🔒 No reset
-                               </button>`
-                            : `<button onclick="openResetPinModal('${token}')"
-                                class="flex-1 bg-red-50 text-red-600 border border-red-200 text-[10px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-red-100 transition">
-                                🔄 Resetear PIN
-                               </button>`
-                        }
-                    </div>
-                    <div class="flex gap-2 pt-2 border-t border-gray-100 mt-2">
+                    <div class="flex flex-col gap-2 pt-2">
                         <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" style="background:#000;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;width:100%; font-weight:bold;">🪪 Ver Tarjeta Digital →</button>
+                        <div class="flex gap-2">
+                            <button onclick="window.open('https://wa.me/52${phone.replace(/\\D/g,'')}', '_blank')" class="flex-1 bg-[#16A34A] text-white text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-green-700 transition">💬 WhatsApp</button>
+                            ${u.rol !== 'admin' && esVerdaderoAdmin ? `<button onclick="verComoAsesor('${u.nombre}')" class="flex-1 bg-blue-50 text-blue-600 border border-blue-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-blue-100 transition">👁️ Ver panel</button>` : `<button onclick="openResetPinModal('${token}')" class="flex-1 bg-red-50 text-red-600 border border-red-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-red-100 transition">🔄 Reset PIN</button>`}
+                        </div>
                     </div>
-                    ${u.rol !== 'admin' && esVerdaderoAdmin ? `
-                    <div class="flex gap-2 pt-2 border-t border-gray-100 mt-2">
-                        <button onclick="verComoAsesor('${u.nombre}')" class="bg-blue-50 text-blue-600 border border-blue-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-blue-100 transition w-full">👁️ Ver su dashboard</button>
-                    </div>` : ''}
                 </div>`;
             }).join('');
         }
