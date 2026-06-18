@@ -20,7 +20,7 @@
         }
     </script>
     <style>
-        body { background-color: #F5F5F5; font-family: system-ui, sans-serif; }
+        body { background-color: #F5F5F5; font-family: system-ui, sans-serif; overflow-x: hidden; max-width: 100vw; font-size: 14px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -32,13 +32,16 @@
         .expandable-content { display: none; }
         .expandable-content.active { display: block; animation: slideDown 0.2s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-        select, input, textarea { @apply border border-gray-300 rounded p-2 text-sm w-full outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red transition; }
-        label { @apply text-[10px] font-bold text-gray-600 block mb-1 uppercase tracking-wider; }
-        .btn-red { @apply bg-ibr-red text-white py-2 px-4 rounded font-bold shadow hover:bg-red-800 transition text-sm; }
-        .btn-green { @apply bg-ibr-green text-white py-2 px-4 rounded font-bold shadow hover:bg-green-700 transition text-sm; }
-        .btn-gray { @apply bg-gray-200 text-gray-700 py-2 px-4 rounded font-bold shadow hover:bg-gray-300 transition text-sm; }
-        .btn-wa { @apply bg-[#16A34A] text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1 shadow-sm uppercase hover:bg-green-700 transition; }
+        select, input, textarea { @apply border border-gray-300 rounded p-2 text-[16px] w-full outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red transition; }
+        label { @apply text-[12px] font-bold text-gray-600 block mb-1 uppercase tracking-wider; }
+        .btn-red { @apply bg-ibr-red text-white py-2 px-4 rounded font-bold shadow hover:bg-red-800 transition text-[14px] min-h-[48px]; }
+        .btn-green { @apply bg-ibr-green text-white py-2 px-4 rounded font-bold shadow hover:bg-green-700 transition text-[14px] min-h-[48px]; }
+        .btn-gray { @apply bg-gray-200 text-gray-700 py-2 px-4 rounded font-bold shadow hover:bg-gray-300 transition text-[14px] min-h-[48px]; }
+        .btn-wa { @apply bg-[#16A34A] text-white px-3 py-1.5 rounded-lg text-[14px] font-bold flex items-center justify-center gap-1 shadow-sm uppercase hover:bg-green-700 transition min-h-[48px]; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        /* Cards & Layout */
+        .card-container { @apply p-4 m-2 bg-white rounded-xl shadow-sm border border-gray-100; }
+        .grid-kpi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         /* Login screen */
         #loginScreen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
         #loginScreen.hidden { display: none; }
@@ -50,7 +53,7 @@
         .pulse-ibr { animation: pulse-red 2s infinite; }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-gray-800 w-full overflow-x-hidden">
 
 <!-- ═══════════════════════════════════════════
      PANTALLA DE LOGIN CON PIN
@@ -623,14 +626,14 @@
     </main>
 
     <!-- BOTTOM NAV -->
-    <nav id="bottomNav" class="fixed bottom-0 w-full max-w-[480px] bg-black border-t border-gray-800 flex justify-around p-2 pb-6 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.2)]">
+    <nav id="bottomNav" class="fixed bottom-0 w-full max-w-[480px] bg-black border-t border-gray-800 flex justify-around items-center px-2 py-2 pb-6 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.2)] min-h-[64px]">
         <!-- Injected via JS -->
     </nav>
 </div>
 
 <!-- MODALS -->
 <div id="leadModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
-    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-t-3xl w-[95vw] max-w-[480px] mx-auto p-4 pb-10 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6"><h3 class="font-black text-xl">Nueva Cita</h3><button onclick="closeModal('leadModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
         <form id="leadForm" class="space-y-4" onsubmit="saveLead(event)">
             <div><label>Nombre Completo*</label><input required id="lf-name" class="bg-gray-50"></div>
@@ -639,7 +642,7 @@
             <div class="flex gap-3"><div class="w-1/2"><label>Fecha*</label><input required type="date" id="lf-date" class="bg-gray-50"></div><div class="w-1/2"><label>Hora*</label><input required type="time" id="lf-time" class="bg-gray-50"></div></div>
             <div><label>Asesor Asignado*</label><select id="lf-advisor" required class="bg-gray-50"></select></div>
             <div><label>Observaciones</label><textarea id="lf-obs" rows="2" class="bg-gray-50"></textarea></div>
-            <button type="submit" class="w-full btn-red mt-4 py-3 rounded-xl">Guardar Cita</button>
+            <button type="submit" class="w-full btn-red mt-4">Guardar Cita</button>
         </form>
     </div>
 </div>
@@ -920,11 +923,21 @@
     ];
 
     /* ================= TOKENS DE ACCESO ================= */
+    const TELEFONOS_EQUIPO = {
+        "Daniel Vázquez": "9612466204",
+        "Lupyta Mendoza": "PENDIENTE",
+        "Carmen Jiménez": "PENDIENTE", 
+        "Luis García": "PENDIENTE"
+    };
+
     const USUARIOS = {
-        "IBR-Daniel-Vázquez": { nombre: "Daniel Vázquez",  email: "realstatechiapas@gmail.com",  rol: "admin",  pin: "IBRDAVM1512", tel: "9612466204" },
-        "IBR-Lupyta-Mendoza":  { nombre: "Lupyta Mendoza",  email: "gabryelatgz@gmail.com",       rol: "asesor", pin: "2001",        tel: "" },
-        "IBR-Carmen-Jiménez": { nombre: "Carmen Jiménez",  email: "jose0208.cj@gmail.com",        rol: "asesor", pin: "3001",        tel: "" },
-        "IBR-Luis-García":    { nombre: "Luis García",     email: "lord.garcia.0205@gmail.com",  rol: "asesor", pin: "4001",        tel: "" }
+        "IBR-Daniel-Vázquez": { nombre: "Daniel Vázquez",  email: "realstatechiapas@gmail.com",  rol: "admin",  pin: "IBRDAVM1512" },
+        "IBR-Daniel-Vazquez": { nombre: "Daniel Vázquez",  email: "realstatechiapas@gmail.com",  rol: "admin",  pin: "IBRDAVM1512" },
+        "IBR-Lupyta-Mendoza":  { nombre: "Lupyta Mendoza",  email: "gabryelatgz@gmail.com",       rol: "asesor", pin: "2001" },
+        "IBR-Carmen-Jiménez": { nombre: "Carmen Jiménez",  email: "jose0208.cj@gmail.com",        rol: "asesor", pin: "3001" },
+        "IBR-Carmen-Jimenez": { nombre: "Carmen Jiménez",  email: "jose0208.cj@gmail.com",        rol: "asesor", pin: "3001" },
+        "IBR-Luis-García":    { nombre: "Luis García",     email: "lord.garcia.0205@gmail.com",  rol: "asesor", pin: "4001" },
+        "IBR-Luis-Garcia":    { nombre: "Luis García",     email: "lord.garcia.0205@gmail.com",  rol: "asesor", pin: "4001" }
     };
     const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000;
     const LOCKOUT_DURATION = 5 * 60 * 1000;
@@ -1370,7 +1383,8 @@
 
         // 2. URL token → show PIN screen
         var params = new URLSearchParams(window.location.search);
-        var urlToken = params.get('token');
+        var urlTokenRaw = params.get('token') || localStorage.getItem('ibr_token') || '';
+        var urlToken = urlTokenRaw ? decodeURIComponent(urlTokenRaw) : null;
         if(urlToken) {
             history.replaceState(null, '', window.location.pathname);
             var userData = resolveUserByToken(urlToken);
@@ -1380,7 +1394,7 @@
                 document.getElementById('loginContent').innerHTML =
                     '<div class="text-center"><div class="text-5xl mb-4">🚫</div>' +
                     '<h2 class="text-white font-black text-lg">Link no válido</h2>' +
-                    '<p class="text-gray-500 text-xs mt-2">Solicita tu link a Daniel Vázquez.</p></div>';
+                    '<p class="text-gray-500 text-sm mt-2">Solicita tu link a Daniel Vázquez.</p></div>';
             }
             return;
         }
@@ -1594,20 +1608,20 @@
         const nav = document.getElementById('bottomNav');
         if(esAdmin()) {
             nav.innerHTML = `
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('dashboard-admin')"><span class="text-xl">🏠</span><span class="text-[8px] uppercase font-bold tracking-widest mt-1">Resumen</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('projects')"><span class="text-xl">🏘️</span><span class="text-[8px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[8px] uppercase font-bold tracking-widest mt-1">Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('pagos')"><span class="text-xl">💳</span><span class="text-[8px] uppercase font-bold tracking-widest mt-1">Pagos</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('finances')"><span class="text-xl">💰</span><span class="text-[8px] uppercase font-bold tracking-widest mt-1">Finanzas</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('config')"><span class="text-xl">⚙️</span><span class="text-[8px] uppercase font-bold tracking-widest mt-1">Config</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('dashboard-admin')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Resumen</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('pagos')"><span class="text-2xl">💳</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Pagos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('finances')"><span class="text-2xl">💰</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Finanzas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('config')"><span class="text-2xl">⚙️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Config</span></button>
             `;
         } else {
             nav.innerHTML = `
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-asesor')"><span class="text-xl">🏠</span><span class="text-[9px] uppercase font-bold tracking-widest mt-1">Mi Panel</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('projects')"><span class="text-xl">🏘️</span><span class="text-[9px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-xl">👥</span><span class="text-[9px] uppercase font-bold tracking-widest mt-1">Mis Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-xl">📋</span><span class="text-[9px] uppercase font-bold tracking-widest mt-1">Mis Ventas</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('profile')"><span class="text-xl">👤</span><span class="text-[9px] uppercase font-bold tracking-widest mt-1">Perfil</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-asesor')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mi Panel</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-2xl">📋</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Ventas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('profile')"><span class="text-2xl">👤</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Perfil</span></button>
             `;
         }
     }
@@ -1769,32 +1783,28 @@
 
                 let specialBadge = s.razon ? `<span class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-1 py-0.5 rounded ml-1 uppercase tracking-widest">⚡ ${s.razon}</span>` : '';
                 return `
-                <div class="bg-white p-3 border-b border-r border-gray-100 flex flex-col justify-between">
+                <div class="bg-white p-4 border-b border-r border-gray-100 flex flex-col justify-between">
                     <div>
-                        <div class="mb-1 text-sm font-black text-black flex items-center">
-                            ${s.lote_str || ('BV-M'+s.mz+'-L'+s.lote)} <span class="text-[10px] font-bold text-gray-500 ml-1 font-normal">${coAsesorTxt ? '· ' + coAsesorTxt : ''}</span>
-                            ${specialBadge}
-                        </div>
                         <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">${p}</div>
-                        <div class="text-[10px] font-bold text-gray-700 mt-1">
-                            💰 Lote total: $${(s.comision_total_lote||0).toLocaleString()}
+                        <div class="mb-2">
+                            <h3 class="font-black text-xl text-black">${s.lote_str || ('BV-M'+s.mz+'-L'+s.lote)}${specialBadge}</h3>
+                            ${coAsesorTxt ? `<p class="text-[12px] font-bold text-gray-500 mt-1">👥 ${coAsesorTxt}</p>` : ''}
                         </div>
-                        <div class="text-[10px] font-bold text-ibr-green mt-1">
-                            👥 Tu comisión: $${(s.com_total||0).toLocaleString()}
-                        </div>
-                        <div class="text-[10px] font-bold text-gray-700 mt-1">
-                            📅 Mensualidad: $${(s.mensualidad||0).toLocaleString()}/mes
-                        </div>
-                        <div class="text-[10px] text-gray-500 font-bold mt-1 mb-2">
-                            ✅ Cobrado: $${s.pagado.toLocaleString()} · ⏳ Pendiente: $${(s.com_total - s.pagado).toLocaleString()}
+                        
+                        <div class="space-y-1 text-[12px] font-bold text-gray-600">
+                            <p class="flex justify-between"><span>💰 Total lote:</span> <span class="font-black text-gray-800">$${(s.comision_total_lote || 10800).toLocaleString()}</span></p>
+                            <p class="flex justify-between"><span>👤 Tu comisión:</span> <span class="text-ibr-red font-black">$${s.com_total.toLocaleString()}</span></p>
+                            <p class="flex justify-between"><span>📅 Mensualidad:</span> <span class="font-black">$${(s.mensualidad || 350).toLocaleString()}/mes</span></p>
+                            <p class="flex justify-between"><span>✅ Cobrado:</span> <span class="text-ibr-green font-black">$${s.pagado.toLocaleString()}</span></p>
+                            <p class="flex justify-between"><span>⏳ Pendiente:</span> <span class="text-ibr-red font-black">$${(s.com_total - s.pagado).toLocaleString()}</span></p>
                         </div>
                     </div>
-                    <div class="mt-2 space-y-2">
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] font-bold text-gray-600">📆 Fecha:</span>
-                            <input type="date" value="${fVenta}" onchange="saveFechaVenta('${s.id}', this.value)" class="text-[10px] font-bold p-1 rounded border border-gray-200 text-gray-600 flex-1 bg-gray-50 outline-none focus:border-ibr-red">
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[12px] font-bold text-gray-600">📆 Fecha de venta:</span>
+                            <input type="date" value="${fVenta}" onchange="saveFechaVenta('${s.id}', this.value)" style="border:1px solid #8B0000; border-radius:4px; padding:4px; font-size:14px" class="flex-1 bg-gray-50 outline-none">
                         </div>
-                        <button onclick="openComModal('${s.id}')" class="w-full bg-gray-50 text-ibr-red py-1.5 rounded text-[10px] font-black hover:bg-gray-200 transition border border-gray-200 text-left px-2">✏️ Caso especial</button>
+                        <button onclick="openComModal('${s.id}')" class="w-full bg-gray-50 text-ibr-red py-2 rounded text-[12px] font-black hover:bg-gray-200 transition border border-gray-200 text-left px-3 mt-2">✏️ Caso especial</button>
                     </div>
                 </div>
                 `;
@@ -1935,9 +1945,15 @@
             let coAsesorTxt = '';
             if (s.adv2) coAsesorTxt = `con ${s.adv2===currentUser ? s.adv : s.adv2}`;
             else if (s.adv !== currentUser) coAsesorTxt = `con ${s.adv}`;
-            let coAsesorSub = coAsesorTxt ? ` · <span class="text-[10px] font-bold text-gray-500 font-normal">${coAsesorTxt}</span>` : '';
+            
             let specialBadge = s.razon ? `<span class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-1 py-0.5 rounded ml-1 uppercase tracking-widest">⚡ ${s.razon}</span>` : '';
             
+            let histData = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id) : null;
+            let fVenta = '';
+            if(histData && histData.fecha_venta) fVenta = histData.fecha_venta;
+            let savedFVenta = JSON.parse(localStorage.getItem('ibr_fechas_venta')||'{}')[s.id];
+            if(savedFVenta) fVenta = savedFVenta;
+
             return `
             <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-4">
                 <div class="flex justify-between items-center mb-1">
@@ -1945,15 +1961,23 @@
                     ${getLeadBadge(s.estatus||'Validada')}
                 </div>
                 <div class="mb-3">
-                    <h3 class="font-black text-xl text-black">BV-M${s.mz}-L${s.lote}${coAsesorSub}${specialBadge}</h3>
+                    <h3 class="font-black text-xl text-black">${s.lote_str || ('BV-M'+s.mz+'-L'+s.lote)}${specialBadge}</h3>
+                    ${coAsesorTxt ? `<p class="text-[12px] font-bold text-gray-500 mt-1">👥 ${coAsesorTxt}</p>` : ''}
                 </div>
                 
-                <div class="space-y-1 text-[10px] font-bold text-gray-600">
-                    <p class="flex justify-between"><span>💰 Lote total:</span> <span class="font-black text-gray-800">$${(s.comision_total_lote || 10800).toLocaleString()}</span></p>
-                    <p class="flex justify-between"><span>👥 Tu comisión:</span> <span class="text-ibr-red font-black">$${s.com_total.toLocaleString()}</span></p>
-                    <p class="flex justify-between"><span>📅 Mensualidad:</span> <span class="font-black">$${s.mensualidad.toLocaleString()}/mes</span></p>
+                <div class="space-y-1 text-[12px] font-bold text-gray-600">
+                    <p class="flex justify-between"><span>💰 Total lote:</span> <span class="font-black text-gray-800">$${(s.comision_total_lote || 10800).toLocaleString()}</span></p>
+                    <p class="flex justify-between"><span>👤 Tu comisión:</span> <span class="text-ibr-red font-black">$${s.com_total.toLocaleString()}</span></p>
+                    <p class="flex justify-between"><span>📅 Mensualidad:</span> <span class="font-black">$${(s.mensualidad || 350).toLocaleString()}/mes</span></p>
                     <p class="flex justify-between"><span>✅ Cobrado:</span> <span class="text-ibr-green font-black">$${s.pagado.toLocaleString()}</span></p>
                     <p class="flex justify-between"><span>⏳ Pendiente:</span> <span class="text-ibr-red font-black">$${(s.com_total - s.pagado).toLocaleString()}</span></p>
+                </div>
+                
+                <div class="mt-3 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[12px] font-bold text-gray-600">📆 Fecha de venta:</span>
+                        <input type="date" value="${fVenta}" onchange="saveFechaVenta('${s.id}', this.value)" style="border:1px solid #8B0000; border-radius:4px; padding:4px; font-size:14px" class="flex-1 bg-gray-50 outline-none">
+                    </div>
                 </div>
                 
                 <div class="mt-3 pt-3 border-t border-gray-100">
@@ -2044,7 +2068,7 @@
         // Populate cards for mobile
         if(cardsEl) {
             cardsEl.innerHTML = usersList.map(([token, u]) => {
-                let phone = teamPhones[token] || u.tel || '';
+                let phone = teamPhones[token] || TELEFONOS_EQUIPO[u.nombre] || 'PENDIENTE';
                 let lastAccess = formatLastAccess(ultimos[token]);
                 let isSessionActive = sess && sess.token === token && (Date.now() - sess.timestamp) < SESSION_DURATION;
                 let statusBadge = isSessionActive 
@@ -2066,10 +2090,7 @@
                         <p class="mt-1 font-bold text-gray-600">🔑 PIN actual: ${getEffectivePin(token)}</p>
                     </div>
                     <div class="flex items-center gap-2 mt-1">
-                        <span class="text-[9px] font-bold text-gray-400 uppercase">Tel WhatsApp:</span>
-                        <input type="tel" placeholder="10 dígitos" value="${phone}"
-                            onchange="saveTeamPhone('${token}', this.value); teamPhones['${token}'] = this.value;"
-                            class="flex-1 bg-white border border-gray-200 rounded-lg px-2 py-1 text-[10px] font-bold text-gray-700 outline-none focus:border-ibr-red">
+                        ${phone && phone !== 'PENDIENTE' ? `<a href="https://wa.me/52${phone}" target="_blank" class="text-blue-600 font-bold hover:underline">📱 ${phone}</a>` : `<div class="flex items-center gap-2"><span class="text-gray-400 font-medium">📱 Sin número registrado</span><button onclick="promptForPhone('${token}')" class="bg-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded shadow-sm hover:bg-gray-300 transition">+ Agregar número</button></div>`}
                     </div>
                     <div class="flex gap-2 pt-2">
                         <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre.split(' ')[0]}')"
@@ -2093,15 +2114,17 @@
         // Populate table for desktop
         if(tableBodyEl) {
             tableBodyEl.innerHTML = usersList.map(([token, u]) => {
-                let phone = teamPhones[token] || u.tel || '';
+                let phone = teamPhones[token] || TELEFONOS_EQUIPO[u.nombre] || 'PENDIENTE';
                 let lastAccess = formatLastAccess(ultimos[token]);
                 let isSessionActive = sess && sess.token === token && (Date.now() - sess.timestamp) < SESSION_DURATION;
+                
+                let phoneDisplay = phone && phone !== 'PENDIENTE' ? `<a href="https://wa.me/52${phone}" target="_blank" class="text-blue-600 font-bold hover:underline">📱 ${phone}</a>` : `<div class="flex items-center gap-2"><span class="text-gray-400 text-[10px]">📱 Sin número registrado</span><button onclick="promptForPhone('${token}')" class="bg-gray-200 text-gray-700 text-[9px] px-2 py-0.5 rounded shadow-sm hover:bg-gray-300 transition">+ Agregar</button></div>`;
                 
                 let actionButtons = u.rol === 'admin'
                     ? `<span class="text-gray-400 italic font-bold">No se puede resetear</span>`
                     : `<div class="flex justify-end gap-2">
                         <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre.split(' ')[0]}')" class="bg-[#16A34A] text-white text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-green-700 transition">📲 Enviar link</button>
-                        <button onclick="openResetPinModal('${token}')" class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-red-100 transition">🔄 Resetear</button>
+                        <button onclick="openResetPinModal('${token}')" class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-red-100 transition">🔄 Resetear PIN</button>
                        </div>`;
                        
                 return `
