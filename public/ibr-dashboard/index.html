@@ -1242,7 +1242,7 @@
             '</div>';
         document.getElementById('loginError').classList.add('hidden');
         document.getElementById('loginLockout').classList.add('hidden');
-        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('loginScreen').style.display = 'flex';
     }
 
     function copyAccessLink(token) {
@@ -1397,40 +1397,43 @@
     function init() {
         var params = new URLSearchParams(window.location.search);
         var urlTokenRaw = params.get('token');
-        var tokenToUse = urlTokenRaw ? decodeURIComponent(urlTokenRaw) : (localStorage.getItem('ibr_token') ? decodeURIComponent(localStorage.getItem('ibr_token')) : null);
-        
+        var tokenToUse = urlTokenRaw
+            ? decodeURIComponent(urlTokenRaw)
+            : (localStorage.getItem('ibr_token') ? decodeURIComponent(localStorage.getItem('ibr_token')) : null);
+
+        // Guardar token en localStorage para que validarPin() lo encuentre
         if (tokenToUse) {
-            localStorage.setItem('ibr_token', encodeURIComponent(tokenToUse));
+            localStorage.setItem('ibr_token', tokenToUse);
         }
 
+        // Sesión activa válida → entrar directo
         try {
             var sess = JSON.parse(localStorage.getItem('ibr_session'));
-            if(sess && (Date.now() - sess.timestamp) < SESSION_DURATION) {
+            if (sess && (Date.now() - (sess.ts || sess.timestamp || 0)) < SESSION_DURATION) {
                 var ud2 = resolveUserByToken(sess.token);
-                if(ud2) { applySession(sess.token, ud2, false); return; }
+                if (ud2) { applySession(sess.token, ud2, false); return; }
             }
         } catch(err) {}
 
-        if(tokenToUse) {
-            history.replaceState(null, '', window.location.pathname);
-            var userData = resolveUserByToken(tokenToUse);
-            if(userData) {
-                renderLoginPin(tokenToUse, userData);
-            } else {
-                document.getElementById('loginContent').innerHTML =
-                    '<div class="text-center"><div class="text-5xl mb-4">🚫</div>' +
-                    '<h2 class="text-white font-black text-lg">Link no válido</h2>' +
-                    '<p class="text-gray-500 text-sm mt-2">Solicita tu link a Daniel Vázquez.</p></div>';
-            }
-            return;
-        }
+        // Mostrar pantalla de login estática
+        document.getElementById('loginScreen').style.display = 'flex';
 
-        document.getElementById('loginContent').innerHTML =
-            '<div class="text-center space-y-4">' +
-              '<div class="text-5xl">🔗</div>' +
-              '<p class="text-gray-300 text-sm font-bold">Abre tu link personal para ingresar.</p>' +
-              '<p class="text-gray-600 text-[10px]">Si no tienes tu link, contáctale a tu administrador.</p>' +
-            '</div>';
+        if (tokenToUse) {
+            var userData = resolveUserByToken(tokenToUse);
+            if (userData) {
+                // Mostrar nombre del asesor en el saludo
+                var nombreEl = document.getElementById('loginNombre');
+                if (nombreEl) nombreEl.textContent = 'Bienvenido, ' + userData.nombre.split(' ')[0];
+            } else {
+                // Token inválido
+                var errEl = document.getElementById('loginError');
+                if (errEl) { errEl.style.display = 'block'; errEl.textContent = 'Link inválido — pide tu link a Daniel Vázquez'; }
+            }
+        } else {
+            // Sin token
+            var errEl2 = document.getElementById('loginError');
+            if (errEl2) { errEl2.style.display = 'block'; errEl2.textContent = 'Abre tu link personal para ingresar'; }
+        }
     }
 
 
