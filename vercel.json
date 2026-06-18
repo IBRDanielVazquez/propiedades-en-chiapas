@@ -75,7 +75,7 @@
   ],
   "rewrites": [
     {
-      "source": "/:folder(monte-de-los-olivos|colinas-del-campestre|la-sima-park-terrenos-en-ocozocoautla|la-canada-desarrollo-eco-campestre|el-higo-copoya-terrenos-10x20-en-copoya|fraccionamiento-montecristo|quinta-en-berriozabal|cuauhtli-terrenos-en-venta-en-el-jobo|bella-vista-terrenos-en-ocozocoautla-en-pagos|carmen-jimenez-asesor-inmobiliario-de-ibr|luis-garcia-asesor-inmobiliario-de-ibr|lupyta-mendoza-asesor-inmobiliario-ibr|valle-campestre)",
+      "source": "/:folder(monte-de-los-olivos|colinas-del-campestre|la-sima-park-terrenos-en-ocozocoautla|la-canada-desarrollo-eco-campestre|el-higo-copoya-terrenos-10x20-en-copoya|fraccionamiento-montecristo|quinta-en-berriozabal|cuauhtli-terrenos-en-venta-en-el-jobo|bella-vista-terrenos-en-ocozocoautla-en-pagos|carmen-jimenez-asesor-inmobiliario-de-ibr|luis-garcia-asesor-inmobiliario-de-ibr|lupyta-mendoza-asesor-inmobiliario-ibr|valle-campestre|ibr-dashboard)",
       "destination": "/:folder/index.html"
     },
     {

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBR Dashboard - Bella Vista Ocozocoautla</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ibr: {
+                            red: '#8B0000',
+                            black: '#000000',
+                            white: '#FFFFFF',
+                            gray: '#F5F5F5',
+                            green: '#16A34A',
+                            yellow: '#D97706'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F5F5F5;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .expandable-content {
+            display: none;
+        }
+        .expandable-content.active {
+            display: block;
+        }
+        .chip {
+            display: inline-block;
+            background-color: #8B0000;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            margin: 0.25rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+<div class="max-w-[480px] mx-auto bg-white min-h-screen shadow-lg flex flex-col relative pb-4">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-ibr-black text-ibr-white p-4 shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="text-ibr-red font-bold text-2xl tracking-tighter">IBR</span>
+        </div>
+        <div class="text-right">
+            <h1 class="text-sm font-semibold leading-tight text-ibr-white">Control de Ventas</h1>
+            <p class="text-[10px] text-gray-300">Bella Vista Ocozocoautla</p>
+        </div>
+    </header>
+
+    <main class="p-4 flex-1 space-y-6">
+        
+        <!-- KPIs -->
+        <section class="grid grid-cols-2 gap-3">
+            <div class="bg-white border border-gray-100 p-3 rounded-xl shadow-sm text-center">
+                <p class="text-xs text-gray-500 font-medium">Total Vendidos</p>
+                <p class="text-2xl font-bold text-ibr-black">160</p>
+            </div>
+            <div class="bg-white border border-gray-100 p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-red">
+                <p class="text-xs text-gray-500 font-medium">Ventas IBR</p>
+                <p class="text-2xl font-bold text-ibr-red">34</p>
+            </div>
+            <div class="bg-white border border-gray-100 p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-green">
+                <p class="text-xs text-gray-500 font-medium">Ventas Externas</p>
+                <p class="text-2xl font-bold text-ibr-green">126</p>
+            </div>
+            <div class="bg-white border border-gray-100 p-3 rounded-xl shadow-sm text-center border-b-4 border-b-ibr-black">
+                <p class="text-xs text-gray-500 font-medium">Canceladas</p>
+                <p class="text-2xl font-bold text-ibr-black">3</p>
+            </div>
+        </section>
+
+        <!-- Ranking IBR -->
+        <section>
+            <h2 class="text-ibr-red font-bold mb-3 border-b-2 border-ibr-red pb-1 inline-block">Equipo IBR - Bella Vista</h2>
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                
+                <!-- Daniel -->
+                <div class="border-b border-gray-100">
+                    <div class="p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="toggleDetails('det-1')">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-gray-400">#1</span>
+                            <div>
+                                <p class="font-bold text-sm text-ibr-black">Daniel Vázquez</p>
+                                <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded inline-block mt-1">Team Leader</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-ibr-red text-lg">17 <span class="text-xs text-gray-500 font-normal">lotes</span></p>
+                            <p class="text-[10px] text-gray-500">$0 Com / $0 Pen</p>
+                        </div>
+                    </div>
+                    <div id="det-1" class="expandable-content bg-gray-50 p-3 text-sm border-t border-gray-100">
+                        <div class="flex flex-wrap">
+                            <span class="chip">M5L10</span><span class="chip">M5L11</span><span class="chip">M5L14</span><span class="chip">M5L15</span><span class="chip">M8L2</span>
+                            <span class="chip">M6L9</span><span class="chip">M6L10</span><span class="chip">M12L13</span><span class="chip">M7L1</span><span class="chip">M7L2</span>
+                            <span class="chip">M13L9</span><span class="chip">M14L12</span><span class="chip">M8L7</span><span class="chip">M14L13</span><span class="chip">M13L7</span>
+                            <span class="chip">M13L8</span><span class="chip">M14L19</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lupyta -->
+                <div class="border-b border-gray-100">
+                    <div class="p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="toggleDetails('det-2')">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-gray-400">#2</span>
+                            <div>
+                                <p class="font-bold text-sm text-ibr-black">Lupyta Mendoza</p>
+                                <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded inline-block mt-1">Asesor</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-ibr-red text-lg">9 <span class="text-xs text-gray-500 font-normal">lotes</span></p>
+                            <p class="text-[10px] text-gray-500">$0 Com / $0 Pen</p>
+                        </div>
+                    </div>
+                    <div id="det-2" class="expandable-content bg-gray-50 p-3 text-sm border-t border-gray-100">
+                        <div class="flex flex-wrap">
+                            <span class="chip">M5L10</span><span class="chip">M5L11</span><span class="chip">M5L14</span><span class="chip">M5L15</span><span class="chip">M13L9</span>
+                            <span class="chip">M8L7</span><span class="chip">M14L13</span><span class="chip">M13L7</span><span class="chip">M13L8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Luis -->
+                <div class="border-b border-gray-100">
+                    <div class="p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="toggleDetails('det-3')">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-gray-400">#3</span>
+                            <div>
+                                <p class="font-bold text-sm text-ibr-black">Luis García</p>
+                                <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded inline-block mt-1">Asesor</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-ibr-red text-lg">5 <span class="text-xs text-gray-500 font-normal">lotes</span></p>
+                            <p class="text-[10px] text-gray-500">$0 Com / $0 Pen</p>
+                        </div>
+                    </div>
+                    <div id="det-3" class="expandable-content bg-gray-50 p-3 text-sm border-t border-gray-100">
+                        <div class="flex flex-wrap">
+                            <span class="chip">M8L2</span><span class="chip">M6L9</span><span class="chip">M6L10</span><span class="chip">M7L1</span><span class="chip">M7L2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carmen -->
+                <div>
+                    <div class="p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50" onclick="toggleDetails('det-4')">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-gray-400">#4</span>
+                            <div>
+                                <p class="font-bold text-sm text-ibr-black">Carmen Jiménez</p>
+                                <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded inline-block mt-1">Asesor</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-ibr-red text-lg">3 <span class="text-xs text-gray-500 font-normal">lotes</span></p>
+                            <p class="text-[10px] text-gray-500">$0 Com / $0 Pen</p>
+                        </div>
+                    </div>
+                    <div id="det-4" class="expandable-content bg-gray-50 p-3 text-sm border-t border-gray-100">
+                        <div class="flex flex-wrap">
+                            <span class="chip">M12L13</span><span class="chip">M14L12</span><span class="chip">M14L19</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ventas Externas -->
+        <section>
+            <h2 class="text-ibr-green font-bold mb-3 border-b-2 border-ibr-green pb-1 inline-block">Top Ventas Externas</h2>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                <ul class="space-y-3">
+                    <li class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">1. Walter Moguel</span>
+                        <span class="font-bold text-ibr-green bg-green-50 px-2 py-1 rounded">35 lotes</span>
+                    </li>
+                    <li class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">2. Martín Altamirano</span>
+                        <span class="font-bold text-ibr-green bg-green-50 px-2 py-1 rounded">32 lotes</span>
+                    </li>
+                    <li class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">3. Luisa Rodríguez</span>
+                        <span class="font-bold text-ibr-green bg-green-50 px-2 py-1 rounded">24 lotes</span>
+                    </li>
+                    <li class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">4. Eduardo Méndez</span>
+                        <span class="font-bold text-ibr-green bg-green-50 px-2 py-1 rounded">21 lotes</span>
+                    </li>
+                    <li class="flex justify-between items-center text-sm">
+                        <span class="font-medium text-gray-700">5. Arturo Coutiño</span>
+                        <span class="font-bold text-ibr-green bg-green-50 px-2 py-1 rounded">13 lotes</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-ibr-gray border-t border-gray-200 p-4 text-center text-xs text-gray-500 mt-auto">
+        <p class="font-semibold text-ibr-black mb-1">IBR Marketing Digital &copy; 2026</p>
+        <p class="mb-3">Bella Vista Ocozocoautla</p>
+        <div class="flex justify-center gap-3 font-medium bg-white py-2 rounded-md border border-gray-200 shadow-sm">
+            <span>Total inventario: 513</span>
+            <span class="text-ibr-red">Vendidos: 160</span>
+            <span class="text-ibr-green">Disponibles: 353</span>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+    function toggleDetails(id) {
+        const el = document.getElementById(id);
+        if (el.classList.contains('active')) {
+            el.classList.remove('active');
+        } else {
+            el.classList.add('active');
+        }
+    }
+</script>
+</body>
+</html>
