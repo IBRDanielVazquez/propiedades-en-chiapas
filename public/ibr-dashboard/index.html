@@ -849,16 +849,9 @@
     </div>
 </div>
 
-    const USUARIOS = {
-        "daniel": {nombre:"Daniel Vázquez", email:"realstatechiapas@gmail.com", rol:"admin", pin:"IBRDAVM1512"},
-        "lupyta": {nombre:"Lupyta Mendoza", email:"gabryelatgz@gmail.com", rol:"asesor", pin:"2001"},
-        "carmen": {nombre:"Carmen Jiménez", email:"jose0208.cj@gmail.com", rol:"asesor", pin:"3001"},
-        "luis": {nombre:"Luis García", email:"lord.garcia.0205@gmail.com", rol:"asesor", pin:"4001"}
-    };
+    // USUARIOS definido más abajo (tokens nombre-apellido)
 
-    const IBR_USERS = Object.values(USUARIOS).map(u => ({
-        name: u.nombre, role: u.rol === 'admin' ? "Team Leader" : "Asesor", type: u.rol === 'admin' ? "Admin" : "Asesor", email: u.email, link: TARJETAS_DIGITALES[u.nombre], lots: []
-    }));
+
     
     const TARJETAS_DIGITALES = {
         "Lupyta Mendoza": "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/",
@@ -924,6 +917,9 @@
         "Carmen-Jimenez": {nombre:"Carmen Jiménez", email:"jose0208.cj@gmail.com", rol:"asesor", pin:"3001"},
         "Luis-Garcia": {nombre:"Luis García", email:"lord.garcia.0205@gmail.com", rol:"asesor", pin:"4001"}
     };
+    const IBR_USERS = Object.values(USUARIOS).map(u => ({
+        name: u.nombre, role: u.rol === 'admin' ? "Team Leader" : "Asesor", type: u.rol === 'admin' ? "Admin" : "Asesor", email: u.email, link: TARJETAS_DIGITALES[u.nombre], lots: []
+    }));
     const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000;
     const LOCKOUT_DURATION = 5 * 60 * 1000;
     const MAX_ATTEMPTS     = 3;
@@ -1058,7 +1054,15 @@
     }
 
     function resolveUserByToken(token) {
-        return USUARIOS[token] || null;
+        if (!token) return null;
+        // Buscar directo
+        if (USUARIOS[token]) return USUARIOS[token];
+        // Buscar decodificado (por si viene encoded de localStorage)
+        try {
+            var decoded = decodeURIComponent(token);
+            if (USUARIOS[decoded]) return USUARIOS[decoded];
+        } catch(e) {}
+        return null;
     }
 
     function showToast(msg, duration) {
