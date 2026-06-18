@@ -92,18 +92,11 @@
   padding:32px;
   box-sizing:border-box">
 
-  <div style="
-    background:#8B0000;
-    width:80px; height:80px;
-    border-radius:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+  <img src="logo-ibr.png"
+    style="width:100px;height:100px;
+    border-radius:50%;
+    object-fit:cover;
     margin-bottom:20px">
-    <span style="color:#fff;
-      font-size:28px;
-      font-weight:900">IBR</span>
-  </div>
 
   <h1 style="color:#fff;
     font-size:20px;
@@ -113,7 +106,7 @@
   </h1>
 
   <p id="loginNombre" style="
-    color:#8B0000;
+    color:#ffffff;
     font-size:14px;
     margin-bottom:32px">
     Bienvenido
@@ -1098,6 +1091,42 @@
         setTimeout(function() { var f = document.getElementById('pinInput'); if(f) f.focus(); }, 100);
     }
 
+    function validarPin() {
+        var inputPin = document.getElementById('pinInput') ? document.getElementById('pinInput').value.trim() : '';
+        var urlParams = new URLSearchParams(window.location.search);
+        var token = urlParams.get('token') || localStorage.getItem('ibr_token') || '';
+
+        var usuarios = {
+            "Daniel-Vazquez": {nombre:"Daniel Vázquez", rol:"admin", pin:"IBRDAVM1512"},
+            "Lupyta-Mendoza": {nombre:"Lupyta Mendoza", rol:"asesor", pin:"2001"},
+            "Carmen-Jimenez": {nombre:"Carmen Jiménez", rol:"asesor", pin:"3001"},
+            "Luis-Garcia":    {nombre:"Luis García",    rol:"asesor", pin:"4001"}
+        };
+
+        var usuario = usuarios[token];
+        var errEl = document.getElementById('loginError');
+
+        if (!usuario) {
+            if(errEl) { errEl.style.display = 'block'; errEl.textContent = 'Link inválido ❌'; }
+            return;
+        }
+
+        if (inputPin === usuario.pin) {
+            localStorage.setItem('ibr_token', token);
+            localStorage.setItem('ibr_session', JSON.stringify({
+                token: token,
+                nombre: usuario.nombre,
+                rol: usuario.rol,
+                ts: Date.now()
+            }));
+            document.getElementById('loginScreen').style.display = 'none';
+            applySession(token, usuario, true);
+        } else {
+            if(errEl) { errEl.style.display = 'block'; errEl.textContent = 'PIN incorrecto ❌'; }
+            document.getElementById('pinInput').value = '';
+        }
+    }
+
     function handlePinSubmit(e) {
         if(e) e.preventDefault();
         if(!pendingToken) return;
@@ -1154,7 +1183,7 @@
         localStorage.setItem('ibr_ultimo_acceso', JSON.stringify(ultimos));
         currentUser = userData.nombre;
         isAdmin = PERMISOS[currentUser] === 'admin';
-        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('headerUserName').textContent = currentUser;
         document.getElementById('headerUserRole').textContent = isAdmin ? 'Admin' : 'Asesor';
         var sel = document.getElementById('userSelector');
