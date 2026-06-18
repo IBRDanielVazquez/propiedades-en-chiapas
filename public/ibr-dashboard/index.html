@@ -1275,6 +1275,18 @@
         };
 
         var usuario = usuarios[token];
+
+        // Si no hay token o no existe ese usuario, buscar el token por el PIN ingresado
+        if (!usuario && inputPin) {
+            var foundToken = Object.keys(usuarios).find(function(k) {
+                return getEffectivePin(k) === inputPin;
+            });
+            if (foundToken) {
+                token = foundToken;
+                usuario = usuarios[token];
+            }
+        }
+
         var errEl = document.getElementById('loginError');
 
         if (!usuario) {
@@ -1282,7 +1294,9 @@
             return;
         }
 
-        if (inputPin === usuario.pin) {
+        var correctPin = getEffectivePin(token);
+
+        if (inputPin === correctPin) {
             localStorage.setItem('ibr_token', token);
             localStorage.setItem('ibr_session', JSON.stringify({
                 token: token,
