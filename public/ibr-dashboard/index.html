@@ -51,6 +51,27 @@
         .slide-up { animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
         @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(139,0,0,0.4); } 50% { box-shadow: 0 0 0 16px rgba(139,0,0,0); } }
         .pulse-ibr { animation: pulse-red 2s infinite; }
+    
+        /* REDESIGN RULES */
+        body { padding-bottom: 80px; } /* Space for bottom nav */
+        .section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-bottom: 8px; font-weight: 800; }
+        .collapse-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; user-select: none; margin-bottom: 8px; }
+        .collapse-title { font-size: 14px; font-weight: 900; color: #000; }
+        .collapse-icon { font-size: 12px; transition: transform 0.3s ease; }
+        .collapse-content { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; opacity: 0; }
+        .collapse-content.open { max-height: 2000px; opacity: 1; margin-bottom: 16px; }
+        .collapse-wrapper.open .collapse-icon { transform: rotate(180deg); }
+        .card-ui { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 16px; margin-bottom: 12px; }
+        .push-view { position: fixed; inset: 0; background: #F5F5F5; z-index: 50; transform: translateX(100%); transition: transform 0.3s ease; overflow-y: auto; padding-bottom: 80px; }
+        .push-view.active { transform: translateX(0); }
+        .push-header { display: flex; align-items: center; gap: 12px; padding: 16px; background: white; position: sticky; top: 0; z-index: 51; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .push-back { font-size: 20px; cursor: pointer; padding: 4px; }
+        .push-title { font-size: 16px; font-weight: 900; }
+        .filters-scroll { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 8px; scrollbar-width: none; }
+        .filters-scroll::-webkit-scrollbar { display: none; }
+        .filter-btn { padding: 6px 16px; background: white; border: 1px solid #E5E7EB; border-radius: 20px; font-size: 12px; font-weight: 800; white-space: nowrap; transition: all 0.2s; }
+        .filter-btn.active { background: #000; color: white; border-color: #000; }
+
     </style>
 </head>
 <body class="text-gray-800 w-full overflow-x-hidden">
@@ -150,119 +171,72 @@
         </div>
 
         <!-- ADMIN: DASHBOARD -->
-        <div id="tab-dashboard-admin" class="tab-content p-4 space-y-5">
+                <div id="tab-dashboard-admin" class="tab-content p-4 space-y-4">
+            <!-- 1. SALUDO -->
+            <div class="card-ui">
+                <p class="text-gray-500 font-bold text-xs">Buenos días, <span id="ad-user-name">Admin</span> 👋</p>
+                <p class="font-black text-lg">IBR · <span id="ad-user-role">Admin</span></p>
+                <p class="text-xs text-gray-400 font-medium">Bella Vista Ocozocoautla</p>
+            </div>
+
+            <!-- 2. KPIs -->
             <div class="grid grid-cols-2 gap-3">
-                <div class="bg-black text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Vendidos</p>
-                    <p class="text-4xl font-black">193</p>
+                <div class="card-ui !mb-0 bg-black text-white p-4">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">VENDIDOS</p>
+                    <p class="text-3xl font-black" id="kpi-vendidos">193</p>
                 </div>
-                <div class="bg-ibr-red text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
-                    <p class="text-[9px] font-bold text-red-200 uppercase tracking-widest mb-1">Ventas IBR únicas</p>
-                    <p class="text-4xl font-black">23</p>
+                <div class="card-ui !mb-0 bg-ibr-red text-white p-4">
+                    <p class="text-[10px] text-red-200 uppercase font-bold tracking-widest mb-1">IBR</p>
+                    <p class="text-3xl font-black" id="kpi-ibr">23</p>
                 </div>
-                <div class="bg-ibr-blue text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
-                    <p class="text-[9px] font-bold text-blue-200 uppercase tracking-widest mb-1">Ventas Externas</p>
-                    <p class="text-4xl font-black">170</p>
+                <div class="card-ui !mb-0 bg-ibr-blue text-white p-4">
+                    <p class="text-[10px] text-blue-200 uppercase font-bold tracking-widest mb-1">EXTERNOS</p>
+                    <p class="text-3xl font-black" id="kpi-externos">170</p>
                 </div>
-                <div class="bg-ibr-yellow text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
-                    <p class="text-[9px] font-bold text-yellow-100 uppercase tracking-widest mb-1">Canceladas</p>
-                    <p class="text-4xl font-black">3</p>
-                </div>
-                <div class="bg-gray-100 border border-gray-200 text-gray-800 p-4 rounded-xl shadow-md flex flex-col justify-center col-span-2">
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Lotes Disponibles</p>
-                    <p class="text-4xl font-black text-black">320</p>
+                <div class="card-ui !mb-0 bg-ibr-yellow text-white p-4">
+                    <p class="text-[10px] text-yellow-100 uppercase font-bold tracking-widest mb-1">CANCELADOS</p>
+                    <p class="text-3xl font-black" id="kpi-cancelados">3</p>
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2">
-                <div class="bg-green-50 border border-green-200 p-2 rounded-xl text-center shadow-sm">
-                    <p class="text-[8px] font-bold text-green-600 uppercase tracking-widest">Gen.</p>
-                    <p class="text-sm font-black text-green-800" id="ad-com-gen">$0</p>
+            <!-- 3. COMISIONES IBR -->
+            <div class="collapse-wrapper" id="col-com">
+                <div class="collapse-header" onclick="toggleCollapse('col-com')">
+                    <span class="collapse-title">💰 Comisiones IBR</span>
+                    <span class="collapse-icon">▼</span>
                 </div>
-                <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl text-center shadow-sm">
-                    <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Pag.</p>
-                    <p class="text-sm font-black text-blue-800" id="ad-com-pag">$0</p>
-                </div>
-                <div class="bg-yellow-50 border border-yellow-200 p-2 rounded-xl text-center shadow-sm">
-                    <p class="text-[8px] font-bold text-yellow-600 uppercase tracking-widest">Pend.</p>
-                    <p class="text-sm font-black text-yellow-800" id="ad-com-pen">$0</p>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-xl shadow-lg p-5">
-                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><span>Campañas</span> <div class="h-px bg-gray-700 flex-1"></div></h3>
-                <div class="flex justify-between items-center mb-4">
-                    <div><p class="text-[10px] text-gray-400 font-bold uppercase">Inversión</p><p class="text-2xl font-black text-white" id="ad-camp-inv">$0</p></div>
-                    <div class="text-right"><p class="text-[10px] text-gray-400 font-bold uppercase">ROI</p><p class="text-2xl font-black text-ibr-green" id="ad-camp-roi">0%</p></div>
-                </div>
-                <div class="rounded-lg text-xs flex justify-between items-center">
-                    <div id="ad-camp-status" class="font-black px-3 py-1 rounded bg-green-500 text-white">✅ OK</div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-5">
-                <div class="bg-ibr-red text-white p-4 flex justify-between items-center cursor-pointer hover:bg-red-800 transition" onclick="document.getElementById('ad-mis-ventas-content').classList.toggle('hidden')">
-                    <h3 class="font-black text-lg tracking-tight">Mis Ventas Personales</h3>
-                    <div class="flex items-center gap-2">
-                        <span class="bg-black text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-widest" id="ad-mis-ventas-badge">0 participaciones</span>
-                        <span class="text-white font-black text-xl leading-none">−</span>
-                    </div>
-                </div>
-                <div id="ad-mis-ventas-content" class="bg-gray-50">
-                    <div class="p-3 bg-white border-b border-gray-100 flex justify-end gap-2">
-                         <select id="ad-mis-ventas-filter" onchange="renderDashAdmin()" class="text-[10px] font-bold p-1 border border-gray-200 rounded text-gray-600 bg-white shadow-sm w-auto">
-                            <option value="Todos">Todos los proyectos</option>
-                            <option value="Bella Vista Ocozocoautla">Bella Vista Ocozocoautla</option>
-                            <option value="Bosques de Chapultepec">Bosques de Chapultepec</option>
-                         </select>
-                    </div>
-                    <div id="ad-mis-ventas-list">
-                        <!-- Populated by JS -->
+                <div class="collapse-content" id="col-com-content">
+                    <div class="card-ui">
+                        <div class="flex justify-between border-b border-gray-100 pb-2 mb-2 text-[10px] uppercase font-bold text-gray-400">
+                            <span class="w-1/3">Asesor</span>
+                            <span class="w-1/4 text-right">Total</span>
+                            <span class="w-1/4 text-right">/Mes</span>
+                            <span class="w-1/4 text-right">Pend.</span>
+                        </div>
+                        <div id="ad-com-breakdown" class="space-y-2 text-xs"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-ibr-red to-black text-white rounded-xl shadow-lg mb-5 overflow-hidden">
-                <div class="p-4 border-b border-red-900">
-                    <h3 class="text-[10px] font-bold text-red-200 uppercase tracking-widest mb-1">💰 COMISIONES IBR</h3>
-                    <p class="text-xs text-gray-300 font-bold">Bella Vista Ocozocoautla</p>
+            <!-- 4. EQUIPO IBR -->
+            <div class="collapse-wrapper" id="col-team">
+                <div class="collapse-header" onclick="toggleCollapse('col-team')">
+                    <span class="collapse-title">🏆 Equipo IBR</span>
+                    <span class="collapse-icon">▼</span>
                 </div>
-                <div class="p-4 bg-black bg-opacity-20 border-b border-red-900 space-y-2 text-xs">
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Total generado:</span> <span class="font-black" id="ad-com-gen-card">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Mensualidad/mes:</span> <span class="font-black text-blue-300" id="ad-com-men-card">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Cobrado:</span> <span class="font-black text-ibr-green" id="ad-com-pag-card">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Pendiente:</span> <span class="font-black text-red-300" id="ad-com-pen-card">$0</span></div>
-                </div>
-                <div class="p-4 space-y-2 text-xs" id="ad-com-breakdown">
-                    <!-- Populated by JS -->
+                <div class="collapse-content" id="col-team-content">
+                    <div id="ad-team-list" class="space-y-3"></div>
                 </div>
             </div>
 
-            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-xl shadow-lg mb-5 overflow-hidden">
-                <div class="p-4 border-b border-gray-800">
-                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">💰 EXCLUSIVO DANIEL</h3>
-                    <p class="text-xs text-white font-bold">Bosques de Chapultepec</p>
+            <!-- 5. TOP EXTERNOS -->
+            <div class="collapse-wrapper" id="col-ext">
+                <div class="collapse-header" onclick="toggleCollapse('col-ext')">
+                    <span class="collapse-title">📊 Top Externos</span>
+                    <span class="collapse-icon">▼</span>
                 </div>
-                <div class="p-4 bg-black bg-opacity-40 space-y-2 text-xs">
-                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2 border-b border-gray-800 pb-1"><span id="ad-bc-lotes">0</span> lotes vendidos</div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Total generado:</span> <span class="font-black" id="ad-bc-gen">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Mensualidad/mes:</span> <span class="font-black text-blue-400" id="ad-bc-men">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Cobrado:</span> <span class="font-black text-ibr-green" id="ad-bc-pag">$0</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Pendiente:</span> <span class="font-black text-red-400" id="ad-bc-pen">$0</span></div>
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-ibr-red font-black text-xs uppercase tracking-widest mb-3">Equipo IBR</h3>
-                <div class="space-y-3" id="ad-team-list"></div>
-            </div>
-
-            <div>
-                <h3 class="text-ibr-black font-black text-xs uppercase tracking-widest mb-3">Top 5 Externos</h3>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                    <div class="space-y-4 font-medium" id="ad-top-ext">
-                        <!-- Filled by JS -->
-                    </div>
+                <div class="collapse-content" id="col-ext-content">
+                    <div class="card-ui" id="ad-top-ext"></div>
                 </div>
             </div>
         </div>
@@ -308,91 +282,53 @@
         </div>
 
         <!-- SHARED: PROYECTOS -->
-        <div id="tab-projects" class="tab-content min-h-full">
-            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
-                <h2 class="font-black text-xl">Mis Desarrollos</h2>
-                <button onclick="alert('Módulo en construcción')" class="admin-only hidden btn-red px-2 py-1 text-[10px]">+ Nuevo</button>
-            </div>
-            <div class="p-4">
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden mb-4">
-                    <div class="bg-gradient-to-r from-black to-gray-900 text-white p-5 cursor-pointer relative" onclick="document.getElementById('proj-1').classList.toggle('active')">
-                        <h3 class="font-black text-xl mb-1">BELLA VISTA</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-3">📍 Ocozocoautla, Chiapas</p>
-                        
-                        <div class="flex gap-2 text-[10px] font-bold mb-4">
-                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">22 Mz</span>
-                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">513 Lotes</span>
-                            <span class="bg-ibr-green text-white px-2 py-1 rounded">$350/lote base</span>
-                        </div>
-                        
-                        <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
-                            <span class="text-ibr-green">✅ Vend: 193</span>
-                            <span class="text-blue-400">🟢 Disp: 320</span>
-                            <span class="text-ibr-red">❌ Canc: 3</span>
-                        </div>
-                        <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
-                            <div class="bg-gradient-to-r from-ibr-red to-ibr-green h-1.5 rounded-full" style="width: 38%"></div>
-                        </div>
-                        <p class="text-[9px] text-right mt-1 font-bold text-gray-500">38% Vendido</p>
-                        
-                        <div class="absolute top-4 right-4 text-white opacity-50">▼</div>
+                <div id="tab-projects" class="tab-content p-4 space-y-4">
+            <h2 class="section-title">Proyectos Activos</h2>
+            <div class="card-ui p-0 overflow-hidden">
+                <div class="p-4 border-b border-gray-100">
+                    <p class="font-black text-xl">🏘️ BELLA VISTA</p>
+                    <p class="text-sm text-gray-500 font-bold mb-3">Ocozocoautla</p>
+                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
+                        <span>513 lotes · <span id="proj-vendidos">193</span> vendidos</span>
+                        <span id="proj-pct">31%</span>
                     </div>
-                    
-                    <div id="proj-1" class="expandable-content bg-white">
-                        <div class="p-0 overflow-x-auto">
-                            <table class="w-full text-xs text-center border-collapse">
-                                <thead>
-                                    <tr class="bg-gray-50 text-[9px] text-gray-500 uppercase tracking-widest border-b border-gray-200">
-                                        <th class="p-3 text-left font-black">Mz</th><th class="p-3">Tot</th><th class="p-3 text-ibr-green">V</th><th class="p-3 text-blue-600">D</th><th class="p-3 text-left">Nota</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="mz-table-body" class="divide-y divide-gray-100 font-medium">
-                                    <!-- Injected by JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="p-4 bg-gray-50 text-center border-t border-gray-200 admin-only">
-                            <button onclick="alert('Edición en construcción')" class="bg-black text-white text-xs font-bold py-3 w-full rounded-xl shadow-md hover:bg-gray-800 transition">Editar Lotes / Estatus</button>
-                        </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                        <div class="bg-ibr-green h-2.5 rounded-full" id="proj-bar" style="width: 31%"></div>
                     </div>
                 </div>
-
-                <div class="bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden mb-4">
-                    <div class="bg-gradient-to-r from-gray-800 to-black text-white p-5 cursor-pointer relative" onclick="document.getElementById('proj-2').classList.toggle('active')">
-                        <h3 class="font-black text-xl mb-1 text-red-400">BOSQUES DE CHAPULTEPEC</h3>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-3">📍 Chiapas</p>
-                        
-                        <div class="flex gap-2 text-[10px] font-bold mb-4">
-                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">Vendedor Único</span>
-                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">6 Lotes</span>
-                            <span class="bg-red-800 text-white px-2 py-1 rounded">Exclusivo Daniel</span>
-                        </div>
-                        
-                        <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
-                            <span class="text-ibr-green">✅ Vend: 6</span>
-                        </div>
-                        <div class="absolute top-4 right-4 text-white opacity-50">▼</div>
+                <div class="collapse-wrapper !mb-0" id="col-mz">
+                    <div class="collapse-header !rounded-none !shadow-none !mb-0 bg-gray-50 text-ibr-blue" onclick="toggleCollapse('col-mz')">
+                        <span class="text-xs font-bold uppercase tracking-widest">Ver detalle</span>
+                        <span class="collapse-icon">▼</span>
                     </div>
-                    <div id="proj-2" class="expandable-content bg-white p-4">
-                        <p class="text-xs text-gray-500 font-bold text-center">Gestión simplificada para ventas exclusivas. Ver detalles en "Mis Ventas Personales".</p>
+                    <div class="collapse-content" id="col-mz-content">
+                        <div class="p-4 overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead><tr class="text-[10px] text-gray-400 uppercase tracking-widest border-b border-gray-200"><th class="pb-2">Mz</th><th class="pb-2">Total</th><th class="pb-2 text-ibr-green">Vend</th><th class="pb-2 text-blue-600">Disp</th><th class="pb-2">Avance</th></tr></thead>
+                                <tbody id="mz-table-body" class="divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- SHARED: LEADS -->
-        <div id="tab-leads" class="tab-content min-h-full">
-            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
-                <h2 class="font-black text-xl">Leads & Citas</h2>
-                <button onclick="openModal('leadModal')" class="admin-only hidden btn-red px-3 py-1.5 text-xs">+ Cita</button>
+                <div id="tab-leads" class="tab-content p-4 space-y-4">
+            <div class="sticky top-0 z-30 bg-[#F5F5F5] pt-2 pb-2">
+                <h2 class="section-title">Leads & Citas</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="lead-search" placeholder="🔍 Buscar lead..." class="flex-1" onkeyup="renderLeads()">
+                    <button onclick="openModal('leadModal')" class="admin-only hidden bg-ibr-red text-white w-12 rounded-lg font-black text-xl flex justify-center items-center">+</button>
+                </div>
+                <div class="filters-scroll mt-3">
+                    <button onclick="filterLeads('Todos')" class="filter-btn active" id="fbtn-Todos">Todos</button>
+                    <button onclick="filterLeads('Hoy')" class="filter-btn" id="fbtn-Hoy">Hoy</button>
+                    <button onclick="filterLeads('Pendientes')" class="filter-btn" id="fbtn-Pendientes">Pendientes</button>
+                    <button onclick="filterLeads('Cerrados')" class="filter-btn" id="fbtn-Cerrados">Cerrados</button>
+                </div>
             </div>
-            <div class="px-4 py-3 flex gap-2 overflow-x-auto whitespace-nowrap border-b bg-gray-50 scrollbar-hide">
-                <button onclick="filterLeads('Todos')" class="px-4 py-1.5 bg-white border border-gray-200 shadow-sm text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Todos</button>
-                <button onclick="filterLeads('Hoy')" class="px-4 py-1.5 bg-white border border-blue-200 shadow-sm text-blue-600 rounded-full text-[10px] uppercase tracking-widest font-black">Hoy</button>
-                <button onclick="filterLeads('Pendientes')" class="px-4 py-1.5 bg-white border border-yellow-200 shadow-sm text-yellow-600 rounded-full text-[10px] uppercase tracking-widest font-black">Pendientes</button>
-                <button onclick="filterLeads('Cerrados')" class="px-4 py-1.5 bg-white border border-green-200 shadow-sm text-green-600 rounded-full text-[10px] uppercase tracking-widest font-black">Cerrados</button>
-            </div>
-            <div class="p-4 space-y-4" id="leadsContainer"></div>
+            <div class="space-y-3" id="leadsContainer"></div>
         </div>
 
         <!-- SHARED: VENTAS -->
@@ -405,118 +341,78 @@
         </div>
 
         <!-- ADMIN: FINANZAS -->
-        <div id="tab-finances" class="tab-content min-h-full p-4 space-y-6">
-            <h2 class="font-black text-2xl text-ibr-black">Finanzas</h2>
+                <div id="tab-finances" class="tab-content p-4 space-y-4">
+            <h2 class="section-title">Análisis Financiero</h2>
             
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
-                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Comisiones Bella Vista</h3>
-                <div class="flex gap-2 text-xs font-black mb-4 bg-gray-50 p-3 rounded-xl justify-between text-center border border-gray-100">
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest mb-1">Generadas</p><p class="text-green-600 text-sm" id="fin-gen">$0</p></div>
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest mb-1">Pagadas</p><p class="text-blue-600 text-sm" id="fin-pag">$0</p></div>
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest mb-1">Pendientes</p><p class="text-yellow-600 text-sm" id="fin-pen">$0</p></div>
+            <div class="collapse-wrapper" id="col-fin-com">
+                <div class="collapse-header" onclick="toggleCollapse('col-fin-com')">
+                    <span class="collapse-title">📊 Comisiones por Proyecto</span>
+                    <span class="collapse-icon">▼</span>
                 </div>
-                <div class="space-y-3" id="fin-com-list"></div>
-                <button onclick="openModal('pagoModal')" class="w-full mt-5 bg-black text-white font-bold text-xs py-3 rounded-xl shadow-md transition hover:bg-gray-800">Registrar Pago Asesor</button>
-            </div>
-
-            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-2xl shadow-lg p-5 relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 opacity-10 text-9xl">📈</div>
-                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4 relative z-10 flex items-center gap-2"><span>Punto de Equilibrio</span> <div class="h-px bg-gray-700 flex-1"></div></h3>
-                <div class="grid grid-cols-2 gap-4 text-xs relative z-10 font-medium mb-4">
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Inversión Campañas</p><p class="font-black text-lg" id="pe-inv">$0</p></div>
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Com. Promedio</p><p class="font-black text-lg">$350</p></div>
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Lotes Necesarios</p><p class="font-black text-lg" id="pe-req">0</p></div>
-                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Lotes Vendidos</p><p class="font-black text-lg text-ibr-green" id="pe-vendidos">0</p></div>
-                </div>
-                <div class="pt-4 border-t border-gray-700 flex justify-between items-center relative z-10">
-                    <span class="font-black text-sm px-3 py-1 rounded bg-green-500 text-white" id="pe-estado">✅ SUPERADO</span>
-                    <span class="text-[10px] font-black bg-white bg-opacity-20 px-3 py-1 rounded text-white" id="pe-roi">ROI: 0%</span>
+                <div class="collapse-content" id="col-fin-com-content">
+                    <div class="card-ui" id="fin-com-list"></div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400">Inversión Campañas</h3>
-                    <button onclick="openModal('invModal')" class="bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow">+ Gasto</button>
+            <div class="collapse-wrapper" id="col-fin-inv">
+                <div class="collapse-header" onclick="toggleCollapse('col-fin-inv')">
+                    <span class="collapse-title">📢 Inversión en Campañas</span>
+                    <span class="collapse-icon">▼</span>
                 </div>
-                <div class="space-y-3" id="fin-inv-list"></div>
+                <div class="collapse-content" id="col-fin-inv-content">
+                    <div class="card-ui">
+                        <div id="fin-inv-list" class="space-y-2"></div>
+                        <button onclick="openModal('invModal')" class="w-full mt-3 border border-gray-300 text-gray-700 text-[10px] font-black uppercase py-2 rounded-lg">+ Añadir Gasto</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
-                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Historial Pagos Antiguos (Finanzas)</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-xs text-left">
-                        <thead class="text-[8px] text-gray-400 uppercase tracking-widest border-b border-gray-200">
-                            <tr><th class="pb-2 font-bold">Fec</th><th class="pb-2 font-bold">Asesor</th><th class="pb-2 font-bold text-right">Monto</th></tr>
-                        </thead>
-                        <tbody id="fin-pagos-list" class="divide-y divide-gray-100"></tbody>
-                    </table>
+            <div class="collapse-wrapper" id="col-fin-eq">
+                <div class="collapse-header" onclick="toggleCollapse('col-fin-eq')">
+                    <span class="collapse-title">⚖️ Punto de Equilibrio</span>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="collapse-content" id="col-fin-eq-content">
+                    <div class="card-ui text-xs space-y-3">
+                        <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 font-bold">Total Invertido:</span> <span class="font-black text-ibr-red" id="pe-inv">$0</span></div>
+                        <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 font-bold">Ventas Requeridas:</span> <span class="font-black" id="pe-req">0</span></div>
+                        <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 font-bold">Ventas Logradas:</span> <span class="font-black text-ibr-green" id="pe-vendidos">0</span></div>
+                        <div class="flex justify-between border-b border-gray-100 pb-2"><span class="text-gray-500 font-bold">Estado:</span> <span id="pe-estado"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-500 font-bold">Retorno Estimado:</span> <span class="font-black" id="pe-roi"></span></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- ADMIN: PAGOS -->
-        <div id="tab-pagos" class="tab-content min-h-full p-4 space-y-6">
+                <div id="tab-pagos" class="tab-content p-4 space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="font-black text-2xl text-ibr-black">Registro de Pagos</h2>
-                <button onclick="openModal('registroPagoModal')" class="bg-ibr-red text-white text-xs font-black px-4 py-2 rounded-xl shadow">+ Registrar Pago</button>
+                <h2 class="section-title !mb-0">Gestión de Pagos</h2>
+                <button onclick="openModal('pagoModal')" class="bg-black text-white text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-sm">+ Nuevo</button>
             </div>
             
-            <div class="flex gap-2 text-xs font-black bg-gray-50 p-4 rounded-xl justify-between text-center border border-gray-200 shadow-inner">
-                <div><p class="text-gray-400 text-[9px] uppercase tracking-widest mb-1">Total Generado</p><p class="text-black text-lg" id="pagos-tot-gen">$0</p></div>
-                <div><p class="text-gray-400 text-[9px] uppercase tracking-widest mb-1">Total Cobrado</p><p class="text-ibr-green text-lg" id="pagos-tot-cob">$0</p></div>
-                <div><p class="text-gray-400 text-[9px] uppercase tracking-widest mb-1">Total Pendiente</p><p class="text-ibr-red text-lg" id="pagos-tot-pen">$0</p></div>
-            </div>
-
-            <div class="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
-                <button onclick="filterPagos('Todos')" class="px-3 py-1.5 bg-black text-white rounded-full text-[10px] uppercase tracking-widest font-black">Todos</button>
-                <button onclick="filterPagos('Bella Vista')" class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Bella Vista</button>
-                <select id="pagos-filter-adv" onchange="filterPagos('Asesor')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black border-none outline-none"><option value="">Por Asesor ▼</option></select>
-                <select id="pagos-filter-mes" onchange="filterPagos('Mes')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black border-none outline-none"><option value="">Por Mes ▼</option></select>
-            </div>
-
-            <div class="space-y-4" id="pagosContainer">
-                <!-- Populated by JS -->
-            </div>
-            
-            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 mt-6">
-                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Totales por Asesor</h3>
-                <div class="space-y-3" id="pagos-adv-totals"></div>
-            </div>
-
-            <!-- COBRANZA A CLIENTES -->
-            <div class="mt-8 border-t border-gray-200 pt-8">
-                <h2 class="font-black text-2xl text-ibr-black mb-4">📅 Calendario de Cobros (Clientes)</h2>
-                
-                <div class="bg-gray-800 text-white rounded-2xl shadow-md p-5 mb-6">
-                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">📊 Proyección Mensual - Bella Vista</h3>
-                    <div class="grid grid-cols-2 gap-4 text-sm font-bold">
-                        <div class="space-y-2 text-gray-300">
-                            <p class="flex justify-between"><span>Cobros día 15:</span> <span id="proj-d15" class="text-white">$0</span></p>
-                            <p class="flex justify-between"><span>Cobros fin mes:</span> <span id="proj-d28" class="text-white">$0</span></p>
-                            <p class="flex justify-between"><span>Otros / Sin fecha:</span> <span id="proj-dother" class="text-white">$0</span></p>
-                        </div>
-                        <div class="border-l border-gray-600 pl-4 flex flex-col justify-center">
-                            <p class="text-[9px] uppercase tracking-widest text-gray-400">Total Esperado</p>
-                            <p class="text-xl text-ibr-green font-black" id="proj-total">$0<span class="text-xs">/mes</span></p>
-                            <p class="text-[9px] text-gray-500 mt-1">Si nadie se atrasa ✅</p>
-                        </div>
+            <div class="card-ui bg-gradient-to-r from-gray-900 to-black text-white">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Total Pendiente IBR</p>
+                        <p class="text-3xl font-black text-ibr-red" id="pag-tot-pend">$0</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Pagado este mes</p>
+                        <p class="text-xl font-black text-ibr-green" id="pag-tot-pag">$0</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide py-1 mb-4">
-                    <button onclick="renderCobranzaAdmin('15')" id="btn-cob-15" class="cob-filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Día 15</button>
-                    <button onclick="renderCobranzaAdmin('28')" id="btn-cob-28" class="cob-filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Fin de mes</button>
-                    <button onclick="renderCobranzaAdmin('Todos')" id="btn-cob-Todos" class="cob-filter-btn px-3 py-1.5 bg-black text-white rounded-full text-[10px] uppercase tracking-widest font-black">Todos</button>
-                    <button onclick="renderCobranzaAdmin('Atrasados')" id="btn-cob-Atrasados" class="cob-filter-btn px-3 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-full text-[10px] uppercase tracking-widest font-black">Atrasados</button>
+            <div class="card-ui p-0 overflow-hidden">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                    <span class="font-black text-sm">Historial de Pagos</span>
                 </div>
-
-                <div class="bg-gray-50 p-3 rounded-lg mb-4 text-center font-black text-xs border border-gray-200 shadow-inner" id="cob-filtro-resumen">
-                    <!-- Ej. 💰 Cobros esperados día 15: $X -->
-                </div>
-
-                <div class="space-y-3" id="cobranzaContainer">
-                    <!-- Populated by JS -->
+                <div class="p-0">
+                    <table class="w-full text-xs text-left">
+                        <thead><tr class="bg-gray-50 text-[10px] uppercase text-gray-400 border-b border-gray-200"><th class="p-3">Fecha</th><th class="p-3">Asesor</th><th class="p-3 text-right">Monto</th></tr></thead>
+                        <tbody id="fin-pagos-list" class="divide-y divide-gray-100"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1482,164 +1378,33 @@
         renderPagos();
     }
 
-    function renderPagos() {
-        // Populate dropdowns if empty
-        if(document.getElementById('pagos-filter-adv').options.length <= 1) {
-            let adOpts = IBR_USERS.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
-            document.getElementById('pagos-filter-adv').innerHTML += adOpts;
-            
-            let months = [...new Set(payments.map(p => p.period))].filter(Boolean);
-            let moOpts = months.map(m => `<option value="${m}">${m}</option>`).join('');
-            document.getElementById('pagos-filter-mes').innerHTML += moOpts;
-            
-            let rHtml = IBR_USERS.map((u, i) => `
-                <label class="flex items-center gap-1 border border-gray-200 p-2 rounded cursor-pointer bg-white text-[9px] truncate">
-                    <input type="radio" name="rp-asesor" value="${u.name}" onchange="loadAsesorLots()" required> ${u.name.split(' ')[0]}
-                </label>
-            `).join('');
-            document.getElementById('rp-asesores-radios').innerHTML = rHtml;
-        }
-
-        let allS = getAllSales();
-        let totalGen = 0, totalCob = 0;
-        IBR_USERS.forEach(u => {
-            let uSales = getMisVentas(u.name);
-            uSales.forEach(s => {
-                totalGen += Number(s.com_total || 0);
-            });
-        });
-        totalCob = payments.reduce((sum, p) => sum + Number(p.amount||0), 0);
-        
-        document.getElementById('pagos-tot-gen').innerText = '$' + totalGen.toLocaleString();
-        document.getElementById('pagos-tot-cob').innerText = '$' + totalCob.toLocaleString();
-        document.getElementById('pagos-tot-pen').innerText = '$' + (totalGen - totalCob).toLocaleString();
-
-        let filtered = [...payments];
-        if(pagosFilter === 'Bella Vista Ocozocoautla') filtered = filtered.filter(p => p.project === 'Bella Vista Ocozocoautla');
-        if(pagosFilter === 'Asesor' && pagosAdvFilter) filtered = filtered.filter(p => p.adv === pagosAdvFilter);
-        if(pagosFilter === 'Mes' && pagosMesFilter) filtered = filtered.filter(p => p.period === pagosMesFilter);
-
-        let pListHtml = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => {
-            let parts = p.date.split('-'); // YYYY-MM-DD
-            let formattedDate = parts.length === 3 ? `${parts[2]}/${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][parseInt(parts[1])-1]}/${parts[0]}` : p.date;
-            
-            return `
-            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-ibr-red border-y border-r border-gray-100 flex justify-between items-center">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2 mb-2"><span class="text-[9px] font-black text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-widest">#${p.id || 'PAG'}</span> <span class="text-[9px] font-bold text-gray-400">${formattedDate}</span></div>
-                    <p class="font-black text-sm text-black">${p.adv}</p>
-                    <p class="text-[10px] text-gray-500 font-bold">${p.lote_str || ''} · ${p.project || 'Bella Vista'}</p>
-                    <p class="text-[9px] text-gray-400 font-bold">Periodo: ${p.period || '-'}</p>
-                </div>
-                <div class="text-right">
-                    <span class="text-ibr-green font-black text-lg bg-green-50 px-2 py-1 rounded-lg">💰 $${Number(p.amount||0).toLocaleString()}</span>
-                </div>
-            </div>`;
-        }).join('');
-        document.getElementById('pagosContainer').innerHTML = pListHtml || '<p class="text-center text-[10px] font-bold text-gray-400 py-10 uppercase tracking-widest">Sin pagos registrados</p>';
-
-        let advTotalsHtml = IBR_USERS.map(u => {
-            let uGen = 0, uCob = 0;
-            getMisVentas(u.name).forEach(s => uGen += Number(s.com_total || 0));
-            payments.filter(p => p.adv === u.name).forEach(p => uCob += Number(p.amount||0));
-            return `<div class="flex justify-between items-center text-[10px] border-b border-gray-50 pb-2">
-                <span class="font-black text-gray-800">${u.name.split(' ')[0]}</span>
-                <div>
-                    <span class="text-ibr-green font-black mr-2">Pagado $${uCob.toLocaleString()}</span> 
-                    <span class="text-ibr-red font-black">/ Pendiente $${(uGen - uCob).toLocaleString()}</span>
-                </div>
-            </div>`;
-        }).join('');
-        document.getElementById('pagos-adv-totals').innerHTML = advTotalsHtml;
-    }
-
-    function loadAsesorLots() {
-        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
-        if(!adv) return;
-        const mySales = getMisVentas(adv);
-        const html = mySales.map(s => {
-            let lTxt = `M${s.mz}-L${s.lote}`;
-            let advTxt = s.adv2 ? (s.adv2===adv?'con '+s.adv:'con '+s.adv2) : 'Individual';
-            return `<option value="${s.id}">${lTxt} · ${advTxt}</option>`;
-        }).join('');
-        document.getElementById('rp-sale').innerHTML = html || '<option value="">Sin ventas registradas</option>';
-        loadLotDetails();
-    }
-
-    function loadLotDetails() {
-        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
-        const saleId = document.getElementById('rp-sale').value;
-        if(!adv || !saleId) return;
-        
-        const sale = getMisVentas(adv).find(s => s.id === saleId);
-        if(sale) {
-            document.getElementById('rp-amount').value = sale.mensualidad;
-            document.getElementById('rp-lot-details').innerHTML = `
-                💰 Comisión total: <span class="text-ibr-green">$${sale.com_total.toLocaleString()}</span><br>
-                ✅ Ya pagado: <span class="text-ibr-green">$${sale.pagado.toLocaleString()}</span><br>
-                ⏳ Pendiente: <span class="text-ibr-red">$${(sale.com_total - sale.pagado).toLocaleString()}</span>
-            `;
-            document.getElementById('rp-lot-details').classList.remove('hidden');
-            updateRpSummary();
-        }
-    }
     
-    function updateRpSummary() {
-        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
-        const saleSel = document.getElementById('rp-sale');
-        const saleStr = saleSel.options[saleSel.selectedIndex]?.text;
-        const amount = document.getElementById('rp-amount').value;
-        const date = document.getElementById('rp-date').value;
-        if(adv && saleStr && amount && date) {
-            document.getElementById('rp-summary').innerHTML = `Asesor: ${adv}<br>Lote: ${saleStr.split(' ·')[0]}<br>Monto: $${amount}<br>Fecha: ${date}`;
-            document.getElementById('rp-summary').classList.remove('hidden');
-        } else {
-            document.getElementById('rp-summary').classList.add('hidden');
-        }
+    function renderPagos() {
+        let allS = getAllSales();
+        let ibrS = allS.filter(s => s.adv !== 'Externo');
+        let men = ibrS.length * 350;
+        let extGen = allS.filter(s=>s.adv==='Externo').length * 10800; // Assuming ext also generates 10800 in total
+        // Wait, total pendiente IBR
+        let totalGenIBR = 0;
+        ibrS.forEach(s => totalGenIBR += Number(s.com_total || 0));
+        let totalPagIBR = 0;
+        payments.forEach(p => totalPagIBR += Number(p.amount));
+        
+        // Let's sum payments of the current month
+        let today = new Date();
+        let currentMonthPayments = payments.filter(p => {
+            let pd = new Date(p.date);
+            return pd.getMonth() === today.getMonth() && pd.getFullYear() === today.getFullYear();
+        }).reduce((sum, p) => sum + Number(p.amount), 0);
+
+        document.getElementById('pag-tot-pend').innerText = '$' + (totalGenIBR - totalPagIBR).toLocaleString();
+        document.getElementById('pag-tot-pag').innerText = '$' + currentMonthPayments.toLocaleString();
+
+        document.getElementById('fin-pagos-list').innerHTML = payments.map(p => `
+            <tr class="hover:bg-gray-50"><td class="p-3 font-medium text-gray-500">${p.date}</td><td class="p-3 font-black text-gray-800">${p.adv.split(' ')[0]}</td><td class="p-3 text-right font-black text-ibr-green">$${p.amount.toLocaleString()}</td></tr>
+        `).join('') || '<tr><td colspan="3" class="text-center p-4 text-xs font-bold text-gray-400">Sin pagos registrados</td></tr>';
     }
-
-    function savePago(e) {
-        e.preventDefault();
-        if(!esAdmin()) return alert('🔒 Solo el Administrador puede registrar pagos.');
-
-        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
-        const saleId = document.getElementById('rp-sale').value;
-        const saleSel = document.getElementById('rp-sale');
-        const loteStr = saleSel.options[saleSel.selectedIndex]?.text.split(' ·')[0] || '';
-        
-        if(!adv || !saleId) return alert('Selecciona un asesor y una venta.');
-        
-        let newIdNum = payments.length > 0 ? Math.max(...payments.map(p => Number(p.id ? p.id.split('-')[1] : 0))) + 1 : 1;
-        let newId = 'PAG-' + String(newIdNum).padStart(3, '0');
-
-        payments.push({
-            id: newId,
-            project: document.getElementById('rp-project').value,
-            adv: adv,
-            sale_id: saleId,
-            lote_str: loteStr,
-            amount: document.getElementById('rp-amount').value,
-            date: document.getElementById('rp-date').value,
-            period: document.getElementById('rp-period').value,
-            method: document.getElementById('rp-method').value,
-            obs: document.getElementById('rp-obs').value
-        });
-        localStorage.setItem('ibr_pagos', JSON.stringify(payments));
-        closeModal('registroPagoModal');
-        alert('✅ Pago registrado (' + newId + ')');
-        
-        // Reset form manually
-        document.getElementById('registroPagoForm').reset();
-        document.getElementById('rp-lot-details').classList.add('hidden');
-        document.getElementById('rp-summary').classList.add('hidden');
-        document.getElementById('rp-sale').innerHTML = '<option value="">Primero selecciona un asesor</option>';
-        
-        if(document.getElementById('tab-pagos').classList.contains('active')) renderPagos();
-        if(isAdmin) renderDashAdmin();
-        renderProfile();
-    }
-
-    function populateSelects() {
+function populateSelects() {
         const teamOpts = IBR_USERS.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
         document.getElementById('lf-advisor').innerHTML = teamOpts;
         document.getElementById('pf-adv').innerHTML = teamOpts;
@@ -1690,192 +1455,69 @@
     }
 
     /* ================= RENDERERS ================= */
+    
     function renderDashAdmin() {
+        document.getElementById('ad-user-name').innerText = window.currentUser ? window.currentUser.nombre.split(' ')[0] : 'Admin';
+        document.getElementById('ad-user-role').innerText = window.currentUser ? window.currentUser.rol : 'Admin';
+        
         let allS = getAllSales();
-        let gen = 0; allS.forEach(s => gen += Number(s.com||0));
-        let pag = 0; payments.forEach(p => pag += Number(p.amount||0));
-        let totalInv = investments.reduce((a, b) => a + Number(b.amount), 0);
-        document.getElementById('ad-camp-inv').innerText = `$${totalInv}`;
+        let ibrS = allS.filter(s => s.adv !== 'Externo');
+        let extS = allS.filter(s => s.adv === 'Externo');
         
-        let teamGen = 0, teamMen = 0, teamPag = 0;
-        let breakdownItems = [];
-        let html = IBR_USERS.map((m, i) => {
-            let uSalesRaw = getMisVentas(m.name);
-            let uSales = uSalesRaw.filter(s => {
-                let pName = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id)?.proyecto : 'Bella Vista Ocozocoautla';
-                if(!pName) pName = 'Bella Vista Ocozocoautla';
-                return pName === 'Bella Vista Ocozocoautla';
-            });
-            let uSumCom = 0, uSumMen = 0;
-            
-            let chips = uSales.map(s => {
-                uSumCom += s.com_total; uSumMen += s.mensualidad;
-                return `<div class="inline-block bg-white text-[9px] font-bold text-gray-600 px-2 py-1 rounded shadow-sm border border-gray-100 m-1">BV-M${s.mz}-L${s.lote}</div>`;
-            });
-            teamGen += uSumCom; teamMen += uSumMen;
-            let uTotalPag = uSales.reduce((sum,s)=>sum+s.pagado, 0);
-            teamPag += uTotalPag;
-            
-            breakdownItems.push(`<div class="flex justify-between"><span class="text-gray-300 font-bold w-16">${m.name.split(' ')[0]}</span> <span class="font-black">$${uSumCom.toLocaleString()} · <span class="text-gray-400 font-normal">$${uSumMen.toLocaleString()}ms</span></span></div>`);
-            
-            let totalL = uSales.length;
-            let prom = (totalL/5.7).toFixed(1); 
-            let initials = m.name.split(' ').map(n=>n[0]).join('');
-            return `
-            <div class="bg-white border-l-4 border-l-ibr-red rounded-xl shadow-sm mb-3 overflow-hidden">
-                <div class="p-4 cursor-pointer" onclick="document.getElementById('det-${i}').classList.toggle('active')">
-                    <div class="flex justify-between items-center mb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-ibr-red text-white rounded-full flex items-center justify-center font-black">${initials}</div>
-                            <div>
-                                <p class="font-black text-sm text-black leading-tight">${m.name}</p>
-                                <span class="bg-black text-white text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">${m.role}</span>
-                            </div>
-                        </div>
-                        <span class="font-black text-ibr-red text-2xl">${totalL}</span>
-                    </div>
-                    <div class="flex justify-between items-center mt-2 border-t border-gray-100 pt-3">
-                        <div><p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Generado</p><p class="text-xs font-black text-ibr-red">$${uSumCom.toLocaleString()}</p></div>
-                        <div class="text-right"><p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Mensualidad</p><p class="text-xs font-black text-black">$${uSumMen.toLocaleString()}/mes</p></div>
-                    </div>
-                </div>
-                <div id="det-${i}" class="expandable-content bg-gray-50 p-4 border-t border-gray-100">
-                    <div class="mb-3 flex justify-between text-[10px] text-gray-500 font-medium">
-                        <a href="${m.link}" target="_blank" class="text-blue-600 hover:underline">Ver Tarjeta Digital →</a>
-                        <span>Promedio: ${prom}</span>
-                    </div>
-                    ${chips.join('')}
-                </div>
-            </div>`;
-        }).join('');
-        document.getElementById('ad-team-list').innerHTML = html;
-        
-        // Populate Admin Global Comissions Card (Bella Vista)
-        if(document.getElementById('ad-com-gen-card')) {
-            document.getElementById('ad-com-gen-card').innerText = '$' + teamGen.toLocaleString();
-            document.getElementById('ad-com-men-card').innerText = '$' + teamMen.toLocaleString();
-            document.getElementById('ad-com-pag-card').innerText = '$' + teamPag.toLocaleString();
-            document.getElementById('ad-com-pen-card').innerText = '$' + (teamGen - teamPag).toLocaleString();
-            document.getElementById('ad-com-breakdown').innerHTML = breakdownItems.join('');
-        }
+        document.getElementById('kpi-vendidos').innerText = allS.length;
+        document.getElementById('kpi-ibr').innerText = ibrS.length;
+        document.getElementById('kpi-externos').innerText = extS.length;
+        document.getElementById('kpi-cancelados').innerText = leads.filter(l => l.status === 'Cancelado').length;
 
-        // Populate EXCLUSIVO DANIEL (Bosques de Chapultepec)
-        let bcSales = getMisVentas("Daniel Vázquez").filter(s => {
-            let pName = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id)?.proyecto : 'Bella Vista Ocozocoautla';
-            return pName === 'Bosques de Chapultepec';
+        const ibrCom = IBR_USERS.map(u => {
+            let gen = 0; 
+            allS.filter(s=>s.adv===u.name || s.adv2===u.name).forEach(s=>gen+=Number(s.com_total||0));
+            let pag = 0; payments.filter(p=>p.adv===u.name).forEach(p=>pag+=Number(p.amount));
+            return { name: u.name, gen: gen, pag: pag, pen: gen - pag, men: (allS.filter(s=>s.adv===u.name).length * 350) + (allS.filter(s=>s.adv2===u.name).length * 350) };
         });
-        if(document.getElementById('ad-bc-lotes')) {
-            let bcGen = 0, bcMen = 0, bcPag = 0;
-            bcSales.forEach(s => { bcGen += s.com_total; bcMen += s.mensualidad; bcPag += s.pagado; });
-            document.getElementById('ad-bc-lotes').innerText = bcSales.length;
-            document.getElementById('ad-bc-gen').innerText = '$' + bcGen.toLocaleString();
-            document.getElementById('ad-bc-men').innerText = '$' + bcMen.toLocaleString() + '/mes';
-            document.getElementById('ad-bc-pag').innerText = '$' + bcPag.toLocaleString();
-            document.getElementById('ad-bc-pen').innerText = '$' + (bcGen - bcPag).toLocaleString();
-        }
 
-        // Top Externos
-        const extVals = [35,32,24,21,13];
-        document.getElementById('ad-top-ext').innerHTML = DEFAULT_EXT.slice(0,5).map((e,i) => `
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2 w-1/2">
-                    <div class="w-6 h-6 bg-ibr-red text-white rounded-full flex items-center justify-center text-xs font-black shadow-sm">${i+1}</div>
-                    <span class="text-xs truncate font-bold text-gray-800">${e}</span>
-                </div>
-                <div class="w-1/2 flex items-center gap-2">
-                    <div class="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-ibr-red to-black h-2 rounded-full" style="width:${(extVals[i]/35)*100}%"></div></div>
-                    <span class="text-xs font-black text-ibr-red">${extVals[i]}</span>
-                </div>
+        document.getElementById('ad-com-breakdown').innerHTML = ibrCom.map(c => `
+            <div class="flex justify-between border-b border-gray-50 pb-2">
+                <span class="w-1/3 truncate text-gray-700 font-bold">${c.name.split(' ')[0]}</span>
+                <span class="w-1/4 text-right font-black text-ibr-green">$${c.gen.toLocaleString()}</span>
+                <span class="w-1/4 text-right font-bold text-blue-500">$${c.men.toLocaleString()}</span>
+                <span class="w-1/4 text-right font-black text-ibr-red">$${c.pen.toLocaleString()}</span>
             </div>
         `).join('');
 
-        // Mis Ventas Personales (Daniel)
-        let myAdminSales = getMisVentas(currentUser);
-        document.getElementById('ad-mis-ventas-badge').innerText = myAdminSales.length + " participaciones";
-        
-        let filterVal = 'Todos';
-        let filterEl = document.getElementById('ad-mis-ventas-filter');
-        if(filterEl) filterVal = filterEl.value;
+        let topExtMap = {};
+        extS.forEach(s => { topExtMap[s.adv2] = (topExtMap[s.adv2]||0)+1; });
+        let topExtArr = Object.entries(topExtMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+        document.getElementById('ad-top-ext').innerHTML = topExtArr.map((t, i) => `
+            <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-2">
+                <span class="font-bold text-xs text-gray-700">#${i+1} ${t[0]}</span>
+                <span class="bg-black text-white text-[10px] px-2 py-0.5 rounded-full font-black">${t[1]} lotes</span>
+            </div>
+        `).join('') || '<p class="text-[10px] text-gray-400 font-bold">Sin externos registrados</p>';
 
-        let projGroups = {};
-        myAdminSales.forEach(s => {
-            let pName = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id)?.proyecto : 'Bella Vista Ocozocoautla';
-            if(!pName) pName = 'Bella Vista Ocozocoautla';
-            if(filterVal !== 'Todos' && pName !== filterVal) return;
-            if(!projGroups[pName]) projGroups[pName] = [];
-            projGroups[pName].push(s);
-        });
-
-        let mvHtml = Object.keys(projGroups).map(p => {
-            let group = projGroups[p];
-            group.sort((a,b) => (a.mz - b.mz) || (a.lote - b.lote));
-            
-            let sumCom = 0;
-            let groupHtml = group.map(s => {
-                sumCom += Number(s.com_total||0);
-                let coAsesorTxt = '';
-                if (s.adv2) coAsesorTxt = `con ${s.adv2===currentUser ? s.adv : s.adv2}`;
-                else if (s.adv !== currentUser) coAsesorTxt = `con ${s.adv}`;
-
-                let histData = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id) : null;
-                let fVenta = '';
-                if(histData && histData.fecha_venta) fVenta = histData.fecha_venta;
-                let savedFVenta = JSON.parse(localStorage.getItem('ibr_fechas_venta')||'{}')[s.id];
-                if(savedFVenta) fVenta = savedFVenta;
-
-                let specialBadge = s.razon ? `<span class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-1 py-0.5 rounded ml-1 uppercase tracking-widest">⚡ ${s.razon}</span>` : '';
-                return `
-                <div class="bg-white p-4 border-b border-r border-gray-100 flex flex-col justify-between">
-                    <div>
-                        <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">${p}</div>
-                        <div class="mb-2">
-                            <h3 class="font-black text-xl text-black">${s.lote_str || ('BV-M'+s.mz+'-L'+s.lote)}${specialBadge}</h3>
-                            ${coAsesorTxt ? `<p class="text-[12px] font-bold text-gray-500 mt-1">👥 ${coAsesorTxt}</p>` : ''}
-                        </div>
-                        
-                        <div class="space-y-1 text-[12px] font-bold text-gray-600">
-                            <p class="flex justify-between"><span>💰 Total lote:</span> <span class="font-black text-gray-800">$${(s.comision_total_lote || 10800).toLocaleString()}</span></p>
-                            <p class="flex justify-between"><span>👤 Tu comisión:</span> <span class="text-ibr-red font-black">$${s.com_total.toLocaleString()}</span></p>
-                            <p class="flex justify-between"><span>📅 Mensualidad:</span> <span class="font-black">$${(s.mensualidad || 350).toLocaleString()}/mes</span></p>
-                            <p class="flex justify-between"><span>✅ Cobrado:</span> <span class="text-ibr-green font-black">$${s.pagado.toLocaleString()}</span></p>
-                            <p class="flex justify-between"><span>⏳ Pendiente:</span> <span class="text-ibr-red font-black">$${(s.com_total - s.pagado).toLocaleString()}</span></p>
-                        </div>
+        // Populate ad-team-list using the existing cards logic from config
+        let teamHtml = "";
+        let teamPhones = JSON.parse(localStorage.getItem('ibr_team_phones') || '{}');
+        Object.entries(USUARIOS).forEach(([token, u]) => {
+            let phone = teamPhones[token] || TELEFONOS_EQUIPO[u.nombre] || '';
+            teamHtml += `
+            <div class="card-ui !mb-3 border border-gray-100">
+                <p class="font-black text-sm text-gray-900">👤 ${u.nombre}</p>
+                <div class="text-[12px] text-gray-600 font-bold mb-1">${u.rol === 'admin' ? 'Team Leader' : 'Asesor'}</div>
+                <div class="text-[12px] text-gray-800 font-bold mb-2">📱 ${phone}</div>
+                <div class="flex flex-col gap-2 pt-2">
+                    <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" class="bg-black text-white rounded-lg py-2 text-[12px] w-full font-black">🪪 Ver Tarjeta Digital →</button>
+                    <div class="flex gap-2">
+                        <button onclick="window.open('https://wa.me/52${phone.replace(/\D/g,'')}', '_blank')" class="flex-1 bg-ibr-green text-white text-[12px] font-black py-2 rounded-lg hover:bg-green-700 transition">💬 WhatsApp</button>
+                        ${u.rol !== 'admin' && window.currentUser && window.currentUser.rol === 'admin' ? `<button onclick="verComoAsesor('${u.nombre}')" class="flex-1 bg-blue-50 text-blue-600 border border-blue-200 text-[12px] font-black py-2 rounded-lg hover:bg-blue-100 transition">👁️ Ver panel</button>` : ''}
                     </div>
-                    <div class="mt-4 space-y-2">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[12px] font-bold text-gray-600">📆 Fecha de venta:</span>
-                            <input type="date" value="${fVenta}" onchange="saveFechaVenta('${s.id}', this.value)" style="border:1px solid #8B0000; border-radius:4px; padding:4px; font-size:14px" class="flex-1 bg-gray-50 outline-none">
-                        </div>
-                        <button onclick="openComModal('${s.id}')" class="w-full bg-gray-50 text-ibr-red py-2 rounded text-[12px] font-black hover:bg-gray-200 transition border border-gray-200 text-left px-3 mt-2">✏️ Caso especial</button>
-                    </div>
-                </div>
-                `;
-            }).join('');
-
-            return `
-            <div class="mb-2">
-                <div class="bg-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest px-4 py-2 border-y border-gray-300 text-center shadow-inner">━━ ${p.toUpperCase()} (${group.length}) ━━</div>
-                <div class="max-h-80 overflow-y-auto overflow-x-hidden">
-                    <div class="grid grid-cols-2 gap-0 bg-gray-100 border-l border-gray-100">
-                        ${groupHtml}
-                    </div>
-                </div>
-                <div class="bg-black text-white text-[10px] font-black uppercase tracking-widest px-4 py-3 flex justify-between border-t border-gray-800">
-                    <span>Total: ${group.length} lotes</span>
-                    <span class="text-ibr-green">Acumulado: $${sumCom.toLocaleString()}</span>
                 </div>
             </div>`;
-        }).join('');
+        });
+        document.getElementById('ad-team-list').innerHTML = teamHtml;
 
-        let listEl = document.getElementById('ad-mis-ventas-list');
-        if(listEl) {
-            listEl.innerHTML = mvHtml || '<p class="p-5 text-center text-xs text-gray-400 font-bold uppercase tracking-widest">No hay participaciones aún</p>';
-        } else {
-            document.getElementById('ad-mis-ventas-content').innerHTML = mvHtml || '<p class="p-5 text-center text-xs text-gray-400 font-bold uppercase tracking-widest">No hay participaciones aún</p>';
-        }
     }
-
-    function renderDashAsesor() {
+function renderDashAsesor() {
         const u = IBR_USERS.find(x => x.name === currentUser);
         document.getElementById('as-greeting').innerText = `Hola ${currentUser.split(' ')[0]} 👋`;
         document.getElementById('as-card-btn').href = u ? u.link : '#';
@@ -1903,20 +1545,29 @@
         document.getElementById('as-sales').innerHTML = myS.slice(0,5).map(s => `<div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"><span class="font-black text-xs">M${s.mz} L${s.lote}</span><span class="text-ibr-green font-black text-sm">$${s.mensualidad}/mes</span></div>`).join('') || '<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border-2 border-dashed border-gray-200 rounded-xl">Sin ventas</p>';
     }
 
+    
     function renderProyectos() {
+        // Project card UI
+        let allS = getAllSales();
+        let bvs = allS.filter(s => s.proyecto !== 'Bosques de Chapultepec').length;
+        let pct = Math.round((bvs / 513) * 100);
+        
+        document.getElementById('proj-vendidos').innerText = bvs;
+        document.getElementById('proj-pct').innerText = pct + '%';
+        document.getElementById('proj-bar').style.width = pct + '%';
+
         const html = MANZANAS_DATA.map(m => `
-            <tr>
-                <td class="p-3 font-black border-r border-gray-100">Mz ${m.m}</td>
-                <td class="p-3 text-gray-500">${m.t}</td>
-                <td class="p-3 text-ibr-green font-black bg-green-50 bg-opacity-50">${m.v}</td>
-                <td class="p-3 text-blue-600 font-black bg-blue-50 bg-opacity-50">${m.d}</td>
-                <td class="p-3 text-[10px] text-gray-400 font-medium">${m.av || '-'}</td>
+            <tr class="hover:bg-gray-50">
+                <td class="pt-3 pb-3 font-black text-gray-800">Mz ${m.m}</td>
+                <td class="pt-3 pb-3 font-medium text-gray-500">${m.t}</td>
+                <td class="pt-3 pb-3 text-ibr-green font-black">${m.v}</td>
+                <td class="pt-3 pb-3 text-blue-600 font-black">${m.d}</td>
+                <td class="pt-3 pb-3 font-medium text-gray-400">${m.av || '-'}</td>
             </tr>
         `).join('');
         document.getElementById('mz-table-body').innerHTML = html;
     }
-
-    function getLeadBorder(status) {
+function getLeadBorder(status) {
         return { 'Programada': 'border-l-[#1D4ED8]', 'Seguimiento': 'border-l-[#D97706]', 'Vendido': 'border-l-[#16A34A]', 'Cancelado': 'border-l-[#DC2626]', 'No llegó': 'border-l-[#6B7280]', 'Reagendado': 'border-l-[#8B0000]' }[status] || 'border-l-gray-300';
     }
     function getLeadBadge(status) {
@@ -1973,30 +1624,43 @@
         }
     }
 
+    
     function renderLeads() {
         let f = getLeadsVisibles();
-        if(filterL === 'Hoy') { const td = new Date().toISOString().split('T')[0]; f = f.filter(l => l.date === td || l.status === 'Programada'); }
-        if(filterL === 'Pendientes') f = f.filter(l => l.status === 'Seguimiento' || l.status === 'Reagendado');
-        if(filterL === 'Cerrados') f = f.filter(l => l.status === 'Vendido' || l.status === 'Cancelado');
+        const search = document.getElementById('lead-search') ? document.getElementById('lead-search').value.toLowerCase() : '';
+        if(search) {
+            f = f.filter(l => l.name.toLowerCase().includes(search) || l.phone.includes(search));
+        } else {
+            if(filterL === 'Hoy') { const td = new Date().toISOString().split('T')[0]; f = f.filter(l => l.date === td || l.status === 'Programada'); }
+            if(filterL === 'Pendientes') f = f.filter(l => l.status === 'Seguimiento' || l.status === 'Reagendado');
+            if(filterL === 'Cerrados') f = f.filter(l => l.status === 'Vendido' || l.status === 'Cancelado');
+        }
 
-        const html = f.map(l => `
-            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 ${getLeadBorder(l.status)} border-y border-r border-gray-100">
-                <div class="flex justify-between items-start mb-3">
-                    <div><h3 class="font-black text-sm text-black mb-1">${l.name}</h3><p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">${l.project} <br> ${l.date} ${l.time}</p></div>
-                    ${getLeadBadge(l.status)}
+        // update active button
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        let btn = document.getElementById('fbtn-'+filterL);
+        if(btn && !search) btn.classList.add('active');
+
+        const html = f.map(l => {
+            const dateParts = l.date ? new Date(l.date).toLocaleDateString('es-ES', {month:'short', day:'numeric'}) : '';
+            return `
+            <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}">
+                <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
+                <div class="mt-2 text-xs text-gray-600 space-y-1">
+                    <p>📅 ${dateParts} · ${l.time || '--'}</p>
+                    <p class="truncate">👤 ${l.advisor.split(' ')[0]} · 🏘️ ${l.project.split(' ')[0]}</p>
                 </div>
-                ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium border border-gray-100 rounded-lg">💬 ${l.lastComment}</div>` : ''}
-                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                    <a href="https://wa.me/52${l.phone}" target="_blank" class="btn-wa">📱 WhatsApp</a>
-                    ${esAdmin() ? `<span class="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">${l.advisor.split(' ')[0]}</span>` : ''}
-                    <button onclick="openResultModal('${l.id}')" class="text-ibr-red text-[10px] font-black uppercase tracking-widest bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition ${['Vendido','Cancelado'].includes(l.status) ? 'hidden' : ''}">Actualizar</button>
+                <div class="mt-2 mb-3">${getLeadBadge(l.status)}</div>
+                ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium rounded">💬 ${l.lastComment}</div>` : ''}
+                <div class="flex gap-2">
+                    <button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 rounded-lg hover:bg-gray-50">💬 WA</button>
+                    ${!['Vendido','Cancelado'].includes(l.status) ? `<button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50">✏️ Resultado</button>` : ''}
                 </div>
             </div>
-        `).join('');
-        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest">Sin leads registrados</p>';
+        `}).join('');
+        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-xs font-bold text-gray-400 py-10">Sin resultados</p>';
     }
-
-    function openComModal(id) {
+function openComModal(id) {
         let all = getAllSales();
         let s = all.find(x => x.id === id);
         if(!s) return;
@@ -2094,52 +1758,40 @@
         document.getElementById('salesContainer').innerHTML = html || '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest">Sin ventas registradas</p>';
     }
 
+    
     function renderFinances() {
         let allS = getAllSales();
         const ibrCom = IBR_USERS.map(u => {
             let gen = 0; 
-            // In getAllSales, one record per sale, we don't double count teamGen here if we just sum for the user's participation.
-            // Wait, if it's shared, the user's portion is already `com_total`? 
-            // Yes, com_total is what the user gets. But wait, in getAllSales, com_total is either 10800 or 5400.
-            // If it's 5400, it's correct to sum it for both. So we filter by adv or adv2.
             allS.filter(s=>s.adv===u.name || s.adv2===u.name).forEach(s=>gen+=Number(s.com_total||0));
             let pag = 0; payments.filter(p=>p.adv===u.name).forEach(p=>pag+=Number(p.amount));
             return { name: u.name, gen: gen, pag: pag };
         });
         document.getElementById('fin-com-list').innerHTML = ibrCom.map(c => `
-            <div class="flex justify-between text-[10px] border-b border-gray-100 pb-2 mb-2 items-center">
-                <span class="font-black w-1/3 truncate text-gray-800">${c.name}</span>
-                <span class="text-ibr-green font-black w-1/3 text-center bg-green-50 py-1 rounded">$${c.gen.toLocaleString()}</span>
-                <span class="text-blue-600 font-black w-1/3 text-right">$${c.pag.toLocaleString()}</span>
+            <div class="flex justify-between items-center text-xs border-b border-gray-100 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
+                <span class="font-black text-gray-800">${c.name.split(' ')[0]}</span>
+                <span class="text-ibr-green font-black bg-green-50 px-2 py-1 rounded">$${c.gen.toLocaleString()}</span>
+                <span class="text-blue-600 font-black">$${c.pag.toLocaleString()}</span>
             </div>
         `).join('');
 
         let t = 0;
-        document.getElementById('fin-inv-list').innerHTML = investments.map(i => { t += Number(i.amount); return `<div class="flex justify-between text-[10px] border-b border-gray-100 pb-2 mb-2 font-bold"><span class="text-gray-500">${i.date} - ${i.concept}</span><span class="font-black text-ibr-red bg-red-50 px-2 rounded">$${i.amount}</span></div>`; }).join('');
+        document.getElementById('fin-inv-list').innerHTML = investments.map(i => { t += Number(i.amount); return `<div class="flex justify-between text-xs border-b border-gray-100 pb-2"><span class="text-gray-500 font-medium">${i.date} - ${i.concept}</span><span class="font-black text-ibr-red bg-red-50 px-2 rounded">$${i.amount}</span></div>`; }).join('') || '<p class="text-[10px] font-bold text-gray-400">Sin inversiones</p>';
         
-        // genAll is the total generated by all sales. Since allS has 1 record per sale, 
-        // if we just sum com_total it's wrong (it would be 5400 instead of 10800 for shared).
-        // Let's sum based on total property value. If shared, it's 10800. If individual, 10800.
-        // Wait, yes, the total generated by a sale is ALWAYS 10800.
         let genAll = allS.length * 10800;
         let req = Math.ceil(t / 350);
-        let totV = 193;
+        let totV = allS.length;
         let roi = t > 0 ? ((genAll - t) / t * 100).toFixed(0) : 0;
         document.getElementById('pe-inv').innerText = `$${t.toLocaleString()}`;
         document.getElementById('pe-req').innerText = req;
         document.getElementById('pe-vendidos').innerText = totV;
         document.getElementById('pe-roi').innerText = `ROI: ${roi}%`;
         let st = document.getElementById('pe-estado');
-        if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "font-black text-sm px-3 py-1 rounded bg-green-500 text-white"; }
-        else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "font-black text-sm px-3 py-1 rounded bg-yellow-500 text-white"; }
-        else { st.innerHTML = "❌ PÉRDIDA"; st.className = "font-black text-sm px-3 py-1 rounded bg-red-600 text-white"; }
-
-        document.getElementById('fin-pagos-list').innerHTML = payments.map(p => `
-            <tr class="border-b border-gray-50"><td class="py-2 text-gray-500 font-medium">${p.date.substring(5)}</td><td class="py-2 font-black text-gray-800">${p.adv.split(' ')[0]}</td><td class="py-2 font-black text-ibr-green text-right">$${p.amount}</td></tr>
-        `).join('');
+        if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "font-black px-2 py-0.5 rounded bg-green-500 text-white"; }
+        else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "font-black px-2 py-0.5 rounded bg-yellow-500 text-white"; }
+        else { st.innerHTML = "❌ PÉRDIDA"; st.className = "font-black px-2 py-0.5 rounded bg-red-600 text-white"; }
     }
-
-    function renderConfig() {
+function renderConfig() {
         document.getElementById('conf-ext').innerHTML = extUsers.map(u => `<div class="text-[10px] font-black border border-gray-100 p-2 bg-gray-50 rounded-lg text-gray-700 truncate">${u}</div>`).join('');
 
         const cardsEl = document.getElementById('users-cards-list');
@@ -2225,6 +1877,25 @@
         }
     }
 
+
+    
+    function toggleCollapse(id) {
+        const wrapper = document.getElementById(id + '-wrapper');
+        const content = document.getElementById(id + '-content');
+        if(wrapper.classList.contains('open')) {
+            wrapper.classList.remove('open');
+            content.classList.remove('open');
+        } else {
+            wrapper.classList.add('open');
+            content.classList.add('open');
+        }
+    }
+    function openPushView(id) {
+        document.getElementById(id).classList.add('active');
+    }
+    function closePushView(id) {
+        document.getElementById(id).classList.remove('active');
+    }
 
     function renderProfile() {
         const u = IBR_USERS.find(x => x.name === currentUser);
