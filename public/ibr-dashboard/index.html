@@ -3031,6 +3031,13 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         if(container) container.innerHTML = 
             '<p style="text-align:center;padding:32px;color:#666">⏳ Cargando citas...</p>'
 
+        function fallbackLocalJson() {
+            fetch('./citas-historico.json')
+              .then(r => r.json())
+              .then(data => renderLeads(normalizeLeads(data.citas||[])))
+              .catch(() => renderLeads([]))
+        }
+
         // Crear callback global único
         const cbName = 'ibrCB_' + Date.now()
         
@@ -3040,7 +3047,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
             document.getElementById('jsonp-script')?.remove()
             
             if(!data.ok || !data.citas) {
-                mostrarLeadsLocales()
+                fallbackLocalJson()
                 return
             }
             
@@ -3068,17 +3075,17 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         script.onerror = () => {
             delete window[cbName]
             script.remove()
-            mostrarLeadsLocales()
+            fallbackLocalJson()
         }
         
-        // Timeout 10 segundos
+        // Timeout 5 segundos
         setTimeout(() => {
             if(window[cbName]) {
                 delete window[cbName]
                 document.getElementById('jsonp-script')?.remove()
-                mostrarLeadsLocales()
+                fallbackLocalJson()
             }
-        }, 10000)
+        }, 5000)
         
         document.head.appendChild(script)
     }
