@@ -3028,6 +3028,7 @@ function getLeadBorder(status) {
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2KcvydnJmo-iex7XAJlU8EDecRpJel7FXJhPNxhWXroOVjPVef5Q31aXjJhkwzz25Ow/exec'
 
     function cargarCitas() {
+        localStorage.removeItem('ibr_leads');
         // Mostrar loading
         const container = document.getElementById('leadsContainer')
         if(container) container.innerHTML = 
