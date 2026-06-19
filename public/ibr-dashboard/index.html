@@ -3080,6 +3080,28 @@ function getLeadBorder(status) {
     }
 
     
+    function renderLeadCard(l) {
+        const dateParts = l.date ? new Date(l.date).toLocaleDateString('es-ES', {month:'short', day:'numeric'}) : '';
+        const hasPhone = l.phone && l.phone !== '0000000000' && l.phone.trim() !== '';
+        
+        return `
+        <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}">
+            <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
+            <div class="mt-2 text-xs text-gray-600 space-y-1">
+                <p>📅 ${dateParts} · ${l.time || '--'}</p>
+                <p class="truncate">👤 ${l.advisor.split(' ')[0]} · 🏘️ ${l.project.split(' ')[0]}</p>
+            </div>
+            <div class="mt-2 mb-3">${getLeadBadge(l.status)}</div>
+            ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium rounded">💬 ${l.lastComment}</div>` : ''}
+            <div class="flex gap-2">
+                ${hasPhone ? `<button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 rounded-lg hover:bg-gray-50">💬 WA</button>` : ''}
+                <button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50">✏️ Resultado</button>
+                ${esAdmin() ? `<button onclick="deleteLead('${l.id}')" style="background:#ff4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🗑️</button>` : ''}
+            </div>
+        </div>
+        `;
+    }
+
     function renderLeads() {
         let f = getLeadsVisibles();
         
@@ -3135,28 +3157,54 @@ function getLeadBorder(status) {
             if (btn) btn.classList.remove('active');
         }
 
-        const html = f.map(l => {
-            const dateParts = l.date ? new Date(l.date).toLocaleDateString('es-ES', {month:'short', day:'numeric'}) : '';
-            const hasPhone = l.phone && l.phone !== '0000000000' && l.phone.trim() !== '';
-            
-            return `
-            <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}">
-                <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
-                <div class="mt-2 text-xs text-gray-600 space-y-1">
-                    <p>📅 ${dateParts} · ${l.time || '--'}</p>
-                    <p class="truncate">👤 ${l.advisor.split(' ')[0]} · 🏘️ ${l.project.split(' ')[0]}</p>
-                </div>
-                <div class="mt-2 mb-3">${getLeadBadge(l.status)}</div>
-                ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium rounded">💬 ${l.lastComment}</div>` : ''}
-                <div class="flex gap-2">
-                    ${hasPhone ? `<button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 rounded-lg hover:bg-gray-50">💬 WA</button>` : ''}
-                    <button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50">✏️ Resultado</button>
-                    ${esAdmin() ? `<button onclick="deleteLead('${l.id}')" style="background:#ff4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🗑️</button>` : ''}
-                </div>
-            </div>
-        `}).join('');
+        // Store references for pagination
+        window.filteredLeadsForPagination = f;
+        window.leadsOffset = 30;
+
+        const primeras30 = f.slice(0, 30);
+        let html = primeras30.map(lead => renderLeadCard(lead)).join('');
+        
+        if (f.length > 30) {
+            html += `
+            <button id="btn-cargar-mas" onclick="cargarMasLeads()" 
+              style="width:100%;padding:16px;
+              background:#f5f5f5;border:none;
+              border-radius:8px;margin-top:8px;
+              font-size:14px;font-weight:bold;cursor:pointer">
+              Ver más (${f.length - 30} restantes)
+            </button>`;
+        }
+        
         document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-xs font-bold text-gray-400 py-10">Sin resultados</p>';
     }
+
+    function cargarMasLeads() {
+        const filtradas = window.filteredLeadsForPagination || [];
+        const offset = window.leadsOffset || 0;
+        const sig30 = filtradas.slice(offset, offset + 30);
+        
+        const container = document.getElementById('leadsContainer');
+        const btn = document.getElementById('btn-cargar-mas');
+        if (btn) btn.remove();
+        
+        const newHtml = sig30.map(lead => renderLeadCard(lead)).join('');
+        container.insertAdjacentHTML('beforeend', newHtml);
+        
+        window.leadsOffset += 30;
+        
+        if (window.leadsOffset < filtradas.length) {
+            container.insertAdjacentHTML('beforeend', `
+                <button id="btn-cargar-mas" onclick="cargarMasLeads()" 
+                  style="width:100%;padding:16px;
+                  background:#f5f5f5;border:none;
+                  border-radius:8px;margin-top:8px;
+                  font-size:14px;font-weight:bold;cursor:pointer">
+                  Ver más (${filtradas.length - window.leadsOffset} restantes)
+                </button>
+            `);
+        }
+    }
+    window.cargarMasLeads = cargarMasLeads;
 
     function deleteLead(id) {
         if(!esAdmin()) return;
