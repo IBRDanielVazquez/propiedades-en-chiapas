@@ -1269,29 +1269,19 @@
     }
     
     function normalizeLeads(arr) {
-        if (!Array.isArray(arr)) return [];
-        return arr.map(l => {
-            const name = l.name || l.titulo || 'Sin nombre';
-            const phoneVal = (l.phone !== undefined && l.phone !== null) ? l.phone : (l.telefono !== undefined && l.telefono !== null ? l.telefono : '');
-            const project = l.project || l.ubicacion || 'Por definir';
-            const advisor = l.advisor || l.asesor || 'Sin asignar';
-            const date = l.date || l.fecha || '';
-            const time = l.time || l.hora || '';
-            const status = l.status || l.estatus || 'Programada';
-            const lastComment = l.lastComment || l.descripcion || l.comentarios || '';
-            
-            return {
-                id: l.id,
-                name: name,
-                phone: phoneVal.toString().replace(/\D/g, ''),
-                project: project,
-                advisor: advisor,
-                date: date,
-                time: time,
-                status: status,
-                lastComment: lastComment
-            };
-        });
+      if(!Array.isArray(arr)) return []
+      return arr.map(l => ({
+        id: l.id,
+        name: l.nombre_cliente || l.titulo || l.name || 'Sin nombre',
+        phone: (l.telefono || l.phone || '').toString().replace(/\D/g,''),
+        project: l.titulo || l.project || 'Sin proyecto',
+        advisor: l.asesor || l.advisor || l.calendario || 'Sin asignar',
+        date: l.fecha || l.date || '',
+        time: l.hora || l.time || '',
+        status: l.resultado || l.estatus || l.status || 'Programada',
+        whatsapp: l.whatsapp || '',
+        lastComment: l.descripcion || l.comentarios || ''
+      }))
     }
 
     let extUsers = JSON.parse(localStorage.getItem('ibr_externos')) || DEFAULT_EXT;
@@ -3025,7 +3015,7 @@ function getLeadBorder(status) {
         return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${cls}">${status}</span>`;
     }
 
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2KcvydnJmo-iex7XAJlU8EDecRpJel7FXJhPNxhWXroOVjPVef5Q31aXjJhkwzz25Ow/exec'
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNyw990CDVOjA3YXMpy2-4szsqo-MdgXlo3YU_dz7lkUsrbpuq1yJusdA/exec'
 
     function cargarCitas() {
         localStorage.removeItem('ibr_leads');
