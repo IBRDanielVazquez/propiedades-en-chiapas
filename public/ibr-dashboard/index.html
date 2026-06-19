@@ -1270,18 +1270,25 @@
     
     function normalizeLeads(arr) {
       if(!Array.isArray(arr)) return []
-      return arr.map(l => ({
-        id: l.id,
-        name: l.nombre_cliente || l.titulo || l.name || 'Sin nombre',
-        phone: (l.telefono || l.phone || '').toString().replace(/\D/g,''),
-        project: l.titulo || l.project || 'Sin proyecto',
-        advisor: l.asesor || l.advisor || l.calendario || 'Sin asignar',
-        date: l.fecha || l.date || '',
-        time: l.hora || l.time || '',
-        status: l.resultado || l.estatus || l.status || 'Programada',
-        whatsapp: l.whatsapp || '',
-        lastComment: l.descripcion || l.comentarios || ''
-      }))
+      return arr.map(l => {
+        let tel = (l.telefono || l.phone || '').toString().replace(/\D/g,'');
+        if (!tel && l.descripcion) {
+          const m = l.descripcion.replace(/\+52/g, '').replace(/\D/g, '').match(/\d{10}/);
+          if (m) tel = m[0];
+        }
+        return {
+          id: l.id,
+          name: l.nombre_cliente || l.titulo || l.name || 'Sin nombre',
+          phone: tel,
+          project: l.titulo || l.project || 'Sin proyecto',
+          advisor: l.asesor || l.advisor || l.calendario || 'Sin asignar',
+          date: l.fecha || l.date || '',
+          time: l.hora || l.time || '',
+          status: l.resultado || l.estatus || l.status || 'Programada',
+          whatsapp: l.whatsapp || '',
+          lastComment: l.descripcion || l.comentarios || ''
+        }
+      })
     }
 
     let extUsers = JSON.parse(localStorage.getItem('ibr_externos')) || DEFAULT_EXT;
