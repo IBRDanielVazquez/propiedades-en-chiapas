@@ -458,48 +458,8 @@
         <!-- SHARED: PROYECTOS -->
         <div id="tab-projects" class="tab-content p-4 space-y-4">
             <h2 class="section-title">Proyectos Activos</h2>
-            
-            <!-- Bella Vista Card -->
-            <div class="card-ui p-0 overflow-hidden">
-                <div class="p-4 border-b border-gray-100">
-                    <p class="font-black text-xl">🏘️ BELLA VISTA</p>
-                    <p class="text-sm text-gray-500 font-bold mb-3">Ocozocoautla</p>
-                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
-                        <span>513 lotes · <span id="proj-vendidos">193</span> vendidos</span>
-                        <span id="proj-pct">38%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                        <div class="bg-ibr-green h-2.5 rounded-full" id="proj-bar" style="width: 38%"></div>
-                    </div>
-                </div>
-                <div class="collapse-wrapper !mb-0" id="col-mz">
-                    <div class="accordion-header !rounded-none !shadow-none !mb-0 bg-gray-50 text-ibr-blue">
-                        <span class="text-xs font-bold uppercase tracking-widest">Ver detalle</span>
-                        <span class="arrow">▼</span>
-                    </div>
-                    <div class="collapse-content" id="col-mz-content" style="display:none">
-                        <div class="p-4 overflow-x-auto">
-                            <table class="w-full text-left text-xs">
-                                <thead><tr class="text-[10px] text-gray-400 uppercase tracking-widest border-b border-gray-200"><th class="pb-2">Mz</th><th class="pb-2">Total</th><th class="pb-2 text-ibr-green">Vend</th><th class="pb-2 text-blue-600">Disp</th><th class="pb-2">Avance</th></tr></thead>
-                                <tbody id="mz-table-body" class="divide-y divide-gray-100"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bosques de Chapultepec Card -->
-            <div class="card-ui p-4">
-                <p class="font-black text-xl">🏘️ BOSQUES DE CHAPULTEPEC</p>
-                <p class="text-sm text-gray-500 font-bold mb-3">Tuxtla Gutiérrez</p>
-                <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
-                    <span>6 lotes vendidos</span>
-                    <span>100% de Daniel Vázquez</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-                    <div class="bg-ibr-green h-2.5 rounded-full" style="width: 100%"></div>
-                </div>
-                <p class="text-[10px] text-gray-400 italic mt-2">* Proyecto exclusivo comercializado por Daniel Vázquez</p>
+            <div id="projectsDynamicContainer" class="space-y-4">
+                <!-- Rendered dynamically -->
             </div>
         </div>
 
@@ -2350,9 +2310,28 @@ function populateSelects() {
         return Math.max(0, gen - paid);
     }
 
+    function toggleAccordion(header) {
+        const content = header.nextElementSibling;
+        if (!content) return;
+        const arrow = header.querySelector('.arrow');
+        const isOpen = content.style.display !== 'none';
+        content.style.display = isOpen ? 'none' : 'block';
+        if (arrow) arrow.textContent = isOpen ? '▼' : '▲';
+    }
+    window.toggleAccordion = toggleAccordion;
+
     function openProjectDetail(projectId) {
         window.currentDetailProject = projectId;
         renderProjectDetail(projectId);
+        
+        // Remember which tab was active to go back to it
+        window.detailSourceTab = document.getElementById('tab-projects').style.display !== 'none' ? 'proyectos' : 'resumen';
+        
+        // Ensure the admin tab is visible because the projectDetailView wrapper is inside it
+        document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display='none');
+        const adminTab = document.getElementById('tab-dashboard-admin');
+        if (adminTab) adminTab.style.display = 'block';
+        
         document.getElementById('admin-dashboard-main-view').classList.add('hidden');
         document.getElementById('projectDetailView').classList.remove('hidden');
     }
@@ -2360,7 +2339,11 @@ function populateSelects() {
     function closeProjectDetail() {
         document.getElementById('projectDetailView').classList.add('hidden');
         document.getElementById('admin-dashboard-main-view').classList.remove('hidden');
-        renderDashAdmin();
+        if (window.detailSourceTab === 'proyectos') {
+            switchTab('proyectos');
+        } else {
+            switchTab('resumen');
+        }
     }
 
     function renderProjectDetail(projectId) {
@@ -2838,28 +2821,165 @@ function populateSelects() {
 
     
     function renderProyectos() {
-        // Project card UI
-        let allS = getAllSales();
-        let bvs = allS.filter(s => s.proyecto !== 'Bosques de Chapultepec').length;
-        let pct = Math.round((bvs / 513) * 100);
+        const container = document.getElementById('projectsDynamicContainer');
+        if (!container) return;
         
-        document.getElementById('proj-vendidos').innerText = bvs;
-        document.getElementById('proj-pct').innerText = pct + '%';
-        document.getElementById('proj-bar').style.width = pct + '%';
-
-        const html = MANZANAS_DATA.map(m => {
-            const pctVal = Math.round((m.v / m.t) * 100);
-            return `
-                <tr class="hover:bg-gray-50">
-                    <td class="pt-3 pb-3 font-black text-gray-800">Mz ${m.m}</td>
-                    <td class="pt-3 pb-3 font-medium text-gray-500">${m.t}</td>
-                    <td class="pt-3 pb-3 text-ibr-green font-black">${m.v}</td>
-                    <td class="pt-3 pb-3 text-blue-600 font-black">${m.d}</td>
-                    <td class="pt-3 pb-3 font-bold text-gray-600">${pctVal}%</td>
-                </tr>
+        const proyectos = JSON.parse(localStorage.getItem('ibr_proyectos') || '[]');
+        let html = '';
+        
+        proyectos.forEach(p => {
+            let kpis = calcKPIs(p.id);
+            let progressHtml = '';
+            let pct = 0;
+            
+            if (p.lotes_total) {
+                pct = Math.round((kpis.vendidos / p.lotes_total) * 100);
+                progressHtml = `
+                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
+                        <span>${kpis.vendidos} / ${p.lotes_total} lotes vendidos</span>
+                        <span>${pct}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden relative shadow-inner">
+                        <div class="h-full rounded-full transition-all duration-700" style="width: ${pct}%; background-color: ${p.color || '#8B0000'}"></div>
+                    </div>
+                `;
+            } else {
+                progressHtml = `
+                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-2">
+                        <span>${kpis.vendidos} lotes vendidos</span>
+                    </div>
+                `;
+            }
+            
+            // Personal commission for advisors, or total for admin
+            let commissionHtml = '';
+            if (esAdmin()) {
+                let comPendientes = calcComisionesPendientes(p.id);
+                commissionHtml = `
+                    <div class="flex justify-between items-center p-3 rounded-xl bg-red-50/50 border border-red-100 mb-4">
+                        <span class="text-xs font-bold text-gray-600">Comisiones Totales Pendientes:</span>
+                        <span class="text-sm font-black text-ibr-red">$${comPendientes.toLocaleString()}</span>
+                    </div>
+                `;
+            } else {
+                // Advisor: only show their own pending commission
+                let myS = getMisVentas(currentUser);
+                let myProjSales = myS.filter(s => s.proyecto === p.nombre || s.project === p.id || (p.id === 'bella-vista' && (!s.proyecto && !s.project)));
+                let myProjSaleIds = new Set(myProjSales.map(s => s.id));
+                let myPaid = payments.filter(pay => pay.adv === currentUser && (pay.sale_id ? myProjSaleIds.has(pay.sale_id) : (pay.project === p.id || pay.project === p.nombre))).reduce((sum, pay) => sum + Number(pay.amount || 0), 0);
+                let myGen = myProjSales.reduce((sum, s) => sum + (s.com_total !== undefined ? s.com_total : 5400), 0);
+                let myPending = Math.max(0, myGen - myPaid);
+                
+                commissionHtml = `
+                    <div class="flex justify-between items-center p-3 rounded-xl bg-green-50/50 border border-green-100 mb-4">
+                        <span class="text-xs font-bold text-gray-600">Mi Comisión Pendiente:</span>
+                        <span class="text-sm font-black text-ibr-green">$${myPending.toLocaleString()}</span>
+                    </div>
+                `;
+            }
+            
+            // Accordion for manzanas details (specifically for Bella Vista)
+            let detailAccordionHtml = '';
+            if (p.id === 'bella-vista') {
+                const manzanaRowsHtml = MANZANAS_DATA.map(m => {
+                    const pctVal = Math.round((m.v / m.t) * 100);
+                    return `
+                        <tr class="hover:bg-gray-50 border-b border-gray-100">
+                            <td class="pt-2.5 pb-2.5 font-black text-gray-800">Mz ${m.m}</td>
+                            <td class="pt-2.5 pb-2.5 font-medium text-gray-500">${m.t}</td>
+                            <td class="pt-2.5 pb-2.5 text-ibr-green font-black">${m.v}</td>
+                            <td class="pt-2.5 pb-2.5 text-blue-600 font-black">${m.d}</td>
+                            <td class="pt-2.5 pb-2.5 font-bold text-gray-600">${pctVal}%</td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                detailAccordionHtml = `
+                    <div class="collapse-wrapper !mb-0 !mt-2 rounded-xl overflow-hidden border border-gray-100">
+                        <div class="accordion-header !rounded-none !shadow-none !mb-0 bg-gray-50/70 hover:bg-gray-100 transition py-3 px-4 flex justify-between items-center cursor-pointer text-ibr-blue" onclick="toggleAccordion(this)">
+                            <span class="text-xs font-extrabold uppercase tracking-wider">🗺️ Ver detalle por manzana</span>
+                            <span class="arrow transition-transform duration-300">▼</span>
+                        </div>
+                        <div class="collapse-content p-0" style="display:none">
+                            <div class="p-3 overflow-x-auto bg-white">
+                                <table class="w-full text-left text-xs text-gray-700">
+                                    <thead>
+                                        <tr class="text-[9px] text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                                            <th class="pb-2 font-black">Mz</th>
+                                            <th class="pb-2 font-black">Total</th>
+                                            <th class="pb-2 font-black text-ibr-green">Vend</th>
+                                            <th class="pb-2 font-black text-blue-600">Disp</th>
+                                            <th class="pb-2 font-black">Avance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50 font-bold text-gray-700">
+                                        ${manzanaRowsHtml}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (p.id === 'bosques-chapultepec') {
+                detailAccordionHtml = `
+                    <p class="text-[10px] text-gray-400 italic mt-3 text-center">* Proyecto exclusivo comercializado por Daniel Vázquez</p>
+                `;
+            }
+            
+            // Ficha tecnica button only for admin
+            let detailBtnHtml = '';
+            if (esAdmin()) {
+                detailBtnHtml = `
+                    <button onclick="openProjectDetail('${p.id}')" class="w-full mt-3 bg-black text-white text-xs font-black py-3 rounded-xl uppercase tracking-wider hover:bg-gray-800 transition shadow-sm">
+                        🔍 Ver Ficha Técnica Completa &rarr;
+                    </button>
+                `;
+            }
+            
+            html += `
+                <div class="card-ui p-4 border border-gray-100 shadow-sm bg-white rounded-xl relative overflow-hidden" style="border-left: 6px solid ${p.color || '#3b82f6'}">
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-extrabold text-base text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${p.color || '#3b82f6'}"></span>
+                            <span>${p.nombre}</span>
+                        </h3>
+                        <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-green-50 text-green-700 border border-green-200">Activo</span>
+                    </div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-3 pl-4">${p.municipio || 'Chiapas'}</p>
+                    
+                    <div class="border-t border-gray-100 my-2"></div>
+                    
+                    ${progressHtml}
+                    
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Ventas IBR</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.ibr}</span>
+                        </div>
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Ventas Ext.</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.externos}</span>
+                        </div>
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Disponibles</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.disponibles !== null ? kpis.disponibles : '0'}</span>
+                        </div>
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Cancelados</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.cancelados}</span>
+                        </div>
+                    </div>
+                    
+                    ${commissionHtml}
+                    
+                    ${detailAccordionHtml}
+                    
+                    ${detailBtnHtml}
+                </div>
             `;
-        }).join('');
-        document.getElementById('mz-table-body').innerHTML = html;
+        });
+        
+        container.innerHTML = html || '<p class="text-center text-xs font-bold text-gray-400 py-10">Sin proyectos disponibles</p>';
     }
 function getLeadBorder(status) {
         return { 'Programada': 'border-l-[#1D4ED8]', 'Seguimiento': 'border-l-[#D97706]', 'Vendido': 'border-l-[#16A34A]', 'Cancelado': 'border-l-[#DC2626]', 'No llegó': 'border-l-[#6B7280]', 'Reagendado': 'border-l-[#8B0000]' }[status] || 'border-l-gray-300';

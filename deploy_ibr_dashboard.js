@@ -13,7 +13,8 @@ async function deploy() {
         console.log("Connected to Propiedades en Chiapas FTP");
         
         await client.ensureDir("/public_html/ibr-dashboard");
-        await client.uploadFrom("/Users/danielvazquez/.gemini/antigravity/scratch/ibr-dashboard/index.html", "/public_html/ibr-dashboard/index.html");
+        await client.uploadFrom("public/ibr-dashboard/index.html", "/public_html/ibr-dashboard/index.html");
+        await client.uploadFrom("public/ibr-dashboard/logo-ibr.png", "/public_html/ibr-dashboard/logo-ibr.png");
         
         console.log("Deploy finished successfully.");
     }
