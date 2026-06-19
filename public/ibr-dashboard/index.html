@@ -213,8 +213,16 @@
 
 <div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-2xl pb-20">
     
+    <!-- PREVIEW BANNER -->
+    <div id="previewBanner" class="hidden bg-yellow-400 text-black px-4 py-2 text-xs font-bold flex justify-between items-center z-[50] sticky top-0 left-0 w-full" style="box-shadow: 0 2px 4px rgba(0,0,0,0.1)">
+        <span>⚠️ Modo vista: <span id="previewUserName" class="font-extrabold text-gray-900"></span></span>
+        <button onclick="exitPreviewMode()" class="bg-black text-white px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-wider transition hover:bg-gray-800">
+            [← Volver a Admin]
+        </button>
+    </div>
+    
     <!-- HEADER -->
-    <header class="sticky top-0 z-40 bg-gradient-to-r from-black to-[#8B0000] text-white p-3 shadow-md flex justify-between items-center">
+    <header class="sticky top-0 z-40 bg-gradient-to-r from-black to-[#8B0000] text-white p-3 shadow-md flex justify-between items-center transition-all duration-300">
         <div>
             <div class="flex items-center gap-2">
                 <span class="text-white font-black text-2xl tracking-tighter leading-none">IBR</span>
@@ -222,6 +230,12 @@
             </div>
         </div>
         <div class="text-right flex items-center gap-2">
+            <select id="viewSwitcher" onchange="changePreviewMode(this.value)" class="hidden bg-black/40 border border-white/20 text-white text-[10px] font-bold px-1.5 py-1 rounded-lg cursor-pointer transition focus:outline-none max-w-[130px] truncate">
+                <option value="admin" style="background:#000;color:#fff">👁️ Vista: Admin ▼</option>
+                <option value="Lupyta Mendoza" style="background:#000;color:#fff">👤 Lupyta Mendoza</option>
+                <option value="Carmen Jiménez" style="background:#000;color:#fff">👤 Carmen Jiménez</option>
+                <option value="Luis García" style="background:#000;color:#fff">👤 Luis García</option>
+            </select>
             <div>
                 <p class="text-white font-black text-[10px] text-right" id="headerUserName">Cargando...</p>
                 <p class="text-gray-400 text-[8px] uppercase tracking-widest" id="headerUserRole"></p>
@@ -1247,8 +1261,8 @@
     const ASESOR_TABS   = ['dashboard-asesor','projects','leads','sales','profile'];
 
     let originalUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
-    let vistaComo = sessionStorage.getItem('ibr_vista_como');
-    let currentUser = vistaComo || originalUser;
+    let vistaComo = sessionStorage.getItem('ibr_preview');
+    let currentUser = (vistaComo && vistaComo !== 'admin') ? vistaComo : originalUser;
     
     const checkIsAdmin = (user) => {
         if (!user) return false;
@@ -1606,21 +1620,45 @@
     }
 
     function bootApp() {
-        let vistaComo = sessionStorage.getItem('ibr_vista_como');
-        if (vistaComo) {
-            currentUser = vistaComo;
-            isAdmin = PERMISOS[currentUser] === 'admin';
+        const vistaPreview = sessionStorage.getItem('ibr_preview');
+        const banner = document.getElementById('previewBanner');
+        const header = document.querySelector('header');
+        
+        const realUser = window.currentUser?.nombre || originalUser;
+        const esVerdaderoAdmin = checkIsAdmin(realUser);
+
+        if (vistaPreview && vistaPreview !== 'admin') {
+            currentUser = vistaPreview;
+            if (window.currentUser) window.currentUser.nombre = vistaPreview;
+            isAdmin = checkIsAdmin(currentUser);
+            
+            if (banner) {
+                banner.classList.remove('hidden');
+                const nameSpan = document.getElementById('previewUserName');
+                if (nameSpan) nameSpan.innerText = currentUser;
+            }
+            if (header) {
+                header.style.top = '36px'; // Height of the banner
+            }
             document.getElementById('headerUserName').textContent = currentUser;
             document.getElementById('headerUserRole').textContent = 'Asesor (Preview)';
-            document.getElementById('preview-banner-container').innerHTML = `
-                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 m-4 rounded shadow-sm">
-                    <p class="font-black text-[14px]">👁️ Viendo como: ${vistaComo} [Asesor]</p>
-                    <button onclick="volverAdmin()" class="mt-2 bg-yellow-200 hover:bg-yellow-300 text-yellow-900 font-bold py-1.5 px-3 rounded text-[12px] transition">
-                        ← Volver a mi Admin
-                    </button>
-                </div>
-            `;
+        } else {
+            currentUser = realUser;
+            if (window.currentUser) window.currentUser.nombre = realUser;
+            isAdmin = checkIsAdmin(currentUser);
+            
+            if (banner) banner.classList.add('hidden');
+            if (header) header.style.top = '0';
+            document.getElementById('headerUserName').textContent = currentUser;
+            document.getElementById('headerUserRole').textContent = isAdmin ? 'Admin' : 'Asesor';
         }
+
+        const switcher = document.getElementById('viewSwitcher');
+        if (switcher) {
+            switcher.classList.toggle('hidden', !esVerdaderoAdmin);
+            switcher.value = (vistaPreview && vistaPreview !== 'admin') ? vistaPreview : 'admin';
+        }
+        
         populateSelects();
         updateAuth();
         switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
@@ -1631,7 +1669,7 @@
     function logout() {
         if(!confirm('Cerrar sesión ¿Seguro?')) return;
         localStorage.removeItem('ibr_session');
-        sessionStorage.removeItem('ibr_vista_como');
+        sessionStorage.removeItem('ibr_preview');
         localStorage.removeItem('ibr_user');
         currentUser = '';
         isAdmin = false;
@@ -1743,12 +1781,26 @@
     let pendingResetToken = '';
     
     window.verComoAsesor = function(nombre) {
-        sessionStorage.setItem('ibr_vista_como', nombre);
+        sessionStorage.setItem('ibr_preview', nombre);
         location.reload();
     };
 
     window.volverAdmin = function() {
-        sessionStorage.removeItem('ibr_vista_como');
+        sessionStorage.removeItem('ibr_preview');
+        location.reload();
+    };
+
+    window.exitPreviewMode = function() {
+        sessionStorage.removeItem('ibr_preview');
+        location.reload();
+    };
+
+    window.changePreviewMode = function(val) {
+        if (val === 'admin') {
+            sessionStorage.removeItem('ibr_preview');
+        } else {
+            sessionStorage.setItem('ibr_preview', val);
+        }
         location.reload();
     };
 
