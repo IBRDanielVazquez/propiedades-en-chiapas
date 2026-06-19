@@ -2226,30 +2226,9 @@ function populateSelects() {
         if(targetId === 'dashboard-asesor') renderDashAsesor();
         if(targetId === 'leads') {
             filterL = 'Todos';
-            const existentes = JSON.parse(localStorage.getItem('ibr_leads') || '[]');
-            if (existentes.length < 100) {
-                fetch('./citas-historico.json')
-                  .then(r => r.json())
-                  .then(data => {
-                    const current = JSON.parse(localStorage.getItem('ibr_leads') || '[]');
-                    const ids = new Set(current.map(c => c.id));
-                    const nuevas = data.citas.filter(c => !ids.has(c.id));
-                    const merged = [...current, ...nuevas];
-                    localStorage.setItem('ibr_leads', JSON.stringify(merged));
-                    leads = merged;
-                    renderLeads();
-                    loadCalendarLeads();
-                  })
-                  .catch(() => {
-                    leads = existentes;
-                    renderLeads();
-                    loadCalendarLeads();
-                  });
-            } else {
-                leads = existentes;
-                renderLeads();
+            cargarCitasHistoricas().finally(() => {
                 loadCalendarLeads();
-            }
+            });
         }
         if(targetId === 'sales') renderSales();
         if(targetId === 'finances' && esAdmin()) renderFinances();
@@ -3016,6 +2995,42 @@ function getLeadBorder(status) {
     }
 
     const CALENDAR_API_URL = "https://script.google.com/macros/s/AKfycbyEDY_uepSq4SRBMJL1HFpJorXeDeRMe22hBzwjaR_f3OPS2g5H9jGgAct4AQ0FqGJ1/exec";
+
+    async function cargarCitasHistoricas() {
+        const container = document.getElementById('leadsContainer');
+        if(container) container.innerHTML = '<p style="text-align:center;padding:20px">⏳ Cargando citas...</p>';
+        
+        try {
+            const res = await fetch('./citas-historico.json?v='+Date.now());
+            if(!res.ok) throw new Error('HTTP '+res.status);
+            const data = await res.json();
+            
+            if(!data.citas || !data.citas.length) throw new Error('Sin citas');
+            
+            // Merge con leads locales
+            const locales = JSON.parse(localStorage.getItem('ibr_leads')||'[]');
+            const ids = new Set(locales.map(c=>c.id));
+            const merged = [
+                ...data.citas.filter(c=>!ids.has(c.id)),
+                ...locales
+            ];
+            
+            localStorage.setItem('ibr_leads', JSON.stringify(merged));
+            leads = merged;
+            window.allLeads = merged;
+            renderLeads(merged);
+            
+        } catch(err) {
+            console.error('Error citas:', err);
+            const locales = JSON.parse(localStorage.getItem('ibr_leads')||'[]');
+            if(locales.length) {
+                leads = locales;
+                renderLeads(locales);
+            } else {
+                if(container) container.innerHTML = '<p style="text-align:center;color:red;padding:20px">⚠️ Error: '+err.message+'</p>';
+            }
+        }
+    }
 
     async function loadCalendarLeads() {
         document.getElementById('leadsContainer').innerHTML = '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest animate-pulse">🔄 Sincronizando con Google Calendar...</p>';
