@@ -271,20 +271,20 @@
                 <!-- 2. KPIs DINÁMICOS -->
                 <div class="grid grid-cols-2 gap-3">
                     <div class="card-ui !mb-0 bg-black text-white p-4 shadow-sm">
-                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">VENDIDOS</p>
-                        <p class="text-3xl font-black" id="kpi-vendidos">0</p>
-                    </div>
-                    <div class="card-ui !mb-0 bg-ibr-red text-white p-4 shadow-sm">
-                        <p class="text-[10px] text-red-200 uppercase font-bold tracking-widest mb-1">IBR</p>
+                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">VENTAS IBR</p>
                         <p class="text-3xl font-black" id="kpi-ibr">0</p>
                     </div>
-                    <div class="card-ui !mb-0 bg-ibr-blue text-white p-4 shadow-sm">
-                        <p class="text-[10px] text-blue-200 uppercase font-bold tracking-widest mb-1">EXTERNOS</p>
-                        <p class="text-3xl font-black" id="kpi-externos">0</p>
+                    <div class="card-ui !mb-0 bg-ibr-red text-white p-4 shadow-sm">
+                        <p class="text-[10px] text-red-200 uppercase font-bold tracking-widest mb-1">COMISIONES</p>
+                        <p class="text-3xl font-black" id="kpi-comisiones">$0</p>
                     </div>
                     <div class="card-ui !mb-0 bg-ibr-yellow text-white p-4 shadow-sm">
                         <p class="text-[10px] text-yellow-100 uppercase font-bold tracking-widest mb-1">CANCELADOS</p>
                         <p class="text-3xl font-black" id="kpi-cancelados">0</p>
+                    </div>
+                    <div class="card-ui !mb-0 bg-ibr-blue text-white p-4 shadow-sm">
+                        <p class="text-[10px] text-blue-200 uppercase font-bold tracking-widest mb-1">DISPONIBLES</p>
+                        <p class="text-3xl font-black" id="kpi-disponibles">0</p>
                     </div>
                 </div>
 
@@ -293,44 +293,13 @@
                     <!-- Rendered dynamically -->
                 </div>
 
-                <!-- 3. COMISIONES IBR -->
-                <div class="collapse-wrapper" id="col-com">
-                    <div class="accordion-header">
-                        <span class="collapse-title">💰 Comisiones IBR</span>
-                        <span class="arrow">▼</span>
-                    </div>
-                    <div class="collapse-content" id="col-com-content" style="display:none">
-                        <div class="card-ui">
-                            <div class="flex justify-between border-b border-gray-100 pb-2 mb-2 text-[10px] uppercase font-bold text-gray-400">
-                                <span class="w-1/3">Asesor</span>
-                                <span class="w-1/4 text-right">Total</span>
-                                <span class="w-1/4 text-right">/Mes</span>
-                                <span class="w-1/4 text-right">Pend.</span>
-                            </div>
-                            <div id="ad-com-breakdown" class="space-y-2 text-xs"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. EQUIPO IBR -->
-                <div class="collapse-wrapper" id="col-team">
-                    <div class="accordion-header">
-                        <span class="collapse-title">🏆 Equipo IBR</span>
-                        <span class="arrow">▼</span>
-                    </div>
-                    <div class="collapse-content" id="col-team-content" style="display:none">
-                        <div id="ad-team-list" class="space-y-3"></div>
-                    </div>
-                </div>
-
-                <!-- 5. TOP EXTERNOS -->
-                <div class="collapse-wrapper" id="col-ext">
-                    <div class="accordion-header">
-                        <span class="collapse-title">📊 Top Externos</span>
-                        <span class="arrow">▼</span>
-                    </div>
-                    <div class="collapse-content" id="col-ext-content" style="display:none">
-                        <div class="card-ui" id="ad-top-ext"></div>
+                <!-- 3. EQUIPO IBR POR DESARROLLO -->
+                <div class="card-ui p-4 border border-gray-100 shadow-sm bg-white">
+                    <h3 class="font-black text-sm uppercase text-gray-900 mb-4 flex items-center gap-2">
+                        <span>🏆 Equipo IBR por Desarrollo</span>
+                    </h3>
+                    <div id="teamByProjectContainer" class="space-y-6">
+                        <!-- Rendered dynamically -->
                     </div>
                 </div>
             </div>
@@ -2267,7 +2236,7 @@ function populateSelects() {
         
         if (proyectoId !== 'todos') {
             const p = proyectos.find(x => x.id === proyectoId);
-            if (!p) return { vendidos: 0, ibr: 0, externos: 0, cancelados: 0, disponibles: 0 };
+            if (!p) return { vendidos: 0, ibr: 0, externos: 0, cancelados: 0, disponibles: 0, comisiones: 0 };
             
             let pSales = getProjectSales(p.id);
             let localSales = salesLocal.filter(s => s.proyecto === p.nombre || s.project === p.id || (p.id === 'bella-vista' && (!s.proyecto && !s.project)));
@@ -2276,9 +2245,10 @@ function populateSelects() {
             let ibr = p.ventas_ibr + localSales.filter(s => s.adv !== 'Externo').length;
             let ext = sold - ibr;
             let cancelados = p.cancelados + leads.filter(l => l.status === 'Cancelado' && (l.project === p.nombre || l.project === p.id || (p.id === 'bella-vista' && (!l.project)))).length;
-            let disponibles = p.lotes_total ? Math.max(0, p.lotes_total - sold) : null;
+            let disponibles = p.lotes_total ? Math.max(0, p.lotes_total - sold) : 0;
+            let comisiones = calcComisionesPendientes(p.id);
             
-            return { vendidos: sold, ibr: ibr, externos: ext, cancelados: cancelados, disponibles: disponibles };
+            return { vendidos: sold, ibr: ibr, externos: ext, cancelados: cancelados, disponibles: disponibles, comisiones: comisiones };
         }
         
         let totVendidos = 0;
@@ -2286,6 +2256,7 @@ function populateSelects() {
         let totExt = 0;
         let totCancelados = 0;
         let totDisponibles = 0;
+        let totComisiones = 0;
         
         proyectos.forEach(p => {
             let kpis = calcKPIs(p.id);
@@ -2294,9 +2265,10 @@ function populateSelects() {
             totExt += kpis.externos;
             totCancelados += kpis.cancelados;
             if (kpis.disponibles !== null) totDisponibles += kpis.disponibles;
+            totComisiones += kpis.comisiones;
         });
         
-        return { vendidos: totVendidos, ibr: totIbr, externos: totExt, cancelados: totCancelados, disponibles: totDisponibles };
+        return { vendidos: totVendidos, ibr: totIbr, externos: totExt, cancelados: totCancelados, disponibles: totDisponibles, comisiones: totComisiones };
     }
 
     function calcComisionesPendientes(proyectoId) {
@@ -2574,78 +2546,97 @@ function populateSelects() {
         document.getElementById('ad-active-project-lbl').innerText = activeProj ? activeProj.nombre : 'Todos los Desarrollos';
         
         let kpis = calcKPIs(window.proyectoActivo);
-        document.getElementById('kpi-vendidos').innerText = kpis.vendidos;
-        document.getElementById('kpi-ibr').innerText = kpis.ibr;
-        document.getElementById('kpi-externos').innerText = kpis.externos;
-        document.getElementById('kpi-cancelados').innerText = kpis.cancelados;
+        if (document.getElementById('kpi-ibr')) document.getElementById('kpi-ibr').innerText = kpis.ibr;
+        if (document.getElementById('kpi-comisiones')) document.getElementById('kpi-comisiones').innerText = `$${(kpis.comisiones || 0).toLocaleString()}`;
+        if (document.getElementById('kpi-cancelados')) document.getElementById('kpi-cancelados').innerText = kpis.cancelados;
+        if (document.getElementById('kpi-disponibles')) document.getElementById('kpi-disponibles').innerText = kpis.disponibles !== null ? kpis.disponibles : '0';
         
-        let activeSales = getProjectSales(window.proyectoActivo);
-        let activeSaleIds = new Set(activeSales.map(s => s.id));
+        renderTeamByProject();
+    }
 
-        const ibrCom = IBR_USERS.map(u => {
-            let gen = 0; 
-            activeSales.filter(s=>s.adv===u.name || s.adv2===u.name).forEach(s=>gen+=Number(s.com_total||0));
+    function renderTeamByProject() {
+        const proyectos = JSON.parse(localStorage.getItem('ibr_proyectos') || '[]');
+        const container = document.getElementById('teamByProjectContainer');
+        if (!container) return;
+        
+        let html = '';
+        let projectsToShow = proyectos;
+        if (window.proyectoActivo && window.proyectoActivo !== 'todos') {
+            projectsToShow = proyectos.filter(p => p.id === window.proyectoActivo);
+        }
+        
+        projectsToShow.forEach(p => {
+            let pSales = getProjectSales(p.id);
+            let pSaleIds = new Set(pSales.map(s => s.id));
             
-            let pag = 0; 
-            payments.filter(p=>p.adv===u.name && (p.sale_id ? activeSaleIds.has(p.sale_id) : (p.project === window.proyectoActivo || (window.proyectoActivo === 'bella-vista' && (!p.project || p.project === 'Bella Vista Ocozocoautla'))))).forEach(p=>pag+=Number(p.amount));
+            let advisorsData = IBR_USERS.map(u => {
+                let sales = pSales.filter(s => s.adv === u.name || s.adv2 === u.name);
+                let lotsCount = sales.length;
+                
+                let gen = sales.reduce((sum, s) => sum + Number(s.com_total || 0), 0);
+                let pag = payments.filter(pay => pay.adv === u.name && (pay.sale_id ? pSaleIds.has(pay.sale_id) : (pay.project === p.id || pay.project === p.nombre || (p.id === 'bella-vista' && (!pay.project || pay.project === 'Bella Vista Ocozocoautla'))))).reduce((sum, pay) => sum + Number(pay.amount || 0), 0);
+                let pen = Math.max(0, gen - pag);
+                
+                return {
+                    name: u.name,
+                    lots: lotsCount,
+                    commission: pen
+                };
+            }).filter(stats => stats.lots > 0 || stats.commission > 0);
             
-            let men = 0;
-            activeSales.forEach(s => {
-                let pObj = proyectos.find(pr => pr.id === s.proyecto || pr.nombre === s.proyecto || (pr.id === 'bella-vista' && (!s.proyecto || s.proyecto === 'Bella Vista Ocozocoautla')));
-                let isShared = s.adv && s.adv2;
-                let baseMen = pObj ? (isShared ? pObj.mensualidad_compartida : pObj.mensualidad_base) : (isShared ? 350 : 700);
-                if (s.adv === u.name) men += baseMen;
-                if (s.adv2 === u.name) men += baseMen;
+            // Sort by lots descending, then commission descending
+            advisorsData.sort((a, b) => {
+                if (b.lots !== a.lots) return b.lots - a.lots;
+                return b.commission - a.commission;
             });
             
-            return { name: u.name, gen: gen, pag: pag, pen: Math.max(0, gen - pag), men: men };
-        });
-
-        document.getElementById('ad-com-breakdown').innerHTML = ibrCom.map(c => `
-            <div class="flex justify-between border-b border-gray-50 pb-2">
-                <span class="w-1/3 truncate text-gray-700 font-bold">${c.name.split(' ')[0]}</span>
-                <span class="w-1/4 text-right font-black text-ibr-green">$${c.gen.toLocaleString()}</span>
-                <span class="w-1/4 text-right font-bold text-blue-500">$${c.men.toLocaleString()}</span>
-                <span class="w-1/4 text-right font-black text-ibr-red">$${c.pen.toLocaleString()}</span>
-            </div>
-        `).join('') || '<p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center py-2">Sin comisiones en este proyecto</p>';
-
-        let extSales = activeSales.filter(s => s.adv === 'Externo');
-        let topExtMap = {};
-        extSales.forEach(s => { topExtMap[s.adv2] = (topExtMap[s.adv2]||0)+1; });
-        let topExtArr = Object.entries(topExtMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
-        document.getElementById('ad-top-ext').innerHTML = topExtArr.map((t, i) => `
-            <div class="flex justify-between items-center border-b border-gray-100 pb-2 mb-2">
-                <span class="font-bold text-xs text-gray-700">#${i+1} ${t[0]}</span>
-                <span class="bg-black text-white text-[10px] px-2 py-0.5 rounded-full font-black">${t[1]} lotes</span>
-            </div>
-        `).join('') || '<p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center py-2">Sin externos en este proyecto</p>';
-
-        let teamHtml = "";
-        let teamPhones = JSON.parse(localStorage.getItem('ibr_team_phones') || '{}');
-        Object.entries(USUARIOS).forEach(([token, u]) => {
-            let phone = teamPhones[token] || TELEFONOS_EQUIPO[u.nombre] || '';
-            let uSalesCount = activeSales.filter(s => s.adv === u.nombre || s.adv2 === u.nombre).length;
-            let salesBadge = uSalesCount > 0 ? `<span class="bg-ibr-red text-white text-[10px] px-2 py-0.5 rounded-full font-black">${uSalesCount} ventas</span>` : '';
+            if (advisorsData.length === 0) {
+                html += `
+                <div class="mb-6 p-4 rounded-xl border-l-4 bg-gray-50/50 shadow-sm transition-all duration-300 hover:shadow-md" style="border-left-color: ${p.color || '#3b82f6'}; border-left-width: 6px;">
+                    <h4 class="font-extrabold text-sm uppercase text-gray-800 tracking-wider mb-3 flex justify-between items-center border-b border-gray-100 pb-2">
+                        <span>${p.nombre}</span>
+                        <span class="text-xs text-gray-500 font-medium">${p.municipio || ''}</span>
+                    </h4>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4">Sin ventas registradas</p>
+                </div>`;
+                return;
+            }
             
-            teamHtml += `
-            <div class="card-ui !mb-3 border border-gray-100 p-4 shadow-sm bg-white rounded-2xl">
-                <div class="flex justify-between items-center mb-2">
-                    <p class="font-black text-sm text-gray-900">👤 ${u.nombre}</p>
-                    ${salesBadge}
-                </div>
-                <div class="text-[12px] text-gray-600 font-bold mb-1">${u.rol === 'admin' ? 'Team Leader' : 'Asesor'}</div>
-                <div class="text-[12px] text-gray-800 font-bold mb-2">📱 ${phone}</div>
-                <div class="flex flex-col gap-2 pt-2 border-t border-gray-50 mt-2">
-                    <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" class="bg-black text-white rounded-lg py-2 text-[12px] w-full font-black uppercase tracking-wider">🪪 Ver Tarjeta Digital →</button>
-                    <div class="flex gap-2">
-                        <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre}')" class="flex-1 bg-ibr-green text-white text-[12px] font-black py-2 rounded-lg uppercase tracking-wider hover:bg-green-700 transition">💬 WhatsApp</button>
-                        ${u.rol !== 'admin' && window.currentUser && window.currentUser.rol === 'admin' ? `<button onclick="verComoAsesor('${u.nombre}')" class="flex-1 bg-blue-50 text-blue-600 border border-blue-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-wider hover:bg-blue-100 transition">👁️ Ver panel</button>` : ''}
-                    </div>
+            let rowsHtml = advisorsData.map(u => `
+                <tr class="hover:bg-white/60 transition-colors">
+                    <td class="py-2.5 font-bold text-gray-900 flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${p.color || '#3b82f6'}"></span>
+                        ${u.name}
+                    </td>
+                    <td class="py-2.5 text-right font-black text-gray-900 pr-6">${u.lots}</td>
+                    <td class="py-2.5 text-right font-black text-ibr-green">$${u.commission.toLocaleString()}</td>
+                </tr>
+            `).join('');
+            
+            html += `
+            <div class="mb-6 p-4 rounded-xl border-l-4 bg-gray-50/50 shadow-sm transition-all duration-300 hover:shadow-md" style="border-left-color: ${p.color || '#3b82f6'}; border-left-width: 6px;">
+                <h4 class="font-extrabold text-sm uppercase text-gray-800 tracking-wider mb-3 flex justify-between items-center border-b border-gray-100 pb-2">
+                    <span>${p.nombre}</span>
+                    <span class="text-xs text-gray-500 font-medium">${p.municipio || ''}</span>
+                </h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-gray-400 font-bold uppercase tracking-wider text-[10px] pb-2">
+                                <th class="pb-2 font-semibold">Asesor</th>
+                                <th class="pb-2 text-right font-semibold pr-6">Lotes</th>
+                                <th class="pb-2 text-right font-semibold">Comisión</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 font-medium text-gray-700">
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
                 </div>
             </div>`;
         });
-        document.getElementById('ad-team-list').innerHTML = teamHtml;
+        
+        container.innerHTML = html || '<p class="text-center text-xs font-bold text-gray-400 py-10">Sin proyectos disponibles</p>';
     }
 function renderDashAsesor() {
         const u = IBR_USERS.find(x => x.name === currentUser);
