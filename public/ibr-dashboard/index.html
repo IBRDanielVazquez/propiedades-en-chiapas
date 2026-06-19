@@ -1244,7 +1244,10 @@
     const esAdmin = () => checkIsAdmin(currentUser);
     const esPropietario = (v) => v.asesor1 === currentUser || v.asesor2 === currentUser || v.adv === currentUser || v.adv2 === currentUser;
     const getVentasVisibles = () => esAdmin() ? getAllSales() : getAllSales().filter(esPropietario);
-    const getLeadsVisibles = () => esAdmin() ? leads : leads.filter(l => l.advisor === currentUser);
+    const getLeadsVisibles = () => esAdmin() ? leads : leads.filter(l => {
+        const asesorDelLead = l.advisor || l.asesor || '';
+        return asesorDelLead === currentUser;
+    });
 
     function guardTab(tabId) {
         // Admin tiene acceso a TODO — nunca mostrar Acceso Restringido
@@ -1271,7 +1274,7 @@
             const name = l.name || l.titulo || 'Sin nombre';
             const phoneVal = (l.phone !== undefined && l.phone !== null) ? l.phone : (l.telefono !== undefined && l.telefono !== null ? l.telefono : '');
             const project = l.project || l.ubicacion || 'Por definir';
-            const advisor = l.advisor || l.asesor || 'Por definir';
+            const advisor = l.advisor || l.asesor || 'Sin asignar';
             const date = l.date || l.fecha || '';
             const time = l.time || l.hora || '';
             const status = l.status || l.estatus || 'Programada';
@@ -2812,7 +2815,10 @@ function populateSelects() {
             const dd = String(d.getDate()).padStart(2, '0');
             const todayStr = `${yyyy}-${mm}-${dd}`;
             
-            const myLeadsToday = leads.filter(l => l.advisor === currentUser && l.date === todayStr);
+            const myLeadsToday = leads.filter(l => {
+                const asesorDelLead = l.advisor || l.asesor || '';
+                return asesorDelLead === currentUser && l.date === todayStr;
+            });
             
             let leadsHtml = '';
             if (myLeadsToday.length > 0) {
@@ -3119,10 +3125,19 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2KcvydnJmo-ie
             leads = normalizeLeads(JSON.parse(localStorage.getItem('ibr_leads') || '[]'));
         }
 
+        leads.sort((a, b) => {
+          const fa = (a.date || a.fecha || '').replace(/-/g,'')
+          const fb = (b.date || b.fecha || '').replace(/-/g,'')
+          return fb.localeCompare(fa)
+        });
+
         const rol = window.currentUser?.rol || (esAdmin() ? 'admin' : 'asesor');
         if (rol === 'asesor') {
             const advisorName = window.currentUser?.nombre || currentUser;
-            leads = leads.filter(l => (l.asesor === advisorName || l.advisor === advisorName));
+            leads = leads.filter(l => {
+                const asesorDelLead = l.advisor || l.asesor || '';
+                return asesorDelLead === advisorName;
+            });
         }
 
         let f = getLeadsVisibles();
@@ -3161,7 +3176,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx2KcvydnJmo-ie
 
         const advVal = document.getElementById('filter-advisor') ? document.getElementById('filter-advisor').value : '';
         if(advVal) {
-            f = f.filter(l => l.advisor === advVal);
+            f = f.filter(l => {
+                const asesorDelLead = l.advisor || l.asesor || '';
+                return asesorDelLead === advVal;
+            });
         }
 
         const projVal = document.getElementById('filter-project') ? document.getElementById('filter-project').value : '';
