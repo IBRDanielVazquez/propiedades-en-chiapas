@@ -2253,7 +2253,18 @@ function populateSelects() {
         if(targetId === 'dashboard-asesor') renderDashAsesor();
         if(targetId === 'leads') {
             filterL = 'Todos';
-            cargarCitas();
+            const localLeads = JSON.parse(localStorage.getItem('ibr_leads')||'[]')
+            if(localLeads.length > 0) {
+                renderLeads(localLeads)
+            } else {
+                fetch('./citas-historico.json?v='+Date.now())
+                  .then(r=>r.json())
+                  .then(d=>{
+                    const norm = normalizeLeads(d.citas||[])
+                    localStorage.setItem('ibr_leads',JSON.stringify(norm))
+                    renderLeads(norm)
+                  })
+            }
         }
         if(targetId === 'sales') renderSales();
         if(targetId === 'finances' && esAdmin()) renderFinances();
