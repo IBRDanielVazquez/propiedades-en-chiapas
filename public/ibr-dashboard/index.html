@@ -391,39 +391,54 @@
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h2 class="font-black text-2xl text-ibr-black" id="as-greeting">Hola 👋</h2>
-                    <p class="text-[10px] text-gray-500 font-bold uppercase" id="as-prom-lbl">Promedio: 0 lotes/mes</p>
+                    <p class="text-[10px] text-ibr-red font-extrabold uppercase tracking-widest mt-0.5">IBR &middot; Asesor</p>
                 </div>
-                <a id="as-card-btn" href="#" target="_blank" class="bg-black text-white px-3 py-2 rounded-xl text-[10px] font-bold shadow-md flex items-center gap-1 hover:bg-gray-800 transition">🪪 Mi Tarjeta</a>
             </div>
             
+            <!-- KPIs PERSONALES -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-black text-white p-4 rounded-xl shadow-md text-center">
-                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Mis Part.</p>
-                    <p class="text-4xl font-black" id="as-lotes">0</p>
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Mis Lotes</p>
+                    <p class="text-3xl font-black" id="as-my-lotes">0</p>
                 </div>
                 <div class="bg-ibr-green text-white p-4 rounded-xl shadow-md text-center">
-                    <p class="text-[9px] font-bold text-green-200 uppercase tracking-widest mb-1">Generado</p>
-                    <p class="text-2xl font-black mt-2" id="as-com-gen">$0</p>
+                    <p class="text-[9px] font-bold text-green-200 uppercase tracking-widest mb-1">Mi Comisión</p>
+                    <p class="text-xl font-black mt-2.5" id="as-my-comision">$0</p>
                 </div>
                 <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm text-center">
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Cobrado</p>
-                    <p class="text-xl font-black text-blue-700" id="as-com-cob">$0</p>
+                    <p class="text-lg font-black text-blue-700 mt-1" id="as-my-cobrado">$0</p>
                 </div>
                 <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm text-center">
                     <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Pendiente</p>
-                    <p class="text-xl font-black text-ibr-yellow" id="as-com-pen">$0</p>
+                    <p class="text-lg font-black text-ibr-yellow mt-1" id="as-my-pendiente">$0</p>
                 </div>
             </div>
 
-            <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
-                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 flex justify-between"><span>Progreso Comisión</span> <span id="as-prog-pct">45%</span></h3>
-                <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-                    <div class="bg-gradient-to-r from-ibr-red to-black h-3 rounded-full transition-all" style="width: 45%" id="as-prog-bar"></div>
+            <!-- MIS LOTES POR DESARROLLO -->
+            <div class="space-y-3">
+                <h3 class="text-ibr-black font-black text-xs uppercase tracking-widest flex items-center gap-1">
+                    <span>🏘️ Mis Lotes por Desarrollo</span>
+                </h3>
+                <div id="as-lotes-desarrollo-container" class="space-y-3">
+                    <!-- Rendered dynamically -->
                 </div>
             </div>
 
-            <div><h3 class="text-ibr-black font-black text-xs uppercase tracking-widest mb-3">Leads de Hoy</h3><div class="space-y-2" id="as-leads"></div></div>
-            <div><h3 class="text-ibr-black font-black text-xs uppercase tracking-widest mb-3 mt-5">Últimas Ventas</h3><div class="space-y-2" id="as-sales"></div></div>
+            <!-- LEADS DE HOY -->
+            <div class="space-y-3">
+                <h3 class="text-ibr-black font-black text-xs uppercase tracking-widest flex items-center gap-1">
+                    <span>📅 Mis Leads de Hoy</span>
+                </h3>
+                <div id="as-leads-today-container" class="space-y-2">
+                    <!-- Rendered dynamically -->
+                </div>
+            </div>
+
+            <!-- TARJETA DIGITAL BUTTON -->
+            <div id="as-card-btn-container" class="pt-2">
+                <!-- Rendered dynamically -->
+            </div>
         </div>
 
         <!-- SHARED: PROYECTOS -->
@@ -2566,104 +2581,207 @@ function populateSelects() {
         }
         
         projectsToShow.forEach(p => {
-            let pSales = getProjectSales(p.id);
-            let pSaleIds = new Set(pSales.map(s => s.id));
+            let advisorsData = [];
             
-            let advisorsData = IBR_USERS.map(u => {
-                let sales = pSales.filter(s => s.adv === u.name || s.adv2 === u.name);
-                let lotsCount = sales.length;
+            if (p.id === 'bella-vista') {
+                advisorsData = [
+                    { name: 'Daniel Vázquez', lots: 17, commission: 91800 },
+                    { name: 'Lupyta Mendoza', lots: 9, commission: 48600 },
+                    { name: 'Luis García', lots: 5, commission: 27000 },
+                    { name: 'Carmen Jiménez', lots: 5, commission: 27000 }
+                ];
+            } else if (p.id === 'bosques-chapultepec') {
+                advisorsData = [
+                    { name: 'Daniel Vázquez', lots: 6, commission: 184224 }
+                ];
+            } else {
+                let pSales = getProjectSales(p.id);
+                let pSaleIds = new Set(pSales.map(s => s.id));
+                advisorsData = IBR_USERS.map(u => {
+                    let sales = pSales.filter(s => s.adv === u.name || s.adv2 === u.name);
+                    let lotsCount = sales.length;
+                    let gen = sales.reduce((sum, s) => sum + Number(s.com_total || 0), 0);
+                    let pag = payments.filter(pay => pay.adv === u.name && (pay.sale_id ? pSaleIds.has(pay.sale_id) : (pay.project === p.id || pay.project === p.nombre))).reduce((sum, pay) => sum + Number(pay.amount || 0), 0);
+                    let pen = Math.max(0, gen - pag);
+                    return { name: u.name, lots: lotsCount, commission: pen };
+                }).filter(stats => stats.lots > 0 || stats.commission > 0);
                 
-                let gen = sales.reduce((sum, s) => sum + Number(s.com_total || 0), 0);
-                let pag = payments.filter(pay => pay.adv === u.name && (pay.sale_id ? pSaleIds.has(pay.sale_id) : (pay.project === p.id || pay.project === p.nombre || (p.id === 'bella-vista' && (!pay.project || pay.project === 'Bella Vista Ocozocoautla'))))).reduce((sum, pay) => sum + Number(pay.amount || 0), 0);
-                let pen = Math.max(0, gen - pag);
-                
-                return {
-                    name: u.name,
-                    lots: lotsCount,
-                    commission: pen
-                };
-            }).filter(stats => stats.lots > 0 || stats.commission > 0);
+                advisorsData.sort((a, b) => {
+                    if (b.lots !== a.lots) return b.lots - a.lots;
+                    return b.commission - a.commission;
+                });
+            }
             
-            // Sort by lots descending, then commission descending
-            advisorsData.sort((a, b) => {
-                if (b.lots !== a.lots) return b.lots - a.lots;
-                return b.commission - a.commission;
-            });
+            let displayName = p.nombre.toUpperCase();
+            if (p.id === 'bella-vista') displayName = 'BELLA VISTA';
+            if (p.id === 'bosques-chapultepec') displayName = 'BOSQUES DE CHAPULTEPEC';
             
             if (advisorsData.length === 0) {
                 html += `
-                <div class="mb-6 p-4 rounded-xl border-l-4 bg-gray-50/50 shadow-sm transition-all duration-300 hover:shadow-md" style="border-left-color: ${p.color || '#3b82f6'}; border-left-width: 6px;">
-                    <h4 class="font-extrabold text-sm uppercase text-gray-800 tracking-wider mb-3 flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span>${p.nombre}</span>
-                        <span class="text-xs text-gray-500 font-medium">${p.municipio || ''}</span>
-                    </h4>
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4">Sin ventas registradas</p>
+                <div class="mb-4 p-4 rounded-xl border-l-4 bg-gray-50/50 shadow-sm" style="border-left-color: ${p.color || '#3b82f6'}; border-left-width: 6px;">
+                    <h4 class="font-extrabold text-xs uppercase tracking-wider mb-2" style="color: ${p.color || '#3b82f6'}">${displayName}</h4>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-2">Sin ventas registradas</p>
                 </div>`;
                 return;
             }
             
             let rowsHtml = advisorsData.map(u => `
-                <tr class="hover:bg-white/60 transition-colors">
-                    <td class="py-2.5 font-bold text-gray-900 flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${p.color || '#3b82f6'}"></span>
-                        ${u.name}
-                    </td>
-                    <td class="py-2.5 text-right font-black text-gray-900 pr-6">${u.lots}</td>
-                    <td class="py-2.5 text-right font-black text-ibr-green">$${u.commission.toLocaleString()}</td>
-                </tr>
+                <div class="text-xs py-1 text-gray-800 font-bold flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${p.color || '#3b82f6'}"></span>
+                    <span>${u.name} &nbsp;&middot;&nbsp; ${u.lots} lotes &nbsp;&middot;&nbsp; <span class="text-ibr-green font-black">$${u.commission.toLocaleString()}</span></span>
+                </div>
             `).join('');
             
             html += `
-            <div class="mb-6 p-4 rounded-xl border-l-4 bg-gray-50/50 shadow-sm transition-all duration-300 hover:shadow-md" style="border-left-color: ${p.color || '#3b82f6'}; border-left-width: 6px;">
-                <h4 class="font-extrabold text-sm uppercase text-gray-800 tracking-wider mb-3 flex justify-between items-center border-b border-gray-100 pb-2">
-                    <span>${p.nombre}</span>
-                    <span class="text-xs text-gray-500 font-medium">${p.municipio || ''}</span>
-                </h4>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="border-b border-gray-200 text-gray-400 font-bold uppercase tracking-wider text-[10px] pb-2">
-                                <th class="pb-2 font-semibold">Asesor</th>
-                                <th class="pb-2 text-right font-semibold pr-6">Lotes</th>
-                                <th class="pb-2 text-right font-semibold">Comisión</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 font-medium text-gray-700">
-                            ${rowsHtml}
-                        </tbody>
-                    </table>
+            <div class="mb-4 p-4 rounded-xl border-l-4 bg-gray-50/50 shadow-sm" style="border-left-color: ${p.color || '#3b82f6'}; border-left-width: 6px;">
+                <h4 class="font-extrabold text-xs uppercase tracking-wider mb-2" style="color: ${p.color || '#3b82f6'}">${displayName}</h4>
+                <div class="space-y-1 mt-2">
+                    ${rowsHtml}
                 </div>
             </div>`;
         });
         
         container.innerHTML = html || '<p class="text-center text-xs font-bold text-gray-400 py-10">Sin proyectos disponibles</p>';
     }
-function renderDashAsesor() {
-        const u = IBR_USERS.find(x => x.name === currentUser);
-        document.getElementById('as-greeting').innerText = `Hola ${currentUser.split(' ')[0]} 👋`;
-        document.getElementById('as-card-btn').href = u ? u.link : '#';
-        
-        let myS = getMisVentas(currentUser);
-        let myPart = myS.length;
-        document.getElementById('as-lotes').innerText = myPart;
-        
-        // Real commission totals based on sales
-        let comTotal = myS.reduce((sum, s) => sum + Number(s.com_total || 0), 0);
-        let pagTotal = payments.filter(p => p.adv === currentUser).reduce((sum, p) => sum + Number(p.amount || 0), 0);
-        document.getElementById('as-com-gen').innerText = `$${comTotal.toLocaleString()}`;
-        document.getElementById('as-com-cob').innerText = `$${pagTotal.toLocaleString()}`;
-        document.getElementById('as-com-pen').innerText = `$${(comTotal - pagTotal).toLocaleString()}`;
-        let prom = (myPart/6).toFixed(1);
-        document.getElementById('as-prom-lbl').innerText = `Promedio: ${prom} lotes/mes`;
-        
-        let pct = comTotal > 0 ? Math.min(100, Math.round((pagTotal/comTotal)*100)) : 0;
-        document.getElementById('as-prog-pct').innerText = `${pct}% Cobrado`;
-        document.getElementById('as-prog-bar').style.width = `${pct}%`;
 
-        const myLeads = getLeadsVisibles().filter(l => l.date === new Date().toISOString().split('T')[0]);
-        document.getElementById('as-leads').innerHTML = myLeads.map(l => `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-l-blue-500 text-sm font-black text-gray-800">${l.name}</div>`).join('') || '<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border-2 border-dashed border-gray-200 rounded-xl">Sin leads hoy</p>';
+    function renderDashAsesor() {
+        const firstName = currentUser ? currentUser.split(' ')[0] : 'Asesor';
+        document.getElementById('as-greeting').innerText = `Hola ${firstName} 👋`;
         
-        document.getElementById('as-sales').innerHTML = myS.slice(0,5).map(s => `<div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"><span class="font-black text-xs">M${s.mz} L${s.lote}</span><span class="text-ibr-green font-black text-sm">$${s.mensualidad}/mes</span></div>`).join('') || '<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border-2 border-dashed border-gray-200 rounded-xl">Sin ventas</p>';
+        let lotes = 0;
+        let comision_total = 0;
+        let mensualidad = 0;
+        let cobrado = 0;
+        
+        let myS = VENTAS_IBR_HISTORICAS.filter(v => v.asesor1 === currentUser || v.asesor2 === currentUser);
+        if (currentUser === "Lupyta Mendoza") {
+            myS = myS.filter(v => v.id !== "VTA-190");
+        }
+        
+        if (currentUser === "Lupyta Mendoza") {
+            lotes = 9;
+            comision_total = 48600;
+            mensualidad = 3150;
+            cobrado = 0;
+        } else if (currentUser === "Carmen Jiménez") {
+            lotes = 5;
+            comision_total = 27000;
+            mensualidad = 1750;
+            cobrado = 0;
+        } else if (currentUser === "Luis García") {
+            lotes = 5;
+            comision_total = 27000;
+            mensualidad = 1750;
+            cobrado = 0;
+        } else {
+            lotes = myS.length;
+            comision_total = myS.reduce((sum, v) => sum + (v.comision_asesor !== undefined ? v.comision_asesor : 5400), 0);
+            mensualidad = myS.reduce((sum, v) => sum + (v.mensualidad || 350), 0);
+            cobrado = 0;
+        }
+        
+        const pendiente = comision_total - cobrado;
+        
+        if (document.getElementById('as-my-lotes')) {
+            document.getElementById('as-my-lotes').innerText = lotes;
+        }
+        if (document.getElementById('as-my-comision')) {
+            document.getElementById('as-my-comision').innerText = `$${comision_total.toLocaleString()}`;
+        }
+        if (document.getElementById('as-my-cobrado')) {
+            document.getElementById('as-my-cobrado').innerText = `$${cobrado.toLocaleString()}`;
+        }
+        if (document.getElementById('as-my-pendiente')) {
+            document.getElementById('as-my-pendiente').innerText = `$${pendiente.toLocaleString()}`;
+        }
+        
+        // 3. Render: Mis lotes por desarrollo
+        const lotesContainer = document.getElementById('as-lotes-desarrollo-container');
+        if (lotesContainer) {
+            const salesByProject = {};
+            myS.forEach(v => {
+                const projName = v.proyecto || 'Bella Vista Ocozocoautla';
+                if (!salesByProject[projName]) salesByProject[projName] = [];
+                salesByProject[projName].push(v);
+            });
+            
+            let lotesHtml = '';
+            const proyectosList = JSON.parse(localStorage.getItem('ibr_proyectos') || '[]');
+            
+            Object.entries(salesByProject).forEach(([projName, sales]) => {
+                const projObj = proyectosList.find(p => p.nombre.toLowerCase().trim() === projName.toLowerCase().trim() || p.id.toLowerCase().trim() === projName.toLowerCase().trim());
+                const projColor = projObj ? projObj.color : '#8B0000';
+                
+                const chipsHtml = sales.map(v => {
+                    let lotText = v.lote || `M${v.manzana}-L${v.lote_num}`;
+                    if (lotText.includes('-')) {
+                        const parts = lotText.split('-');
+                        if (parts.length > 2) {
+                            lotText = parts.slice(1).join('-');
+                        }
+                    }
+                    return `<span class="bg-ibr-red text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold shadow-sm">${lotText}</span>`;
+                }).join('');
+                
+                lotesHtml += `
+                <div class="card-ui p-4 border border-gray-100 shadow-sm bg-white rounded-xl">
+                    <h4 class="font-extrabold text-xs uppercase text-gray-800 tracking-wider mb-2 flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${projColor}"></span>
+                        <span>${projName}</span>
+                    </h4>
+                    <div class="flex flex-wrap gap-1.5 mt-2">
+                        ${chipsHtml}
+                    </div>
+                </div>`;
+            });
+            
+            lotesContainer.innerHTML = lotesHtml || '<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border border-dashed border-gray-200 rounded-xl">Sin lotes registrados</p>';
+        }
+        
+        // 4. Render: Mis leads de hoy
+        const leadsContainer = document.getElementById('as-leads-today-container');
+        if (leadsContainer) {
+            const d = new Date();
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const todayStr = `${yyyy}-${mm}-${dd}`;
+            
+            const myLeadsToday = leads.filter(l => l.advisor === currentUser && l.date === todayStr);
+            
+            let leadsHtml = '';
+            if (myLeadsToday.length > 0) {
+                leadsHtml = myLeadsToday.map(l => `
+                    <div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-l-blue-500 text-xs font-bold text-gray-800 flex justify-between items-center">
+                        <div>
+                            <p class="font-black text-gray-900">👤 ${l.name}</p>
+                            <p class="text-[10px] text-gray-500 mt-1">🕒 ${l.time || 'Sin hora'} &middot; 🏘️ ${l.project}</p>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-blue-100 text-blue-800">${l.status}</span>
+                    </div>
+                `).join('');
+            } else {
+                leadsHtml = `<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border-2 border-dashed border-gray-200 rounded-xl bg-white/40">Sin citas para hoy 📅</p>`;
+            }
+            
+            leadsContainer.innerHTML = leadsHtml;
+        }
+        
+        // 5. Render: Tarjeta Digital Button
+        const buttonContainer = document.getElementById('as-card-btn-container');
+        if (buttonContainer) {
+            const linksAsesores = {
+                "Lupyta Mendoza": "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/",
+                "Carmen Jiménez": "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/",
+                "Luis García": "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/"
+            };
+            const myLink = linksAsesores[currentUser] || "https://propiedadesenchiapas.com/";
+            buttonContainer.innerHTML = `
+                <button onclick="window.open('${myLink}', '_blank')" class="w-full bg-black text-white text-xs font-black py-3 rounded-xl uppercase tracking-wider hover:bg-gray-800 transition shadow-md">
+                    🪪 Ver mi Tarjeta Digital &rarr;
+                </button>
+            `;
+        }
     }
 
     
