@@ -466,7 +466,7 @@
         <!-- SHARED: LEADS -->
         <div id="tab-leads" class="tab-content p-4 space-y-4">
             <div class="sticky top-0 z-30 bg-[#F5F5F5] pt-2 pb-2">
-                <h2 class="section-title">Leads & Citas</h2>
+                <h2 class="section-title">Leads & Citas <span id="leads-total-count" class="text-xs font-bold text-gray-500 ml-1.5"></span></h2>
                 <div class="flex gap-2">
                     <input type="text" id="lead-search" placeholder="🔍 Buscar lead..." class="flex-1" onkeyup="renderLeads()">
                     <button onclick="openModal('leadModal')" class="admin-only hidden bg-ibr-red text-white w-12 rounded-lg font-black text-xl flex justify-center items-center">+</button>
@@ -2224,7 +2224,33 @@ function populateSelects() {
         // Trigger content renderers
         if(targetId === 'dashboard-admin' && esAdmin()) renderDashAdmin();
         if(targetId === 'dashboard-asesor') renderDashAsesor();
-        if(targetId === 'leads') { filterL = 'Todos'; loadCalendarLeads(); }
+        if(targetId === 'leads') {
+            filterL = 'Todos';
+            const existentes = JSON.parse(localStorage.getItem('ibr_leads') || '[]');
+            if (existentes.length < 100) {
+                fetch('./citas-historico.json')
+                  .then(r => r.json())
+                  .then(data => {
+                    const current = JSON.parse(localStorage.getItem('ibr_leads') || '[]');
+                    const ids = new Set(current.map(c => c.id));
+                    const nuevas = data.citas.filter(c => !ids.has(c.id));
+                    const merged = [...current, ...nuevas];
+                    localStorage.setItem('ibr_leads', JSON.stringify(merged));
+                    leads = merged;
+                    renderLeads();
+                    loadCalendarLeads();
+                  })
+                  .catch(() => {
+                    leads = existentes;
+                    renderLeads();
+                    loadCalendarLeads();
+                  });
+            } else {
+                leads = existentes;
+                renderLeads();
+                loadCalendarLeads();
+            }
+        }
         if(targetId === 'sales') renderSales();
         if(targetId === 'finances' && esAdmin()) renderFinances();
         if(targetId === 'pagos' && esAdmin()) { renderPagos(); renderCobranzaAdmin(currentCobFilter); }
@@ -3041,6 +3067,13 @@ function getLeadBorder(status) {
     
     function renderLeads() {
         let f = getLeadsVisibles();
+        
+        // Update total count indicator in Leads header
+        const totalCountEl = document.getElementById('leads-total-count');
+        if (totalCountEl) {
+            totalCountEl.innerText = `(${f.length} filtradas de ${leads.length} totales)`;
+        }
+
         const search = document.getElementById('lead-search') ? document.getElementById('lead-search').value.toLowerCase() : '';
         if(search) {
             f = f.filter(l => l.name.toLowerCase().includes(search) || l.phone.includes(search));
@@ -3089,6 +3122,8 @@ function getLeadBorder(status) {
 
         const html = f.map(l => {
             const dateParts = l.date ? new Date(l.date).toLocaleDateString('es-ES', {month:'short', day:'numeric'}) : '';
+            const hasPhone = l.phone && l.phone !== '0000000000' && l.phone.trim() !== '';
+            
             return `
             <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}">
                 <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
@@ -3099,8 +3134,8 @@ function getLeadBorder(status) {
                 <div class="mt-2 mb-3">${getLeadBadge(l.status)}</div>
                 ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium rounded">💬 ${l.lastComment}</div>` : ''}
                 <div class="flex gap-2">
-                    <button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 rounded-lg hover:bg-gray-50">💬 WA</button>
-                    ${!['Vendido','Cancelado'].includes(l.status) ? `<button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50">✏️ Resultado</button>` : ''}
+                    ${hasPhone ? `<button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 rounded-lg hover:bg-gray-50">💬 WA</button>` : ''}
+                    <button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50">✏️ Resultado</button>
                     ${esAdmin() ? `<button onclick="deleteLead('${l.id}')" style="background:#ff4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🗑️</button>` : ''}
                 </div>
             </div>
@@ -3463,6 +3498,13 @@ function renderConfig() {
         document.getElementById('rf-id').value = id;
         document.getElementById('buyFields').classList.add('hidden');
         document.getElementById('rf-date').value = new Date().toISOString().split('T')[0];
+        
+        const l = leads.find(x => x.id === id);
+        if(l) {
+            document.getElementById('rf-status').value = l.status || 'Programada';
+            document.getElementById('rf-comments').value = l.lastComment || '';
+            toggleBuyFields();
+        }
         openModal('resultModal');
     }
 
@@ -3478,9 +3520,10 @@ function renderConfig() {
         const stat = document.getElementById('rf-status').value;
         const idx = leads.findIndex(l => l.id === document.getElementById('rf-id').value);
         if(idx > -1) {
+            const prevStatus = leads[idx].status;
             leads[idx].status = stat;
             leads[idx].lastComment = document.getElementById('rf-comments').value;
-            if(stat === 'Vendido') {
+            if(stat === 'Vendido' && prevStatus !== 'Vendido') {
                 salesLocal.unshift({
                     id: 'VTA-'+Math.floor(1000+Math.random()*9000), mz: document.getElementById('rf-mz').value,
                     lote: document.getElementById('rf-lote').value, type: document.getElementById('rf-type').value,
