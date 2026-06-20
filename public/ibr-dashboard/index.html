@@ -403,7 +403,7 @@
         </div>
 
         <!-- ASESOR: MI PANEL -->
-        <div id="tab-dashboard-asesor" class="tab-content p-4 space-y-4">
+        <div id="tab-dashboard-asesor" class="tab-content p-4 space-y-4 admin-only">
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h2 class="font-black text-2xl text-ibr-black" id="as-greeting">Hola 👋</h2>
@@ -458,7 +458,7 @@
         </div>
 
         <!-- SHARED: PROYECTOS -->
-        <div id="tab-projects" class="tab-content p-4 space-y-4">
+        <div id="tab-projects" class="tab-content p-4 space-y-4 admin-only">
             <h2 class="section-title">Proyectos Activos</h2>
             <div id="projectsDynamicContainer" class="space-y-4">
                 <!-- Rendered dynamically -->
@@ -469,7 +469,7 @@
         <div id="tab-leads" class="tab-content p-4 space-y-4">
             
             <!-- PORTADA / RESUMEN DE MÉTRICAS CRM -->
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-2" id="leads-summary-card">
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-2 admin-only" id="leads-summary-card">
                 <div class="flex justify-between items-center mb-3">
                     <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest flex items-center gap-1">
                         📊 Resumen de Leads y Conversión
@@ -527,16 +527,16 @@
             </div>
 
             <div class="sticky top-0 z-30 bg-[#F5F5F5] pt-2 pb-2">
-                <h2 class="section-title">Leads & Citas <span id="leads-total-count" class="text-xs font-bold text-gray-500 ml-1.5"></span></h2>
+                <h2 class="section-title">Leads & Citas <span id="leads-total-count" class="text-xs font-bold text-gray-500 ml-1.5 admin-only"></span></h2>
                 <div class="flex gap-2">
                     <input type="text" id="lead-search" placeholder="🔍 Buscar lead..." class="flex-1" onkeyup="renderLeads()">
                     <button onclick="openModal('leadModal')" class="admin-only hidden bg-ibr-red text-white px-4 py-2 rounded-lg font-bold text-xs flex justify-center items-center gap-1">➕ Nueva Cita</button>
                 </div>
-                <div class="flex gap-2 mt-2">
+                <div class="flex gap-2 mt-2 admin-only">
                     <button onclick="syncCalendar()" style="background:#1a1a1a;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🔄 Sincronizar Google Calendar</button>
                     <span id="calSyncStatus" style="font-size:11px;color:#666;align-self:center"></span>
                 </div>
-                <div class="filters-scroll mt-3">
+                <div class="filters-scroll mt-3 admin-only">
                     <button type="button" onclick="filterLeads('Todos')" class="filter-btn active" id="fbtn-Todos">Todos</button>
                     <button type="button" onclick="filterLeads('Clientes')" class="filter-btn" id="fbtn-Clientes">Clientes</button>
                     <button type="button" onclick="filterLeads('Hoy')" class="filter-btn" id="fbtn-Hoy">Hoy</button>
@@ -564,7 +564,7 @@
         </div>
 
         <!-- SHARED: VENTAS -->
-        <div id="tab-sales" class="tab-content min-h-full">
+        <div id="tab-sales" class="tab-content min-h-full admin-only">
             <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
                 <h2 class="font-black text-xl">Historial de Ventas</h2>
                 <button onclick="openModal('saleModal')" class="admin-only hidden btn-green px-3 py-1.5 text-xs">+ Venta</button>
@@ -572,38 +572,15 @@
             <div class="p-4 space-y-4" id="salesContainer"></div>
         </div>
 
-        <!-- ASESOR: MIS COMISIONES -->
-        <div id="tab-comisiones" class="tab-content p-4 space-y-4">
-            <h2 class="section-title">💰 Mis Comisiones</h2>
-            
-            <!-- Card Resumen -->
-            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 text-xs space-y-3" id="comisiones-resumen-card">
-                <div class="flex justify-between items-center pb-2 border-b border-gray-100">
-                    <span class="text-sm font-black text-gray-800">💰 MIS COMISIONES</span>
-                    <span class="text-[10px] font-black uppercase bg-ibr-red text-white px-2 py-0.5 rounded" id="com-asesor-name">Asesor</span>
-                </div>
-                <div class="space-y-2">
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 font-bold">Total generado:</span>
-                        <span class="font-black text-gray-800" id="com-total-generado">$0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 font-bold">Cobrado:</span>
-                        <span class="font-black text-ibr-green" id="com-total-cobrado">$0</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-500 font-bold">Pendiente:</span>
-                        <span class="font-black text-ibr-red" id="com-total-pendiente">$0</span>
-                    </div>
-                    <div class="flex justify-between pt-2 border-t border-dashed border-gray-150">
-                        <span class="text-gray-500 font-bold">Mensualidad:</span>
-                        <span class="font-black text-blue-600" id="com-total-mensualidad">$0</span>
-                    </div>
-                </div>
+        <!-- ASESOR: MIS LOTES -->
+        <div id="tab-lotes" class="tab-content p-4 space-y-4" style="display: none;">
+            <h2 class="section-title">📋 Mis Lotes</h2>
+            <div class="space-y-3" id="lotesContainer"></div>
+            <div class="pt-4 pb-6">
+                <button onclick="guardarComisiones()" class="w-full bg-ibr-red text-white font-black py-4 rounded-xl text-sm uppercase tracking-widest shadow-lg hover:bg-red-800 transition">
+                    Guardar mis comisiones
+                </button>
             </div>
-
-            <!-- Lista de Lotes -->
-            <div class="space-y-3" id="comisiones-lotes-list"></div>
         </div>
 
         <!-- ADMIN: FINANZAS -->
@@ -806,7 +783,7 @@
         </div>
 
         <!-- ASESOR: PERFIL -->
-        <div id="tab-profile" class="tab-content p-4">
+        <div id="tab-profile" class="tab-content p-4 admin-only">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
                 <div class="w-24 h-24 bg-ibr-red text-white rounded-full flex items-center justify-center text-4xl font-black mx-auto mb-4 shadow-md" id="prof-initials"></div>
                 <h2 class="text-3xl font-black text-ibr-black mb-1" id="prof-name">Nombre</h2>
@@ -1337,7 +1314,7 @@
         "Luis García": "asesor"
     };
     const ADMIN_TABS    = ['dashboard-admin','projects','leads','pagos','finances','config'];
-    const ASESOR_TABS   = ['dashboard-asesor','projects','leads','sales','profile'];
+    const ASESOR_TABS   = ['leads','lotes'];
 
     let originalUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
     let vistaComo = sessionStorage.getItem('ibr_preview');
@@ -1688,13 +1665,7 @@
         currentUser = userData.nombre;
         isAdmin = PERMISOS[currentUser] === 'admin';
         document.getElementById('loginScreen').style.display = 'none';
-        if (isAdmin) {
-            document.getElementById('headerUserName').textContent = currentUser;
-            document.getElementById('headerUserRole').textContent = 'Admin';
-        } else {
-            document.getElementById('headerUserName').textContent = currentUser + ' | ASESOR';
-            document.getElementById('headerUserRole').textContent = '';
-        }
+        updateHeader();
         var sel = document.getElementById('userSelector');
         if(sel) sel.value = currentUser;
         if(showWelcome) {
@@ -1750,13 +1721,7 @@
             if (header) {
                 header.style.top = '36px'; // Height of the banner
             }
-            if (checkIsAdmin(currentUser)) {
-                document.getElementById('headerUserName').textContent = currentUser;
-                document.getElementById('headerUserRole').textContent = 'Admin (Preview)';
-            } else {
-                document.getElementById('headerUserName').textContent = currentUser + ' | ASESOR';
-                document.getElementById('headerUserRole').textContent = '';
-            }
+            updateHeader();
         } else {
             currentUser = realUser;
             if (window.currentUser) window.currentUser.nombre = realUser;
@@ -1765,13 +1730,7 @@
             if (banner) banner.classList.add('hidden');
             if (header) header.style.top = '0';
             
-            if (isAdmin) {
-                document.getElementById('headerUserName').textContent = currentUser;
-                document.getElementById('headerUserRole').textContent = 'Admin';
-            } else {
-                document.getElementById('headerUserName').textContent = currentUser + ' | ASESOR';
-                document.getElementById('headerUserRole').textContent = '';
-            }
+            updateHeader();
         }
 
         const switcher = document.getElementById('viewSwitcher');
@@ -1782,9 +1741,66 @@
         
         populateSelects();
         updateAuth();
-        switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
+        switchTab(isAdmin ? 'dashboard-admin' : 'leads');
         renderProyectos();
         checkBanners();
+    }
+
+    function updateHeader() {
+        const header = document.querySelector('header');
+        if (!header) return;
+        
+        const nombreAsesor = window.currentUser?.nombre ||
+          JSON.parse(localStorage.getItem('ibr_session')||'{}').nombre ||
+          currentUser;
+        const isCurrentlyAdmin = checkIsAdmin(nombreAsesor);
+
+        if (isCurrentlyAdmin) {
+            header.className = "sticky top-0 z-40 bg-gradient-to-r from-black to-[#8B0000] text-white p-3 shadow-md flex justify-between items-center transition-all duration-300";
+            header.innerHTML = `
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-white font-black text-2xl tracking-tighter leading-none">IBR</span>
+                        <span class="text-[10px] font-bold leading-tight uppercase tracking-widest text-gray-200">Control<br>de Ventas</span>
+                    </div>
+                </div>
+                <div class="text-right flex items-center gap-2">
+                    <select id="viewSwitcher" onchange="changePreviewMode(this.value)" class="bg-black/40 border border-white/20 text-white text-[10px] font-bold px-1.5 py-1 rounded-lg cursor-pointer transition focus:outline-none max-w-[130px] truncate">
+                        <option value="admin">👁️ Vista: Admin ▼</option>
+                        <option value="Lupyta Mendoza">👤 Lupyta Mendoza</option>
+                        <option value="Carmen Jiménez">👤 Carmen Jiménez</option>
+                        <option value="Luis García">👤 Luis García</option>
+                    </select>
+                    <div>
+                        <p class="text-white font-black text-[10px] text-right" id="headerUserName">${currentUser}</p>
+                        <p class="text-gray-400 text-[8px] uppercase tracking-widest" id="headerUserRole">Admin</p>
+                    </div>
+                    <button onclick="logout()" title="Cerrar sesión"
+                        class="bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-20 text-white text-[10px] font-bold px-2 py-1.5 rounded-lg transition whitespace-nowrap">
+                        Salir 🚪
+                    </button>
+                </div>
+            `;
+            const switcher = document.getElementById('viewSwitcher');
+            if (switcher) {
+                const vistaPreview = sessionStorage.getItem('ibr_preview');
+                switcher.value = (vistaPreview && vistaPreview !== 'admin') ? vistaPreview : 'admin';
+            }
+        } else {
+            header.className = "sticky top-0 z-40 bg-black text-white p-4 shadow-sm flex justify-between items-center";
+            header.innerHTML = `
+                <div class="flex items-center gap-2 font-black text-xl">
+                    <span>IBR</span>
+                    <span class="text-gray-500 font-normal">|</span>
+                    <span class="text-base font-bold">${nombreAsesor}</span>
+                </div>
+                <div>
+                    <button onclick="logout()" class="text-sm font-bold text-gray-400 hover:text-white transition">
+                        Salir
+                    </button>
+                </div>
+            `;
+        }
     }
 
     function logout() {
@@ -2043,7 +2059,7 @@
         leads = normalizeLeads(JSON.parse(localStorage.getItem('ibr_leads') || '[]'));
         salesLocal = JSON.parse(localStorage.getItem('ibr_ventas')) || [];
         updateAuth();
-        switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
+        switchTab(isAdmin ? 'dashboard-admin' : 'leads');
         checkBanners();
     }
 
@@ -2343,10 +2359,8 @@ function populateSelects() {
             `;
         } else {
             nav.innerHTML = `
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('dashboard-asesor')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mi Panel</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
                 <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('comisiones')"><span class="text-2xl">💰</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Comisiones</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('lotes')"><span class="text-2xl">📋</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Lotes</span></button>
             `;
         }
     }
@@ -2360,20 +2374,20 @@ function populateSelects() {
         const isCurrentlyAdmin = checkIsAdmin(nombreAsesor);
 
         if (tabId === 'resumen') {
-            targetId = isCurrentlyAdmin ? 'dashboard-admin' : 'dashboard-asesor';
+            targetId = isCurrentlyAdmin ? 'dashboard-admin' : 'leads';
         } else if (tabId === 'proyectos') {
             targetId = 'projects';
         } else if (tabId === 'finanzas') {
             targetId = 'finances';
-        } else if (tabId === 'comisiones') {
-            targetId = 'comisiones';
+        } else if (tabId === 'comisiones' || tabId === 'lotes') {
+            targetId = 'lotes';
         }
 
-        // Restricción de rutas para asesor: redirección a Mi Panel si es una ruta inválida o Config
+        // Restricción de rutas para asesor: redirección a leads si es una ruta inválida o Config
         if (!isCurrentlyAdmin) {
-            const allowedTabs = ['dashboard-asesor', 'projects', 'leads', 'comisiones'];
+            const allowedTabs = ['leads', 'lotes'];
             if (!allowedTabs.includes(targetId)) {
-                switchTab('dashboard-asesor');
+                switchTab('leads');
                 return;
             }
         }
@@ -2384,9 +2398,18 @@ function populateSelects() {
         const tab = document.getElementById('tab-'+targetId)
         if(tab) tab.style.display='block'
 
+        // Update active class on nav items
+        document.querySelectorAll('#bottomNav button').forEach(btn => {
+            const onclickAttr = btn.getAttribute('onclick') || '';
+            if (onclickAttr.includes(`'${tabId}'`) || (tabId === 'lotes' && onclickAttr.includes("'comisiones'"))) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
         // Trigger content renderers
         if(targetId === 'dashboard-admin' && esAdmin()) renderDashAdmin();
-        if(targetId === 'dashboard-asesor') renderDashAsesor();
         if(targetId === 'leads') {
             filterL = 'Todos';
             const localLeads = JSON.parse(localStorage.getItem('ibr_leads')||'[]')
@@ -2416,7 +2439,7 @@ function populateSelects() {
         if(targetId === 'config' && esAdmin()) renderConfig();
         if(targetId === 'profile') renderProfile();
         if(targetId === 'projects') renderProyectos();
-        if(targetId === 'comisiones') renderMisComisiones();
+        if(targetId === 'lotes') renderMisLotes();
     }
 
     /* ================= RENDERERS ================= */
@@ -3431,8 +3454,45 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
 
     function renderLeadCard(l) {
         const dateParts = l.date ? new Date(l.date).toLocaleDateString('es-ES', {month:'short', day:'numeric'}) : '';
+        const timePart = l.time || '--';
         const hasPhone = l.phone && l.phone !== '0000000000' && l.phone.trim() !== '';
         
+        const nombreAsesor = window.currentUser?.nombre ||
+          JSON.parse(localStorage.getItem('ibr_session')||'{}').nombre ||
+          currentUser;
+        const isCurrentlyAdmin = checkIsAdmin(nombreAsesor);
+
+        if (!isCurrentlyAdmin) {
+            const projClean = (l.project || 'Bella Vista').replace(' Ocozocoautla', '');
+            return `
+            <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}" id="lead-card-${l.id}">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
+                        <div class="mt-1 text-xs text-gray-600 space-y-0.5">
+                            <p>📅 ${dateParts} · 🕒 ${timePart}</p>
+                            <p class="truncate">🏘️ ${projClean}</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1.5">
+                        ${getLeadBadge(l.status)}
+                    </div>
+                </div>
+                
+                <div class="flex gap-2 mt-3 pt-3 border-t border-gray-150">
+                    ${hasPhone ? `
+                    <button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-emerald-500 text-white text-xs font-bold py-2 rounded-lg hover:bg-emerald-600 transition flex items-center justify-center gap-1">
+                        💬 WhatsApp
+                    </button>
+                    ` : ''}
+                    <button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50 transition flex items-center justify-center gap-1">
+                        Resultado
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
         const advisorShort = (l.advisor || 'Por definir').split(' ')[0];
         const projectShort = (l.project || 'Por definir').split(' ')[0];
         
@@ -3965,123 +4025,76 @@ function renderConfig() {
         `).join('');
     }
 
-    function renderMisComisiones() {
+    function renderMisLotes() {
         const nombreAsesor = window.currentUser?.nombre ||
           JSON.parse(localStorage.getItem('ibr_session')||'{}').nombre ||
           currentUser;
-
-        // Set advisor name in UI
-        const nameEl = document.getElementById('com-asesor-name');
-        if (nameEl) nameEl.textContent = nombreAsesor;
-
-        // Calculate advisor stats
-        let lotesCount = 0;
-        let totalGenerado = 0;
-        let mensualidad = 0;
-        let cobrado = 0;
-
-        // Advisor specific data fallback:
-        // Lupyta: $54,000 total · $3,500/mes · 10 lotes
-        // Carmen: $27,000 total · $1,750/mes · 5 lotes
-        // Luis: $27,000 total · $1,750/mes · 5 lotes
         
-        let myS = VENTAS_IBR_HISTORICAS.filter(v => v.asesor1 === nombreAsesor || v.asesor2 === nombreAsesor);
-        if (nombreAsesor === "Lupyta Mendoza") {
-            myS = myS.filter(v => v.id !== "VTA-190");
-        }
-        
-        if (nombreAsesor === "Lupyta Mendoza") {
-            lotesCount = 10;
-            totalGenerado = 54000;
-            mensualidad = 3500;
-            cobrado = 0;
-        } else if (nombreAsesor === "Carmen Jiménez") {
-            lotesCount = 5;
-            totalGenerado = 27000;
-            mensualidad = 1750;
-            cobrado = 0;
-        } else if (nombreAsesor === "Luis García") {
-            lotesCount = 5;
-            totalGenerado = 27000;
-            mensualidad = 1750;
-            cobrado = 0;
+        // Filter VENTAS_IBR_HISTORICAS for lotes belonging to this advisor
+        const mySales = VENTAS_IBR_HISTORICAS.filter(v => {
+            return v.asesor1 === nombreAsesor || v.asesor2 === nombreAsesor;
+        });
+
+        const savedComisiones = JSON.parse(localStorage.getItem('ibr_comisiones_pactadas') || '{}');
+
+        let html = '';
+        if (mySales.length === 0) {
+            html = '<p class="text-center text-xs font-bold text-gray-400 py-10">No tienes lotes vendidos asignados</p>';
         } else {
-            lotesCount = myS.length;
-            totalGenerado = myS.reduce((sum, v) => sum + (v.comision_asesor !== undefined ? v.comision_asesor : 5400), 0);
-            mensualidad = myS.reduce((sum, v) => sum + (v.mensualidad || 350), 0);
-            cobrado = 0;
-        }
-
-        const pendiente = totalGenerado - cobrado;
-
-        // Update summaries
-        const tgEl = document.getElementById('com-total-generado');
-        const tcEl = document.getElementById('com-total-cobrado');
-        const tpEl = document.getElementById('com-total-pendiente');
-        const tmEl = document.getElementById('com-total-mensualidad');
-
-        if (tgEl) tgEl.textContent = `$${totalGenerado.toLocaleString()}`;
-        if (tcEl) tcEl.textContent = `$${cobrado.toLocaleString()}`;
-        if (tpEl) tpEl.textContent = `$${pendiente.toLocaleString()}`;
-        if (tmEl) tmEl.textContent = `$${mensualidad.toLocaleString()}/mes`;
-
-        // Render lotes with commission
-        const listContainer = document.getElementById('comisiones-lotes-list');
-        if (listContainer) {
-            let html = '';
-            
-            let displaySales = [...myS];
-            const targetCount = nombreAsesor === "Lupyta Mendoza" ? 10 : (nombreAsesor === "Carmen Jiménez" || nombreAsesor === "Luis García" ? 5 : myS.length);
-            
-            let renderedHtml = displaySales.map(v => {
-                let coasesor = '';
-                if (v.asesor1 === nombreAsesor && v.asesor2) coasesor = v.asesor2;
-                else if (v.asesor2 === nombreAsesor && v.asesor1) coasesor = v.asesor1;
-                
-                let coasesorShort = coasesor ? coasesor.split(' ')[0] : '';
-                
-                const loteLabel = v.lote || `Mz ${v.manzana} Lote ${v.lote_num}`;
-                const projName = v.proyecto || 'Bella Vista';
-                const comStr = (v.comision_asesor !== undefined ? v.comision_asesor : 5400).toLocaleString();
-                const mensStr = (v.mensualidad || 350).toLocaleString();
+            html = mySales.map(s => {
+                const coAsesor = (s.asesor1 === nombreAsesor) ? s.asesor2 : s.asesor1;
+                const coAsesorTxt = coAsesor ? `con ${coAsesor}` : '';
+                const projectClean = (s.proyecto || 'Bella Vista').replace(' Ocozocoautla', '');
+                const savedVal = savedComisiones[s.lote] || '';
                 
                 return `
-                    <div class="bg-white p-3 rounded-xl border border-gray-150 shadow-sm flex justify-between items-center text-xs">
-                        <div>
-                            <p class="font-black text-gray-800">🏘️ ${projName} · ${loteLabel}</p>
-                            <p class="text-[10px] text-gray-500 mt-1">👥 Coasesor: <span class="font-bold text-gray-700">${coasesorShort || 'Ninguno'}</span></p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-ibr-green font-black text-sm">$${comStr}</p>
-                            <p class="text-[9px] text-gray-500 mt-0.5">$${mensStr}/mes</p>
+                <div class="card-ui relative border-l-4 border-black p-5 bg-white rounded-xl shadow-sm space-y-3">
+                    <div class="font-black text-xl text-black">${s.lote}</div>
+                    ${coAsesorTxt ? `<div class="text-sm font-bold text-gray-600">${coAsesorTxt}</div>` : ''}
+                    <div class="text-xs text-gray-500">Proyecto: ${projectClean}</div>
+                    
+                    <div class="pt-3 border-t border-gray-150">
+                        <label class="block text-[10px] font-black uppercase text-gray-400 tracking-wider mb-1">
+                            Comisión pactada:
+                        </label>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-gray-800 font-extrabold text-lg">$</span>
+                            <input type="number" 
+                                   id="comision-${s.lote}" 
+                                   value="${savedVal}" 
+                                   oninput="changeCommission('${s.lote}', this.value)"
+                                   class="flex-1 p-2 border border-gray-300 rounded-lg text-sm font-black focus:outline-none focus:border-black"
+                                   placeholder="0" />
                         </div>
                     </div>
+                </div>
                 `;
             }).join('');
-            
-            const currentCount = displaySales.length;
-            if (currentCount < targetCount) {
-                const diff = targetCount - currentCount;
-                for (let i = 0; i < diff; i++) {
-                    const fakeLote = `Mz 1 Lote ${100 + i}`;
-                    renderedHtml += `
-                        <div class="bg-white p-3 rounded-xl border border-gray-150 shadow-sm flex justify-between items-center text-xs">
-                            <div>
-                                <p class="font-black text-gray-800">🏘️ Bella Vista · ${fakeLote}</p>
-                                <p class="text-[10px] text-gray-500 mt-1">👥 Coasesor: <span class="font-bold text-gray-700">Ninguno</span></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-ibr-green font-black text-sm">$5,400</p>
-                                <p class="text-[9px] text-gray-500 mt-0.5">$350/mes</p>
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            listContainer.innerHTML = renderedHtml || '<p class="text-center text-xs text-gray-400 py-10 font-bold uppercase">Sin comisiones registradas</p>';
         }
+
+        const container = document.getElementById('lotesContainer');
+        if (container) container.innerHTML = html;
     }
+    window.renderMisLotes = renderMisLotes;
+
+    function changeCommission(lote, val) {
+        let comisiones = JSON.parse(localStorage.getItem('ibr_comisiones_pactadas') || '{}');
+        comisiones[lote] = val;
+        localStorage.setItem('ibr_comisiones_pactadas', JSON.stringify(comisiones));
+    }
+    window.changeCommission = changeCommission;
+
+    function guardarComisiones() {
+        let comisiones = JSON.parse(localStorage.getItem('ibr_comisiones_pactadas') || '{}');
+        const inputs = document.querySelectorAll('[id^="comision-"]');
+        inputs.forEach(input => {
+            const lote = input.id.replace('comision-', '');
+            comisiones[lote] = input.value;
+        });
+        localStorage.setItem('ibr_comisiones_pactadas', JSON.stringify(comisiones));
+        showToast('✅ Comisiones guardadas');
+    }
+    window.guardarComisiones = guardarComisiones;
 
     /* ================= FORMS & MODALS ================= */
     function filterLeads(f) { filterL = f; renderLeads(); }
