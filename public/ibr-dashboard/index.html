@@ -572,6 +572,40 @@
             <div class="p-4 space-y-4" id="salesContainer"></div>
         </div>
 
+        <!-- ASESOR: MIS COMISIONES -->
+        <div id="tab-comisiones" class="tab-content p-4 space-y-4">
+            <h2 class="section-title">💰 Mis Comisiones</h2>
+            
+            <!-- Card Resumen -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 text-xs space-y-3" id="comisiones-resumen-card">
+                <div class="flex justify-between items-center pb-2 border-b border-gray-100">
+                    <span class="text-sm font-black text-gray-800">💰 MIS COMISIONES</span>
+                    <span class="text-[10px] font-black uppercase bg-ibr-red text-white px-2 py-0.5 rounded" id="com-asesor-name">Asesor</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500 font-bold">Total generado:</span>
+                        <span class="font-black text-gray-800" id="com-total-generado">$0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500 font-bold">Cobrado:</span>
+                        <span class="font-black text-ibr-green" id="com-total-cobrado">$0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500 font-bold">Pendiente:</span>
+                        <span class="font-black text-ibr-red" id="com-total-pendiente">$0</span>
+                    </div>
+                    <div class="flex justify-between pt-2 border-t border-dashed border-gray-150">
+                        <span class="text-gray-500 font-bold">Mensualidad:</span>
+                        <span class="font-black text-blue-600" id="com-total-mensualidad">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Lotes -->
+            <div class="space-y-3" id="comisiones-lotes-list"></div>
+        </div>
+
         <!-- ADMIN: FINANZAS -->
         <!-- ADMIN: FINANZAS -->
         <div id="tab-finances" class="tab-content p-4 space-y-4">
@@ -1654,8 +1688,13 @@
         currentUser = userData.nombre;
         isAdmin = PERMISOS[currentUser] === 'admin';
         document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('headerUserName').textContent = currentUser;
-        document.getElementById('headerUserRole').textContent = isAdmin ? 'Admin' : 'Asesor';
+        if (isAdmin) {
+            document.getElementById('headerUserName').textContent = currentUser;
+            document.getElementById('headerUserRole').textContent = 'Admin';
+        } else {
+            document.getElementById('headerUserName').textContent = currentUser + ' | ASESOR';
+            document.getElementById('headerUserRole').textContent = '';
+        }
         var sel = document.getElementById('userSelector');
         if(sel) sel.value = currentUser;
         if(showWelcome) {
@@ -1711,8 +1750,13 @@
             if (header) {
                 header.style.top = '36px'; // Height of the banner
             }
-            document.getElementById('headerUserName').textContent = currentUser;
-            document.getElementById('headerUserRole').textContent = 'Asesor (Preview)';
+            if (checkIsAdmin(currentUser)) {
+                document.getElementById('headerUserName').textContent = currentUser;
+                document.getElementById('headerUserRole').textContent = 'Admin (Preview)';
+            } else {
+                document.getElementById('headerUserName').textContent = currentUser + ' | ASESOR';
+                document.getElementById('headerUserRole').textContent = '';
+            }
         } else {
             currentUser = realUser;
             if (window.currentUser) window.currentUser.nombre = realUser;
@@ -1720,8 +1764,14 @@
             
             if (banner) banner.classList.add('hidden');
             if (header) header.style.top = '0';
-            document.getElementById('headerUserName').textContent = currentUser;
-            document.getElementById('headerUserRole').textContent = isAdmin ? 'Admin' : 'Asesor';
+            
+            if (isAdmin) {
+                document.getElementById('headerUserName').textContent = currentUser;
+                document.getElementById('headerUserRole').textContent = 'Admin';
+            } else {
+                document.getElementById('headerUserName').textContent = currentUser + ' | ASESOR';
+                document.getElementById('headerUserRole').textContent = '';
+            }
         }
 
         const switcher = document.getElementById('viewSwitcher');
@@ -2293,11 +2343,10 @@ function populateSelects() {
             `;
         } else {
             nav.innerHTML = `
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-asesor')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mi Panel</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-2xl">📋</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Ventas</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('profile')"><span class="text-2xl">👤</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Perfil</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('dashboard-asesor')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mi Panel</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('comisiones')"><span class="text-2xl">💰</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Comisiones</span></button>
             `;
         }
     }
@@ -2305,8 +2354,10 @@ function populateSelects() {
     function switchTab(tabId) {
         // Translate incoming tabId to match the actual HTML tab IDs
         let targetId = tabId;
-        const isCurrentlyAdmin = (window.currentUser?.rol === 'admin') || 
-            (JSON.parse(localStorage.getItem('ibr_session')||'{}').rol === 'admin');
+        const nombreAsesor = window.currentUser?.nombre ||
+          JSON.parse(localStorage.getItem('ibr_session')||'{}').nombre ||
+          currentUser;
+        const isCurrentlyAdmin = checkIsAdmin(nombreAsesor);
 
         if (tabId === 'resumen') {
             targetId = isCurrentlyAdmin ? 'dashboard-admin' : 'dashboard-asesor';
@@ -2314,16 +2365,16 @@ function populateSelects() {
             targetId = 'projects';
         } else if (tabId === 'finanzas') {
             targetId = 'finances';
+        } else if (tabId === 'comisiones') {
+            targetId = 'comisiones';
         }
 
-        const rol = window.currentUser?.rol || 
-            JSON.parse(localStorage.getItem('ibr_session')||'{}').rol
-        
-        // Admin pasa siempre
-        if (rol !== 'admin') {
-            const tabsAdmin = ['pagos','finanzas','config']
-            if (tabsAdmin.includes(tabId)) {
-                return // asesor no puede
+        // Restricción de rutas para asesor: redirección a Mi Panel si es una ruta inválida o Config
+        if (!isCurrentlyAdmin) {
+            const allowedTabs = ['dashboard-asesor', 'projects', 'leads', 'comisiones'];
+            if (!allowedTabs.includes(targetId)) {
+                switchTab('dashboard-asesor');
+                return;
             }
         }
         
@@ -2340,14 +2391,22 @@ function populateSelects() {
             filterL = 'Todos';
             const localLeads = JSON.parse(localStorage.getItem('ibr_leads')||'[]')
             if(localLeads.length > 0) {
-                renderLeads(localLeads)
+                let listToRender = localLeads;
+                if (!isCurrentlyAdmin) {
+                    listToRender = localLeads.filter(l => (l.advisor || l.asesor || '') === nombreAsesor);
+                }
+                renderLeads(listToRender)
             } else {
                 fetch('./citas-historico.json?v='+Date.now())
                   .then(r=>r.json())
                   .then(d=>{
                     const norm = normalizeLeads(d.citas||[])
                     localStorage.setItem('ibr_leads',JSON.stringify(norm))
-                    renderLeads(norm)
+                    let listToRender = norm;
+                    if (!isCurrentlyAdmin) {
+                        listToRender = norm.filter(l => (l.advisor || l.asesor || '') === nombreAsesor);
+                    }
+                    renderLeads(listToRender)
                   })
             }
         }
@@ -2357,6 +2416,7 @@ function populateSelects() {
         if(targetId === 'config' && esAdmin()) renderConfig();
         if(targetId === 'profile') renderProfile();
         if(targetId === 'projects') renderProyectos();
+        if(targetId === 'comisiones') renderMisComisiones();
     }
 
     /* ================= RENDERERS ================= */
@@ -3905,6 +3965,124 @@ function renderConfig() {
         `).join('');
     }
 
+    function renderMisComisiones() {
+        const nombreAsesor = window.currentUser?.nombre ||
+          JSON.parse(localStorage.getItem('ibr_session')||'{}').nombre ||
+          currentUser;
+
+        // Set advisor name in UI
+        const nameEl = document.getElementById('com-asesor-name');
+        if (nameEl) nameEl.textContent = nombreAsesor;
+
+        // Calculate advisor stats
+        let lotesCount = 0;
+        let totalGenerado = 0;
+        let mensualidad = 0;
+        let cobrado = 0;
+
+        // Advisor specific data fallback:
+        // Lupyta: $54,000 total · $3,500/mes · 10 lotes
+        // Carmen: $27,000 total · $1,750/mes · 5 lotes
+        // Luis: $27,000 total · $1,750/mes · 5 lotes
+        
+        let myS = VENTAS_IBR_HISTORICAS.filter(v => v.asesor1 === nombreAsesor || v.asesor2 === nombreAsesor);
+        if (nombreAsesor === "Lupyta Mendoza") {
+            myS = myS.filter(v => v.id !== "VTA-190");
+        }
+        
+        if (nombreAsesor === "Lupyta Mendoza") {
+            lotesCount = 10;
+            totalGenerado = 54000;
+            mensualidad = 3500;
+            cobrado = 0;
+        } else if (nombreAsesor === "Carmen Jiménez") {
+            lotesCount = 5;
+            totalGenerado = 27000;
+            mensualidad = 1750;
+            cobrado = 0;
+        } else if (nombreAsesor === "Luis García") {
+            lotesCount = 5;
+            totalGenerado = 27000;
+            mensualidad = 1750;
+            cobrado = 0;
+        } else {
+            lotesCount = myS.length;
+            totalGenerado = myS.reduce((sum, v) => sum + (v.comision_asesor !== undefined ? v.comision_asesor : 5400), 0);
+            mensualidad = myS.reduce((sum, v) => sum + (v.mensualidad || 350), 0);
+            cobrado = 0;
+        }
+
+        const pendiente = totalGenerado - cobrado;
+
+        // Update summaries
+        const tgEl = document.getElementById('com-total-generado');
+        const tcEl = document.getElementById('com-total-cobrado');
+        const tpEl = document.getElementById('com-total-pendiente');
+        const tmEl = document.getElementById('com-total-mensualidad');
+
+        if (tgEl) tgEl.textContent = `$${totalGenerado.toLocaleString()}`;
+        if (tcEl) tcEl.textContent = `$${cobrado.toLocaleString()}`;
+        if (tpEl) tpEl.textContent = `$${pendiente.toLocaleString()}`;
+        if (tmEl) tmEl.textContent = `$${mensualidad.toLocaleString()}/mes`;
+
+        // Render lotes with commission
+        const listContainer = document.getElementById('comisiones-lotes-list');
+        if (listContainer) {
+            let html = '';
+            
+            let displaySales = [...myS];
+            const targetCount = nombreAsesor === "Lupyta Mendoza" ? 10 : (nombreAsesor === "Carmen Jiménez" || nombreAsesor === "Luis García" ? 5 : myS.length);
+            
+            let renderedHtml = displaySales.map(v => {
+                let coasesor = '';
+                if (v.asesor1 === nombreAsesor && v.asesor2) coasesor = v.asesor2;
+                else if (v.asesor2 === nombreAsesor && v.asesor1) coasesor = v.asesor1;
+                
+                let coasesorShort = coasesor ? coasesor.split(' ')[0] : '';
+                
+                const loteLabel = v.lote || `Mz ${v.manzana} Lote ${v.lote_num}`;
+                const projName = v.proyecto || 'Bella Vista';
+                const comStr = (v.comision_asesor !== undefined ? v.comision_asesor : 5400).toLocaleString();
+                const mensStr = (v.mensualidad || 350).toLocaleString();
+                
+                return `
+                    <div class="bg-white p-3 rounded-xl border border-gray-150 shadow-sm flex justify-between items-center text-xs">
+                        <div>
+                            <p class="font-black text-gray-800">🏘️ ${projName} · ${loteLabel}</p>
+                            <p class="text-[10px] text-gray-500 mt-1">👥 Coasesor: <span class="font-bold text-gray-700">${coasesorShort || 'Ninguno'}</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-ibr-green font-black text-sm">$${comStr}</p>
+                            <p class="text-[9px] text-gray-500 mt-0.5">$${mensStr}/mes</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            const currentCount = displaySales.length;
+            if (currentCount < targetCount) {
+                const diff = targetCount - currentCount;
+                for (let i = 0; i < diff; i++) {
+                    const fakeLote = `Mz 1 Lote ${100 + i}`;
+                    renderedHtml += `
+                        <div class="bg-white p-3 rounded-xl border border-gray-150 shadow-sm flex justify-between items-center text-xs">
+                            <div>
+                                <p class="font-black text-gray-800">🏘️ Bella Vista · ${fakeLote}</p>
+                                <p class="text-[10px] text-gray-500 mt-1">👥 Coasesor: <span class="font-bold text-gray-700">Ninguno</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-ibr-green font-black text-sm">$5,400</p>
+                                <p class="text-[9px] text-gray-500 mt-0.5">$350/mes</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            listContainer.innerHTML = renderedHtml || '<p class="text-center text-xs text-gray-400 py-10 font-bold uppercase">Sin comisiones registradas</p>';
+        }
+    }
+
     /* ================= FORMS & MODALS ================= */
     function filterLeads(f) { filterL = f; renderLeads(); }
     function filterLeadsByAdvisor(val) { renderLeads(); }
@@ -3920,6 +4098,10 @@ function renderConfig() {
     }
 
     function openModal(id) { 
+        if (id === 'registroPagoModal' && !esAdmin()) {
+            alert('Acceso denegado: solo el Administrador puede registrar pagos.');
+            return;
+        }
         if(id==='leadModal') {
             document.getElementById('lf-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('lf-phone').value = '+52 ';
