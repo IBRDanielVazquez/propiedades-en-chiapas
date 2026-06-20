@@ -542,7 +542,7 @@
                     <button type="button" onclick="filterLeads('Hoy')" class="filter-btn" id="fbtn-Hoy">Hoy</button>
                     <button type="button" onclick="filterLeads('Semana')" class="filter-btn" id="fbtn-Semana">Esta semana</button>
                     
-                    <select id="filter-advisor" onchange="filterLeadsByAdvisor(this.value)" class="filter-btn" style="appearance: none; -webkit-appearance: none; padding-right: 20px; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23666%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>'); background-repeat: no-repeat; background-position: right 8px center; background-size: 10px; border: 1px solid #ccc; border-radius: 9999px;">
+                    <select id="filter-advisor" onchange="filterLeadsByAdvisor(this.value)" class="filter-btn admin-only hidden" style="appearance: none; -webkit-appearance: none; padding-right: 20px; background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%23666%22 stroke-width=%223%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><polyline points=%226 9 12 15 18 9%22></polyline></svg>'); background-repeat: no-repeat; background-position: right 8px center; background-size: 10px; border: 1px solid #ccc; border-radius: 9999px;">
                         <option value="">Por asesor ▼</option>
                         <option value="Daniel Vázquez">Daniel Vázquez</option>
                         <option value="Lupyta Mendoza">Lupyta Mendoza</option>
@@ -2961,23 +2961,26 @@ function populateSelects() {
             let progressHtml = '';
             let pct = 0;
             
-            if (p.lotes_total) {
-                pct = Math.round((kpis.vendidos / p.lotes_total) * 100);
-                progressHtml = `
-                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
-                        <span>${kpis.vendidos} / ${p.lotes_total} lotes vendidos</span>
-                        <span>${pct}%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden relative shadow-inner">
-                        <div class="h-full rounded-full transition-all duration-700" style="width: ${pct}%; background-color: ${p.color || '#8B0000'}"></div>
-                    </div>
-                `;
-            } else {
-                progressHtml = `
-                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-2">
-                        <span>${kpis.vendidos} lotes vendidos</span>
-                    </div>
-                `;
+            // Only show project progress bar and totals to Admin
+            if (esAdmin()) {
+                if (p.lotes_total) {
+                    pct = Math.round((kpis.vendidos / p.lotes_total) * 100);
+                    progressHtml = `
+                        <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
+                            <span>${kpis.vendidos} / ${p.lotes_total} lotes vendidos</span>
+                            <span>${pct}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4 overflow-hidden relative shadow-inner">
+                            <div class="h-full rounded-full transition-all duration-700" style="width: ${pct}%; background-color: ${p.color || '#8B0000'}"></div>
+                        </div>
+                    `;
+                } else {
+                    progressHtml = `
+                        <div class="flex justify-between text-xs font-bold text-gray-600 mb-2">
+                            <span>${kpis.vendidos} lotes vendidos</span>
+                        </div>
+                    `;
+                }
             }
             
             // Personal commission for advisors, or total for admin
@@ -3007,52 +3010,79 @@ function populateSelects() {
                 `;
             }
             
-            // Accordion for manzanas details (specifically for Bella Vista)
-            let detailAccordionHtml = '';
-            if (p.id === 'bella-vista') {
-                const manzanaRowsHtml = MANZANAS_DATA.map(m => {
-                    const pctVal = Math.round((m.v / m.t) * 100);
-                    return `
-                        <tr class="hover:bg-gray-50 border-b border-gray-100">
-                            <td class="pt-2.5 pb-2.5 font-black text-gray-800">Mz ${m.m}</td>
-                            <td class="pt-2.5 pb-2.5 font-medium text-gray-500">${m.t}</td>
-                            <td class="pt-2.5 pb-2.5 text-ibr-green font-black">${m.v}</td>
-                            <td class="pt-2.5 pb-2.5 text-blue-600 font-black">${m.d}</td>
-                            <td class="pt-2.5 pb-2.5 font-bold text-gray-600">${pctVal}%</td>
-                        </tr>
-                    `;
-                }).join('');
-                
-                detailAccordionHtml = `
-                    <div class="collapse-wrapper !mb-0 !mt-2 rounded-xl overflow-hidden border border-gray-100">
-                        <div class="accordion-header !rounded-none !shadow-none !mb-0 bg-gray-50/70 hover:bg-gray-100 transition py-3 px-4 flex justify-between items-center cursor-pointer text-ibr-blue" onclick="toggleAccordion(this)">
-                            <span class="text-xs font-extrabold uppercase tracking-wider">🗺️ Ver detalle por manzana</span>
-                            <span class="arrow transition-transform duration-300">▼</span>
+            // Grid de KPIs de ventas (sólo para Admin)
+            let kpisGridHtml = '';
+            if (esAdmin()) {
+                kpisGridHtml = `
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Ventas IBR</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.ibr}</span>
                         </div>
-                        <div class="collapse-content p-0" style="display:none">
-                            <div class="p-3 overflow-x-auto bg-white">
-                                <table class="w-full text-left text-xs text-gray-700">
-                                    <thead>
-                                        <tr class="text-[9px] text-gray-400 uppercase tracking-widest border-b border-gray-100">
-                                            <th class="pb-2 font-black">Mz</th>
-                                            <th class="pb-2 font-black">Total</th>
-                                            <th class="pb-2 font-black text-ibr-green">Vend</th>
-                                            <th class="pb-2 font-black text-blue-600">Disp</th>
-                                            <th class="pb-2 font-black">Avance</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-50 font-bold text-gray-700">
-                                        ${manzanaRowsHtml}
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Ventas Ext.</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.externos}</span>
+                        </div>
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Disponibles</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.disponibles !== null ? kpis.disponibles : '0'}</span>
+                        </div>
+                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Cancelados</span>
+                            <span class="text-xs font-black text-gray-800">${kpis.cancelados}</span>
                         </div>
                     </div>
                 `;
-            } else if (p.id === 'bosques-chapultepec') {
-                detailAccordionHtml = `
-                    <p class="text-[10px] text-gray-400 italic mt-3 text-center">* Proyecto exclusivo comercializado por Daniel Vázquez</p>
-                `;
+            }
+            
+            // Accordion for manzanas details (specifically for Bella Vista, sólo para Admin)
+            let detailAccordionHtml = '';
+            if (esAdmin()) {
+                if (p.id === 'bella-vista') {
+                    const manzanaRowsHtml = MANZANAS_DATA.map(m => {
+                        const pctVal = Math.round((m.v / m.t) * 100);
+                        return `
+                            <tr class="hover:bg-gray-50 border-b border-gray-100">
+                                <td class="pt-2.5 pb-2.5 font-black text-gray-800">Mz ${m.m}</td>
+                                <td class="pt-2.5 pb-2.5 font-medium text-gray-500">${m.t}</td>
+                                <td class="pt-2.5 pb-2.5 text-ibr-green font-black">${m.v}</td>
+                                <td class="pt-2.5 pb-2.5 text-blue-600 font-black">${m.d}</td>
+                                <td class="pt-2.5 pb-2.5 font-bold text-gray-600">${pctVal}%</td>
+                            </tr>
+                        `;
+                    }).join('');
+                    
+                    detailAccordionHtml = `
+                        <div class="collapse-wrapper !mb-0 !mt-2 rounded-xl overflow-hidden border border-gray-100">
+                            <div class="accordion-header !rounded-none !shadow-none !mb-0 bg-gray-50/70 hover:bg-gray-100 transition py-3 px-4 flex justify-between items-center cursor-pointer text-ibr-blue" onclick="toggleAccordion(this)">
+                                <span class="text-xs font-extrabold uppercase tracking-wider">🗺️ Ver detalle por manzana</span>
+                                <span class="arrow transition-transform duration-300">▼</span>
+                            </div>
+                            <div class="collapse-content p-0" style="display:none">
+                                <div class="p-3 overflow-x-auto bg-white">
+                                    <table class="w-full text-left text-xs text-gray-700">
+                                        <thead>
+                                            <tr class="text-[9px] text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                                                <th class="pb-2 font-black">Mz</th>
+                                                <th class="pb-2 font-black">Total</th>
+                                                <th class="pb-2 font-black text-ibr-green">Vend</th>
+                                                <th class="pb-2 font-black text-blue-600">Disp</th>
+                                                <th class="pb-2 font-black">Avance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-50 font-bold text-gray-700">
+                                            ${manzanaRowsHtml}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (p.id === 'bosques-chapultepec') {
+                    detailAccordionHtml = `
+                        <p class="text-[10px] text-gray-400 italic mt-3 text-center">* Proyecto exclusivo comercializado por Daniel Vázquez</p>
+                    `;
+                }
             }
             
             // Ficha tecnica button only for admin
@@ -3080,24 +3110,7 @@ function populateSelects() {
                     
                     ${progressHtml}
                     
-                    <div class="grid grid-cols-2 gap-2 mb-4">
-                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
-                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Ventas IBR</span>
-                            <span class="text-xs font-black text-gray-800">${kpis.ibr}</span>
-                        </div>
-                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
-                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Ventas Ext.</span>
-                            <span class="text-xs font-black text-gray-800">${kpis.externos}</span>
-                        </div>
-                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
-                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Disponibles</span>
-                            <span class="text-xs font-black text-gray-800">${kpis.disponibles !== null ? kpis.disponibles : '0'}</span>
-                        </div>
-                        <div class="bg-gray-50/50 p-2.5 rounded-xl border border-gray-100 flex flex-col items-center justify-center">
-                            <span class="text-[9px] text-gray-400 uppercase font-black tracking-widest mb-0.5">Cancelados</span>
-                            <span class="text-xs font-black text-gray-800">${kpis.cancelados}</span>
-                        </div>
-                    </div>
+                    ${kpisGridHtml}
                     
                     ${commissionHtml}
                     
