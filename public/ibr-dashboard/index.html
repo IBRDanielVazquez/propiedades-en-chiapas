@@ -62,6 +62,8 @@
         .collapse-content.open { max-height: 2000px; opacity: 1; margin-bottom: 16px; }
         .collapse-wrapper.open .collapse-icon { transform: rotate(180deg); }
         .card-ui { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 16px; margin-bottom: 12px; }
+        .card-ui .expandable-content { display: block; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.2s ease-in-out, opacity 0.2s ease-in-out; }
+        .card-ui.expanded .expandable-content { max-height: 1000px; opacity: 1; margin-top: 12px; }
         .push-view { position: fixed; inset: 0; background: #F5F5F5; z-index: 50; transform: translateX(100%); transition: transform 0.3s ease; overflow-y: auto; padding-bottom: 80px; }
         .push-view.active { transform: translateX(0); }
         .push-header { display: flex; align-items: center; gap: 12px; padding: 16px; background: white; position: sticky; top: 0; z-index: 51; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
@@ -469,7 +471,7 @@
                 <h2 class="section-title">Leads & Citas <span id="leads-total-count" class="text-xs font-bold text-gray-500 ml-1.5"></span></h2>
                 <div class="flex gap-2">
                     <input type="text" id="lead-search" placeholder="🔍 Buscar lead..." class="flex-1" onkeyup="renderLeads()">
-                    <button onclick="openModal('leadModal')" class="admin-only hidden bg-ibr-red text-white w-12 rounded-lg font-black text-xl flex justify-center items-center">+</button>
+                    <button onclick="openModal('leadModal')" class="admin-only hidden bg-ibr-red text-white px-4 py-2 rounded-lg font-bold text-xs flex justify-center items-center gap-1">➕ Nueva Cita</button>
                 </div>
                 <div class="flex gap-2 mt-2">
                     <button onclick="syncCalendar()" style="background:#1a1a1a;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🔄 Sincronizar Google Calendar</button>
@@ -835,14 +837,15 @@
                     <input required id="lf-name" class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Teléfono (10 dígitos)*</label>
-                    <input required type="tel" pattern="[0-9]{10}" id="lf-phone" placeholder="9611234567" class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Teléfono*</label>
+                    <input required type="tel" id="lf-phone" placeholder="+52 961 123 4567" class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Proyecto*</label>
-                    <select id="lf-project" class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
-                        <option value="Bella Vista Ocozocoautla">Bella Vista Ocozocoautla</option>
-                        <option value="Bosques de Chapultepec">Bosques de Chapultepec</option>
+                    <select id="lf-project" required class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
+                        <option value="Bella Vista">Bella Vista</option>
+                        <option value="Bosques">Bosques</option>
+                        <option value="Otro">Otro</option>
                     </select>
                 </div>
                 <div>
@@ -854,8 +857,29 @@
                     <input required type="time" id="lf-time" class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Asesor Asignado*</label>
-                    <select id="lf-advisor" required class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red"></select>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Asignar a*</label>
+                    <div class="space-y-2 text-xs font-bold text-gray-700 bg-white p-3 rounded-lg border border-gray-200">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="lf-assign" value="Pendiente" checked class="text-ibr-red focus:ring-ibr-red">
+                            <span>Pendiente (sin asignar)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="lf-assign" value="Daniel Vázquez" class="text-ibr-red focus:ring-ibr-red">
+                            <span>Daniel Vázquez</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="lf-assign" value="Lupyta Mendoza" class="text-ibr-red focus:ring-ibr-red">
+                            <span>Lupyta Mendoza</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="lf-assign" value="Carmen Jiménez" class="text-ibr-red focus:ring-ibr-red">
+                            <span>Carmen Jiménez</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="lf-assign" value="Luis García" class="text-ibr-red focus:ring-ibr-red">
+                            <span>Luis García</span>
+                        </label>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Observaciones</label>
@@ -2165,7 +2189,8 @@
     }
 function populateSelects() {
         const teamOpts = IBR_USERS.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
-        document.getElementById('lf-advisor').innerHTML = teamOpts;
+        const lfAdv = document.getElementById('lf-advisor');
+        if (lfAdv) lfAdv.innerHTML = teamOpts;
         document.getElementById('pf-adv').innerHTML = teamOpts;
 
         // Populate projects select boxes dynamically
@@ -2178,10 +2203,10 @@ function populateSelects() {
         const hpFilterProj = document.getElementById('hp-filter-project');
         if (hpFilterProj) hpFilterProj.innerHTML = filterProjOptsHtml;
 
-        const modalProjOptsHtml = proyectos.map(p => `<option value="${p.nombre}">${p.nombre}</option>`).join('');
-        
         const lfProj = document.getElementById('lf-project');
-        if (lfProj) lfProj.innerHTML = modalProjOptsHtml;
+        if (lfProj) {
+            lfProj.innerHTML = '<option value="Bella Vista">Bella Vista</option><option value="Bosques">Bosques</option><option value="Otro">Otro</option>';
+        }
         
         const rfProj = document.getElementById('rf-proj');
         if (rfProj) rfProj.innerHTML = modalProjOptsHtml;
@@ -3109,6 +3134,101 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
     }
 
     
+    function getAdvisorBadge(advisor) {
+        const adv = (advisor || 'Pendiente').toLowerCase().trim();
+        if (adv === 'pendiente' || adv === 'sin asignar' || adv === 'ninguno' || adv === '') {
+            return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-200 text-gray-800 border border-gray-300">Pendiente</span>`;
+        }
+        if (adv.includes('daniel')) {
+            return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-blue-100 text-blue-800 border border-blue-200">Daniel</span>`;
+        }
+        if (adv.includes('lupyta') || adv.includes('lupita')) {
+            return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-purple-100 text-purple-800 border border-purple-200">Lupyta</span>`;
+        }
+        if (adv.includes('carmen')) {
+            return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-pink-100 text-pink-800 border border-pink-200">Carmen</span>`;
+        }
+        if (adv.includes('luis')) {
+            return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-green-100 text-green-800 border border-green-200">Luis</span>`;
+        }
+        return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-800 border border-gray-200">${advisor}</span>`;
+    }
+
+    function updateLeadsHeaderMetrics() {
+        const totalLeads = leads.length;
+        const resClientes = JSON.parse(localStorage.getItem('ibr_leads_resultado') || '{}');
+        let clientesCount = 0;
+        leads.forEach(l => {
+            if (resClientes[l.id] && resClientes[l.id].es_cliente) {
+                clientesCount++;
+            }
+        });
+        
+        const cierrePct = totalLeads > 0 ? Math.round((clientesCount / totalLeads) * 100) : 0;
+        const pendientesCount = leads.filter(l => !['Vendido', 'Cancelado'].includes(l.status)).length;
+        
+        const totalCountEl = document.getElementById('leads-total-count');
+        if (totalCountEl) {
+            totalCountEl.innerHTML = `(📋 Total: ${totalLeads} | ✅ Clientes: ${clientesCount} | 📊 Cierre: ${cierrePct}% | ⏳ Pendientes: ${pendientesCount})`;
+        }
+    }
+
+    window.toggleLeadExpand = function(btnEl, leadId) {
+        const card = document.getElementById('lead-card-' + leadId);
+        if (!card) return;
+        const isExpanded = card.classList.toggle('expanded');
+        const btnText = btnEl.querySelector('.btn-text');
+        if (btnText) {
+            btnText.textContent = isExpanded ? '▲ Ver menos' : '▼ Ver más';
+        }
+    };
+
+    window.setLeadCliente = function(leadId, esCliente) {
+        const res = JSON.parse(localStorage.getItem('ibr_leads_resultado') || '{}');
+        if (esCliente) {
+            const des = document.getElementById('sel-cli-des-' + leadId)?.value || 'Bella Vista Ocozocoautla';
+            const lot = document.getElementById('inp-cli-lote-' + leadId)?.value || '';
+            res[leadId] = {
+                es_cliente: true,
+                desarrollo: des,
+                lote: lot,
+                fecha_cierre: new Date().toISOString().split('T')[0]
+            };
+            document.getElementById('fields-cli-' + leadId)?.classList.remove('hidden');
+        } else {
+            delete res[leadId];
+            document.getElementById('fields-cli-' + leadId)?.classList.add('hidden');
+        }
+        localStorage.setItem('ibr_leads_resultado', JSON.stringify(res));
+        
+        const btnNo = document.getElementById('btn-cli-no-' + leadId);
+        const btnSi = document.getElementById('btn-cli-si-' + leadId);
+        if (btnNo && btnSi) {
+            if (esCliente) {
+                btnSi.className = "flex-1 py-1.5 rounded-lg border text-center font-bold transition bg-green-600 text-white border-green-600";
+                btnNo.className = "flex-1 py-1.5 rounded-lg border text-center font-bold transition bg-white text-gray-600 border-gray-200";
+            } else {
+                btnSi.className = "flex-1 py-1.5 rounded-lg border text-center font-bold transition bg-white text-gray-600 border-gray-200";
+                btnNo.className = "flex-1 py-1.5 rounded-lg border text-center font-bold transition bg-ibr-red text-white border-ibr-red";
+            }
+        }
+        updateLeadsHeaderMetrics();
+    };
+
+    window.updateLeadClienteFields = function(leadId) {
+        const res = JSON.parse(localStorage.getItem('ibr_leads_resultado') || '{}');
+        const des = document.getElementById('sel-cli-des-' + leadId)?.value || 'Bella Vista Ocozocoautla';
+        const lot = document.getElementById('inp-cli-lote-' + leadId)?.value || '';
+        res[leadId] = {
+            es_cliente: true,
+            desarrollo: des,
+            lote: lot,
+            fecha_cierre: new Date().toISOString().split('T')[0]
+        };
+        localStorage.setItem('ibr_leads_resultado', JSON.stringify(res));
+        updateLeadsHeaderMetrics();
+    };
+
     function renderLeadCard(l) {
         const dateParts = l.date ? new Date(l.date).toLocaleDateString('es-ES', {month:'short', day:'numeric'}) : '';
         const hasPhone = l.phone && l.phone !== '0000000000' && l.phone.trim() !== '';
@@ -3116,20 +3236,74 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         const advisorShort = (l.advisor || 'Por definir').split(' ')[0];
         const projectShort = (l.project || 'Por definir').split(' ')[0];
         
+        const resClientes = JSON.parse(localStorage.getItem('ibr_leads_resultado') || '{}');
+        const leadRes = resClientes[l.id] || {};
+        const esCliente = !!leadRes.es_cliente;
+        const desarrollo = leadRes.desarrollo || 'Bella Vista Ocozocoautla';
+        const lote = leadRes.lote || '';
+
         return `
-        <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}">
-            <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
-            <div class="mt-2 text-xs text-gray-600 space-y-1">
-                <p>📅 ${dateParts} · ${l.time || '--'}</p>
-                <p class="truncate">👤 ${advisorShort} · 🏘️ ${projectShort}</p>
+        <div class="card-ui relative border-l-4 ${getLeadBorder(l.status)}" id="lead-card-${l.id}">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="font-black text-sm text-gray-900 truncate">👤 ${l.name}</p>
+                    <div class="mt-1 text-xs text-gray-600 space-y-0.5">
+                        <p>📅 ${dateParts} · 🕒 ${l.time || '--'}</p>
+                        <p class="truncate">🏘️ ${projectShort}</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-end gap-1.5">
+                    ${getLeadBadge(l.status)}
+                    ${getAdvisorBadge(l.advisor)}
+                </div>
             </div>
-            <div class="mt-2 mb-3">${getLeadBadge(l.status)}</div>
-            ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium rounded">💬 ${l.lastComment}</div>` : ''}
-            <div class="flex gap-2">
-                ${hasPhone ? `<button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="flex-1 bg-white border border-gray-300 text-gray-700 text-xs font-bold py-2 rounded-lg hover:bg-gray-50">💬 WA</button>` : ''}
-                <button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50">✏️ Resultado</button>
-                ${esAdmin() ? `<button onclick="deleteLead('${l.id}')" style="background:#ff4444;color:#fff;border:none;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer">🗑️</button>` : ''}
+            
+            <div class="expandable-content">
+                <div class="border-t border-gray-100 pt-3 mt-3 space-y-3">
+                    <div class="bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-xs">
+                        <span class="font-bold text-gray-500 block mb-1">📝 Observaciones / Descripción:</span>
+                        <p class="text-gray-700 whitespace-pre-line">${l.lastComment || 'Sin observaciones'}</p>
+                    </div>
+
+                    ${hasPhone ? `
+                    <div class="flex items-center justify-between bg-gray-50 p-2.5 rounded-lg border border-gray-100 text-xs">
+                        <span class="text-gray-700">📞 Teléfono: <span class="font-bold">${l.phone}</span></span>
+                        <button onclick="window.open('https://wa.me/52${l.phone}', '_blank')" class="bg-emerald-500 text-white text-[10px] font-black px-3 py-1.5 rounded-lg hover:bg-emerald-600 transition">💬 WA</button>
+                    </div>
+                    ` : ''}
+
+                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 text-xs">
+                        <span class="font-bold text-gray-700 block mb-2">¿Se convirtió en cliente?</span>
+                        <div class="flex gap-2">
+                            <button type="button" id="btn-cli-no-${l.id}" onclick="setLeadCliente('${l.id}', false)" class="flex-1 py-1.5 rounded-lg border text-center font-bold transition ${!esCliente ? 'bg-ibr-red text-white border-ibr-red' : 'bg-white text-gray-600 border-gray-200'}">No</button>
+                            <button type="button" id="btn-cli-si-${l.id}" onclick="setLeadCliente('${l.id}', true)" class="flex-1 py-1.5 rounded-lg border text-center font-bold transition ${esCliente ? 'bg-green-600 text-white border-green-600' : 'bg-white text-gray-600 border-gray-200'}">Sí ✅</button>
+                        </div>
+                        <div id="fields-cli-${l.id}" class="${esCliente ? '' : 'hidden'} space-y-2 mt-2 pt-2 border-t border-gray-200">
+                            <div>
+                                <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Desarrollo</label>
+                                <select id="sel-cli-des-${l.id}" onchange="updateLeadClienteFields('${l.id}')" class="w-full p-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="Bella Vista Ocozocoautla" ${desarrollo === 'Bella Vista Ocozocoautla' ? 'selected' : ''}>Bella Vista Ocozocoautla</option>
+                                    <option value="Bosques de Chapultepec" ${desarrollo === 'Bosques de Chapultepec' ? 'selected' : ''}>Bosques de Chapultepec</option>
+                                    <option value="Otro" ${desarrollo === 'Otro' ? 'selected' : ''}>Otro</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-bold text-gray-400 uppercase block mb-1">Lote/Referencia</label>
+                                <input type="text" id="inp-cli-lote-${l.id}" value="${lote}" onkeyup="updateLeadClienteFields('${l.id}')" placeholder="Ej: M5 L10" class="w-full p-2 border border-gray-300 rounded-lg">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="openResultModal('${l.id}')" class="flex-1 bg-white border border-ibr-red text-ibr-red text-xs font-bold py-2 rounded-lg hover:bg-red-50 transition">✏️ Resultado</button>
+                        ${esAdmin() ? `<button onclick="deleteLead('${l.id}')" class="bg-red-500 text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-red-600 transition">🗑️ Eliminar</button>` : ''}
+                    </div>
+                </div>
             </div>
+            
+            <button onclick="toggleLeadExpand(this, '${l.id}')" class="w-full mt-2 pt-2 border-t border-gray-100 flex justify-center items-center text-xs font-bold text-gray-500 hover:text-gray-800 transition">
+                <span class="btn-text">▼ Ver más</span>
+            </button>
         </div>
         `;
     }
@@ -3147,6 +3321,13 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
           return fb.localeCompare(fa)
         });
 
+        // Strip the country code '52' from raw phone numbers if they are 12 digits (prevent doubling +52)
+        leads.forEach(l => {
+            if (l.phone && l.phone.startsWith('52') && l.phone.length === 12) {
+                l.phone = l.phone.substring(2);
+            }
+        });
+
         const rol = window.currentUser?.rol || (esAdmin() ? 'admin' : 'asesor');
         if (rol === 'asesor') {
             const advisorName = window.currentUser?.nombre || currentUser;
@@ -3159,10 +3340,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         let f = getLeadsVisibles();
         
         // Update total count indicator in Leads header
-        const totalCountEl = document.getElementById('leads-total-count');
-        if (totalCountEl) {
-            totalCountEl.innerText = `(${f.length} filtradas de ${leads.length} totales)`;
-        }
+        updateLeadsHeaderMetrics();
 
         const search = document.getElementById('lead-search') ? document.getElementById('lead-search').value.toLowerCase() : '';
         if(search) {
@@ -3598,18 +3776,39 @@ function renderConfig() {
     }
 
     function openModal(id) { 
-        if(id==='leadModal') document.getElementById('lf-date').value = new Date().toISOString().split('T')[0];
+        if(id==='leadModal') {
+            document.getElementById('lf-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('lf-phone').value = '+52 ';
+        }
         document.getElementById(id).classList.remove('hidden'); 
     }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
     function saveLead(e) {
         e.preventDefault();
+        
+        let rawPhone = document.getElementById('lf-phone').value.trim();
+        if (!rawPhone.startsWith('+52')) {
+            let clean = rawPhone.replace(/^\+/, '');
+            if (clean.startsWith('52') && clean.length > 10) {
+                rawPhone = '+' + clean;
+            } else {
+                rawPhone = '+52' + clean;
+            }
+        }
+        
+        const advisorVal = document.querySelector('input[name="lf-assign"]:checked').value;
+
         leads.unshift({
-            id: 'L'+Date.now(), name: document.getElementById('lf-name').value, phone: document.getElementById('lf-phone').value,
-            project: document.getElementById('lf-project').value, date: document.getElementById('lf-date').value,
-            time: document.getElementById('lf-time').value, advisor: document.getElementById('lf-advisor').value,
-            obs: document.getElementById('lf-obs').value, status: 'Programada'
+            id: 'L'+Date.now(), 
+            name: document.getElementById('lf-name').value, 
+            phone: rawPhone,
+            project: document.getElementById('lf-project').value, 
+            date: document.getElementById('lf-date').value,
+            time: document.getElementById('lf-time').value, 
+            advisor: advisorVal,
+            lastComment: document.getElementById('lf-obs').value,
+            status: 'Programada'
         });
         localStorage.setItem('ibr_leads', JSON.stringify(leads));
         closeModal('leadModal'); e.target.reset(); renderLeads();
