@@ -467,6 +467,65 @@
 
         <!-- SHARED: LEADS -->
         <div id="tab-leads" class="tab-content p-4 space-y-4">
+            
+            <!-- PORTADA / RESUMEN DE MÉTRICAS CRM -->
+            <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-2" id="leads-summary-card">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest flex items-center gap-1">
+                        📊 Resumen de Leads y Conversión
+                    </span>
+                    <button type="button" onclick="toggleLeadsSummary()" id="btn-toggle-summary" class="text-[11px] text-ibr-red font-black hover:underline uppercase tracking-wider">
+                        ▲ Ocultar Resumen
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 transition-all duration-300 overflow-hidden" id="leads-summary-grid">
+                    <!-- KPI: Total Leads -->
+                    <div id="kpi-card-total" onclick="filterLeads('Todos')" class="cursor-pointer p-3.5 rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50/40 to-blue-50/70 hover:from-blue-50 hover:to-blue-100 text-blue-900 shadow-sm hover:shadow transition-all duration-200 hover:-translate-y-0.5 flex flex-col justify-between min-h-[95px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-lg">📋</span>
+                            <span class="text-[9px] font-black bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Ver todo</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-extrabold uppercase text-blue-500 tracking-wider mt-1">Total Leads</p>
+                            <h3 class="text-2xl font-black text-blue-950" id="kpi-total-leads">0</h3>
+                        </div>
+                    </div>
+                    <!-- KPI: Clientes -->
+                    <div id="kpi-card-clientes" onclick="filterLeads('Clientes')" class="cursor-pointer p-3.5 rounded-xl border border-emerald-100 bg-gradient-to-br from-emerald-50/40 to-emerald-50/70 hover:from-emerald-50 hover:to-emerald-100 text-emerald-900 shadow-sm hover:shadow transition-all duration-200 hover:-translate-y-0.5 flex flex-col justify-between min-h-[95px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-lg">✅</span>
+                            <span class="text-[9px] font-black bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Filtrar</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-extrabold uppercase text-emerald-600 tracking-wider mt-1">Clientes</p>
+                            <h3 class="text-2xl font-black text-emerald-950" id="kpi-clientes">0</h3>
+                        </div>
+                    </div>
+                    <!-- KPI: Tasa Cierre -->
+                    <div class="p-3.5 rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50/40 to-purple-50/70 text-purple-900 shadow-sm flex flex-col justify-between min-h-[95px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-lg">📈</span>
+                            <span class="text-[9px] font-black bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Tasa</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-extrabold uppercase text-purple-600 tracking-wider mt-1">Tasa Cierre</p>
+                            <h3 class="text-2xl font-black text-purple-950" id="kpi-cierre">0%</h3>
+                        </div>
+                    </div>
+                    <!-- KPI: Pendientes -->
+                    <div id="kpi-card-pendientes" onclick="filterLeads('Pendientes')" class="cursor-pointer p-3.5 rounded-xl border border-amber-100 bg-gradient-to-br from-amber-50/40 to-amber-50/70 hover:from-amber-50 hover:to-amber-100 text-amber-900 shadow-sm hover:shadow transition-all duration-200 hover:-translate-y-0.5 flex flex-col justify-between min-h-[95px]">
+                        <div class="flex justify-between items-start">
+                            <span class="text-lg">⏳</span>
+                            <span class="text-[9px] font-black bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Filtrar</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-extrabold uppercase text-amber-600 tracking-wider mt-1">Pendientes</p>
+                            <h3 class="text-2xl font-black text-amber-950" id="kpi-pendientes">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="sticky top-0 z-30 bg-[#F5F5F5] pt-2 pb-2">
                 <h2 class="section-title">Leads & Citas <span id="leads-total-count" class="text-xs font-bold text-gray-500 ml-1.5"></span></h2>
                 <div class="flex gap-2">
@@ -479,6 +538,7 @@
                 </div>
                 <div class="filters-scroll mt-3">
                     <button type="button" onclick="filterLeads('Todos')" class="filter-btn active" id="fbtn-Todos">Todos</button>
+                    <button type="button" onclick="filterLeads('Clientes')" class="filter-btn" id="fbtn-Clientes">Clientes</button>
                     <button type="button" onclick="filterLeads('Hoy')" class="filter-btn" id="fbtn-Hoy">Hoy</button>
                     <button type="button" onclick="filterLeads('Semana')" class="filter-btn" id="fbtn-Semana">Esta semana</button>
                     
@@ -3154,7 +3214,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-800 border border-gray-200">${advisor}</span>`;
     }
 
-    function updateLeadsHeaderMetrics() {
+    function updateLeadsHeaderMetrics(filteredCount) {
         const totalLeads = leads.length;
         const resClientes = JSON.parse(localStorage.getItem('ibr_leads_resultado') || '{}');
         let clientesCount = 0;
@@ -3167,11 +3227,78 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         const cierrePct = totalLeads > 0 ? Math.round((clientesCount / totalLeads) * 100) : 0;
         const pendientesCount = leads.filter(l => !['Vendido', 'Cancelado'].includes(l.status)).length;
         
+        // Actualizar valores en las tarjetas del panel de resumen (Portada)
+        const kpiTotal = document.getElementById('kpi-total-leads');
+        const kpiClientes = document.getElementById('kpi-clientes');
+        const kpiCierre = document.getElementById('kpi-cierre');
+        const kpiPendientes = document.getElementById('kpi-pendientes');
+        
+        if (kpiTotal) kpiTotal.textContent = totalLeads;
+        if (kpiClientes) kpiClientes.textContent = clientesCount;
+        if (kpiCierre) kpiCierre.textContent = `${cierrePct}%`;
+        if (kpiPendientes) kpiPendientes.textContent = pendientesCount;
+        
+        // Resaltado dinámico del borde de la tarjeta del filtro activo
+        const cardTotal = document.getElementById('kpi-card-total');
+        const cardClientes = document.getElementById('kpi-card-clientes');
+        const cardPendientes = document.getElementById('kpi-card-pendientes');
+        
+        if (cardTotal) {
+            cardTotal.className = cardTotal.className.replace(/\bborder-(?:blue|emerald|amber)-\d+\b/g, '').replace(/\bring-\d+\b/g, '').replace(/\bring-[^\s]+\b/g, '').trim();
+            cardTotal.classList.add('border-blue-100');
+        }
+        if (cardClientes) {
+            cardClientes.className = cardClientes.className.replace(/\bborder-(?:blue|emerald|amber)-\d+\b/g, '').replace(/\bring-\d+\b/g, '').replace(/\bring-[^\s]+\b/g, '').trim();
+            cardClientes.classList.add('border-emerald-100');
+        }
+        if (cardPendientes) {
+            cardPendientes.className = cardPendientes.className.replace(/\bborder-(?:blue|emerald|amber)-\d+\b/g, '').replace(/\bring-\d+\b/g, '').replace(/\bring-[^\s]+\b/g, '').trim();
+            cardPendientes.classList.add('border-amber-100');
+        }
+        
+        const currentFilter = window.filterL || 'Todos';
+        if (currentFilter === 'Todos' && cardTotal) {
+            cardTotal.classList.remove('border-blue-100');
+            cardTotal.classList.add('border-blue-500', 'ring-2', 'ring-blue-500/20');
+        } else if (currentFilter === 'Clientes' && cardClientes) {
+            cardClientes.classList.remove('border-emerald-100');
+            cardClientes.classList.add('border-emerald-500', 'ring-2', 'ring-emerald-500/20');
+        } else if (currentFilter === 'Pendientes' && cardPendientes) {
+            cardPendientes.classList.remove('border-amber-100');
+            cardPendientes.classList.add('border-amber-500', 'ring-2', 'ring-amber-500/20');
+        }
+        
+        const displayCount = filteredCount !== undefined ? filteredCount : (window.filteredLeadsForPagination ? window.filteredLeadsForPagination.length : totalLeads);
         const totalCountEl = document.getElementById('leads-total-count');
         if (totalCountEl) {
-            totalCountEl.innerHTML = `(📋 Total: ${totalLeads} | ✅ Clientes: ${clientesCount} | 📊 Cierre: ${cierrePct}% | ⏳ Pendientes: ${pendientesCount})`;
+            totalCountEl.innerHTML = `(${displayCount})`;
         }
     }
+
+    window.toggleLeadsSummary = function() {
+        const grid = document.getElementById('leads-summary-grid');
+        const btn = document.getElementById('btn-toggle-summary');
+        if (!grid || !btn) return;
+        
+        const isCollapsed = grid.classList.toggle('hidden');
+        localStorage.setItem('ibr_leads_summary_collapsed', isCollapsed ? 'true' : 'false');
+        btn.textContent = isCollapsed ? '▼ Mostrar Resumen' : '▲ Ocultar Resumen';
+    };
+
+    window.checkLeadsSummaryCollapseState = function() {
+        const grid = document.getElementById('leads-summary-grid');
+        const btn = document.getElementById('btn-toggle-summary');
+        if (!grid || !btn) return;
+        
+        const shouldCollapse = localStorage.getItem('ibr_leads_summary_collapsed') === 'true';
+        if (shouldCollapse) {
+            grid.classList.add('hidden');
+            btn.textContent = '▼ Mostrar Resumen';
+        } else {
+            grid.classList.remove('hidden');
+            btn.textContent = '▲ Ocultar Resumen';
+        }
+    };
 
     window.toggleLeadExpand = function(btnEl, leadId) {
         const card = document.getElementById('lead-card-' + leadId);
@@ -3338,9 +3465,6 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         }
 
         let f = getLeadsVisibles();
-        
-        // Update total count indicator in Leads header
-        updateLeadsHeaderMetrics();
 
         const search = document.getElementById('lead-search') ? document.getElementById('lead-search').value.toLowerCase() : '';
         if(search) {
@@ -3365,6 +3489,9 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
                 f = f.filter(l => !['Vendido', 'Cancelado'].includes(l.status));
             } else if(filterL === 'Cerrados') {
                 f = f.filter(l => ['Vendido', 'Cancelado'].includes(l.status));
+            } else if(filterL === 'Clientes') {
+                const resClientes = JSON.parse(localStorage.getItem('ibr_leads_resultado') || '{}');
+                f = f.filter(l => resClientes[l.id] && resClientes[l.id].es_cliente);
             }
         }
 
@@ -3380,6 +3507,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNy
         if(projVal) {
             f = f.filter(l => l.project === projVal);
         }
+
+        // Actualizar KPIs del panel de resumen (Portada) e indicador del título
+        updateLeadsHeaderMetrics(f.length);
+        checkLeadsSummaryCollapseState();
 
         // update active button
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
