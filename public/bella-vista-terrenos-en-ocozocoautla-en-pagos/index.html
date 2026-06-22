@@ -869,20 +869,20 @@ section p, section li { text-align: center; }
    ═══════════════════════════════════════════ */
 .float-wa{
   position:fixed;
-  bottom:24px;right:24px;
+  bottom:20px;right:20px;
   z-index:999;
-  width:72px;height:72px;
+  width:46px;height:46px;
   background:linear-gradient(135deg,#25D366,#1DB954);
   border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(37,211,102,.4);
+  box-shadow:0 4px 14px rgba(37,211,102,.4);
   cursor:pointer;
   text-decoration:none;
   transition:all .3s var(--ease);
   animation:pulse-wa 2.5s infinite;
 }
 .float-wa:hover{transform:scale(1.1)}
-.float-wa svg{width:30px;height:30px;fill:white}
+.float-wa svg{width:20px;height:20px;fill:white}
 @keyframes pulse-wa{
   0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.4)}
   50%{box-shadow:0 4px 40px rgba(37,211,102,.6)}
@@ -1453,11 +1453,6 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
   <!-- PRECIO GRANDE -->
   <div style="text-align:center; padding:36px 20px 20px; background:#0D0D0D;">
 
-    <!-- Eyebrow -->
-    <div style="font-family:'Inter',sans-serif; font-size:clamp(10px,2.5vw,13px); font-weight:700; letter-spacing:5px; text-transform:uppercase; color:#B8924A; margin-bottom:8px;">
-      BELLA VISTA · OCOZOCOAUTLA · CHIAPAS
-    </div>
-
     <!-- $450 ENORME -->
     <h1 style="font-family:'Cormorant Garamond',Georgia,serif !important; font-size:clamp(100px,26vw,200px) !important; font-weight:900 !important; color:#FFFFFF !important; line-height:0.85 !important; letter-spacing:-4px !important; margin:0 !important; padding:0 !important;">
       $450
@@ -1468,13 +1463,17 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
       A LA SEMANA
     </div>
 
+    <!-- Eyebrow DEBAJO en 2 líneas -->
+    <div style="margin-top:10px; line-height:1.2;">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(22px,5vw,34px); font-weight:700; color:#FFFFFF; letter-spacing:1px;">Bella Vista</div>
+      <div style="font-family:'Inter',sans-serif; font-size:clamp(11px,2.5vw,14px); font-weight:500; letter-spacing:3px; text-transform:uppercase; color:#B8924A; margin-top:2px;">Ocozocoautla, Chiapas</div>
+    </div>
+
     <!-- Checkmarks SIN ENGANCHE -->
     <div style="display:inline-flex; align-items:center; gap:12px; margin-top:20px; flex-wrap:wrap; justify-content:center;">
       <span style="font-family:'Inter',sans-serif; font-size:clamp(14px,2.5vw,17px); font-weight:700; color:#FFFFFF; display:flex; align-items:center; gap:6px;"><span style="color:#B8924A;">✓</span> Sin enganche</span>
       <span style="color:rgba(255,255,255,0.3);">·</span>
       <span style="font-family:'Inter',sans-serif; font-size:clamp(14px,2.5vw,17px); font-weight:700; color:#FFFFFF; display:flex; align-items:center; gap:6px;"><span style="color:#B8924A;">✓</span> Sin buró</span>
-      <span style="color:rgba(255,255,255,0.3);">·</span>
-      <span style="font-family:'Inter',sans-serif; font-size:clamp(14px,2.5vw,17px); font-weight:700; color:#FFFFFF; display:flex; align-items:center; gap:6px;"><span style="color:#B8924A;">✓</span> Lotes 10×20 m</span>
     </div>
 
     <!-- Datos secundarios -->
