@@ -1433,23 +1433,55 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 </head>
 <body>
 
-<section id="video" style="background:#141414; padding:0; margin:0;">
+<style>
+@keyframes hero-pulse {
+  0%,100% { text-shadow: 0 0 30px rgba(184,146,74,0.6), 0 4px 0 #8a6a2a; }
+  50%      { text-shadow: 0 0 60px rgba(184,146,74,0.9), 0 4px 0 #8a6a2a; }
+}
+@keyframes badge-glow {
+  0%,100% { box-shadow: 0 0 0 3px #FFD700, 0 0 20px rgba(255,30,30,0.5); }
+  50%      { box-shadow: 0 0 0 3px #FFD700, 0 0 40px rgba(255,30,30,0.85); }
+}
+@keyframes scroll-bounce {
+  0%,100% { transform:translateY(0); opacity:1; }
+  50%      { transform:translateY(8px); opacity:0.5; }
+}
+</style>
 
-  <!-- TEXTO ARRIBA -->
-  <div style="text-align:center; padding:40px 24px 28px; background:#141414;">
-    <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(52px,12vw,100px); font-weight:800; color:#FFFFFF; line-height:0.95; letter-spacing:-2px;">
+<section id="video" style="background:#0D0D0D; padding:0; margin:0;">
+
+  <!-- PRECIO GRANDE -->
+  <div style="text-align:center; padding:36px 20px 20px; background:#0D0D0D;">
+
+    <!-- Eyebrow -->
+    <div style="font-family:'Inter',sans-serif; font-size:clamp(10px,2.5vw,13px); font-weight:700; letter-spacing:5px; text-transform:uppercase; color:#B8924A; margin-bottom:8px;">
+      BELLA VISTA · OCOZOCOAUTLA · CHIAPAS
+    </div>
+
+    <!-- $450 ENORME -->
+    <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(96px,22vw,180px); font-weight:900; color:#FFFFFF; line-height:0.85; letter-spacing:-4px; animation:hero-pulse 3s ease-in-out infinite;">
       $450
     </div>
-    <div style="font-family:'Inter',sans-serif; font-size:clamp(13px,2.5vw,16px); font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#B8924A; margin-top:8px;">
-      A LA SEMANA · TU TERRENO PROPIO
+
+    <!-- A la semana -->
+    <div style="font-family:'Inter',sans-serif; font-size:clamp(14px,3vw,20px); font-weight:800; letter-spacing:4px; text-transform:uppercase; color:#B8924A; margin-top:10px;">
+      A LA SEMANA
     </div>
-    <div style="font-family:'Inter',sans-serif; font-size:clamp(12px,2vw,14px); color:rgba(255,255,255,0.55); margin-top:6px; letter-spacing:1px;">
-      200 m² · Sin enganche · Sin buró · Escritura pública
+
+    <!-- Badge SIN ENGANCHE -->
+    <div style="display:inline-flex; align-items:center; gap:8px; margin-top:18px; background:#CC1111; color:#FFFFFF; font-family:'Inter',sans-serif; font-size:clamp(13px,3.2vw,17px); font-weight:900; letter-spacing:2px; text-transform:uppercase; padding:10px 22px; border-radius:4px; animation:badge-glow 2s ease-in-out infinite;">
+      ⚡ SIN ENGANCHE &nbsp;·&nbsp; SIN BURÓ
     </div>
+
+    <!-- Datos secundarios -->
+    <div style="font-family:'Inter',sans-serif; font-size:clamp(12px,2vw,14px); color:rgba(255,255,255,0.45); margin-top:12px; letter-spacing:1px;">
+      200 m² · Escritura pública · Entrega inmediata
+    </div>
+
   </div>
 
   <!-- VIDEO -->
-  <div style="padding:0 16px 0;">
+  <div style="padding:0;">
     <video
       autoplay
       muted
@@ -1457,31 +1489,40 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
       playsinline
       preload="auto"
       poster="images/bella-vista-03.png"
-      style="width:100%; max-width:100%; display:block; margin:0 auto; aspect-ratio:16/9; object-fit:cover;">
+      style="width:100%; display:block; margin:0 auto; aspect-ratio:16/9; object-fit:cover;">
       <source src="images/bella-vista-video.mp4" type="video/mp4">
     </video>
   </div>
 
-  <!-- BENEFICIOS DEBAJO DEL VIDEO -->
-  <div style="display:flex; justify-content:center; gap:clamp(16px,4vw,40px); flex-wrap:wrap; padding:24px 24px 16px; background:#141414;">
-    <div style="text-align:center;">
-      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(28px,5vw,44px); font-weight:700; color:#B8924A; line-height:1;">200 m²</div>
-      <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px;">Por lote</div>
+  <!-- STATS DEBAJO DEL VIDEO -->
+  <div style="display:flex; justify-content:center; gap:0; background:#141414; border-top:1px solid rgba(184,146,74,0.2);">
+    <div style="text-align:center; flex:1; padding:18px 8px; border-right:1px solid rgba(184,146,74,0.15);">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(26px,6vw,40px); font-weight:700; color:#B8924A; line-height:1;">200 m²</div>
+      <div style="font-family:'Inter',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-top:3px;">Por lote</div>
     </div>
-    <div style="text-align:center;">
-      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(28px,5vw,44px); font-weight:700; color:#B8924A; line-height:1;">6</div>
-      <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px;">Amenidades</div>
+    <div style="text-align:center; flex:1; padding:18px 8px; border-right:1px solid rgba(184,146,74,0.15);">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(26px,6vw,40px); font-weight:700; color:#B8924A; line-height:1;">6</div>
+      <div style="font-family:'Inter',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-top:3px;">Amenidades</div>
     </div>
-    <div style="text-align:center;">
-      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(28px,5vw,44px); font-weight:700; color:#B8924A; line-height:1;">40 min</div>
-      <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px;">De Tuxtla</div>
+    <div style="text-align:center; flex:1; padding:18px 8px;">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(26px,6vw,40px); font-weight:700; color:#B8924A; line-height:1;">40 min</div>
+      <div style="font-family:'Inter',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-top:3px;">De Tuxtla</div>
     </div>
   </div>
 
-  <!-- CTAs DEBAJO DE LOS BENEFICIOS -->
-  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; padding:16px 24px 40px; background:#141414;">
-    <a href="#formulario" style="display:inline-block; background:#B8924A; color:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:14px 32px; border-radius:4px; text-decoration:none;">🏡 Quiero mi lote</a>
-    <a href="https://wa.me/529612345678" target="_blank" style="display:inline-block; background:#25D366; color:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:14px 32px; border-radius:4px; text-decoration:none;">WhatsApp</a>
+  <!-- SCROLL INDICATOR — en lugar de CTAs -->
+  <div style="text-align:center; padding:24px 20px 32px; background:#0D0D0D;">
+    <div style="font-family:'Inter',sans-serif; font-size:clamp(11px,2.5vw,13px); font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:12px;">
+      Descubre todo lo que incluye
+    </div>
+    <div style="display:inline-flex; flex-direction:column; align-items:center; gap:4px; animation:scroll-bounce 1.6s ease-in-out infinite; cursor:pointer;" onclick="document.getElementById('beneficios').scrollIntoView({behavior:'smooth'})">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8924A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(184,146,74,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
   </div>
 
 </section>
