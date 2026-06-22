@@ -213,6 +213,7 @@
     <div class="bg-black text-white text-xs font-black px-5 py-3 rounded-full shadow-2xl border border-gray-700 flex items-center gap-2"></div>
 </div>
 
+<div id="APP_ADMIN" style="display:none">
 <div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-2xl pb-20">
     
     <!-- PREVIEW BANNER -->
@@ -892,6 +893,63 @@
         ⚙️<span>CONFIG</span>
       </button>
     </nav>
+</div>
+</div>
+
+<div id="APP_ASESOR" style="display:none;
+  background:#0A0A0A;min-height:100vh;
+  font-family:-apple-system,sans-serif">
+
+  <header style="background:#1A1A1A;
+    border-bottom:2px solid #C0392B;
+    padding:16px 20px;
+    display:flex;justify-content:space-between;
+    align-items:center;position:sticky;
+    top:0;z-index:100">
+    <div>
+      <div id="asesorNombre" style="color:#fff;
+        font-weight:700;font-size:16px">Asesor</div>
+      <div style="color:#C0392B;font-size:11px;
+        letter-spacing:2px;margin-top:2px">
+        IBR · ASESOR
+      </div>
+    </div>
+    <button onclick="cerrarSesion()"
+      style="background:#2A2A2A;color:#fff;
+      border:1px solid #444;padding:8px 16px;
+      border-radius:20px;font-size:13px;
+      cursor:pointer">
+      Salir
+    </button>
+  </header>
+
+  <div id="contenido-asesor"
+    style="padding:16px 16px 100px">
+  </div>
+
+  <nav style="position:fixed;bottom:0;left:0;
+    width:100%;background:#111;
+    display:flex;border-top:1px solid #2A2A2A;
+    padding:8px 0 20px;z-index:100">
+    <button onclick="switchAsesor('leads')"
+      id="aBtn-leads"
+      style="flex:1;background:none;border:none;
+      color:#555;font-size:10px;font-weight:600;
+      display:flex;flex-direction:column;
+      align-items:center;gap:4px;padding:8px 0;
+      cursor:pointer;letter-spacing:1px">
+      👥<span>MIS LEADS</span>
+    </button>
+    <button onclick="switchAsesor('lotes')"
+      id="aBtn-lotes"
+      style="flex:1;background:none;border:none;
+      color:#555;font-size:10px;font-weight:600;
+      display:flex;flex-direction:column;
+      align-items:center;gap:4px;padding:8px 0;
+      cursor:pointer;letter-spacing:1px">
+      📋<span>MIS LOTES</span>
+    </button>
+  </nav>
 </div>
 
 <!-- MODALS -->
@@ -1673,31 +1731,13 @@
             document.getElementById('wm-role').textContent = isAdmin ? '👑 Admin' : '💼 Asesor';
             document.getElementById('welcomeModal').classList.remove('hidden');
         } else {
-            bootApp();
+            iniciarApp();
         }
     }
 
     function dismissWelcome() {
-        document.getElementById('loginModal') && 
-        (document.getElementById('loginModal').style.display='none');
-
-        window.currentUser = {
-          nombre: 'Daniel Vázquez',
-          rol: 'admin',
-          token: 'Daniel-Vazquez'
-        };
-
-        window.esAdminUser = true;
-
-        document.querySelectorAll('[id^="tab-"]').forEach(t => {
-          t.style.display = 'none';
-        });
-
-        const dashTab = document.getElementById('tab-dashboard-admin') || 
-                        document.getElementById('tab-resumen') ||
-                        document.getElementById('tab-dashboard');
-
-        if(dashTab) dashTab.style.display = 'block';
+        document.getElementById('welcomeModal') && document.getElementById('welcomeModal').classList.add('hidden');
+        iniciarApp();
     }
 
     function bootApp() {
@@ -4436,6 +4476,325 @@ function renderConfig() {
         if(html) html += `<p class="text-center text-[8px] text-gray-400 italic mb-4">* Las fechas son una guía de seguimiento. El pago depende de cada cliente.</p>`;
         
         bContainer.innerHTML = html;
+    }
+
+    function mostrarLogin() {
+        document.getElementById('loginScreen') && (document.getElementById('loginScreen').style.display = 'flex');
+    }
+
+    function cerrarSesion() {
+        logout();
+    }
+
+    function iniciarApp() {
+        const session = JSON.parse(
+          localStorage.getItem('ibr_session')||'{}')
+        if(!session.rol) { mostrarLogin(); return }
+
+        window.currentUser = session
+
+        // Support Admin Preview Mode
+        const vistaPreview = sessionStorage.getItem('ibr_preview');
+        let effectiveRol = session.rol;
+        let effectiveName = session.nombre;
+
+        if (vistaPreview && vistaPreview !== 'admin') {
+            effectiveName = vistaPreview;
+            effectiveRol = 'asesor';
+        }
+
+        // Show/Hide Preview Banner
+        const banner = document.getElementById('previewBanner');
+        if (banner) {
+            if (vistaPreview && vistaPreview !== 'admin') {
+                banner.classList.remove('hidden');
+                const nameSpan = document.getElementById('previewUserName');
+                if (nameSpan) nameSpan.innerText = vistaPreview;
+            } else {
+                banner.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('APP_ADMIN')
+          .style.display = 'none'
+        document.getElementById('APP_ASESOR')
+          .style.display = 'none'
+        document.getElementById('loginScreen') &&
+          (document.getElementById('loginScreen')
+            .style.display = 'none')
+
+        if(effectiveRol === 'admin') {
+          document.getElementById('APP_ADMIN')
+            .style.display = 'block'
+          populateSelects();
+          updateAuth();
+          switchTab('resumen');
+          renderProyectos();
+          checkBanners();
+        } else {
+          document.getElementById('APP_ASESOR')
+            .style.display = 'block'
+          document.getElementById('asesorNombre')
+            .textContent = effectiveName
+
+          const colores = {
+            'Lupyta Mendoza': '#7C3AED',
+            'Carmen Jiménez': '#0891B2',
+            'Luis García':    '#059669'
+          }
+          window.colorAsesor = colores[effectiveName]||'#C0392B'
+
+          window.currentUser = { nombre: effectiveName, rol: 'asesor' };
+
+          cargarLeadsAsesor();
+          switchAsesor('leads');
+        }
+    }
+
+    const LOTES_ASESOR = {
+      'Lupyta Mendoza': [
+        {id:'BV-M05-L10',label:'M5-L10',co:'Daniel Vázquez'},
+        {id:'BV-M05-L11',label:'M5-L11',co:'Daniel Vázquez'},
+        {id:'BV-M05-L14',label:'M5-L14',co:'Daniel Vázquez'},
+        {id:'BV-M05-L15',label:'M5-L15',co:'Daniel Vázquez'},
+        {id:'BV-M08-L07',label:'M8-L7', co:'Daniel Vázquez'},
+        {id:'BV-M13-L07',label:'M13-L7',co:'Daniel Vázquez'},
+        {id:'BV-M13-L08',label:'M13-L8',co:'Daniel Vázquez'},
+        {id:'BV-M13-L09',label:'M13-L9',co:'Daniel Vázquez'},
+        {id:'BV-M14-L13',label:'M14-L13',co:'Daniel Vázquez'},
+        {id:'BV-M15-L11',label:'M15-L11',co:'Daniel Vázquez'}
+      ],
+      'Carmen Jiménez': [
+        {id:'BV-M12-L13',label:'M12-L13',co:'Daniel Vázquez'},
+        {id:'BV-M14-L03',label:'M14-L3', co:'Daniel Vázquez'},
+        {id:'BV-M14-L12',label:'M14-L12',co:'Daniel Vázquez'},
+        {id:'BV-M14-L19',label:'M14-L19',co:'Daniel Vázquez'},
+        {id:'BV-M14-L20',label:'M14-L20',co:'Daniel Vázquez'}
+      ],
+      'Luis García': [
+        {id:'BV-M06-L09',label:'M6-L9', co:'Daniel Vázquez'},
+        {id:'BV-M06-L10',label:'M6-L10',co:'Daniel Vázquez'},
+        {id:'BV-M07-L01',label:'M7-L1', co:'Daniel Vázquez'},
+        {id:'BV-M07-L02',label:'M7-L2', co:'Daniel Vázquez'},
+        {id:'BV-M08-L02',label:'M8-L2', co:'Daniel Vázquez'}
+      ]
+    }
+
+    function cargarLeadsAsesor() {
+      const nombre = window.currentUser.nombre
+      const todos = JSON.parse(
+        localStorage.getItem('ibr_leads')||'[]')
+      window.misLeads = todos.filter(l =>
+        (l.advisor||l.asesor||'') === nombre)
+    }
+
+    function switchAsesor(tab) {
+      document.querySelectorAll('[id^="aBtn-"]')
+        .forEach(b => {
+          b.style.color = '#555'
+          b.style.borderTop = 'none'
+        })
+      const btn = document.getElementById('aBtn-'+tab)
+      if(btn) {
+        btn.style.color = window.colorAsesor
+        btn.style.borderTop = '2px solid '+window.colorAsesor
+      }
+
+      const c = document.getElementById('contenido-asesor')
+      const nombre = window.currentUser.nombre
+      const color = window.colorAsesor
+
+      if(tab === 'leads') {
+        const leads = window.misLeads || []
+        c.innerHTML = `
+          <div style="margin-bottom:20px">
+            <div style="color:#fff;font-size:22px;
+              font-weight:700">Mis Leads</div>
+            <div style="color:#555;font-size:13px;
+              margin-top:4px">
+              ${leads.length} citas asignadas
+            </div>
+          </div>
+          ${leads.length === 0
+            ? '<div style="color:#444;text-align:center;padding:48px 0">Sin citas asignadas aún</div>'
+            : leads.map(l => `
+            <div style="background:#1E1E1E;
+              border-radius:14px;padding:16px;
+              margin-bottom:12px;
+              border-left:3px solid ${color}">
+              <div style="color:#fff;font-weight:700;
+                font-size:15px;margin-bottom:6px">
+                ${l.name||l.titulo||'Sin nombre'}
+              </div>
+              <div style="color:#777;font-size:13px;
+                margin-bottom:12px">
+                📅 ${l.fecha||l.date||''} · ${l.hora||l.time||''}<br>
+                🏘️ ${l.project||l.titulo||'Sin desarrollo'}
+              </div>
+              <div style="display:flex;gap:8px">
+                ${(l.phone||l.telefono) ? `
+                <a href="https://wa.me/52${l.phone||l.telefono}"
+                  target="_blank"
+                  style="flex:1;background:#16A34A;
+                  color:#fff;padding:10px;
+                  border-radius:8px;font-size:13px;
+                  font-weight:600;text-align:center;
+                  text-decoration:none">
+                  💬 WhatsApp
+                </a>` : ''}
+                <button onclick="modalResultadoAsesor('${l.id}')"
+                  style="flex:1;background:${color};
+                  color:#fff;border:none;padding:10px;
+                  border-radius:8px;font-size:13px;
+                  font-weight:600;cursor:pointer">
+                  ✏️ Resultado
+                </button>
+              </div>
+            </div>`).join('')}`
+      }
+
+      if(tab === 'lotes') {
+        const lotes = LOTES_ASESOR[nombre] || []
+        const guardados = JSON.parse(
+          localStorage.getItem('ibr_com_'+nombre)||'{}')
+
+        c.innerHTML = `
+          <div style="margin-bottom:20px">
+            <div style="color:#fff;font-size:22px;
+              font-weight:700">Mis Lotes</div>
+            <div style="color:#555;font-size:13px;
+              margin-top:4px">
+              Bella Vista · ${lotes.length} lotes vendidos
+            </div>
+          </div>
+          ${lotes.map(l => `
+          <div style="background:#1E1E1E;
+            border-radius:14px;padding:16px;
+            margin-bottom:12px;
+            border-left:3px solid ${color}">
+            <div style="color:#fff;font-weight:700;
+              font-size:15px">
+              Bella Vista · ${l.label}
+            </div>
+            <div style="color:#555;font-size:12px;
+              margin:4px 0 14px">
+              con ${l.co}
+            </div>
+            <div style="color:#888;font-size:11px;
+              letter-spacing:1px;margin-bottom:6px">
+              COMISIÓN PACTADA ($)
+            </div>
+            <input type="number"
+              id="com_${l.id}"
+              value="${guardados[l.id]||''}"
+              placeholder="0.00"
+              style="width:100%;padding:12px;
+              background:#2A2A2A;color:#fff;
+              border:1px solid #444;border-radius:8px;
+              font-size:16px;box-sizing:border-box">
+          </div>`).join('')}
+          <button onclick="guardarComisionesAsesor('${nombre}')"
+            style="width:100%;background:${color};
+            color:#fff;padding:16px;border:none;
+            border-radius:12px;font-size:16px;
+            font-weight:700;margin-top:8px;
+            cursor:pointer">
+            💾 Guardar mis comisiones
+          </button>`
+      }
+    }
+
+    function guardarComisionesAsesor(nombre) {
+      const lotes = LOTES_ASESOR[nombre] || []
+      const datos = {}
+      lotes.forEach(l => {
+        const v = document.getElementById('com_'+l.id)?.value
+        if(v) datos[l.id] = parseFloat(v)
+      })
+      localStorage.setItem('ibr_com_'+nombre,
+        JSON.stringify(datos))
+      alert('✅ Comisiones guardadas')
+    }
+
+    function modalResultadoAsesor(leadId) {
+      const leads = window.misLeads || []
+      const lead = leads.find(l => l.id === leadId)
+      if(!lead) return
+
+      const opciones = [
+        '✅ Compró','🔄 Seguimiento',
+        '📅 Reagendar','❌ Canceló',
+        '👻 No llegó','💬 Interesado'
+      ]
+
+      const modal = document.createElement('div')
+      modal.style.cssText = `
+        position:fixed;inset:0;background:rgba(0,0,0,0.85);
+        z-index:999;display:flex;align-items:flex-end`
+      modal.innerHTML = `
+        <div style="background:#1A1A1A;width:100%;
+          border-radius:20px 20px 0 0;padding:24px;
+          max-height:80vh;overflow-y:auto">
+          <div style="color:#fff;font-size:18px;
+            font-weight:700;margin-bottom:4px">
+            Resultado de Cita
+          </div>
+          <div style="color:#666;font-size:13px;
+            margin-bottom:20px">
+            ${lead.name||lead.titulo}
+          </div>
+          ${opciones.map(op => `
+            <button onclick="guardarResultadoAsesor(
+              '${leadId}','${op}',this)"
+              style="width:100%;background:#2A2A2A;
+              color:#fff;border:1px solid #333;
+              padding:14px;border-radius:10px;
+              font-size:15px;margin-bottom:8px;
+              cursor:pointer;text-align:left">
+              ${op}
+            </button>`).join('')}
+          <textarea id="comentarioLead"
+            placeholder="Comentarios..."
+            style="width:100%;background:#2A2A2A;
+            color:#fff;border:1px solid #444;
+            border-radius:10px;padding:12px;
+            font-size:14px;margin-top:8px;
+            box-sizing:border-box;min-height:80px">
+          </textarea>
+          <button onclick="this.closest('div').parentElement.remove()"
+            style="width:100%;background:#333;
+            color:#999;border:none;padding:14px;
+            border-radius:10px;font-size:14px;
+            margin-top:8px;cursor:pointer">
+            Cancelar
+          </button>
+        </div>`
+      document.body.appendChild(modal)
+    }
+
+    function guardarResultadoAsesor(leadId, resultado, btn) {
+      btn.style.background = window.colorAsesor
+      btn.style.borderColor = window.colorAsesor
+
+      const todos = JSON.parse(
+        localStorage.getItem('ibr_leads')||'[]')
+      const idx = todos.findIndex(l => l.id === leadId)
+      const comentario = document.getElementById(
+        'comentarioLead')?.value || ''
+
+      if(idx > -1) {
+        todos[idx].resultado = resultado
+        todos[idx].estatus = resultado
+        todos[idx].lastComment = comentario
+        localStorage.setItem('ibr_leads',JSON.stringify(todos))
+      }
+
+      setTimeout(() => {
+        document.querySelector('[style*="rgba(0,0,0,0.85)"]')
+          ?.remove()
+        cargarLeadsAsesor()
+        switchAsesor('leads')
+      }, 500)
     }
 
     document.addEventListener("DOMContentLoaded", init);
