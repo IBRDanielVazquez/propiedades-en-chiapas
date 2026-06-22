@@ -871,18 +871,20 @@ section p, section li { text-align: center; }
   position:fixed;
   bottom:20px;right:20px;
   z-index:999;
-  width:46px;height:46px;
-  background:linear-gradient(135deg,#25D366,#1DB954);
+  width:56px;height:56px;
+  background:#25D366;
   border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 14px rgba(37,211,102,.4);
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  box-shadow:0 4px 16px rgba(0,0,0,0.3);
   cursor:pointer;
   text-decoration:none;
   transition:all .3s var(--ease);
   animation:pulse-wa 2.5s infinite;
 }
 .float-wa:hover{transform:scale(1.1)}
-.float-wa svg{width:20px;height:20px;fill:white}
+.float-wa svg{width:32px !important;height:32px !important;fill:#FFFFFF !important;display:block;}
 @keyframes pulse-wa{
   0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.4)}
   50%{box-shadow:0 4px 40px rgba(37,211,102,.6)}
@@ -1265,11 +1267,8 @@ a[href*="wa.me"], button, .btn,
 
 /* FIX 1: BOTÓN FLOTANTE DE WHATSAPP */
 .float-wa {
-  bottom: 90px !important;
-  right: 16px !important;
-  width: 56px !important;
-  height: 56px !important;
-  padding: 0 !important;
+  bottom: 24px !important;
+  right: 20px !important;
 }
 
 /* FIX 2: HERO - NÚMEROS MÁS IMPACTO */
