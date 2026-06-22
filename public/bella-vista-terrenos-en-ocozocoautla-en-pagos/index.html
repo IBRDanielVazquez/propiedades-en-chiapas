@@ -1433,41 +1433,58 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
 </head>
 <body>
 
-<!-- ═══════════════════ 2. HERO — CINEMATIC ═══════════════════ -->
-<section class="hero" id="inicio">
-  
-  <div class="hero__content">
-    <div style="text-align:center;max-width:800px;padding:0 24px;margin:0 auto;display:flex;flex-direction:column;align-items:center;">
+<section id="video" style="background:#141414; padding:0; margin:0;">
 
-      <h1 style="font-family:'Cormorant Garamond',serif;
-        font-size:clamp(64px,11vw,110px);font-weight:800;
-        line-height:1.0;color:white;margin-bottom:12px;letter-spacing:-1px;">
-        <span style="font-size:clamp(14px,2vw,16px);font-family:'Inter',sans-serif;font-weight:600;letter-spacing:5px;text-transform:uppercase;color:#B8924A;display:block;margin-bottom:16px;">BELLA VISTA · OCOZOCOAUTLA</span>
-        Tu terreno propio<br>
-        <em>desde $450</em><br>
-        a la semana.
-      </h1>
-      <p style="font-size:17px;color:rgba(255,255,255,0.85);
-        max-width:540px;line-height:1.35;margin:0 auto 20px">
-        200 m² · Sin enganche · Sin buró · Escritura pública.
-      </p>
+  <!-- TEXTO ARRIBA -->
+  <div style="text-align:center; padding:40px 24px 28px; background:#141414;">
+    <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(52px,12vw,100px); font-weight:800; color:#FFFFFF; line-height:0.95; letter-spacing:-2px;">
+      $450
+    </div>
+    <div style="font-family:'Inter',sans-serif; font-size:clamp(13px,2.5vw,16px); font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#B8924A; margin-top:8px;">
+      A LA SEMANA · TU TERRENO PROPIO
+    </div>
+    <div style="font-family:'Inter',sans-serif; font-size:clamp(12px,2vw,14px); color:rgba(255,255,255,0.55); margin-top:6px; letter-spacing:1px;">
+      200 m² · Sin enganche · Sin buró · Escritura pública
     </div>
   </div>
 
-  
+  <!-- VIDEO -->
+  <div style="padding:0 16px 0;">
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="images/bella-vista-03.png"
+      style="width:100%; max-width:100%; display:block; margin:0 auto; aspect-ratio:16/9; object-fit:cover;">
+      <source src="images/bella-vista-video.mp4" type="video/mp4">
+    </video>
   </div>
-</section>
 
-<div class="top-stats-bar" style="background:#121212; border-top:1px solid rgba(184,146,74,0.25)">
-  <div>
-    <div>Desde 200 m²</div>
-    <div>POR LOTE</div>
+  <!-- BENEFICIOS DEBAJO DEL VIDEO -->
+  <div style="display:flex; justify-content:center; gap:clamp(16px,4vw,40px); flex-wrap:wrap; padding:24px 24px 16px; background:#141414;">
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(28px,5vw,44px); font-weight:700; color:#B8924A; line-height:1;">200 m²</div>
+      <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px;">Por lote</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(28px,5vw,44px); font-weight:700; color:#B8924A; line-height:1;">6</div>
+      <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px;">Amenidades</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-family:'Cormorant Garamond',Georgia,serif; font-size:clamp(28px,5vw,44px); font-weight:700; color:#B8924A; line-height:1;">40 min</div>
+      <div style="font-family:'Inter',sans-serif; font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-top:4px;">De Tuxtla</div>
+    </div>
   </div>
-  <div>
-    <div>6</div>
-    <div>AMENIDADES EXCLUSIVAS</div>
+
+  <!-- CTAs DEBAJO DE LOS BENEFICIOS -->
+  <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; padding:16px 24px 40px; background:#141414;">
+    <a href="#formulario" style="display:inline-block; background:#B8924A; color:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:14px 32px; border-radius:4px; text-decoration:none;">🏡 Quiero mi lote</a>
+    <a href="https://wa.me/529612345678" target="_blank" style="display:inline-block; background:#25D366; color:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:14px 32px; border-radius:4px; text-decoration:none;">WhatsApp</a>
   </div>
-</div>
+
+</section>
 
 
 <!-- ═══════════════════ 3. PROPUESTA DE VALOR ═══════════════════ -->
@@ -1603,23 +1620,7 @@ p, li, span, div:not(.precio-gigante):not(.stat__number) { font-size: 17px !impo
   </div>
 </section>
 
-<!-- ═══════════════════ 6. VIDEO RECORRIDO ═══════════════════ -->
-<section class="section" id="video" style="background:#141414; padding:48px 0; text-align:center;">
-  <div class="container">
-    <span class="section-tag">RECORRIDO EN VIDEO</span>
-    <h2 style="font-family:'Cormorant Garamond',serif; font-size:clamp(36px,7vw,62px); color:white; margin-bottom:32px;">
-      El lugar que soñaste,<br><em style="color:#B8924A;">en video.</em>
-    </h2>
-    <video
-      controls
-      playsinline
-      preload="none"
-      poster="images/bella-vista-03.png"
-      style="width:100%; max-width:760px; border-radius:8px; display:block; margin:0 auto; box-shadow:0 12px 48px rgba(0,0,0,0.5);">
-      <source src="images/bella-vista-video.mp4" type="video/mp4">
-    </video>
-  </div>
-</section>
+
 
 <!-- ═══════════════════ 7. MASTER PLAN ═══════════════════ -->
 <section class="section" id="masterplan">
