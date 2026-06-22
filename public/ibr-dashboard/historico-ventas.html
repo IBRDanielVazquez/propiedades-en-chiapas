@@ -69,12 +69,40 @@
         <option value="Otro">Otros</option>
       </select>
     </div>
+
+    <!-- FILTRO POR AÑO -->
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-top:8px;padding-bottom:4px">
+      <span style="color:#555;font-size:11px;font-weight:700;letter-spacing:1px;align-self:center;white-space:nowrap">AÑO:</span>
+      <button onclick="filtrarAnio('todos')" id="fy-todos" style="background:#8B0000;color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">Todos</button>
+      <button onclick="filtrarAnio('2025')" id="fy-2025" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2025</button>
+      <button onclick="filtrarAnio('2024')" id="fy-2024" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2024</button>
+      <button onclick="filtrarAnio('2023')" id="fy-2023" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2023</button>
+      <button onclick="filtrarAnio('2022')" id="fy-2022" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2022</button>
+    </div>
   </div>
 
   <!-- LISTA -->
   <div id="listaVentas" style="padding:0 16px"></div>
 
 <script>
+// MAPA DE AÑOS POR DESARROLLO
+const ANIO_DESARROLLO = {
+  'Grand Mayan':        2022,
+  'Don Clemente':       2022,
+  'Las Animas':         2022,
+  'Monte Misen':        2023,
+  'San Antonio':        2023,
+  'HN Bosques de Sayab':2023,
+  'Orquídea Campestre': 2024,
+  'Sima Park':          2024,
+  'El Arenal':          2024,
+  'La Cañada':          2024,
+  'Cascadas del Sur':   2025,
+  'Bosques del Sur':    2025,
+  'Real Campestre':     2025,
+  'Bella Vista':        2025
+}
+
 const VENTAS_HISTORICAS = [
   // CARMEN JIMÉNEZ
   {nombre:'Sebastián Cruz',tel:'9611773877',desarrollo:'Grand Mayan',lote:'Toniná Mz 4 Lt 2',asesor:'Carmen Jiménez',estatus:'Otro',comision:0},
@@ -220,7 +248,8 @@ const VENTAS_HISTORICAS = [
   // DANIEL VÁZQUEZ
   {nombre:'Jesús Antonio Orantes',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle B Mz 1 Lt 03 Casa 3',asesor:'Daniel Vázquez',estatus:'Venta',comision:4250},
   {nombre:'Ofir Tinoco Avila',tel:'',desarrollo:'Real Campestre',lote:'Pendiente',asesor:'Daniel Vázquez',estatus:'Venta',comision:2500}
-]
+].map(v => ({ ...v, anio: ANIO_DESARROLLO[v.desarrollo] || 2022 }))
+ // Enriquecer con año
 
 // COLORES POR ASESOR
 const COLORES_ASESOR = {
@@ -232,6 +261,7 @@ const COLORES_ASESOR = {
 
 let filtroAsesorActivo = 'todos'
 let filtroEstatusActivo = 'todos'
+let filtroAnioActivo = 'todos'
 
 function calcularKPIs() {
   const ventas = VENTAS_HISTORICAS
@@ -280,6 +310,23 @@ function filtrarAsesor(asesor) {
   renderLista()
 }
 
+function filtrarAnio(anio) {
+  filtroAnioActivo = anio
+  document.querySelectorAll('[id^="fy-"]')
+    .forEach(b=>{
+      b.style.background='#2A2A2A'
+      b.style.color='#888'
+      b.style.border='1px solid #333'
+    })
+  const btn = document.getElementById('fy-'+(anio==='todos'?'todos':anio))
+  if(btn){
+    btn.style.background='#8B0000'
+    btn.style.color='#fff'
+    btn.style.border='none'
+  }
+  renderLista()
+}
+
 function filtrar() {
   filtroEstatusActivo = document.getElementById(
     'filtroEstatus').value
@@ -295,12 +342,17 @@ function renderLista() {
       v.asesor===filtroAsesorActivo
     const matchEstatus = filtroEstatusActivo==='todos'||
       v.estatus===filtroEstatusActivo
+    const matchAnio = filtroAnioActivo==='todos'||
+      String(v.anio)===String(filtroAnioActivo)
     const matchBuscar = !q ||
       v.nombre.toLowerCase().includes(q)||
       v.desarrollo.toLowerCase().includes(q)||
       v.lote.toLowerCase().includes(q)
-    return matchAsesor && matchEstatus && matchBuscar
+    return matchAsesor && matchEstatus && matchAnio && matchBuscar
   })
+
+  // Ordenar por año descendente (más reciente primero)
+  datos.sort((a,b) => (b.anio||0) - (a.anio||0))
 
   const lista = document.getElementById('listaVentas')
 
@@ -340,6 +392,12 @@ function renderLista() {
       <div style="color:#555;font-size:12px;
         margin-bottom:4px">
         🏘️ ${v.desarrollo} · ${v.lote}
+      </div>
+      <div style="margin-bottom:8px">
+        <span style="background:#2A2A2A;color:#666;
+          font-size:10px;font-weight:700;
+          padding:2px 8px;border-radius:20px;
+          letter-spacing:1px">📅 ${v.anio}</span>
       </div>
       <div style="display:flex;
         justify-content:space-between;
