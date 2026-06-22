@@ -1,435 +1,552 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IBR · Historial de Ventas 2022-2025</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IBR · Historial de Ventas 2022-2025</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0A0A0A;color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  padding-bottom:40px}
+.header{background:#1A1A1A;border-bottom:2px solid #8B0000;
+  padding:16px 20px;position:sticky;top:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center}
+.kpis{display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;padding:16px}
+.kpi{background:#1E1E1E;border-radius:12px;padding:14px;
+  border-left:3px solid #8B0000}
+.kpi-label{color:#888;font-size:10px;letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:4px}
+.kpi-val{font-size:26px;font-weight:700;color:#fff}
+.filtros{padding:0 16px 12px}
+.scroll-filtros{display:flex;gap:8px;overflow-x:auto;
+  padding-bottom:8px;scrollbar-width:none}
+.scroll-filtros::-webkit-scrollbar{display:none}
+.btn-filtro{background:#2A2A2A;color:#888;border:1px solid #333;
+  padding:7px 14px;border-radius:20px;font-size:12px;
+  font-weight:600;white-space:nowrap;cursor:pointer;
+  transition:all 200ms}
+.btn-filtro.activo{color:#fff;border-color:transparent}
+input[type=text],select{width:100%;padding:11px;
+  background:#1E1E1E;color:#fff;border:1px solid #333;
+  border-radius:10px;font-size:14px;margin-bottom:10px}
+.card{background:#1E1E1E;border-radius:12px;padding:15px;
+  margin-bottom:10px;border-left:3px solid #444;
+  transition:border-color 200ms}
+.card-header{display:flex;justify-content:space-between;
+  align-items:flex-start;margin-bottom:6px}
+.card-nombre{font-weight:700;font-size:14px;flex:1}
+.badge{padding:3px 9px;border-radius:20px;font-size:10px;
+  font-weight:700;white-space:nowrap;margin-left:8px}
+.badge-venta{background:#16A34A;color:#fff}
+.badge-cancelado{background:#DC2626;color:#fff}
+.badge-otro{background:#D97706;color:#fff}
+.badge-pendiente{background:#555;color:#fff}
+.card-sub{color:#555;font-size:12px;margin:3px 0}
+.card-footer{display:flex;justify-content:space-between;
+  align-items:center;margin-top:8px;flex-wrap:wrap;gap:6px}
+.tag-asesor{font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:20px}
+.card-comision{font-size:13px;font-weight:700;color:#fff}
+.wa-btn{background:#16A34A;color:#fff;padding:6px 12px;
+  border-radius:6px;font-size:12px;text-decoration:none;
+  font-weight:600;display:inline-block}
+.expandir{background:none;border:none;color:#555;
+  font-size:12px;cursor:pointer;padding:4px 0;
+  width:100%;text-align:center;margin-top:6px}
+.detalle{display:none;margin-top:10px;padding-top:10px;
+  border-top:1px solid #2A2A2A}
+.campo-edit{width:100%;padding:8px;background:#2A2A2A;
+  color:#fff;border:1px solid #444;border-radius:8px;
+  font-size:13px;margin-top:4px}
+.label-edit{color:#888;font-size:11px;
+  text-transform:uppercase;letter-spacing:1px}
+.btn-guardar{background:#8B0000;color:#fff;border:none;
+  padding:8px 16px;border-radius:8px;font-size:13px;
+  font-weight:600;cursor:pointer;margin-top:8px;width:100%}
+.grupo-titulo{color:#8B0000;font-size:11px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  padding:16px 16px 6px;border-top:1px solid #1A1A1A}
+.cte-num{color:#555;font-size:11px;margin-right:6px}
+.sin-resultados{color:#444;text-align:center;padding:48px 0}
+</style>
 </head>
-<body style="margin:0;background:#0A0A0A;font-family:-apple-system,sans-serif;color:#fff;padding-bottom:40px">
+<body>
 
-  <!-- HEADER -->
-  <div style="background:#1A1A1A;border-bottom:2px solid #8B0000;padding:16px 20px;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center">
-    <div>
-      <div style="font-weight:700;font-size:16px">
-        IBR · Historial de Ventas
-      </div>
-      <div style="color:#8B0000;font-size:11px;letter-spacing:2px;margin-top:2px">
-        2022 — 2025
-      </div>
+<div class="header">
+  <div>
+    <div style="font-weight:700;font-size:16px">
+      IBR · Historial de Ventas
     </div>
-    <a href="./index.html?token=Daniel-Vazquez" style="background:#2A2A2A;color:#fff;border:1px solid #444;padding:8px 16px;border-radius:20px;font-size:13px;text-decoration:none">
-      ← Dashboard
-    </a>
-  </div>
-
-  <!-- KPIs -->
-  <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
-    <div style="background:#1E1E1E;border-radius:12px;padding:16px;border-left:3px solid #8B0000">
-      <div style="color:#888;font-size:10px;letter-spacing:1px">VENTAS TOTALES</div>
-      <div id="kpiVentas" style="color:#fff;font-size:28px;font-weight:700">-</div>
-    </div>
-    <div style="background:#1E1E1E;border-radius:12px;padding:16px;border-left:3px solid #8B0000">
-      <div style="color:#888;font-size:10px;letter-spacing:1px">COMISIONES</div>
-      <div id="kpiComisiones" style="color:#8B0000;font-size:22px;font-weight:700">-</div>
-    </div>
-    <div style="background:#1E1E1E;border-radius:12px;padding:16px;border-left:3px solid #DC2626">
-      <div style="color:#888;font-size:10px;letter-spacing:1px">CANCELADOS</div>
-      <div id="kpiCancelados" style="color:#DC2626;font-size:28px;font-weight:700">-</div>
-    </div>
-    <div style="background:#1E1E1E;border-radius:12px;padding:16px;border-left:3px solid #D97706">
-      <div style="color:#888;font-size:10px;letter-spacing:1px">PENDIENTES</div>
-      <div id="kpiPendientes" style="color:#D97706;font-size:28px;font-weight:700">-</div>
+    <div style="color:#8B0000;font-size:11px;
+      letter-spacing:2px;margin-top:2px">
+      2022 — 2025
     </div>
   </div>
+  <a href="./index.html?token=Daniel-Vazquez"
+    style="background:#2A2A2A;color:#fff;
+    border:1px solid #444;padding:8px 16px;
+    border-radius:20px;font-size:13px;
+    text-decoration:none">
+    ← Volver
+  </a>
+</div>
 
-  <!-- FILTROS -->
-  <div style="padding:0 16px 16px">
-    <input type="text" id="buscador" placeholder="🔍 Buscar cliente o desarrollo..." oninput="filtrar()" style="width:100%;padding:12px;background:#1E1E1E;color:#fff;border:1px solid #333;border-radius:10px;font-size:14px;box-sizing:border-box;margin-bottom:12px">
+<div class="kpis">
+  <div class="kpi" style="border-color:#8B0000">
+    <div class="kpi-label">Ventas</div>
+    <div class="kpi-val" id="kVentas">-</div>
+  </div>
+  <div class="kpi" style="border-color:#8B0000">
+    <div class="kpi-label">Comisiones</div>
+    <div class="kpi-val" id="kComisiones"
+      style="font-size:18px;color:#8B0000">-</div>
+  </div>
+  <div class="kpi" style="border-color:#DC2626">
+    <div class="kpi-label">Cancelados</div>
+    <div class="kpi-val" id="kCancelados"
+      style="color:#DC2626">-</div>
+  </div>
+  <div class="kpi" style="border-color:#555">
+    <div class="kpi-label">Pendientes</div>
+    <div class="kpi-val" id="kPendientes"
+      style="color:#888">-</div>
+  </div>
+</div>
 
-    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px">
-      <button onclick="filtrarAsesor('todos')" id="fa-todos" style="background:#8B0000;color:#fff;border:none;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">
-        Todos
-      </button>
-      <button onclick="filtrarAsesor('Carmen Jiménez')" id="fa-carmen" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">
-        Carmen
-      </button>
-      <button onclick="filtrarAsesor('Lupyta Mendoza')" id="fa-lupyta" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">
-        Lupyta
-      </button>
-      <button onclick="filtrarAsesor('Luis García')" id="fa-luis" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">
-        Luis
-      </button>
-      <button onclick="filtrarAsesor('Daniel Vázquez')" id="fa-daniel" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">
-        Daniel
-      </button>
-      <select id="filtroEstatus" onchange="filtrar()" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:8px 16px;border-radius:20px;font-size:12px;cursor:pointer">
-        <option value="todos">Todos</option>
-        <option value="Venta">Ventas</option>
-        <option value="Cancelado">Cancelados</option>
-        <option value="Otro">Otros</option>
-      </select>
-    </div>
+<div class="filtros">
+  <input type="text" id="buscador"
+    placeholder="🔍 Buscar cliente, desarrollo, lote..."
+    oninput="renderizar()">
 
-    <!-- FILTRO POR AÑO -->
-    <div style="display:flex;gap:8px;overflow-x:auto;padding-top:8px;padding-bottom:4px">
-      <span style="color:#555;font-size:11px;font-weight:700;letter-spacing:1px;align-self:center;white-space:nowrap">AÑO:</span>
-      <button onclick="filtrarAnio('todos')" id="fy-todos" style="background:#8B0000;color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">Todos</button>
-      <button onclick="filtrarAnio('2025')" id="fy-2025" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2025</button>
-      <button onclick="filtrarAnio('2024')" id="fy-2024" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2024</button>
-      <button onclick="filtrarAnio('2023')" id="fy-2023" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2023</button>
-      <button onclick="filtrarAnio('2022')" id="fy-2022" style="background:#2A2A2A;color:#888;border:1px solid #333;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer">2022</button>
-    </div>
+  <div class="scroll-filtros" id="filtrosAsesor">
+    <button class="btn-filtro activo" id="fa-todos"
+      onclick="setFiltroAsesor('todos',this)"
+      style="background:#8B0000">Todos</button>
+    <button class="btn-filtro" id="fa-carmen"
+      onclick="setFiltroAsesor('Carmen Jiménez',this)">
+      Carmen</button>
+    <button class="btn-filtro" id="fa-lupyta"
+      onclick="setFiltroAsesor('Lupyta Mendoza',this)">
+      Lupyta</button>
+    <button class="btn-filtro" id="fa-luis"
+      onclick="setFiltroAsesor('Luis García',this)">
+      Luis</button>
+    <button class="btn-filtro" id="fa-daniel"
+      onclick="setFiltroAsesor('Daniel Vázquez',this)">
+      Daniel</button>
   </div>
 
-  <!-- LISTA -->
-  <div id="listaVentas" style="padding:0 16px"></div>
+  <div class="scroll-filtros" style="margin-top:8px"
+    id="filtrosEstatus">
+    <button class="btn-filtro activo" id="fe-todos"
+      onclick="setFiltroEstatus('todos',this)"
+      style="background:#8B0000">Todos</button>
+    <button class="btn-filtro" id="fe-venta"
+      onclick="setFiltroEstatus('Venta',this)">
+      ✅ Ventas</button>
+    <button class="btn-filtro" id="fe-cancelado"
+      onclick="setFiltroEstatus('Cancelado',this)">
+      ❌ Cancelados</button>
+    <button class="btn-filtro" id="fe-pendiente"
+      onclick="setFiltroEstatus('Pendiente',this)">
+      ⏳ Pendientes</button>
+  </div>
+</div>
+
+<div id="contenido"></div>
 
 <script>
-// MAPA DE AÑOS POR DESARROLLO
-const ANIO_DESARROLLO = {
-  'Grand Mayan':        2022,
-  'Don Clemente':       2022,
-  'Las Animas':         2022,
-  'Monte Misen':        2023,
-  'San Antonio':        2023,
-  'HN Bosques de Sayab':2023,
-  'Orquídea Campestre': 2024,
-  'Sima Park':          2024,
-  'El Arenal':          2024,
-  'La Cañada':          2024,
-  'Cascadas del Sur':   2025,
-  'Bosques del Sur':    2025,
-  'Real Campestre':     2025,
-  'Bella Vista':        2025
+const COLORES = {
+  'Carmen Jiménez':'#0891B2',
+  'Lupyta Mendoza':'#7C3AED',
+  'Luis García':'#059669',
+  'Daniel Vázquez':'#8B0000'
 }
 
-const VENTAS_HISTORICAS = [
-  // CARMEN JIMÉNEZ
-  {nombre:'Sebastián Cruz',tel:'9611773877',desarrollo:'Grand Mayan',lote:'Toniná Mz 4 Lt 2',asesor:'Carmen Jiménez',estatus:'Otro',comision:0},
-  {nombre:'Gina Potenciano',tel:'9931152673',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 17',asesor:'Carmen Jiménez',estatus:'Cancelado',comision:583.50},
-  {nombre:'Chepez',tel:'9615396204',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 19 y 20',asesor:'Carmen Jiménez',estatus:'Cancelado',comision:0},
-  {nombre:'Israel Cueto',tel:'9941036111',desarrollo:'Don Clemente',lote:'San Clemente',asesor:'Carmen Jiménez',estatus:'Venta',comision:1000},
-  {nombre:'Rubén Castañeda',tel:'9612983349',desarrollo:'Las Animas',lote:'Toniná Mz 12 Lt 15',asesor:'Carmen Jiménez',estatus:'Venta',comision:7002},
-  {nombre:'Carlos Zuñiga',tel:'9611544517',desarrollo:'Grand Mayan',lote:'Palenque Mz 13 Lt 2',asesor:'Carmen Jiménez',estatus:'Otro',comision:6500},
-  {nombre:'Manuel Fonseca',tel:'9612331729',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 20 y 21',asesor:'Carmen Jiménez',estatus:'Cancelado',comision:1887},
-  {nombre:'María Luisa Torres',tel:'9931152673',desarrollo:'Grand Mayan',lote:'Balam Mz 3 Lt 5',asesor:'Carmen Jiménez',estatus:'Venta',comision:14502},
-  {nombre:'Gerardo Cuellar',tel:'9612942489',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 5',asesor:'Carmen Jiménez',estatus:'Venta',comision:6418.50},
-  {nombre:'Omar Romero',tel:'9611435847',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 16 y 17',asesor:'Carmen Jiménez',estatus:'Venta',comision:14004},
-  {nombre:'Adalberto Hernandez',tel:'9612142836',desarrollo:'Grand Mayan',lote:'Toniná Mz 2 Lt 4',asesor:'Carmen Jiménez',estatus:'Venta',comision:8143},
-  {nombre:'CP Patricia Lopez',tel:'9611267594',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 9',asesor:'Carmen Jiménez',estatus:'Venta',comision:9437},
-  {nombre:'Héctor Ruth y Helena',tel:'9611765015',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 19 y 20',asesor:'Carmen Jiménez',estatus:'Venta',comision:14004},
-  {nombre:'Gemima Collazao',tel:'9611596903',desarrollo:'Grand Mayan',lote:'Toniná Mz 6 Lt 8 y 9',asesor:'Carmen Jiménez',estatus:'Venta',comision:16104},
-  {nombre:'Lic. Alejandro Jimenez',tel:'9614232287',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 4',asesor:'Carmen Jiménez',estatus:'Venta',comision:7200},
-  {nombre:'Billi Joel Gómez',tel:'9611939879',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lts 10 y 11',asesor:'Carmen Jiménez',estatus:'Venta',comision:14400},
-  {nombre:'Carol Rasgado',tel:'9613870224',desarrollo:'Grand Mayan',lote:'Palenque Mz 9 Lt 16',asesor:'Carmen Jiménez',estatus:'Venta',comision:7200},
-  {nombre:'Guadalupe Manzo',tel:'7771681165',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 20',asesor:'Carmen Jiménez',estatus:'Venta',comision:7200},
-  {nombre:'Luis Antonio Muñiz',tel:'9931039361',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 3',asesor:'Carmen Jiménez',estatus:'Venta',comision:7200},
-  {nombre:'Alejandra Ramírez',tel:'9612941461',desarrollo:'Grand Mayan',lote:'Toniná Mz 2 Lts 11 y 12',asesor:'Carmen Jiménez',estatus:'Venta',comision:14400},
-  {nombre:'Pablo Arena',tel:'9611650349',desarrollo:'Grand Mayan',lote:'Balam Mz 3 Lt 12',asesor:'Carmen Jiménez',estatus:'Venta',comision:7000},
-  {nombre:'Martina Zamora',tel:'9611776687',desarrollo:'Grand Mayan',lote:'Toniná Mz 14 Lt 14',asesor:'Carmen Jiménez',estatus:'Venta',comision:8893},
-  {nombre:'Araceli Pola',tel:'7224609162',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 5 Lts 10 y 11',asesor:'Carmen Jiménez',estatus:'Venta',comision:14400},
-  {nombre:'Carlos Lopez',tel:'9611922266',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 9 Lt 9 y 14',asesor:'Carmen Jiménez',estatus:'Venta',comision:14004},
-  {nombre:'Yesenia Galvez',tel:'9671380634',desarrollo:'Grand Mayan',lote:'Palenque Mz 8 Lt 10 y 11',asesor:'Carmen Jiménez',estatus:'Venta',comision:14004},
-  {nombre:'Melida Ortega',tel:'9676778836',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 10 Lt 1 y 20',asesor:'Carmen Jiménez',estatus:'Venta',comision:14004},
-  {nombre:'Floribeth Ortega',tel:'5513299165',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 10 Lt 18 y 19',asesor:'Carmen Jiménez',estatus:'Venta',comision:14400},
-  {nombre:'Ezequiel Gomez',tel:'9614240289',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 8 Lt 5',asesor:'Carmen Jiménez',estatus:'Venta',comision:7002},
-  {nombre:'Ángel López Trujillo',tel:'9613653870',desarrollo:'Grand Mayan',lote:'Toniná Mz 14 Lt 23',asesor:'Carmen Jiménez',estatus:'Venta',comision:7002},
-  {nombre:'Amalia Isabel Sanchez',tel:'9631772167',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 15',asesor:'Carmen Jiménez',estatus:'Venta',comision:7200},
-  {nombre:'Nayeli Trujillo',tel:'9611812883',desarrollo:'Monte Misen',lote:'Mza18 Lt 3',asesor:'Carmen Jiménez',estatus:'Venta',comision:4438.50},
-  {nombre:'Felipe Santoyo',tel:'9612612323',desarrollo:'Grand Mayan',lote:'Palenque Mza 20 Lt 6',asesor:'Carmen Jiménez',estatus:'Venta',comision:7002},
-  {nombre:'Luis Noe Najera',tel:'9681290985',desarrollo:'Grand Mayan',lote:'Toniná Mz 23 Lt 12',asesor:'Carmen Jiménez',estatus:'Venta',comision:7400},
-  {nombre:'Natalia Morales',tel:'9612902802',desarrollo:'Grand Mayan',lote:'Toniná Mz 23 Lts 1,2,3 y 17',asesor:'Carmen Jiménez',estatus:'Venta',comision:28008},
-  {nombre:'Francisco Lescieur',tel:'9611897019',desarrollo:'Orquídea Campestre',lote:'Mz 6 Lt 4',asesor:'Carmen Jiménez',estatus:'Venta',comision:9000},
-  {nombre:'Nicolas Castellanos',tel:'5569057833',desarrollo:'Orquídea Campestre',lote:'Mz 9 Lt 15',asesor:'Carmen Jiménez',estatus:'Venta',comision:4800},
-  {nombre:'Brandon Castellanos',tel:'5569057833',desarrollo:'Orquídea Campestre',lote:'Mz 9 Lt 10',asesor:'Carmen Jiménez',estatus:'Venta',comision:4800},
-  {nombre:'Alejandra Melgar',tel:'9612429440',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 1',asesor:'Carmen Jiménez',estatus:'Venta',comision:7002},
-  {nombre:'Efrain Orantes',tel:'9611269255',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 8 Lt 17 y 18',asesor:'Carmen Jiménez',estatus:'Venta',comision:14004},
-  {nombre:'Raul Moguel',tel:'9611281663',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 11 Lt 16 y 17',asesor:'Carmen Jiménez',estatus:'Venta',comision:14400},
-  {nombre:'Rocio Gutiérrez',tel:'9611144467',desarrollo:'Grand Mayan',lote:'Tulum Mz 14 Lt 11',asesor:'Carmen Jiménez',estatus:'Venta',comision:8400},
-  {nombre:'José Luis Torres',tel:'9612171401',desarrollo:'Grand Mayan',lote:'Tulum Mz 15 Lt 6',asesor:'Carmen Jiménez',estatus:'Venta',comision:8000},
-  {nombre:'Jessica Montero',tel:'9613014529',desarrollo:'Grand Mayan',lote:'Tulum Mz 6 Lt 1',asesor:'Carmen Jiménez',estatus:'Venta',comision:8000},
-  {nombre:'Roxana Carral',tel:'9611142260',desarrollo:'Grand Mayan',lote:'Balam Mz 3 Lt 24',asesor:'Carmen Jiménez',estatus:'Venta',comision:7500},
-  {nombre:'Gabriela Maza',tel:'9611764850',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 3',asesor:'Carmen Jiménez',estatus:'Venta',comision:8000},
-  {nombre:'Ena Moreno',tel:'9611928292',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 4',asesor:'Carmen Jiménez',estatus:'Venta',comision:8000},
-  {nombre:'Hugo Ancheyta',tel:'9622436270',desarrollo:'La Cañada',lote:'Mz 26 Lt 7',asesor:'Carmen Jiménez',estatus:'Venta',comision:9350},
-  {nombre:'Jorge Sánchez',tel:'',desarrollo:'El Arenal',lote:'Manz 12 Lt 1',asesor:'Carmen Jiménez',estatus:'Venta',comision:4000},
-  {nombre:'Jorge Sánchez',tel:'',desarrollo:'El Arenal',lote:'Manz 12 Lt 2',asesor:'Carmen Jiménez',estatus:'Venta',comision:4000},
-  {nombre:'María González',tel:'',desarrollo:'El Arenal',lote:'Manz 18 Lt 5 y 6',asesor:'Carmen Jiménez',estatus:'Venta',comision:8000},
-  {nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',lote:'Manz 12 Lt 13 y 14',asesor:'Carmen Jiménez',estatus:'Venta',comision:8000},
-  {nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',lote:'Manz 19 Lt 1',asesor:'Carmen Jiménez',estatus:'Venta',comision:4000},
-  {nombre:'Nahum Hernández',tel:'',desarrollo:'El Arenal',lote:'Manz 19 Lt 2',asesor:'Carmen Jiménez',estatus:'Venta',comision:4000},
-  {nombre:'Carolina Perez',tel:'',desarrollo:'Bosques del Sur',lote:'Manz 30 Lt 6',asesor:'Carmen Jiménez',estatus:'Venta',comision:4505},
-  // LUPYTA MENDOZA
-  {nombre:'Daniel Vera',tel:'9612156438',desarrollo:'Grand Mayan',lote:'Palenque Mz 2 Lt 1 y 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:15530},
-  {nombre:'Dafne Ruiz Mora',tel:'9611032294',desarrollo:'Grand Mayan',lote:'Toniná Mz 2 Lt 5,6,7,8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:36941.50},
-  {nombre:'Dulce Melgar',tel:'9613002088',desarrollo:'Grand Mayan',lote:'Palenque Mz 5 Lt 11',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7002},
-  {nombre:'José Andrés Cuevas',tel:'9612256479',desarrollo:'Grand Mayan',lote:'Toniná Mz 5 Lt 4',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8040},
-  {nombre:'Ofelia Chanona',tel:'9615601800',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lt 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8040},
-  {nombre:'Angel Gabriel Escobar',tel:'9631426986',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lt 11',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8280},
-  {nombre:'Escobar Gamboa Karem',tel:'9611433009',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 9',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Gamboa Reyna',tel:'9614486965',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Dulce María García',tel:'9613002088',desarrollo:'Grand Mayan',lote:'Palenque Mz 7 Lt 21',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7002},
-  {nombre:'Johan Melgar',tel:'9612380191',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7002},
-  {nombre:'Meynardo Camerino',tel:'',desarrollo:'Grand Mayan',lote:'Balam Mz 1 Lt 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7252.50},
-  {nombre:'Yurisbel Aguilar',tel:'3058329427',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Lilia Castillo',tel:'9613594440',desarrollo:'Grand Mayan',lote:'Palenque Mz 9 Lt 6',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7783.50},
-  {nombre:'Nancy Trinidad',tel:'9613208322',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lt 10',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8280},
-  {nombre:'Hijo de Alba Luz',tel:'',desarrollo:'Grand Mayan',lote:'Toniná Mz 15 Lts 6 y 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:14400},
-  {nombre:'Hija de Alba Luz',tel:'',desarrollo:'Grand Mayan',lote:'Toniná Mz 15 Lt 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7550},
-  {nombre:'Carolina Solis',tel:'',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 15',asesor:'Lupyta Mendoza',estatus:'Venta',comision:6343.50},
-  {nombre:'Paloma Sarai Velazco',tel:'9931676837',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 9',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Elba Velazco',tel:'9612555152',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 10',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Jose Manuel Galaviz',tel:'9931676837',desarrollo:'Grand Mayan',lote:'Palenque Mz 5 Lt 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7002},
-  {nombre:'Adrian Hdz Jimenez',tel:'5532005938',desarrollo:'Grand Mayan',lote:'Bonampak Mz 5 Lt 9',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Elba Velazco 2',tel:'9612555152',desarrollo:'Grand Mayan',lote:'Palenque Mz 5 Lt 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lts 7 y 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:16905},
-  {nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',lote:'Toniná Mz 1 Lts 2 y 3',asesor:'Lupyta Mendoza',estatus:'Venta',comision:14700},
-  {nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',lote:'Bonampak Mz 8 Lt 14',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8670},
-  {nombre:'Sandra Luz Diaz',tel:'9614793788',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 13',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Beatriz Avendaño',tel:'9612156516',desarrollo:'Grand Mayan',lote:'Toniná Mz 3 Lt 9',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8280},
-  {nombre:'Alexis Vazquez',tel:'9631372048',desarrollo:'Grand Mayan',lote:'Toniná Mz 20 Lt 10 y 11',asesor:'Lupyta Mendoza',estatus:'Venta',comision:16440},
-  {nombre:'Sergio Zunun',tel:'9611146013',desarrollo:'Grand Mayan',lote:'Toniná Mz 6 Lt 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7266},
-  {nombre:'Sergio Zunun',tel:'9611146013',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:9277},
-  {nombre:'Victor Cabrera',tel:'5582336577',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Carlos Padilla',tel:'9612303157',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 6',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Beatriz Aparicio',tel:'9612193405',desarrollo:'Grand Mayan',lote:'Bonampak Mz 5 Lt 10',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7002},
-  {nombre:'Jonathan Flores',tel:'9611778980',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 5 Lt 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Adelina Cruz',tel:'9611799986',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 3 Lt 8',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Olga Zamudio',tel:'9611978885',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 4 Lt 4',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'José Ramón Velázquez',tel:'9611060201',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 2 Lt 5,6,17,18',asesor:'Lupyta Mendoza',estatus:'Venta',comision:25674},
-  {nombre:'Reina Ordóñez',tel:'9615934273',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 2 Lt 13',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Carla Rocío Cruz',tel:'9613224929',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 3 Lt 3',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Junny Ordóñez',tel:'9612850810',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 11 Lt 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Junny Ordóñez',tel:'9612850810',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 9 Lt 12',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7920},
-  {nombre:'Fredi Falconi',tel:'9671078595',desarrollo:'Grand Mayan',lote:'Bonampak Mz 8 Lt 16',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8688},
-  {nombre:'Ramiro Castillo',tel:'2211964971',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 5 y 6',asesor:'Lupyta Mendoza',estatus:'Venta',comision:14400},
-  {nombre:'Andrés Talango',tel:'9612369471',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lt 19',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7002},
-  {nombre:'Francisco Talango',tel:'9611313359',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lt 18',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7000},
-  {nombre:'Cinthia Nuricumbo',tel:'9612034784',desarrollo:'Grand Mayan',lote:'Bonampak Mz 9 Lt 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Juan Pablo Nuricumbo',tel:'9612362652',desarrollo:'Grand Mayan',lote:'Bonampak Mz 7 Lt 18',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Artemio',tel:'9611364991',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 17',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8670},
-  {nombre:'Abel Ramos',tel:'9612984428',desarrollo:'Grand Mayan',lote:'Tulum Mz 11 Lt 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7245},
-  {nombre:'Marcoa Antonio Flores',tel:'9613485035',desarrollo:'Grand Mayan',lote:'Tulum Mz 12 Lt 6',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8122},
-  {nombre:'Ma del Carmen Solorzano',tel:'9612500108',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lt 9',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7200},
-  {nombre:'Jorge Nucamenti',tel:'9612012607',desarrollo:'Grand Mayan',lote:'Tulum Mz 4 Lt 17 y 18',asesor:'Lupyta Mendoza',estatus:'Venta',comision:14100},
-  {nombre:'Clarissa Ruíz',tel:'9616033424',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 12',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7245},
-  {nombre:'Victor Cabrera',tel:'5582336577',desarrollo:'Sima Park',lote:'Mz 11 Lt 18',asesor:'Lupyta Mendoza',estatus:'Venta',comision:5000},
-  {nombre:'Martha Patricia Gordillo',tel:'9612994970',desarrollo:'Sima Park',lote:'Mz 14 Lt 4 y 5',asesor:'Lupyta Mendoza',estatus:'Venta',comision:8000},
-  {nombre:'Janet Peralta',tel:'9616199314',desarrollo:'Sima Park',lote:'Mz 15 Lt 4',asesor:'Lupyta Mendoza',estatus:'Venta',comision:5000},
-  {nombre:'Alejandra',tel:'',desarrollo:'Sima Park',lote:'Mz 15 Lt 5,6 y 7',asesor:'Lupyta Mendoza',estatus:'Venta',comision:12000},
-  {nombre:'Socorro Martinez',tel:'9671476487',desarrollo:'Sima Park',lote:'Mz 10 Lote 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:5000},
-  {nombre:'Rossana Sayago',tel:'9611792183',desarrollo:'Sima Park',lote:'Mz 15 Lote 2',asesor:'Lupyta Mendoza',estatus:'Venta',comision:5000},
-  {nombre:'Miriam Cetina',tel:'9611792183',desarrollo:'Sima Park',lote:'Mz 13 Lote 3',asesor:'Lupyta Mendoza',estatus:'Venta',comision:4000},
-  {nombre:'Emilio Cetina',tel:'9616073582',desarrollo:'Sima Park',lote:'Mz 13 Lote 4',asesor:'Lupyta Mendoza',estatus:'Venta',comision:4000},
-  {nombre:'Joshep Casanova',tel:'9616030844',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 5',asesor:'Lupyta Mendoza',estatus:'Venta',comision:7000},
-  // LUIS GARCÍA
-  {nombre:'María del Pilar Ortega',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle Pinos Mz 02 Lt 06 Casa 11',asesor:'Luis García',estatus:'Venta',comision:14250},
-  {nombre:'Amelita Ovalles',tel:'9612107083',desarrollo:'Monte Misen',lote:'Ave Osaka Mz 13 Lt 20',asesor:'Luis García',estatus:'Venta',comision:7000},
-  {nombre:'Elias Jara',tel:'9612429708',desarrollo:'San Antonio',lote:'Ave Chiapas Mzana H Lt 01-18',asesor:'Luis García',estatus:'Cancelado',comision:6000},
-  {nombre:'Rosa Ornelas',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle Amoles Mz 01 Lt 07',asesor:'Luis García',estatus:'Venta',comision:0},
-  {nombre:'Nelva Edith Gomez',tel:'9611968966',desarrollo:'Monte Misen',lote:'Calle Hiroshima Mz 8 Lt 2',asesor:'Luis García',estatus:'Venta',comision:5000},
-  {nombre:'Vanessa Gomez',tel:'9614236952',desarrollo:'San Antonio',lote:'Mzana 20 lote 5 y 6',asesor:'Luis García',estatus:'Venta',comision:10525},
-  {nombre:'Oscar Galeazzi',tel:'9611293254',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 18',asesor:'Luis García',estatus:'Venta',comision:7200},
-  {nombre:'Juan de Dios Albores',tel:'9613202460',desarrollo:'Orquídea Campestre',lote:'Mz 11 Lt 4 y 11',asesor:'Luis García',estatus:'Venta',comision:8726},
-  {nombre:'Karla Cano / Ismael García',tel:'9931173462',desarrollo:'Orquídea Campestre',lote:'Mz 1 Lt 21',asesor:'Luis García',estatus:'Venta',comision:6500},
-  {nombre:'Hugo Ancheyta',tel:'9622436270',desarrollo:'Orquídea Campestre',lote:'Mz 9 Lt 1',asesor:'Luis García',estatus:'Venta',comision:5000},
-  {nombre:'Octavio Rios',tel:'9612691869',desarrollo:'HN Bosques de Sayab',lote:'Calle Amoles Mz 01 Lt 07 Casa 1',asesor:'Luis García',estatus:'Venta',comision:1500},
-  {nombre:'Amanda Moguel',tel:'9615795289',desarrollo:'HN Bosques de Sayab',lote:'Calle Caobas Mz 02 Lt 01 Casa 1',asesor:'Luis García',estatus:'Venta',comision:1500},
-  {nombre:'Ermenegildo Diaz',tel:'9616508970',desarrollo:'HN Bosques de Sayab',lote:'Calle Pinos Mz 02 Lt 06 Casa 12',asesor:'Luis García',estatus:'Venta',comision:0},
-  {nombre:'Luis Enrique Moreno',tel:'9615799363',desarrollo:'HN Bosques de Sayab',lote:'Calle Pinos Mz 02 Lt 04 Casa 7',asesor:'Luis García',estatus:'Venta',comision:0},
-  {nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mza 1 Lt 1 y 2',asesor:'Luis García',estatus:'Venta',comision:10500},
-  {nombre:'Horacio Culebro hijo',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mza 1 Lt 11',asesor:'Luis García',estatus:'Venta',comision:8209},
-  {nombre:'Luis Antonio',tel:'9611998204',desarrollo:'San Antonio',lote:'Mz B Lt 17 y 18',asesor:'Luis García',estatus:'Venta',comision:2000},
-  {nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mza 1 Lt 6 y 7',asesor:'Luis García',estatus:'Venta',comision:10000},
-  {nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mz 1 Lts 3,4,5',asesor:'Luis García',estatus:'Venta',comision:15000},
-  {nombre:'Salvador y Maria Teresa Fuentes',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle Caobas Mz 02 Lt 01 Casa 2',asesor:'Luis García',estatus:'Venta',comision:18512},
-  {nombre:'Ines Olga Perez',tel:'',desarrollo:'Cascadas del Sur',lote:'Manz 9 Lt 15',asesor:'Luis García',estatus:'Venta',comision:7002.80},
-  {nombre:'Hermila Perez',tel:'',desarrollo:'Cascadas del Sur',lote:'Manz 9 Lt 16',asesor:'Luis García',estatus:'Venta',comision:6800},
-  // DANIEL VÁZQUEZ
-  {nombre:'Jesús Antonio Orantes',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle B Mz 1 Lt 03 Casa 3',asesor:'Daniel Vázquez',estatus:'Venta',comision:4250},
-  {nombre:'Ofir Tinoco Avila',tel:'',desarrollo:'Real Campestre',lote:'Pendiente',asesor:'Daniel Vázquez',estatus:'Venta',comision:2500}
-].map(v => ({ ...v, anio: ANIO_DESARROLLO[v.desarrollo] || 2022 }))
- // Enriquecer con año
+// Datos con número Cte para ordenar
+const DATOS = [
+  {cte:1,nombre:'Sebastián Cruz',tel:'9611773877',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 4 Lt 2',estatus:'Otro',comision:0},
+  {cte:2,nombre:'Gina Potenciano',tel:'9931152673',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 10 Lt 17',estatus:'Cancelado',comision:583.50},
+  {cte:3,nombre:'Chepez',tel:'9615396204',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 12 Lt 19 y 20',estatus:'Cancelado',comision:0},
+  {cte:4,nombre:'Israel Cueto',tel:'9941036111',desarrollo:'Don Clemente',asesor:'Carmen Jiménez',lote:'San Clemente',estatus:'Venta',comision:1000},
+  {cte:5,nombre:'Rubén Castañeda',tel:'9612983349',desarrollo:'Las Animas',asesor:'Carmen Jiménez',lote:'Toniná Mz 12 Lt 15',estatus:'Venta',comision:7002},
+  {cte:6,nombre:'Carlos Zuñiga',tel:'9611544517',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 13 Lt 2',estatus:'Otro',comision:6500},
+  {cte:7,nombre:'Mariela Aguilar',tel:'9611774433',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 9 Lt 4',estatus:'Otro',comision:0},
+  {cte:8,nombre:'Daniel Vera',tel:'9612156438',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 2 Lt 1 y 8',estatus:'Venta',comision:15530},
+  {cte:9,nombre:'Dafne Ruiz Mora',tel:'9611032294',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 2 Lt 5,6,7,8',estatus:'Venta',comision:36941.50},
+  {cte:10,nombre:'Manuel Fonseca',tel:'9612331729',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 6 Lt 20 y 21',estatus:'Cancelado',comision:1887},
+  {cte:12,nombre:'Dulce Melgar',tel:'9613002088',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 5 Lt 11',estatus:'Venta',comision:7002},
+  {cte:13,nombre:'María Luisa Torres',tel:'9931152673',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Balam Mz 3 Lt 5',estatus:'Venta',comision:14502},
+  {cte:14,nombre:'José Andrés Cuevas',tel:'9612256479',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 5 Lt 4',estatus:'Venta',comision:8040},
+  {cte:15,nombre:'Gerardo Cuellar',tel:'9612942489',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 12 Lt 5',estatus:'Venta',comision:6418.50},
+  {cte:16,nombre:'Omar Romero',tel:'9611435847',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 12 Lt 16 y 17',estatus:'Venta',comision:14004},
+  {cte:17,nombre:'Edward López',tel:'2711406110',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Balam Mz 4 Lt 5',estatus:'Cancelado',comision:0},
+  {cte:18,nombre:'Referido Adalberto',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 2 Lts 10,11,12',estatus:'Cancelado',comision:0},
+  {cte:20,nombre:'Adalberto Hernandez',tel:'9612142836',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 2 Lt 4',estatus:'Venta',comision:8143},
+  {cte:21,nombre:'Luis Duarte',tel:'9993668511',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 6 Lt 5 y 6',estatus:'Cancelado',comision:0},
+  {cte:22,nombre:'CP Patricia Lopez',tel:'9611267594',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Bonampak Mz 4 Lt 9',estatus:'Venta',comision:9437},
+  {cte:23,nombre:'Ofelia Chanona',tel:'9615601800',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 7 Lt 2',estatus:'Venta',comision:8040},
+  {cte:24,nombre:'Angel Gabriel Escobar',tel:'9631426986',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 7 Lt 11',estatus:'Venta',comision:8280},
+  {cte:25,nombre:'Escobar Gamboa Karem',tel:'9611433009',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 11 Lt 9',estatus:'Venta',comision:7200},
+  {cte:26,nombre:'Martinez Rosales Karla',tel:'9611088105',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 11 Lt 10',estatus:'Cancelado',comision:1440},
+  {cte:27,nombre:'Gamboa Angeles Reyna',tel:'9614486965',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 11 Lt 8',estatus:'Venta',comision:7200},
+  {cte:28,nombre:'Dulce María García',tel:'9613002088',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 7 Lt 21',estatus:'Venta',comision:7002},
+  {cte:29,nombre:'María del Pilar Ortega',tel:'',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Pinos Mz 02 Lt 06 Casa 11',estatus:'Venta',comision:14250},
+  {cte:30,nombre:'Johan Melgar',tel:'9612380191',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 6 Lt 2',estatus:'Venta',comision:7002},
+  {cte:31,nombre:'Meynardo Camerino',tel:'',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Balam Mz 1 Lt 2',estatus:'Venta',comision:7252.50},
+  {cte:33,nombre:'Yurisbel Aguilar',tel:'3058329427',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 11 Lt 7',estatus:'Venta',comision:7200},
+  {cte:34,nombre:'Lilia Castillo',tel:'9613594440',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 9 Lt 6',estatus:'Venta',comision:7783.50},
+  {cte:35,nombre:'Héctor Ruth y Helena',tel:'9611765015',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 11 Lt 19 y 20',estatus:'Venta',comision:14004},
+  {cte:36,nombre:'Gemima Collazao',tel:'9611596903',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 6 Lt 8 y 9',estatus:'Venta',comision:16104},
+  {cte:37,nombre:'Nancy Trinidad',tel:'9613208322',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 7 Lt 10',estatus:'Venta',comision:8280},
+  {cte:38,nombre:'Hijo de Alba Luz',tel:'',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 15 Lts 6 y 7',estatus:'Venta',comision:14400},
+  {cte:39,nombre:'Hija de Alba Luz',tel:'',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 15 Lt 8',estatus:'Venta',comision:7550},
+  {cte:41,nombre:'Lic. Alejandro Jimenez',tel:'9614232287',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 11 Lt 4',estatus:'Venta',comision:7200},
+  {cte:42,nombre:'Billi Joel Gómez',tel:'9611939879',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 22 Lts 10 y 11',estatus:'Venta',comision:14400},
+  {cte:43,nombre:'Carolina Solis',tel:'',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 11 Lt 15',estatus:'Venta',comision:6343.50},
+  {cte:44,nombre:'Paloma Sarai Velazco',tel:'9931676837',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 6 Lt 9',estatus:'Venta',comision:7200},
+  {cte:45,nombre:'Elba Velazco',tel:'9612555152',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 6 Lt 10',estatus:'Venta',comision:7200},
+  {cte:46,nombre:'Jose Manuel Galaviz',tel:'9931676837',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 5 Lt 8',estatus:'Venta',comision:7002},
+  {cte:47,nombre:'Adrian Hdz Jimenez',tel:'5532005938',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 5 Lt 9',estatus:'Venta',comision:7200},
+  {cte:52,nombre:'Andrea Ramírez',tel:'5549641769',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 5 Lt 10',estatus:'Cancelado',comision:0},
+  {cte:53,nombre:'Carol Rasgado',tel:'9613870224',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 9 Lt 16',estatus:'Venta',comision:7200},
+  {cte:54,nombre:'Guadalupe Manzo',tel:'7771681165',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 6 Lt 20',estatus:'Venta',comision:7200},
+  {cte:55,nombre:'Luis Antonio Muñiz',tel:'9931039361',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 6 Lt 3',estatus:'Venta',comision:7200},
+  {cte:57,nombre:'Elba Velazco 2',tel:'9612555152',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 5 Lt 7',estatus:'Venta',comision:7200},
+  {cte:59,nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 7 Lts 7 y 8',estatus:'Venta',comision:16905},
+  {cte:60,nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 1 Lts 2 y 3',estatus:'Venta',comision:14700},
+  {cte:61,nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 8 Lt 14',estatus:'Venta',comision:8670},
+  {cte:62,nombre:'Alejandra Ramírez',tel:'9612941461',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 2 Lts 11 y 12',estatus:'Venta',comision:14400},
+  {cte:64,nombre:'Sandra Luz Diaz',tel:'9614793788',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 11 Lt 13',estatus:'Venta',comision:7200},
+  {cte:65,nombre:'Beatriz Avendaño',tel:'9612156516',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 3 Lt 9',estatus:'Venta',comision:8280},
+  {cte:66,nombre:'Alexis Vazquez',tel:'9631372048',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 20 Lt 10 y 11',estatus:'Venta',comision:16440},
+  {cte:67,nombre:'Sergio Zunun',tel:'9611146013',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 6 Lt 7',estatus:'Venta',comision:7266},
+  {cte:68,nombre:'Sergio Zunun',tel:'9611146013',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 4 Lt 8',estatus:'Venta',comision:9277},
+  {cte:71,nombre:'Victor Cabrera',tel:'5582336577',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 11 Lt 7',estatus:'Venta',comision:7200},
+  {cte:72,nombre:'Carlos Padilla',tel:'9612303157',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 11 Lt 6',estatus:'Venta',comision:7200},
+  {cte:73,nombre:'Pablo Arena',tel:'9611650349',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Balam Mz 3 Lt 12',estatus:'Venta',comision:7000},
+  {cte:74,nombre:'Beatriz Aparicio',tel:'9612193405',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 5 Lt 10',estatus:'Venta',comision:7002},
+  {cte:75,nombre:'Martina Zamora',tel:'9611776687',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 14 Lt 14',estatus:'Venta',comision:8893},
+  {cte:76,nombre:'Amelita Ovalles',tel:'9612107083',desarrollo:'Monte Misen',asesor:'Luis García',lote:'Ave Osaka Mz 13 Lt 20',estatus:'Venta',comision:7000},
+  {cte:77,nombre:'Elias Jara',tel:'9612429708',desarrollo:'San Antonio',asesor:'Luis García',lote:'Ave Chiapas H Lt 01-18',estatus:'Cancelado',comision:6000},
+  {cte:78,nombre:'Araceli Pola',tel:'7224609162',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 5 Lts 10 y 11',estatus:'Venta',comision:14400},
+  {cte:79,nombre:'Rosa Ornelas',tel:'',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Amoles Mz 01 Lt 07 Casa 2',estatus:'Venta',comision:0},
+  {cte:80,nombre:'Jonathan Flores',tel:'9611778980',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 5 Lt 2',estatus:'Venta',comision:7200},
+  {cte:81,nombre:'Referido Victor Hugo',tel:'9611922266',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 5 Lt 9',estatus:'Venta',comision:7200},
+  {cte:82,nombre:'Carlos Lopez',tel:'9611922266',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 9 Lt 9 y 14',estatus:'Venta',comision:14004},
+  {cte:83,nombre:'Adelina Cruz',tel:'9611799986',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 3 Lt 8',estatus:'Venta',comision:7200},
+  {cte:86,nombre:'Yesenia Galvez',tel:'9671380634',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 8 Lt 10 y 11',estatus:'Venta',comision:14004},
+  {cte:87,nombre:'Melida Ortega',tel:'9676778836',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 10 Lt 1 y 20',estatus:'Venta',comision:14004},
+  {cte:88,nombre:'Floribeth Ortega',tel:'5513299165',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 10 Lt 18 y 19',estatus:'Venta',comision:14400},
+  {cte:89,nombre:'Olga Zamudio',tel:'9611978885',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 4 Lt 4',estatus:'Venta',comision:7200},
+  {cte:94,nombre:'José Ramón Velázquez',tel:'9611060201',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 2 Lt 5,6,17,18',estatus:'Venta',comision:25674},
+  {cte:95,nombre:'Reina Ordóñez',tel:'9615934273',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 2 Lt 13',estatus:'Venta',comision:7200},
+  {cte:96,nombre:'Carla Rocío Cruz',tel:'9613224929',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 3 Lt 3',estatus:'Venta',comision:7200},
+  {cte:97,nombre:'Nelva Edith Gomez',tel:'9611968966',desarrollo:'Monte Misen',asesor:'Luis García',lote:'Calle Hiroshima Mz 8 Lt 2',estatus:'Venta',comision:5000},
+  {cte:98,nombre:'Francisco Rosales',tel:'9611862086',desarrollo:'Monte Misen',asesor:'Luis García',lote:'Ave Osaka Mz 13 Lt 19',estatus:'Cancelado',comision:0},
+  {cte:99,nombre:'Alejandra Melgar',tel:'9612429440',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 12 Lt 1',estatus:'Venta',comision:7002},
+  {cte:100,nombre:'Efrain Orantes',tel:'9611269255',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 8 Lt 17 y 18',estatus:'Venta',comision:14004},
+  {cte:101,nombre:'Raul Moguel',tel:'9611281663',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 11 Lt 16 y 17',estatus:'Venta',comision:14400},
+  {cte:102,nombre:'Junny Ordóñez',tel:'9612850810',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 11 Lt 7',estatus:'Venta',comision:7200},
+  {cte:103,nombre:'Junny Ordóñez',tel:'9612850810',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 9 Lt 12',estatus:'Venta',comision:7920},
+  {cte:104,nombre:'Fredi Falconi',tel:'9671078595',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 8 Lt 16',estatus:'Venta',comision:8688},
+  {cte:105,nombre:'Ramiro Castillo',tel:'2211964971',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 11 Lt 5 y 6',estatus:'Venta',comision:14400},
+  {cte:108,nombre:'Christian Cordova',tel:'9612362769',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 3 Lt 8',estatus:'Cancelado',comision:0},
+  {cte:109,nombre:'Ezequiel Gomez',tel:'9614240289',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Yaxchilan Mz 8 Lt 5',estatus:'Venta',comision:7002},
+  {cte:110,nombre:'Marvin Ruiz',tel:'8834500386',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 14 Lt 17',estatus:'Cancelado',comision:0},
+  {cte:111,nombre:'Laura Matilde Castellanos',tel:'9614368677',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 22 Lt 9',estatus:'Venta',comision:1303.50},
+  {cte:112,nombre:'Ángel López Trujillo',tel:'9613653870',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 14 Lt 23',estatus:'Venta',comision:7002},
+  {cte:113,nombre:'Amalia Isabel Sanchez',tel:'9631772167',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 11 Lt 15',estatus:'Venta',comision:7200},
+  {cte:114,nombre:'Jesús Antonio Orantes',tel:'',desarrollo:'HN Bosques de Sayab',asesor:'Daniel Vázquez',lote:'Calle B Mz 1 Lt 03 Casa 3',estatus:'Venta',comision:4250},
+  {cte:115,nombre:'Beatríz Silias',tel:'9611132620',desarrollo:'Grand Mayan',asesor:'Luis García',lote:'Bonampak Mz 4 Lt 18',estatus:'Cancelado',comision:0},
+  {cte:116,nombre:'Vanessa Gomez',tel:'9614236952',desarrollo:'San Antonio',asesor:'Luis García',lote:'Mzana 20 lote 5 y 6',estatus:'Venta',comision:10525},
+  {cte:117,nombre:'Andrés Talango',tel:'9612369471',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 22 Lt 19',estatus:'Venta',comision:7002},
+  {cte:118,nombre:'Francisco Talango',tel:'9611313359',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 22 Lt 18',estatus:'Venta',comision:7000},
+  {cte:119,nombre:'Oscar Galeazzi',tel:'9611293254',desarrollo:'Grand Mayan',asesor:'Luis García',lote:'Bonampak Mz 4 Lt 18',estatus:'Venta',comision:7200},
+  {cte:120,nombre:'Nayeli Trujillo',tel:'9611812883',desarrollo:'Monte Misen',asesor:'Carmen Jiménez',lote:'Mza18 Lt 3',estatus:'Venta',comision:4438.50},
+  {cte:121,nombre:'Cinthia Nuricumbo',tel:'9612034784',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 9 Lt 2',estatus:'Venta',comision:7200},
+  {cte:122,nombre:'Juan Pablo Nuricumbo',tel:'9612362652',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 7 Lt 18',estatus:'Venta',comision:7200},
+  {cte:124,nombre:'Felipe Santoyo',tel:'9612612323',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mza 20 Lt 6',estatus:'Venta',comision:7002},
+  {cte:125,nombre:'Luis Noe Najera',tel:'9681290985',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 23 Lt 12',estatus:'Venta',comision:7400},
+  {cte:126,nombre:'Natalia Morales',tel:'9612902802',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 23 Lts 1,2,3 y 17',estatus:'Venta',comision:28008},
+  {cte:130,nombre:'Juan de Dios Albores',tel:'9613202460',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mz 11 Lt 4 y 11',estatus:'Venta',comision:8726},
+  {cte:131,nombre:'Artemio',tel:'9611364991',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Bonampak Mz 4 Lt 17',estatus:'Venta',comision:8670},
+  {cte:132,nombre:'Karla Cano / Ismael García',tel:'9931173462',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mz 1 Lt 21',estatus:'Venta',comision:6500},
+  {cte:133,nombre:'Francisco Lescieur',tel:'9611897019',desarrollo:'Orquídea Campestre',asesor:'Carmen Jiménez',lote:'Mz 6 Lt 4',estatus:'Venta',comision:9000},
+  {cte:134,nombre:'Nicolas Castellanos',tel:'5569057833',desarrollo:'Orquídea Campestre',asesor:'Carmen Jiménez',lote:'Mz 9 Lt 15',estatus:'Venta',comision:4800},
+  {cte:135,nombre:'Brandon Castellanos',tel:'5569057833',desarrollo:'Orquídea Campestre',asesor:'Carmen Jiménez',lote:'Mz 9 Lt 10',estatus:'Venta',comision:4800},
+  {cte:136,nombre:'Hugo Ancheyta',tel:'9622436270',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mz 9 Lt 1',estatus:'Venta',comision:5000},
+  {cte:137,nombre:'Octavio Rios',tel:'9612691869',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Amoles Mz 01 Lt 07 Casa 1',estatus:'Venta',comision:1500},
+  {cte:138,nombre:'Amanda Moguel',tel:'9615795289',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Caobas Mz 02 Lt 01 Casa 1',estatus:'Venta',comision:1500},
+  {cte:139,nombre:'Ermenegildo Diaz',tel:'9616508970',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Pinos Mz 02 Lt 06 Casa 12',estatus:'Venta',comision:0},
+  {cte:140,nombre:'Luis Enrique Moreno',tel:'9615799363',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Pinos Mz 02 Lt 04 Casa 7',estatus:'Venta',comision:0},
+  {cte:141,nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mza 1 Lt 1 y 2',estatus:'Venta',comision:10500},
+  {cte:142,nombre:'Horacio Culebro hijo',tel:'9616572522',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mza 1 Lt 11',estatus:'Venta',comision:8209},
+  {cte:143,nombre:'Luis Antonio',tel:'9611998204',desarrollo:'San Antonio',asesor:'Luis García',lote:'Mz B Lt 17 y 18',estatus:'Venta',comision:2000},
+  {cte:144,nombre:'Abel Ramos',tel:'9612984428',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 11 Lt 2',estatus:'Venta',comision:7245},
+  {cte:145,nombre:'Marcoa Antonio Flores',tel:'9613485035',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 12 Lt 6',estatus:'Venta',comision:8122},
+  {cte:146,nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mza 1 Lt 6 y 7',estatus:'Venta',comision:10000},
+  {cte:147,nombre:'Jessica Montero',tel:'9613014529',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 6 Lt 1',estatus:'Venta',comision:8000},
+  {cte:148,nombre:'Ena Moreno',tel:'9611928292',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 8 Lt 4',estatus:'Venta',comision:8000},
+  {cte:149,nombre:'Clarissa Ruíz',tel:'9616033424',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 8 Lt 12',estatus:'Venta',comision:7245},
+  {cte:150,nombre:'Gabriela Maza',tel:'9611764850',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 8 Lt 3',estatus:'Venta',comision:8000},
+  {cte:151,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 11 Lt 9',estatus:'Pendiente',comision:8280},
+  {cte:152,nombre:'Guadalupe Espinoza',tel:'9613704730',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 11 Lt 10',estatus:'Venta',comision:8228},
+  {cte:153,nombre:'Rocio Gutiérrez',tel:'9611144467',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 14 Lt 11',estatus:'Venta',comision:8400},
+  {cte:154,nombre:'José Luis Torres',tel:'9612171401',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 15 Lt 6',estatus:'Venta',comision:8000},
+  {cte:155,nombre:'Ana Isabel',tel:'9613766411',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 4 Lt 2 y 3',estatus:'Venta',comision:11200},
+  {cte:156,nombre:'Joshep Casanova',tel:'9616030844',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 8 Lt 5',estatus:'Venta',comision:7000},
+  {cte:157,nombre:'Wilfrido Acosta',tel:'9611173450',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 22 Lt 10',estatus:'Venta',comision:700},
+  {cte:158,nombre:'José Ramón Velázquez',tel:'9611060201',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 2 Lt 1',estatus:'Venta',comision:7000},
+  {cte:159,nombre:'Ma del Carmen Solorzano',tel:'9612500108',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Toniná Mz 22 Lt 9',estatus:'Venta',comision:7200},
+  {cte:160,nombre:'Patricia Adriana Morales',tel:'9612491111',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Palenque Mz 7 Lt 8',estatus:'Venta',comision:7200},
+  {cte:161,nombre:'Julio Cesar Trujillo',tel:'9612935028',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 19 Lt 1',estatus:'Venta',comision:8000},
+  {cte:162,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 24 Lt 1 y 2',estatus:'Pendiente',comision:7000},
+  {cte:163,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 23 Lt 6',estatus:'Pendiente',comision:7000},
+  {cte:164,nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',asesor:'Luis García',lote:'Mz 1 Lts 3,4,5',estatus:'Venta',comision:15000},
+  {cte:165,nombre:'Hugo Ancheyta',tel:'9622436270',desarrollo:'La Cañada',asesor:'Carmen Jiménez',lote:'Mz 26 Lt 7',estatus:'Venta',comision:9350},
+  {cte:166,nombre:'Pendiente 1',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 22 Lt 12',estatus:'Pendiente',comision:7000},
+  {cte:167,nombre:'Jorge Nucamenti',tel:'9612012607',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 4 Lt 17 y 18',estatus:'Venta',comision:14100},
+  {cte:169,nombre:'Ricardo Espinoza',tel:'9611506150',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 3 Lt 2',estatus:'Venta',comision:7200},
+  {cte:170,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Uxmal Mz 1 Lt 14 y 15',estatus:'Pendiente',comision:20000},
+  {cte:171,nombre:'Ignacio Medina',tel:'9631647382',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 12 Lt 4,5,6 y 7',estatus:'Venta',comision:14100},
+  {cte:172,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 13 Lt 9',estatus:'Pendiente',comision:7200},
+  {cte:173,nombre:'Julio Cesar Orantes',tel:'',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 12 Lt 2 y 3',estatus:'Venta',comision:14100},
+  {cte:174,nombre:'Ricardo Espinoza',tel:'9611506150',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 7 Lt 13',estatus:'Venta',comision:7200},
+  {cte:175,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 23 Lt 2',estatus:'Pendiente',comision:7000},
+  {cte:176,nombre:'Maria Alicia Mazariegos',tel:'9611342603',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 21 Lt 8 y 9',estatus:'Venta',comision:12900},
+  {cte:177,nombre:'Andrei Rodriguez',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 23 Lt 1',estatus:'Venta',comision:7000},
+  {cte:178,nombre:'Gerardo Rodriguez',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 23 Lt 12',estatus:'Venta',comision:7000},
+  {cte:179,nombre:'Eva Gomez Lopez',tel:'9681306382',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 5 Lt 8 y 9',estatus:'Cancelado',comision:2400},
+  {cte:180,nombre:'Roxana Carral',tel:'9611142260',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Balam Mz 3 Lt 24',estatus:'Venta',comision:7500},
+  {cte:181,nombre:'Salvador y Ma Teresa Fuentes',tel:'',desarrollo:'HN Bosques de Sayab',asesor:'Luis García',lote:'Calle Caobas Mz 02 Lt 01 Casa 2',estatus:'Venta',comision:18512},
+  {cte:182,nombre:'Noemi Ruiz',tel:'9611790381',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 6 Lt 4',estatus:'Venta',comision:7000},
+  {cte:183,nombre:'Victor Cabrera',tel:'5582336577',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 11 Lt 18',estatus:'Venta',comision:5000},
+  {cte:184,nombre:'Adriana Burquete',tel:'9611914828',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 14 Lt 9',estatus:'Venta',comision:8100},
+  {cte:185,nombre:'Maria Flor Vazquez',tel:'9611925693',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 14 Lt 10',estatus:'Venta',comision:7000},
+  {cte:186,nombre:'Placida Cristina Alvarez',tel:'9681171695',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 8 Lt 7',estatus:'Venta',comision:7200},
+  {cte:187,nombre:'Hugo Enrique Aguilar',tel:'9611192250',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Yaxchilan Mz 12 Lt 8 y 9',estatus:'Venta',comision:14100},
+  {cte:188,nombre:'Martha Patricia Gordillo',tel:'9612994970',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 14 Lt 4 y 5',estatus:'Venta',comision:8000},
+  {cte:189,nombre:'Janet Peralta',tel:'9616199314',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 15 Lt 4',estatus:'Venta',comision:5000},
+  {cte:190,nombre:'Alejandra',tel:'',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 15 Lt 5,6 y 7',estatus:'Venta',comision:12000},
+  {cte:192,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Tulum Mz 19 Lt 2',estatus:'Pendiente',comision:7200},
+  {cte:193,nombre:'William Alexis Cortes',tel:'9671476487',desarrollo:'Grand Mayan',asesor:'Lupyta Mendoza',lote:'Tulum Mz 7 Lt 15',estatus:'Venta',comision:8000},
+  {cte:194,nombre:'Socorro Martinez',tel:'9671476487',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 10 Lote 2',estatus:'Venta',comision:5000},
+  {cte:195,nombre:'Rossana Sayago',tel:'9611792183',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 15 Lote 2',estatus:'Venta',comision:5000},
+  {cte:196,nombre:'Miriam Cetina',tel:'9611792183',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 13 Lote 3',estatus:'Venta',comision:4000},
+  {cte:197,nombre:'Emilio Cetina',tel:'9616073582',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 13 Lote 4',estatus:'Venta',comision:4000},
+  {cte:198,nombre:'Pendiente',tel:'',desarrollo:'Sima Park',asesor:'Carmen Jiménez',lote:'Mz 1 Lote 5 y 6',estatus:'Pendiente',comision:8000},
+  {cte:199,nombre:'Pendiente',tel:'',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 13 Lote 2',estatus:'Pendiente',comision:4000},
+  {cte:200,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 21 Lt 1',estatus:'Pendiente',comision:7000},
+  {cte:209,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Toniná Mz 25 Lts 1 y 10',estatus:'Pendiente',comision:14000},
+  {cte:210,nombre:'Jorge Sánchez',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 12 Lt 1',estatus:'Venta',comision:4000},
+  {cte:211,nombre:'Jorge Sánchez',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 12 Lt 2',estatus:'Venta',comision:4000},
+  {cte:212,nombre:'María González',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 18 Lt 6',estatus:'Venta',comision:4000},
+  {cte:213,nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 12 Lt 13',estatus:'Venta',comision:4000},
+  {cte:214,nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 19 Lt 1',estatus:'Venta',comision:4000},
+  {cte:215,nombre:'Pendiente',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Pendiente',estatus:'Pendiente',comision:2625},
+  {cte:216,nombre:'Ofir Tinoco Avila',tel:'',desarrollo:'Real Campestre',asesor:'Daniel Vázquez',lote:'Pendiente',estatus:'Venta',comision:2500},
+  {cte:217,nombre:'Carolina Perez',tel:'',desarrollo:'Bosques del Sur',asesor:'Carmen Jiménez',lote:'Manz 30 Lt 6',estatus:'Venta',comision:4505},
+  {cte:218,nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 12 Lt 14',estatus:'Venta',comision:4000},
+  {cte:220,nombre:'Pendiente',tel:'',desarrollo:'Sima Park',asesor:'Carmen Jiménez',lote:'Mz 13 Lote 5',estatus:'Pendiente',comision:4000},
+  {cte:225,nombre:'Pendiente',tel:'',desarrollo:'Sima Park',asesor:'Lupyta Mendoza',lote:'Mz 22 Lt 1',estatus:'Pendiente',comision:0},
+  {cte:227,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Uxmal Mz 1 Lt 13',estatus:'Pendiente',comision:0},
+  {cte:228,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Uxmal Mz 2 Lt 08',estatus:'Pendiente',comision:0},
+  {cte:229,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 12 Lt 20',estatus:'Pendiente',comision:0},
+  {cte:230,nombre:'Pendiente',tel:'',desarrollo:'Grand Mayan',asesor:'Carmen Jiménez',lote:'Palenque Mz 5 Lt 19',estatus:'Pendiente',comision:0},
+  {cte:259,nombre:'María González',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 18 Lt 5',estatus:'Venta',comision:4000},
+  {cte:260,nombre:'Nahum Hernández',tel:'',desarrollo:'El Arenal',asesor:'Carmen Jiménez',lote:'Manz 19 Lt 2',estatus:'Venta',comision:4000},
+  {cte:261,nombre:'Ines Olga Perez',tel:'',desarrollo:'Cascadas del Sur',asesor:'Luis García',lote:'Manz 9 Lt 15',estatus:'Venta',comision:7002.80},
+  {cte:263,nombre:'Hermila Perez',tel:'',desarrollo:'Cascadas del Sur',asesor:'Luis García',lote:'Manz 9 Lt 16',estatus:'Venta',comision:6800}
+]
 
-// COLORES POR ASESOR
-const COLORES_ASESOR = {
-  'Carmen Jiménez': '#0891B2',
-  'Lupyta Mendoza': '#7C3AED',
-  'Luis García': '#059669',
-  'Daniel Vázquez': '#8B0000'
+// Ordenar por Cte DESCENDENTE (más reciente primero)
+DATOS.sort((a,b)=>b.cte-a.cte)
+
+// Estado editable en localStorage
+function getEdits(){
+  return JSON.parse(localStorage.getItem('ibr_hist_edits')||'{}')
+}
+function saveEdit(cte,campo,valor){
+  const e=getEdits()
+  if(!e[cte])e[cte]={}
+  e[cte][campo]=valor
+  localStorage.setItem('ibr_hist_edits',JSON.stringify(e))
 }
 
-let filtroAsesorActivo = 'todos'
-let filtroEstatusActivo = 'todos'
-let filtroAnioActivo = 'todos'
+let filtroAsesor='todos'
+let filtroEstatus='todos'
 
-function calcularKPIs() {
-  const ventas = VENTAS_HISTORICAS
-    .filter(v=>v.estatus==='Venta')
-  const cancelados = VENTAS_HISTORICAS
-    .filter(v=>v.estatus==='Cancelado')
-  const pendientes = VENTAS_HISTORICAS
-    .filter(v=>v.estatus==='Otro')
-  const total = ventas.reduce(
-    (s,v)=>s+(v.comision||0),0)
-
-  document.getElementById('kpiVentas')
-    .textContent = ventas.length
-  document.getElementById('kpiCancelados')
-    .textContent = cancelados.length
-  document.getElementById('kpiPendientes')
-    .textContent = pendientes.length
-  document.getElementById('kpiComisiones')
-    .textContent = '$'+(total/1000).toFixed(0)+'K'
-}
-
-function filtrarAsesor(asesor) {
-  filtroAsesorActivo = asesor
-  
+function setFiltroAsesor(v,btn){
+  filtroAsesor=v
   document.querySelectorAll('[id^="fa-"]')
-    .forEach(b=>{
-      b.style.background='#2A2A2A'
-      b.style.color='#888'
-      b.style.border='1px solid #333'
-    })
-
-  const ids = {
-    'todos':'fa-todos',
-    'Carmen Jiménez':'fa-carmen',
-    'Lupyta Mendoza':'fa-lupyta',
-    'Luis García':'fa-luis',
-    'Daniel Vázquez':'fa-daniel'
-  }
-  const btn = document.getElementById(ids[asesor])
-  if(btn){
-    const color = COLORES_ASESOR[asesor]||'#8B0000'
-    btn.style.background = color
-    btn.style.color = '#fff'
-    btn.style.border = 'none'
-  }
-  renderLista()
+    .forEach(b=>{b.style.background='#2A2A2A';
+      b.style.color='#888';b.style.border='1px solid #333'})
+  btn.style.background=COLORES[v]||'#8B0000'
+  btn.style.color='#fff'
+  btn.style.border='none'
+  renderizar()
 }
 
-function filtrarAnio(anio) {
-  filtroAnioActivo = anio
-  document.querySelectorAll('[id^="fy-"]')
-    .forEach(b=>{
-      b.style.background='#2A2A2A'
-      b.style.color='#888'
-      b.style.border='1px solid #333'
-    })
-  const btn = document.getElementById('fy-'+(anio==='todos'?'todos':anio))
-  if(btn){
-    btn.style.background='#8B0000'
-    btn.style.color='#fff'
-    btn.style.border='none'
+function setFiltroEstatus(v,btn){
+  filtroEstatus=v
+  document.querySelectorAll('[id^="fe-"]')
+    .forEach(b=>{b.style.background='#2A2A2A';
+      b.style.color='#888';b.style.border='1px solid #333'})
+  btn.style.background='#8B0000'
+  btn.style.color='#fff'
+  btn.style.border='none'
+  renderizar()
+}
+
+function toggleDetalle(cte){
+  const d=document.getElementById('d-'+cte)
+  const btn=document.getElementById('btn-'+cte)
+  if(d.style.display==='block'){
+    d.style.display='none'
+    btn.textContent='▼ Ver detalle'
+  } else {
+    d.style.display='block'
+    btn.textContent='▲ Cerrar'
   }
-  renderLista()
 }
 
-function filtrar() {
-  filtroEstatusActivo = document.getElementById(
-    'filtroEstatus').value
-  renderLista()
+function guardarEdit(cte){
+  const est=document.getElementById('est-'+cte)?.value
+  const com=document.getElementById('com-'+cte)?.value
+  if(est)saveEdit(cte,'estatus',est)
+  if(com!==undefined&&com!=='')saveEdit(cte,'comision',parseFloat(com)||0)
+  renderizar()
 }
 
-function renderLista() {
-  const q = document.getElementById('buscador')
-    .value.toLowerCase()
+function renderizar(){
+  const q=document.getElementById('buscador').value.toLowerCase()
+  const edits=getEdits()
 
-  let datos = VENTAS_HISTORICAS.filter(v => {
-    const matchAsesor = filtroAsesorActivo==='todos'||
-      v.asesor===filtroAsesorActivo
-    const matchEstatus = filtroEstatusActivo==='todos'||
-      v.estatus===filtroEstatusActivo
-    const matchAnio = filtroAnioActivo==='todos'||
-      String(v.anio)===String(filtroAnioActivo)
-    const matchBuscar = !q ||
-      v.nombre.toLowerCase().includes(q)||
-      v.desarrollo.toLowerCase().includes(q)||
-      v.lote.toLowerCase().includes(q)
-    return matchAsesor && matchEstatus && matchAnio && matchBuscar
+  let datos=DATOS.map(d=>{
+    const e=edits[d.cte]||{}
+    return{...d,
+      estatus:e.estatus||d.estatus,
+      comision:e.comision!==undefined?e.comision:d.comision}
+  }).filter(d=>{
+    const mA=filtroAsesor==='todos'||d.asesor===filtroAsesor
+    const mE=filtroEstatus==='todos'||d.estatus===filtroEstatus
+    const mQ=!q||d.nombre.toLowerCase().includes(q)||
+      d.desarrollo.toLowerCase().includes(q)||
+      d.lote.toLowerCase().includes(q)
+    return mA&&mE&&mQ
   })
 
-  // Ordenar por año descendente (más reciente primero)
-  datos.sort((a,b) => (b.anio||0) - (a.anio||0))
-
-  const lista = document.getElementById('listaVentas')
+  // KPIs (siempre sobre todos los datos con edits aplicados)
+  const todos=DATOS.map(d=>{
+    const e=edits[d.cte]||{}
+    return{...d,estatus:e.estatus||d.estatus,
+      comision:e.comision!==undefined?e.comision:d.comision}
+  })
+  document.getElementById('kVentas').textContent=
+    todos.filter(d=>d.estatus==='Venta').length
+  document.getElementById('kCancelados').textContent=
+    todos.filter(d=>d.estatus==='Cancelado').length
+  document.getElementById('kPendientes').textContent=
+    todos.filter(d=>d.estatus==='Pendiente'||d.estatus==='Otro').length
+  const totalCom=todos.filter(d=>d.estatus==='Venta')
+    .reduce((s,d)=>s+d.comision,0)
+  document.getElementById('kComisiones').textContent=
+    '$'+totalCom.toLocaleString('es-MX',{minimumFractionDigits:0})
 
   if(!datos.length){
-    lista.innerHTML = '<div style="color:#444;'+
-      'text-align:center;padding:48px">'+
-      'Sin resultados</div>'
+    document.getElementById('contenido').innerHTML=
+      '<div class="sin-resultados">Sin resultados</div>'
     return
   }
 
-  lista.innerHTML = datos.map(v => {
-    const color = COLORES_ASESOR[v.asesor]||'#8B0000'
-    return `
-    <div style="background:#1E1E1E;
-      border-radius:12px;padding:16px;
-      margin-bottom:10px;
-      border-left:3px solid ${
-        v.estatus==='Cancelado'?'#DC2626':color}">
-      <div style="display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        margin-bottom:6px">
-        <div style="color:#fff;font-weight:700;
-          font-size:14px;flex:1">
-          ${v.nombre}
+  // Agrupar por desarrollo (manteniendo orden por cte desc dentro de cada grupo)
+  const grupos={}
+  datos.forEach(d=>{
+    if(!grupos[d.desarrollo])grupos[d.desarrollo]=[]
+    grupos[d.desarrollo].push(d)
+  })
+
+  let html=''
+  Object.keys(grupos).forEach(des=>{
+    html+=`<div class="grupo-titulo">
+      ${des} &middot; ${grupos[des].length} registros
+    </div><div style="padding:0 16px">`
+    grupos[des].forEach(d=>{
+      const color=COLORES[d.asesor]||'#8B0000'
+      const bc=d.estatus==='Cancelado'?'#DC2626':
+        d.estatus==='Pendiente'?'#555':color
+      const badgeCls=d.estatus==='Venta'?'badge-venta':
+        d.estatus==='Cancelado'?'badge-cancelado':
+        d.estatus==='Pendiente'?'badge-pendiente':
+        'badge-otro'
+      html+=`
+      <div class="card" style="border-left-color:${bc}">
+        <div class="card-header">
+          <div>
+            <span class="cte-num">Cte ${d.cte}</span>
+            <span class="card-nombre">${d.nombre}</span>
+          </div>
+          <span class="badge ${badgeCls}">${d.estatus}</span>
         </div>
-        <span style="background:${
-          v.estatus==='Cancelado'?'#DC2626':
-          v.estatus==='Venta'?'#16A34A':'#D97706'};
-          color:#fff;padding:2px 8px;
-          border-radius:20px;font-size:10px;
-          font-weight:700;margin-left:8px;
-          white-space:nowrap">
-          ${v.estatus}
-        </span>
-      </div>
-      <div style="color:#555;font-size:12px;
-        margin-bottom:4px">
-        🏘️ ${v.desarrollo} · ${v.lote}
-      </div>
-      <div style="margin-bottom:8px">
-        <span style="background:#2A2A2A;color:#666;
-          font-size:10px;font-weight:700;
-          padding:2px 8px;border-radius:20px;
-          letter-spacing:1px">📅 ${v.anio}</span>
-      </div>
-      <div style="display:flex;
-        justify-content:space-between;
-        align-items:center;margin-top:8px">
-        <span style="color:${color};
-          font-size:11px;font-weight:600;
-          background:${color}22;
-          padding:3px 10px;border-radius:20px">
-          ${v.asesor.split(' ')[0]}
-        </span>
-        ${v.comision>0?`
-        <span style="color:#fff;font-size:13px;
-          font-weight:700">
-          $${v.comision.toLocaleString('es-MX')}
-        </span>`:''}
-      </div>
-      ${v.tel?`
-      <a href="https://wa.me/52${v.tel}"
-        target="_blank"
-        style="display:inline-block;margin-top:8px;
-        background:#16A34A;color:#fff;
-        padding:6px 12px;border-radius:6px;
-        font-size:12px;text-decoration:none;
-        font-weight:600">
-        💬 ${v.tel}
-      </a>`:''}
-    </div>`}).join('')
+        <div class="card-sub">📍 ${d.lote}</div>
+        <div class="card-footer">
+          <span class="tag-asesor"
+            style="background:${color}22;color:${color}">
+            ${d.asesor.split(' ')[0]}
+          </span>
+          ${d.comision>0?
+            `<span class="card-comision">
+              $${d.comision.toLocaleString('es-MX')}
+            </span>`:''}
+          ${d.tel?
+            `<a href="https://wa.me/52${d.tel}"
+              target="_blank" class="wa-btn">
+              💬 WA
+            </a>`:''}
+        </div>
+        <button class="expandir" id="btn-${d.cte}"
+          onclick="toggleDetalle(${d.cte})">
+          ▼ Ver detalle
+        </button>
+        <div class="detalle" id="d-${d.cte}">
+          <div class="label-edit">Estatus</div>
+          <select class="campo-edit" id="est-${d.cte}">
+            <option value="Venta"
+              ${d.estatus==='Venta'?'selected':''}>
+              ✅ Venta</option>
+            <option value="Cancelado"
+              ${d.estatus==='Cancelado'?'selected':''}>
+              ❌ Cancelado</option>
+            <option value="Pendiente"
+              ${d.estatus==='Pendiente'?'selected':''}>
+              ⏳ Pendiente</option>
+            <option value="Otro"
+              ${d.estatus==='Otro'?'selected':''}>
+              📋 Otro</option>
+          </select>
+          <div class="label-edit" style="margin-top:10px">
+            Comisión pactada ($)
+          </div>
+          <input type="number" class="campo-edit"
+            id="com-${d.cte}"
+            value="${d.comision||''}"
+            placeholder="0.00">
+          <button class="btn-guardar"
+            onclick="guardarEdit(${d.cte})">
+            💾 Guardar cambios
+          </button>
+        </div>
+      </div>`
+    })
+    html+='</div>'
+  })
+  document.getElementById('contenido').innerHTML=html
 }
 
-// INIT
-calcularKPIs()
-renderLista()
+renderizar()
 </script>
 </body>
 </html>
