@@ -780,6 +780,61 @@
                 </form>
             </div>
 
+            <!-- TODOS LOS CLIENTES IBR - Admin Only -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 admin-only" id="section-admin-clientes">
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">👥 Todos los Clientes IBR</h3>
+                
+                <!-- Filters -->
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <div>
+                        <label class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Asesor</label>
+                        <select id="filtro-cliente-asesor" onchange="renderClientesConsolidadosAdmin()" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:outline-none focus:border-ibr-red">
+                            <!-- Filled dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Desarrollo</label>
+                        <select id="filtro-cliente-desarrollo" onchange="renderClientesConsolidadosAdmin()" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:outline-none focus:border-ibr-red">
+                            <!-- Filled dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Estatus</label>
+                        <select id="filtro-cliente-estatus" onchange="renderClientesConsolidadosAdmin()" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs focus:outline-none focus:border-ibr-red">
+                            <option value="">Todos</option>
+                            <option value="Venta">Venta</option>
+                            <option value="Cancelado">Cancelado</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Total commissions summary -->
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 mb-4 flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-600">TOTAL COMISIONES FILTRADO</span>
+                    <span class="text-lg font-black text-ibr-green" id="total-comisiones-clientes-admin">$0</span>
+                </div>
+
+                <!-- Table for Clients -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-[11px] border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-gray-400 font-black uppercase tracking-wider text-[8px] pb-2">
+                                <th class="pb-2">Cliente</th>
+                                <th class="pb-2">Asesor</th>
+                                <th class="pb-2">Desarrollo</th>
+                                <th class="pb-2">Lote</th>
+                                <th class="pb-2">Estatus</th>
+                                <th class="pb-2 text-right">Comisión</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientes-table-admin" class="divide-y divide-gray-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <button onclick="clearData()" class="w-full bg-red-50 text-red-600 border border-red-200 font-bold py-3 rounded-xl text-xs mt-4">⚠️ BORRAR TODOS LOS DATOS LOCALES</button>
         </div>
 
@@ -948,6 +1003,15 @@
       align-items:center;gap:4px;padding:8px 0;
       cursor:pointer;letter-spacing:1px">
       📋<span>MIS LOTES</span>
+    </button>
+    <button onclick="switchAsesor('clientes')"
+      id="aBtn-clientes"
+      style="flex:1;background:none;border:none;
+      color:#555;font-size:10px;font-weight:600;
+      display:flex;flex-direction:column;
+      align-items:center;gap:4px;padding:8px 0;
+      cursor:pointer;letter-spacing:1px">
+      🏆<span>MIS CLIENTES</span>
     </button>
   </nav>
 </div>
@@ -3914,6 +3978,9 @@ function openComModal(id) {
         else { st.innerHTML = "❌ PÉRDIDA"; st.className = "font-black px-2 py-0.5 rounded bg-red-600 text-white"; }
     }
 function renderConfig() {
+        initClientesAdminFilters();
+        renderClientesConsolidadosAdmin();
+
         document.getElementById('conf-ext').innerHTML = extUsers.map(u => `<div class="text-[10px] font-black border border-gray-100 p-2 bg-gray-50 rounded-lg text-gray-700 truncate">${u}</div>`).join('');
 
         const cardsEl = document.getElementById('users-cards-list');
@@ -3999,8 +4066,76 @@ function renderConfig() {
         }
     }
 
+    function initClientesAdminFilters() {
+        const selAsesor = document.getElementById('filtro-cliente-asesor');
+        const selDesarrollo = document.getElementById('filtro-cliente-desarrollo');
+        if (!selAsesor || !selDesarrollo) return;
+        if (selAsesor.children.length > 0) return; // Already initialized
 
-    
+        // Asesor options
+        selAsesor.innerHTML = '<option value="">Todos</option>' + Object.keys(CLIENTES_IBR).map(a => `<option value="${a}">${a}</option>`).join('');
+
+        // Desarrollo options
+        const desarrollos = new Set();
+        Object.values(CLIENTES_IBR).forEach(list => {
+            list.forEach(c => {
+                if (c.desarrollo) desarrollos.add(c.desarrollo);
+            });
+        });
+        selDesarrollo.innerHTML = '<option value="">Todos</option>' + Array.from(desarrollos).sort().map(d => `<option value="${d}">${d}</option>`).join('');
+    }
+
+    function renderClientesConsolidadosAdmin() {
+        const tableBody = document.getElementById('clientes-table-admin');
+        if (!tableBody) return;
+
+        const filterAsesor = document.getElementById('filtro-cliente-asesor').value;
+        const filterDesarrollo = document.getElementById('filtro-cliente-desarrollo').value;
+        const filterEstatus = document.getElementById('filtro-cliente-estatus').value;
+
+        // Flatten CLIENTES_IBR with advisor name included
+        let all = [];
+        Object.entries(CLIENTES_IBR).forEach(([asesor, list]) => {
+            list.forEach(c => {
+                all.push({ ...c, asesor });
+            });
+        });
+
+        // Filter
+        const filtered = all.filter(c => {
+            if (filterAsesor && c.asesor !== filterAsesor) return false;
+            if (filterDesarrollo && c.desarrollo !== filterDesarrollo) return false;
+            if (filterEstatus && c.estatus !== filterEstatus) return false;
+            return true;
+        });
+
+        // Render Table
+        tableBody.innerHTML = filtered.map(c => `
+            <tr class="hover:bg-gray-50 transition border-b border-gray-100 last:border-0 text-xs">
+                <td class="py-2.5 font-bold text-gray-900">${c.nombre}</td>
+                <td class="py-2.5 text-gray-600">${c.asesor}</td>
+                <td class="py-2.5 text-gray-700 font-bold">${c.desarrollo}</td>
+                <td class="py-2.5 text-gray-500 font-mono">${c.lote}</td>
+                <td class="py-2.5">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold ${
+                      c.estatus === 'Cancelado' ? 'bg-red-50 text-red-600 border border-red-100' :
+                      c.estatus === 'Venta' ? 'bg-green-50 text-green-600 border border-green-100' :
+                      'bg-yellow-50 text-yellow-600 border border-yellow-100'
+                    }">
+                        ${c.estatus}
+                    </span>
+                </td>
+                <td class="py-2.5 text-right font-bold text-gray-900">
+                    $${c.comision.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                </td>
+            </tr>
+        `).join('') || `<tr><td colspan="6" class="text-center py-4 text-gray-400 font-bold">No se encontraron clientes</td></tr>`;
+
+        // Total Commissions Sum (only sum if status is 'Venta' as per adviser page)
+        const totalComisiones = filtered.reduce((s, c) => s + (c.estatus === 'Venta' ? c.comision : 0), 0);
+        document.getElementById('total-comisiones-clientes-admin').textContent = `$${totalComisiones.toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+    }
+
     function toggleCollapse(id) {
         // Support both id='col-X' (wrapper) and id='col-X-wrapper' patterns
         var wrapper = document.getElementById(id) || document.getElementById(id + '-wrapper');
@@ -4580,6 +4715,157 @@ function renderConfig() {
       ]
     }
 
+    const CLIENTES_IBR = {
+      'Carmen Jiménez': [
+        {nombre:'Sebastián Cruz',tel:'9611773877',desarrollo:'Grand Mayan',lote:'Toniná Mz 4 Lt 2',estatus:'Otro',comision:0},
+        {nombre:'Gina Potenciano',tel:'9931152673',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 17',estatus:'Cancelado',comision:583.50},
+        {nombre:'Chepez',tel:'9615396204',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 19 y 20',estatus:'Cancelado',comision:0},
+        {nombre:'Israel Cueto',tel:'9941036111',desarrollo:'Don Clemente',lote:'San Clemente',estatus:'Venta',comision:1000},
+        {nombre:'Rubén Castañeda',tel:'9612983349',desarrollo:'Las Animas',lote:'Toniná Mz 12 Lt 15',estatus:'Venta',comision:7002},
+        {nombre:'Carlos Zuñiga',tel:'9611544517',desarrollo:'Grand Mayan',lote:'Palenque Mz 13 Lt 2',estatus:'Otro',comision:6500},
+        {nombre:'Manuel Fonseca',tel:'9612331729',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 20 y 21',estatus:'Cancelado',comision:1887},
+        {nombre:'María Luisa Torres',tel:'9931152673',desarrollo:'Grand Mayan',lote:'Balam Mz 3 Lt 5',estatus:'Venta',comision:14502},
+        {nombre:'Gerardo Cuellar',tel:'9612942489',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 5',estatus:'Venta',comision:6418.50},
+        {nombre:'Omar Romero',tel:'9611435847',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 16 y 17',estatus:'Venta',comision:14004},
+        {nombre:'Adalberto Hernandez',tel:'9612142836',desarrollo:'Grand Mayan',lote:'Toniná Mz 2 Lt 4',estatus:'Venta',comision:8143},
+        {nombre:'CP Patricia Lopez',tel:'9611267594',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 9',estatus:'Venta',comision:9437},
+        {nombre:'Héctor Ruth y Helena',tel:'9611765015',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 19 y 20',estatus:'Venta',comision:14004},
+        {nombre:'Gemima Collazao',tel:'9611596903',desarrollo:'Grand Mayan',lote:'Toniná Mz 6 Lt 8 y 9',estatus:'Venta',comision:16104},
+        {nombre:'Lic. Alejandro Jimenez',tel:'9614232287',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 4',estatus:'Venta',comision:7200},
+        {nombre:'Billi Joel Gómez',tel:'9611939879',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lts 10 y 11',estatus:'Venta',comision:14400},
+        {nombre:'Carol Rasgado',tel:'9613870224',desarrollo:'Grand Mayan',lote:'Palenque Mz 9 Lt 16',estatus:'Venta',comision:7200},
+        {nombre:'Guadalupe Manzo',tel:'7771681165',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 20',estatus:'Venta',comision:7200},
+        {nombre:'Luis Antonio Muñiz',tel:'9931039361',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 3',estatus:'Venta',comision:7200},
+        {nombre:'Alejandra Ramírez',tel:'9612941461',desarrollo:'Grand Mayan',lote:'Toniná Mz 2 Lts 11 y 12',estatus:'Venta',comision:14400},
+        {nombre:'Pablo Arena',tel:'9611650349',desarrollo:'Grand Mayan',lote:'Balam Mz 3 Lt 12',estatus:'Venta',comision:7000},
+        {nombre:'Martina Zamora',tel:'9611776687',desarrollo:'Grand Mayan',lote:'Toniná Mz 14 Lt 14',estatus:'Venta',comision:8893},
+        {nombre:'Araceli Pola',tel:'7224609162',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 5 Lts 10 y 11',estatus:'Venta',comision:14400},
+        {nombre:'Carlos Lopez',tel:'9611922266',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 9 Lt 9 y 14',estatus:'Venta',comision:14004},
+        {nombre:'Yesenia Galvez',tel:'9671380634',desarrollo:'Grand Mayan',lote:'Palenque Mz 8 Lt 10 y 11',estatus:'Venta',comision:14004},
+        {nombre:'Melida Ortega',tel:'9676778836',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 10 Lt 1 y 20',estatus:'Venta',comision:14004},
+        {nombre:'Floribeth Ortega',tel:'5513299165',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 10 Lt 18 y 19',estatus:'Venta',comision:14400},
+        {nombre:'Ezequiel Gomez',tel:'9614240289',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 8 Lt 5',estatus:'Venta',comision:7002},
+        {nombre:'Ángel López Trujillo',tel:'9613653870',desarrollo:'Grand Mayan',lote:'Toniná Mz 14 Lt 23',estatus:'Venta',comision:7002},
+        {nombre:'Amalia Isabel Sanchez',tel:'9631772167',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 15',estatus:'Venta',comision:7200},
+        {nombre:'Nayeli Trujillo',tel:'9611812883',desarrollo:'Monte Misen',lote:'Mza18 Lt 3',estatus:'Venta',comision:4438.50},
+        {nombre:'Felipe Santoyo',tel:'9612612323',desarrollo:'Grand Mayan',lote:'Palenque Mza 20 Lt 6',estatus:'Venta',comision:7002},
+        {nombre:'Luis Noe Najera',tel:'9681290985',desarrollo:'Grand Mayan',lote:'Toniná Mz 23 Lt 12',estatus:'Venta',comision:7400},
+        {nombre:'Natalia Morales',tel:'9612902802',desarrollo:'Grand Mayan',lote:'Toniná Mz 23 Lts 1,2,3 y 17',estatus:'Venta',comision:28008},
+        {nombre:'Francisco Lescieur',tel:'9611897019',desarrollo:'Orquídea Campestre',lote:'Mz 6 Lt 4',estatus:'Venta',comision:9000},
+        {nombre:'Nicolas Castellanos',tel:'5569057833',desarrollo:'Orquídea Campestre',lote:'Mz 9 Lt 15',estatus:'Venta',comision:4800},
+        {nombre:'Brandon Castellanos',tel:'5569057833',desarrollo:'Orquídea Campestre',lote:'Mz 9 Lt 10',estatus:'Venta',comision:4800},
+        {nombre:'Alejandra Melgar',tel:'9612429440',desarrollo:'Grand Mayan',lote:'Palenque Mz 12 Lt 1',estatus:'Venta',comision:7002},
+        {nombre:'Efrain Orantes',tel:'9611269255',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 8 Lt 17 y 18',estatus:'Venta',comision:14004},
+        {nombre:'Raul Moguel',tel:'9611281663',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 11 Lt 16 y 17',estatus:'Venta',comision:14400},
+        {nombre:'Rocio Gutiérrez',tel:'9611144467',desarrollo:'Grand Mayan',lote:'Tulum Mz 14 Lt 11',estatus:'Venta',comision:8400},
+        {nombre:'José Luis Torres',tel:'9612171401',desarrollo:'Grand Mayan',lote:'Tulum Mz 15 Lt 6',estatus:'Venta',comision:8000},
+        {nombre:'Jessica Montero',tel:'9613014529',desarrollo:'Grand Mayan',lote:'Tulum Mz 6 Lt 1',estatus:'Venta',comision:8000},
+        {nombre:'Roxana Carral',tel:'9611142260',desarrollo:'Grand Mayan',lote:'Balam Mz 3 Lt 24',estatus:'Venta',comision:7500},
+        {nombre:'Gabriela Maza',tel:'9611764850',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 3',estatus:'Venta',comision:8000},
+        {nombre:'Ena Moreno',tel:'9611928292',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 4',estatus:'Venta',comision:8000},
+        {nombre:'Hugo Ancheyta',tel:'9622436270',desarrollo:'La Cañada',lote:'Mz 26 Lt 7',estatus:'Venta',comision:9350},
+        {nombre:'Jorge Sánchez',tel:'',desarrollo:'El Arenal',lote:'Manz 12 Lt 1',estatus:'Venta',comision:4000},
+        {nombre:'Jorge Sánchez',tel:'',desarrollo:'El Arenal',lote:'Manz 12 Lt 2',estatus:'Venta',comision:4000},
+        {nombre:'María González',tel:'',desarrollo:'El Arenal',lote:'Manz 18 Lt 5 y 6',estatus:'Venta',comision:8000},
+        {nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',lote:'Manz 12 Lt 13 y 14',estatus:'Venta',comision:8000},
+        {nombre:'Nereyda Ramirez',tel:'',desarrollo:'El Arenal',lote:'Manz 19 Lt 1',estatus:'Venta',comision:4000},
+        {nombre:'Nahum Hernández',tel:'',desarrollo:'El Arenal',lote:'Manz 19 Lt 2',estatus:'Venta',comision:4000},
+        {nombre:'Carolina Perez',tel:'',desarrollo:'Bosques del Sur',lote:'Manz 30 Lt 6',estatus:'Venta',comision:4505}
+      ],
+      'Lupyta Mendoza': [
+        {nombre:'Daniel Vera',tel:'9612156438',desarrollo:'Grand Mayan',lote:'Palenque Mz 2 Lt 1 y 8',estatus:'Venta',comision:15530},
+        {nombre:'Dafne Ruiz Mora',tel:'9611032294',desarrollo:'Grand Mayan',lote:'Toniná Mz 2 Lt 5,6,7,8',estatus:'Venta',comision:36941.50},
+        {nombre:'Dulce Melgar',tel:'9613002088',desarrollo:'Grand Mayan',lote:'Palenque Mz 5 Lt 11',estatus:'Venta',comision:7002},
+        {nombre:'José Andrés Cuevas',tel:'9612256479',desarrollo:'Grand Mayan',lote:'Toniná Mz 5 Lt 4',estatus:'Venta',comision:8040},
+        {nombre:'Ofelia Chanona',tel:'9615601800',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lt 2',estatus:'Venta',comision:8040},
+        {nombre:'Angel Gabriel Escobar',tel:'9631426986',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lt 11',estatus:'Venta',comision:8280},
+        {nombre:'Escobar Gamboa Karem',tel:'9611433009',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 9',estatus:'Venta',comision:7200},
+        {nombre:'Gamboa Reyna',tel:'9614486965',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 8',estatus:'Venta',comision:7200},
+        {nombre:'Dulce María García',tel:'9613002088',desarrollo:'Grand Mayan',lote:'Palenque Mz 7 Lt 21',estatus:'Venta',comision:7002},
+        {nombre:'Johan Melgar',tel:'9612380191',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 2',estatus:'Venta',comision:7002},
+        {nombre:'Meynardo Camerino',tel:'',desarrollo:'Grand Mayan',lote:'Balam Mz 1 Lt 2',estatus:'Venta',comision:7252.50},
+        {nombre:'Yurisbel Aguilar',tel:'3058329427',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 7',estatus:'Venta',comision:7200},
+        {nombre:'Lilia Castillo',tel:'9613594440',desarrollo:'Grand Mayan',lote:'Palenque Mz 9 Lt 6',estatus:'Venta',comision:7783.50},
+        {nombre:'Nancy Trinidad',tel:'9613208322',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lt 10',estatus:'Venta',comision:8280},
+        {nombre:'Hijo de Alba Luz',tel:'',desarrollo:'Grand Mayan',lote:'Toniná Mz 15 Lts 6 y 7',estatus:'Venta',comision:14400},
+        {nombre:'Hija de Alba Luz',tel:'',desarrollo:'Grand Mayan',lote:'Toniná Mz 15 Lt 8',estatus:'Venta',comision:7550},
+        {nombre:'Carolina Solis',tel:'',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 15',estatus:'Venta',comision:6343.50},
+        {nombre:'Paloma Sarai Velazco',tel:'9931676837',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 9',estatus:'Venta',comision:7200},
+        {nombre:'Elba Velazco',tel:'9612555152',desarrollo:'Grand Mayan',lote:'Palenque Mz 6 Lt 10',estatus:'Venta',comision:7200},
+        {nombre:'Jose Manuel Galaviz',tel:'9931676837',desarrollo:'Grand Mayan',lote:'Palenque Mz 5 Lt 8',estatus:'Venta',comision:7002},
+        {nombre:'Adrian Hdz Jimenez',tel:'5532005938',desarrollo:'Grand Mayan',lote:'Bonampak Mz 5 Lt 9',estatus:'Venta',comision:7200},
+        {nombre:'Elba Velazco 2',tel:'9612555152',desarrollo:'Grand Mayan',lote:'Palenque Mz 5 Lt 7',estatus:'Venta',comision:7200},
+        {nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',lote:'Toniná Mz 7 Lts 7 y 8',estatus:'Venta',comision:16905},
+        {nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',lote:'Toniná Mz 1 Lts 2 y 3',estatus:'Venta',comision:14700},
+        {nombre:'Ricardo Chanona',tel:'9616685240',desarrollo:'Grand Mayan',lote:'Bonampak Mz 8 Lt 14',estatus:'Venta',comision:8670},
+        {nombre:'Sandra Luz Diaz',tel:'9614793788',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 13',estatus:'Venta',comision:7200},
+        {nombre:'Beatriz Avendaño',tel:'9612156516',desarrollo:'Grand Mayan',lote:'Toniná Mz 3 Lt 9',estatus:'Venta',comision:8280},
+        {nombre:'Alexis Vazquez',tel:'9631372048',desarrollo:'Grand Mayan',lote:'Toniná Mz 20 Lt 10 y 11',estatus:'Venta',comision:16440},
+        {nombre:'Sergio Zunun',tel:'9611146013',desarrollo:'Grand Mayan',lote:'Toniná Mz 6 Lt 7',estatus:'Venta',comision:7266},
+        {nombre:'Sergio Zunun',tel:'9611146013',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 8',estatus:'Venta',comision:9277},
+        {nombre:'Victor Cabrera',tel:'5582336577',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 7',estatus:'Venta',comision:7200},
+        {nombre:'Carlos Padilla',tel:'9612303157',desarrollo:'Grand Mayan',lote:'Palenque Mz 11 Lt 6',estatus:'Venta',comision:7200},
+        {nombre:'Beatriz Aparicio',tel:'9612193405',desarrollo:'Grand Mayan',lote:'Bonampak Mz 5 Lt 10',estatus:'Venta',comision:7002},
+        {nombre:'Jonathan Flores',tel:'9611778980',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 5 Lt 2',estatus:'Venta',comision:7200},
+        {nombre:'Adelina Cruz',tel:'9611799986',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 3 Lt 8',estatus:'Venta',comision:7200},
+        {nombre:'Olga Zamudio',tel:'9611978885',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 4 Lt 4',estatus:'Venta',comision:7200},
+        {nombre:'José Ramón Velázquez',tel:'9611060201',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 2 Lt 5,6,17,18',estatus:'Venta',comision:25674},
+        {nombre:'Reina Ordóñez',tel:'9615934273',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 2 Lt 13',estatus:'Venta',comision:7200},
+        {nombre:'Carla Rocío Cruz',tel:'9613224929',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 3 Lt 3',estatus:'Venta',comision:7200},
+        {nombre:'Junny Ordóñez',tel:'9612850810',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 11 Lt 7',estatus:'Venta',comision:7200},
+        {nombre:'Junny Ordóñez',tel:'9612850810',desarrollo:'Grand Mayan',lote:'Yaxchilan Mz 9 Lt 12',estatus:'Venta',comision:7920},
+        {nombre:'Fredi Falconi',tel:'9671078595',desarrollo:'Grand Mayan',lote:'Bonampak Mz 8 Lt 16',estatus:'Venta',comision:8688},
+        {nombre:'Ramiro Castillo',tel:'2211964971',desarrollo:'Grand Mayan',lote:'Toniná Mz 11 Lt 5 y 6',estatus:'Venta',comision:14400},
+        {nombre:'Andrés Talango',tel:'9612369471',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lt 19',estatus:'Venta',comision:7002},
+        {nombre:'Francisco Talango',tel:'9611313359',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lt 18',estatus:'Venta',comision:7000},
+        {nombre:'Cinthia Nuricumbo',tel:'9612034784',desarrollo:'Grand Mayan',lote:'Bonampak Mz 9 Lt 2',estatus:'Venta',comision:7200},
+        {nombre:'Juan Pablo Nuricumbo',tel:'9612362652',desarrollo:'Grand Mayan',lote:'Bonampak Mz 7 Lt 18',estatus:'Venta',comision:7200},
+        {nombre:'Artemio',tel:'9611364991',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 17',estatus:'Venta',comision:8670},
+        {nombre:'Abel Ramos',tel:'9612984428',desarrollo:'Grand Mayan',lote:'Tulum Mz 11 Lt 2',estatus:'Venta',comision:7245},
+        {nombre:'Marcoa Antonio Flores',tel:'9613485035',desarrollo:'Grand Mayan',lote:'Tulum Mz 12 Lt 6',estatus:'Venta',comision:8122},
+        {nombre:'Ma del Carmen Solorzano',tel:'9612500108',desarrollo:'Grand Mayan',lote:'Toniná Mz 22 Lt 9',estatus:'Venta',comision:7200},
+        {nombre:'Jorge Nucamenti',tel:'9612012607',desarrollo:'Grand Mayan',lote:'Tulum Mz 4 Lt 17 y 18',estatus:'Venta',comision:14100},
+        {nombre:'Clarissa Ruíz',tel:'9616033424',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 12',estatus:'Venta',comision:7245},
+        {nombre:'Victor Cabrera',tel:'5582336577',desarrollo:'Sima Park',lote:'Mz 11 Lt 18',estatus:'Venta',comision:5000},
+        {nombre:'Martha Patricia Gordillo',tel:'9612994970',desarrollo:'Sima Park',lote:'Mz 14 Lt 4 y 5',estatus:'Venta',comision:8000},
+        {nombre:'Janet Peralta',tel:'9616199314',desarrollo:'Sima Park',lote:'Mz 15 Lt 4',estatus:'Venta',comision:5000},
+        {nombre:'Alejandra',tel:'',desarrollo:'Sima Park',lote:'Mz 15 Lt 5,6 y 7',estatus:'Venta',comision:12000},
+        {nombre:'Socorro Martinez',tel:'9671476487',desarrollo:'Sima Park',lote:'Mz 10 Lote 2',estatus:'Venta',comision:5000},
+        {nombre:'Rossana Sayago',tel:'9611792183',desarrollo:'Sima Park',lote:'Mz 15 Lote 2',estatus:'Venta',comision:5000},
+        {nombre:'Miriam Cetina',tel:'9611792183',desarrollo:'Sima Park',lote:'Mz 13 Lote 3',estatus:'Venta',comision:4000},
+        {nombre:'Emilio Cetina',tel:'9616073582',desarrollo:'Sima Park',lote:'Mz 13 Lote 4',estatus:'Venta',comision:4000},
+        {nombre:'Joshep Casanova',tel:'9616030844',desarrollo:'Grand Mayan',lote:'Tulum Mz 8 Lt 5',estatus:'Venta',comision:7000}
+      ],
+      'Luis García': [
+        {nombre:'María del Pilar Ortega',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle Pinos Mz 02 Lt 06 Casa 11',estatus:'Venta',comision:14250},
+        {nombre:'Amelita Ovalles',tel:'9612107083',desarrollo:'Monte Misen',lote:'Ave Osaka Mz 13 Lt 20',estatus:'Venta',comision:7000},
+        {nombre:'Elias Jara',tel:'9612429708',desarrollo:'San Antonio',lote:'Ave Chiapas Mzana H Lt 01-18',estatus:'Cancelado',comision:6000},
+        {nombre:'Rosa Ornelas',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle Amoles Mz 01 Lt 07',estatus:'Venta',comision:0},
+        {nombre:'Nelva Edith Gomez',tel:'9611968966',desarrollo:'Monte Misen',lote:'Calle Hiroshima Mz 8 Lt 2',estatus:'Venta',comision:5000},
+        {nombre:'Vanessa Gomez',tel:'9614236952',desarrollo:'San Antonio',lote:'Mzana 20 lote 5 y 6',estatus:'Venta',comision:10525},
+        {nombre:'Oscar Galeazzi',tel:'9611293254',desarrollo:'Grand Mayan',lote:'Bonampak Mz 4 Lt 18',estatus:'Venta',comision:7200},
+        {nombre:'Juan de Dios Albores',tel:'9613202460',desarrollo:'Orquídea Campestre',lote:'Mz 11 Lt 4 y 11',estatus:'Venta',comision:8726},
+        {nombre:'Karla Cano / Ismael García',tel:'9931173462',desarrollo:'Orquídea Campestre',lote:'Mz 1 Lt 21',estatus:'Venta',comision:6500},
+        {nombre:'Hugo Ancheyta',tel:'9622436270',desarrollo:'Orquídea Campestre',lote:'Mz 9 Lt 1',estatus:'Venta',comision:5000},
+        {nombre:'Octavio Rios',tel:'9612691869',desarrollo:'HN Bosques de Sayab',lote:'Calle Amoles Mz 01 Lt 07 Casa 1',estatus:'Venta',comision:1500},
+        {nombre:'Amanda Moguel',tel:'9615795289',desarrollo:'HN Bosques de Sayab',lote:'Calle Caobas Mz 02 Lt 01 Casa 1',estatus:'Venta',comision:1500},
+        {nombre:'Ermenegildo Diaz',tel:'9616508970',desarrollo:'HN Bosques de Sayab',lote:'Calle Pinos Mz 02 Lt 06 Casa 12',estatus:'Venta',comision:0},
+        {nombre:'Luis Enrique Moreno',tel:'9615799363',desarrollo:'HN Bosques de Sayab',lote:'Calle Pinos Mz 02 Lt 04 Casa 7',estatus:'Venta',comision:0},
+        {nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mza 1 Lt 1 y 2',estatus:'Venta',comision:10500},
+        {nombre:'Horacio Culebro hijo',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mza 1 Lt 11',estatus:'Venta',comision:8209},
+        {nombre:'Luis Antonio',tel:'9611998204',desarrollo:'San Antonio',lote:'Mz B Lt 17 y 18',estatus:'Venta',comision:2000},
+        {nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mza 1 Lt 6 y 7',estatus:'Venta',comision:10000},
+        {nombre:'Horacio Culebro',tel:'9616572522',desarrollo:'Orquídea Campestre',lote:'Mz 1 Lts 3,4,5',estatus:'Venta',comision:15000},
+        {nombre:'Salvador y Maria Teresa Fuentes',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle Caobas Mz 02 Lt 01 Casa 2',estatus:'Venta',comision:18512},
+        {nombre:'Ines Olga Perez',tel:'',desarrollo:'Cascadas del Sur',lote:'Manz 9 Lt 15',estatus:'Venta',comision:7002.80},
+        {nombre:'Hermila Perez',tel:'',desarrollo:'Cascadas del Sur',lote:'Manz 9 Lt 16',estatus:'Venta',comision:6800}
+      ],
+      'Daniel Vázquez': [
+        {nombre:'Jesús Antonio Orantes',tel:'',desarrollo:'HN Bosques de Sayab',lote:'Calle B Mz 1 Lt 03 Casa 3',estatus:'Venta',comision:4250},
+        {nombre:'Ofir Tinoco Avila',tel:'',desarrollo:'Real Campestre',lote:'Pendiente',estatus:'Venta',comision:2500}
+      ]
+    }
+
     function cargarLeadsAsesor() {
       const nombre = window.currentUser.nombre
       const todos = JSON.parse(
@@ -4702,6 +4988,114 @@ function renderConfig() {
             💾 Guardar mis comisiones
           </button>`
       }
+
+      if(tab === 'clientes') {
+        renderClientesAsesor(c)
+      }
+    }
+
+    function renderClientesAsesor(contenido) {
+      const nombre = window.currentUser.nombre
+      const color = window.colorAsesor
+      const clientes = CLIENTES_IBR[nombre] || []
+      
+      const ventas = clientes.filter(c=>c.estatus==='Venta')
+      const cancelados = clientes.filter(c=>c.estatus==='Cancelado')
+      const totalComisiones = ventas.reduce((s,c)=>s+c.comision,0)
+      
+      contenido.innerHTML = `
+        <div style="margin-bottom:20px">
+          <div style="color:#fff;font-size:22px;
+            font-weight:700">Mis Clientes</div>
+          <div style="color:#555;font-size:13px;
+            margin-top:4px">
+            ${ventas.length} ventas · 
+            ${cancelados.length} cancelados
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;
+          gap:12px;margin-bottom:20px">
+          <div style="background:#1E1E1E;border-radius:12px;
+            padding:16px;border-left:3px solid ${color}">
+            <div style="color:#888;font-size:11px;
+              letter-spacing:1px">TOTAL CLIENTES</div>
+            <div style="color:#fff;font-size:28px;
+              font-weight:700">${ventas.length}</div>
+          </div>
+          <div style="background:#1E1E1E;border-radius:12px;
+            padding:16px;border-left:3px solid ${color}">
+            <div style="color:#888;font-size:11px;
+              letter-spacing:1px">COMISIONES</div>
+            <div style="color:${color};font-size:20px;
+              font-weight:700">
+              $${totalComisiones.toLocaleString('es-MX',
+                {minimumFractionDigits:0})}
+            </div>
+          </div>
+        </div>
+
+        <input type="text" id="buscarCliente"
+          placeholder="🔍 Buscar cliente..."
+          oninput="filtrarClientes(this.value)"
+          style="width:100%;padding:12px;
+          background:#1E1E1E;color:#fff;
+          border:1px solid #333;border-radius:10px;
+          font-size:14px;box-sizing:border-box;
+          margin-bottom:16px">
+
+        <div id="listaClientes">
+          ${clientes.map(c => `
+          <div class="cliente-card"
+            data-nombre="${c.nombre.toLowerCase()}"
+            data-desarrollo="${c.desarrollo.toLowerCase()}"
+            style="background:#1E1E1E;border-radius:12px;
+            padding:16px;margin-bottom:10px;
+            border-left:3px solid ${c.estatus==='Cancelado'?'#DC2626':color}">
+            <div style="display:flex;justify-content:space-between;
+              align-items:flex-start">
+              <div style="color:#fff;font-weight:700;
+                font-size:14px;flex:1">
+                ${c.nombre}
+              </div>
+              <span style="background:${c.estatus==='Cancelado'?'#DC2626':c.estatus==='Venta'?'#16A34A':'#D97706'};
+                color:#fff;padding:3px 8px;border-radius:20px;
+                font-size:10px;font-weight:700;
+                white-space:nowrap;margin-left:8px">
+                ${c.estatus}
+              </span>
+            </div>
+            <div style="color:#666;font-size:12px;margin:6px 0">
+              🏘️ ${c.desarrollo} · ${c.lote}
+            </div>
+            ${c.comision > 0 ? `
+            <div style="color:${color};font-size:13px;
+              font-weight:600">
+              💰 $${c.comision.toLocaleString('es-MX')}
+            </div>` : ''}
+            ${c.tel ? `
+            <div style="margin-top:10px">
+              <a href="https://wa.me/52${c.tel}"
+                target="_blank"
+                style="background:#16A34A;color:#fff;
+                padding:8px 14px;border-radius:8px;
+                font-size:12px;text-decoration:none;
+                font-weight:600">
+                💬 ${c.tel}
+              </a>
+            </div>` : ''}
+          </div>`).join('')}
+        </div>`
+    }
+
+    function filtrarClientes(texto) {
+      const cards = document.querySelectorAll('.cliente-card')
+      const q = texto.toLowerCase()
+      cards.forEach(card => {
+        const match = card.dataset.nombre.includes(q) ||
+          card.dataset.desarrollo.includes(q)
+        card.style.display = match ? 'block' : 'none'
+      })
     }
 
     function guardarComisionesAsesor(nombre) {
