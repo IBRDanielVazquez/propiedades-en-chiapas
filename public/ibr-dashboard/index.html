@@ -4748,6 +4748,43 @@ function renderConfig() {
         if(effectiveRol === 'admin') {
           document.getElementById('APP_ADMIN')
             .style.display = 'block'
+
+          // Forzar reinicialización de proyectos si vacío
+          const proyectosExist = localStorage.getItem('ibr_proyectos')
+          const proyectos = proyectosExist ? JSON.parse(proyectosExist) : []
+          if(!proyectosExist || proyectos.length === 0) {
+            localStorage.setItem('ibr_proyectos', JSON.stringify([
+              {id:'bella-vista', nombre:'Bella Vista Ocozocoautla', municipio:'Ocozocoautla', lotes_total:513, vendidos:193, disponibles:320, cancelados:3, ventas_ibr:23, comision_compartida:5400, mensualidad_compartida:350, color:'#8B0000', activo:true},
+              {id:'bosques-chapultepec', nombre:'Bosques de Chapultepec', municipio:'Chiapas', lotes_total:null, vendidos:6, disponibles:null, cancelados:0, ventas_ibr:6, comision_base:31600, mensualidad_base:3500, color:'#1D4ED8', activo:true}
+            ]))
+          }
+
+          // Forzar carga de leads desde citas-historico.json si vacío
+          const leadsExist = localStorage.getItem('ibr_leads')
+          if(!leadsExist || JSON.parse(leadsExist).length === 0) {
+            fetch('./citas-historico.json')
+              .then(r=>r.json())
+              .then(d=>{
+                const norm = (d.citas||[]).map(l=>({
+                  id: l.id,
+                  name: l.nombre_cliente||l.titulo||'Sin nombre',
+                  phone: (l.telefono||'').replace(/\D/g,''),
+                  project: l.titulo||'',
+                  advisor: l.asesor||l.advisor||'Sin asignar',
+                  date: l.fecha||'',
+                  time: l.hora||'',
+                  status: l.estatus||'Programada',
+                  whatsapp: l.whatsapp||'',
+                  lastComment: l.descripcion||''
+                }))
+                localStorage.setItem('ibr_leads', JSON.stringify(norm))
+                leads = norm
+                window.allLeads = norm
+                renderDashAdmin()
+              })
+              .catch(()=>console.log('Sin JSON local'))
+          }
+
           populateSelects();
           updateAuth();
           switchTab('resumen');
