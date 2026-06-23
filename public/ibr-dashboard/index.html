@@ -1034,76 +1034,54 @@
 
 <div id="APP_ASESOR" style="display:none;
   background:#0A0A0A;min-height:100vh;
-  font-family:-apple-system,sans-serif">
-
-  <header style="background:#1A1A1A;
-    border-bottom:2px solid #C0392B;
-    padding:16px 20px;
-    display:flex;justify-content:space-between;
-    align-items:center;position:sticky;
-    top:0;z-index:100">
-    <div>
-      <div id="asesorNombre" style="color:#fff;
-        font-weight:700;font-size:16px">Asesor</div>
-      <div style="color:#C0392B;font-size:11px;
-        letter-spacing:2px;margin-top:2px">
-        IBR · ASESOR
-      </div>
+  font-family:-apple-system,sans-serif;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:32px;text-align:center">
+  
+  <div style="background:#1A1A1A;
+    border-radius:20px;padding:32px;
+    border:1px solid #2A2A2A;
+    max-width:320px;width:100%">
+    
+    <div style="background:#8B0000;
+      width:60px;height:60px;
+      border-radius:16px;
+      display:flex;align-items:center;
+      justify-content:center;
+      margin:0 auto 20px;
+      font-size:24px;font-weight:900;
+      color:#fff">IBR</div>
+    
+    <div id="asesorNombreWelcome"
+      style="color:#fff;font-size:20px;
+      font-weight:700;margin-bottom:8px">
+      Bienvenido
     </div>
+    
+    <div style="color:#555;font-size:13px;
+      margin-bottom:24px">
+      IBR · Asesor
+    </div>
+    
+    <a href="./historico-ventas.html"
+      style="display:block;background:#1E1E1E;
+      color:#fff;padding:14px;border-radius:12px;
+      text-decoration:none;font-size:14px;
+      font-weight:600;margin-bottom:10px;
+      border:1px solid #333">
+      📊 Mi Historial de Ventas →
+    </a>
+    
     <button onclick="cerrarSesion()"
-      style="background:#2A2A2A;color:#fff;
-      border:1px solid #444;padding:8px 16px;
-      border-radius:20px;font-size:13px;
-      cursor:pointer">
-      Salir
+      style="width:100%;background:none;
+      color:#555;border:1px solid #333;
+      padding:12px;border-radius:12px;
+      font-size:13px;cursor:pointer;
+      margin-top:8px">
+      Cerrar sesión
     </button>
-  </header>
-
-  <div id="contenido-asesor"
-    style="padding:16px 16px 100px">
   </div>
-
-  <nav style="position:fixed;bottom:0;left:0;
-    width:100%;background:#111;
-    display:flex;border-top:1px solid #2A2A2A;
-    padding:8px 0 20px;z-index:100">
-    <button onclick="switchAsesor('leads')"
-      id="aBtn-leads"
-      style="flex:1;background:none;border:none;
-      color:#555;font-size:10px;font-weight:600;
-      display:flex;flex-direction:column;
-      align-items:center;gap:4px;padding:8px 0;
-      cursor:pointer;letter-spacing:1px">
-      👥<span>MIS LEADS</span>
-    </button>
-    <button onclick="switchAsesor('lotes')"
-      id="aBtn-lotes"
-      style="flex:1;background:none;border:none;
-      color:#555;font-size:10px;font-weight:600;
-      display:flex;flex-direction:column;
-      align-items:center;gap:4px;padding:8px 0;
-      cursor:pointer;letter-spacing:1px">
-      📋<span>MIS LOTES</span>
-    </button>
-    <button onclick="switchAsesor('clientes')"
-      id="aBtn-clientes"
-      style="flex:1;background:none;border:none;
-      color:#555;font-size:10px;font-weight:600;
-      display:flex;flex-direction:column;
-      align-items:center;gap:4px;padding:8px 0;
-      cursor:pointer;letter-spacing:1px">
-      🏆<span>MIS CLIENTES</span>
-    </button>
-    <button onclick="switchAsesor('historico')"
-      id="aBtn-historico"
-      style="flex:1;background:none;border:none;
-      color:#555;font-size:10px;font-weight:600;
-      display:flex;flex-direction:column;
-      align-items:center;gap:4px;padding:8px 0;
-      cursor:pointer;letter-spacing:1px">
-      📊<span>HISTORIAL</span>
-    </button>
-  </nav>
 </div>
 
 <!-- MODALS -->
@@ -1127,8 +1105,19 @@
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Proyecto*</label>
                     <select id="lf-project" required class="w-full bg-white border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
                         <option value="Bella Vista">Bella Vista</option>
-                        <option value="Bosques">Bosques</option>
-                        <option value="Otro">Otro</option>
+                        <option value="Grand Mayan">Grand Mayan</option>
+                        <option value="Don Clemente">Don Clemente</option>
+                        <option value="Las Animas">Las Animas</option>
+                        <option value="Monte Misen">Monte Misen</option>
+                        <option value="San Antonio">San Antonio</option>
+                        <option value="HN Bosques de Sayab">HN Bosques de Sayab</option>
+                        <option value="Orquídea Campestre">Orquídea Campestre</option>
+                        <option value="Sima Park">Sima Park</option>
+                        <option value="El Arenal">El Arenal</option>
+                        <option value="La Cañada">La Cañada</option>
+                        <option value="Cascadas del Sur">Cascadas del Sur</option>
+                        <option value="Bosques del Sur">Bosques del Sur</option>
+                        <option value="Real Campestre">Real Campestre</option>
                     </select>
                 </div>
                 <div>
@@ -1209,7 +1198,22 @@
                 <h4 class="font-black text-ibr-green uppercase tracking-widest text-[10px]">🎉 Detalle de Venta</h4>
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Proyecto*</label>
-                    <select id="rf-proj" class="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs focus:outline-none"><option value="Bella Vista Ocozocoautla">Bella Vista Ocozocoautla</option><option value="Bosques de Chapultepec">Bosques de Chapultepec</option></select>
+                    <select id="rf-proj" class="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs focus:outline-none">
+                        <option value="Bella Vista">Bella Vista</option>
+                        <option value="Grand Mayan">Grand Mayan</option>
+                        <option value="Don Clemente">Don Clemente</option>
+                        <option value="Las Animas">Las Animas</option>
+                        <option value="Monte Misen">Monte Misen</option>
+                        <option value="San Antonio">San Antonio</option>
+                        <option value="HN Bosques de Sayab">HN Bosques de Sayab</option>
+                        <option value="Orquídea Campestre">Orquídea Campestre</option>
+                        <option value="Sima Park">Sima Park</option>
+                        <option value="El Arenal">El Arenal</option>
+                        <option value="La Cañada">La Cañada</option>
+                        <option value="Cascadas del Sur">Cascadas del Sur</option>
+                        <option value="Bosques del Sur">Bosques del Sur</option>
+                        <option value="Real Campestre">Real Campestre</option>
+                    </select>
                 </div>
                 <div class="flex gap-3">
                     <div class="w-1/2">
@@ -1606,43 +1610,32 @@
     let payments = JSON.parse(localStorage.getItem('ibr_pagos')) || [];
     let clientPayments = JSON.parse(localStorage.getItem('ibr_cobros_clientes')) || [];
 
-    // Initialize ibr_proyectos if not present
-    if (!localStorage.getItem('ibr_proyectos')) {
-        localStorage.setItem('ibr_proyectos', JSON.stringify([
-          {
-            id: "bella-vista",
-            nombre: "Bella Vista Ocozocoautla",
-            municipio: "Ocozocoautla",
-            lotes_total: 513,
-            vendidos: 193,
-            disponibles: 320,
-            cancelados: 3,
-            ventas_ibr: 23,
-            comision_base: 10800,
-            comision_compartida: 5400,
-            mensualidad_base: 700,
-            mensualidad_compartida: 350,
-            color: "#8B0000",
-            activo: true
-          },
-          {
-            id: "bosques-chapultepec",
-            nombre: "Bosques de Chapultepec",
-            municipio: "Chiapas",
-            lotes_total: null,
-            vendidos: 6,
-            disponibles: null,
-            cancelados: 0,
-            ventas_ibr: 6,
-            comision_base: 31600,
-            comision_compartida: 31600,
-            mensualidad_base: 3500,
-            mensualidad_compartida: 3500,
-            color: "#1D4ED8",
-            activo: true
-          }
-        ]));
-    }
+    // Initialize ibr_proyectos with all active and historical developments if not present or missing
+    const defaultProyectos = [
+      { id: "bella-vista", nombre: "Bella Vista Ocozocoautla", municipio: "Ocozocoautla", lotes_total: 513, vendidos: 193, disponibles: 320, cancelados: 3, ventas_ibr: 23, comision_base: 10800, comision_compartida: 5400, mensualidad_base: 700, mensualidad_compartida: 350, color: "#8B0000", activo: true },
+      { id: "bosques-chapultepec", nombre: "Bosques de Chapultepec", municipio: "Chiapas", lotes_total: null, vendidos: 6, disponibles: null, cancelados: 0, ventas_ibr: 6, comision_base: 31600, comision_compartida: 31600, mensualidad_base: 3500, mensualidad_compartida: 3500, color: "#1D4ED8", activo: true },
+      { id: "grand-mayan", nombre: "Grand Mayan", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#7C3AED", activo: true },
+      { id: "don-clemente", nombre: "Don Clemente", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#EC4899", activo: true },
+      { id: "las-animas", nombre: "Las Animas", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#F59E0B", activo: true },
+      { id: "monte-misen", nombre: "Monte Misen", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#10B981", activo: true },
+      { id: "san-antonio", nombre: "San Antonio", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#3B82F6", activo: true },
+      { id: "hn-bosques-sayab", nombre: "HN Bosques de Sayab", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#6366F1", activo: true },
+      { id: "orquidea-campestre", nombre: "Orquídea Campestre", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#8B5CF6", activo: true },
+      { id: "sima-park", nombre: "Sima Park", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#A855F7", activo: true },
+      { id: "el-arenal", nombre: "El Arenal", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#D946EF", activo: true },
+      { id: "la-canada", nombre: "La Cañada", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#F43F5E", activo: true },
+      { id: "cascadas-del-sur", nombre: "Cascadas del Sur", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#EF4444", activo: true },
+      { id: "bosques-del-sur", nombre: "Bosques del Sur", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#06B6D4", activo: true },
+      { id: "real-campestre", nombre: "Real Campestre", municipio: "Chiapas", lotes_total: null, vendidos: 0, disponibles: null, cancelados: 0, ventas_ibr: 0, comision_base: 10000, comision_compartida: 5000, color: "#0EA5E9", activo: true }
+    ];
+
+    let currentProyectos = JSON.parse(localStorage.getItem('ibr_proyectos') || '[]');
+    defaultProyectos.forEach(dp => {
+      if (!currentProyectos.some(p => p.id === dp.id || p.nombre === dp.nombre)) {
+        currentProyectos.push(dp);
+      }
+    });
+    localStorage.setItem('ibr_proyectos', JSON.stringify(currentProyectos));
     window.proyectoActivo = 'todos';
 
 
@@ -2555,7 +2548,7 @@ function populateSelects() {
         } else {
             nav.innerHTML = `
                 <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Leads</span></button>
-                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('lotes')"><span class="text-2xl">📋</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Lotes</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('lotes')"><span class="text-2xl">📋</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis ventas actuales</span></button>
             `;
         }
     }
@@ -4760,21 +4753,9 @@ function renderConfig() {
           checkBanners();
         } else {
           document.getElementById('APP_ASESOR')
-            .style.display = 'block'
-          document.getElementById('asesorNombre')
-            .textContent = effectiveName
-
-          const colores = {
-            'Lupyta Mendoza': '#7C3AED',
-            'Carmen Jiménez': '#0891B2',
-            'Luis García':    '#059669'
-          }
-          window.colorAsesor = colores[effectiveName]||'#C0392B'
-
-          window.currentUser = { nombre: effectiveName, rol: 'asesor' };
-
-          cargarLeadsAsesor();
-          switchAsesor('leads');
+            .style.display = 'flex'
+          document.getElementById('asesorNombreWelcome')
+            .textContent = session.nombre
         }
     }
 
@@ -5042,40 +5023,60 @@ function renderConfig() {
           </a>`
       }
 
+
       if(tab === 'lotes') {
-        const lotes = LOTES_ASESOR[nombre] || []
+        const hardcodedLotes = LOTES_ASESOR[nombre] || []
         const guardados = JSON.parse(
           localStorage.getItem('ibr_com_'+nombre)||'{}')
+
+        const hardcoded = hardcodedLotes.map(l => ({
+          id: l.id,
+          label: l.label,
+          project: 'Bella Vista',
+          co: l.co ? `con ${l.co}` : '',
+          com: guardados[l.id] || 0
+        }));
+
+        const dynamic = salesLocal.filter(s => s.adv === nombre || s.adv2 === nombre).map(s => ({
+          id: s.id,
+          label: `Mz ${s.mz} Lt ${s.lote}`,
+          project: s.project || s.proyecto || 'Bella Vista',
+          co: s.obs || s.type || '',
+          com: s.com || 0
+        }));
+
+        const salesList = [...dynamic, ...hardcoded];
 
         c.innerHTML = `
           <div style="margin-bottom:20px">
             <div style="color:#fff;font-size:22px;
-              font-weight:700">Mis Lotes</div>
-            <div style="color:#555;font-size:13px;
+              font-weight:700">Mis ventas actuales</div>
+            <div style="color:#888;font-size:14px;
               margin-top:4px">
-              Bella Vista · ${lotes.length} lotes vendidos
+              Total consolidado: ${salesList.length} ventas actuales
             </div>
           </div>
-          ${lotes.map(l => `
+          ${salesList.map(s => `
           <div style="background:#1E1E1E;
             border-radius:14px;padding:16px;
             margin-bottom:12px;
             border-left:3px solid ${color}">
             <div style="color:#fff;font-weight:700;
-              font-size:15px">
-              Bella Vista · ${l.label}
+              font-size:16px">
+              ${s.project} &middot; ${s.label}
             </div>
-            <div style="color:#555;font-size:12px;
-              margin:4px 0 14px">
-              con ${l.co}
-            </div>
-            <div style="color:#888;font-size:11px;
+            ${s.co ? `
+            <div style="color:#777;font-size:13px;
+              margin:4px 0 12px">
+              ${s.co}
+            </div>` : '<div style="margin-bottom:12px"></div>'}
+            <div style="color:#888;font-size:12px;
               letter-spacing:1px;margin-bottom:6px">
               COMISIÓN PACTADA ($)
             </div>
             <input type="number"
-              id="com_${l.id}"
-              value="${guardados[l.id]||''}"
+              id="com_${s.id}"
+              value="${s.com || ''}"
               placeholder="0.00"
               style="width:100%;padding:12px;
               background:#2A2A2A;color:#fff;
@@ -5258,14 +5259,28 @@ function renderConfig() {
     }
 
     function guardarComisionesAsesor(nombre) {
-      const lotes = LOTES_ASESOR[nombre] || []
-      const datos = {}
-      lotes.forEach(l => {
-        const v = document.getElementById('com_'+l.id)?.value
-        if(v) datos[l.id] = parseFloat(v)
+      const guardados = JSON.parse(localStorage.getItem('ibr_com_'+nombre) || '{}')
+      const inputs = document.querySelectorAll('input[id^="com_"]')
+      inputs.forEach(input => {
+        const id = input.id.replace('com_', '')
+        const v = input.value
+        
+        if (id.startsWith('VTA-')) {
+          const sIdx = salesLocal.findIndex(s => s.id === id)
+          if (sIdx > -1) {
+            salesLocal[sIdx].com = v ? parseFloat(v) : 0
+          }
+        } else {
+          if (v !== '') {
+            guardados[id] = parseFloat(v) || 0
+          } else {
+            delete guardados[id]
+          }
+        }
       })
-      localStorage.setItem('ibr_com_'+nombre,
-        JSON.stringify(datos))
+      
+      localStorage.setItem('ibr_com_'+nombre, JSON.stringify(guardados))
+      localStorage.setItem('ibr_ventas', JSON.stringify(salesLocal))
       alert('✅ Comisiones guardadas')
     }
 
@@ -5342,12 +5357,139 @@ function renderConfig() {
         localStorage.setItem('ibr_leads',JSON.stringify(todos))
       }
 
+      // If "✅ Compró", show sale details form before closing
+      if(resultado === '✅ Compró') {
+        // Remove the first modal
+        document.querySelector('[style*="rgba(0,0,0,0.85)"]')?.remove()
+
+        const proyectos = JSON.parse(localStorage.getItem('ibr_proyectos') || '[]')
+        const lead = todos[idx] || {}
+        const asesorName = lead.advisor || lead.asesor || window.currentAsesorName || ''
+
+        const saleModal = document.createElement('div')
+        saleModal.style.cssText = `
+          position:fixed;inset:0;background:rgba(0,0,0,0.9);
+          z-index:999;display:flex;align-items:flex-end`
+        saleModal.innerHTML = `
+          <div style="background:#1A1A1A;width:100%;
+            border-radius:20px 20px 0 0;padding:24px;
+            max-height:85vh;overflow-y:auto">
+            <div style="color:#fff;font-size:18px;
+              font-weight:700;margin-bottom:4px">
+              🎉 Registrar Venta
+            </div>
+            <div style="color:#888;font-size:13px;
+              margin-bottom:20px">
+              ${lead.name || lead.titulo || lead.nombre || 'Cliente'}
+            </div>
+
+            <label style="color:#aaa;font-size:12px;
+              letter-spacing:1px;display:block;margin-bottom:6px">
+              DESARROLLO
+            </label>
+            <select id="asesor-venta-proj"
+              style="width:100%;background:#2A2A2A;color:#fff;
+              border:1px solid #444;border-radius:10px;
+              padding:12px;font-size:15px;margin-bottom:16px;
+              box-sizing:border-box">
+              ${proyectos.map(p => `<option value="${p.name || p}">${p.name || p}</option>`).join('')}
+            </select>
+
+            <label style="color:#aaa;font-size:12px;
+              letter-spacing:1px;display:block;margin-bottom:6px">
+              MANZANA
+            </label>
+            <input type="text" id="asesor-venta-mz"
+              placeholder="Ej: 4"
+              style="width:100%;background:#2A2A2A;color:#fff;
+              border:1px solid #444;border-radius:10px;
+              padding:12px;font-size:15px;margin-bottom:16px;
+              box-sizing:border-box">
+
+            <label style="color:#aaa;font-size:12px;
+              letter-spacing:1px;display:block;margin-bottom:6px">
+              LOTE
+            </label>
+            <input type="text" id="asesor-venta-lote"
+              placeholder="Ej: 12"
+              style="width:100%;background:#2A2A2A;color:#fff;
+              border:1px solid #444;border-radius:10px;
+              padding:12px;font-size:15px;margin-bottom:16px;
+              box-sizing:border-box">
+
+            <label style="color:#aaa;font-size:12px;
+              letter-spacing:1px;display:block;margin-bottom:6px">
+              OBSERVACIONES (opcional)
+            </label>
+            <textarea id="asesor-venta-obs"
+              placeholder="Notas adicionales..."
+              style="width:100%;background:#2A2A2A;color:#fff;
+              border:1px solid #444;border-radius:10px;
+              padding:12px;font-size:14px;margin-bottom:20px;
+              box-sizing:border-box;min-height:60px"></textarea>
+
+            <button onclick="confirmarVentaAsesor('${leadId}','${asesorName}')"
+              style="width:100%;background:${window.colorAsesor || '#4F46E5'};
+              color:#fff;padding:16px;border:none;
+              border-radius:12px;font-size:16px;
+              font-weight:700;cursor:pointer">
+              ✅ Confirmar Venta
+            </button>
+            <button onclick="this.closest('div').parentElement.remove()"
+              style="width:100%;background:#333;
+              color:#999;border:none;padding:14px;
+              border-radius:10px;font-size:14px;
+              margin-top:8px;cursor:pointer">
+              Cancelar
+            </button>
+          </div>`
+        document.body.appendChild(saleModal)
+        return
+      }
+
       setTimeout(() => {
         document.querySelector('[style*="rgba(0,0,0,0.85)"]')
           ?.remove()
         cargarLeadsAsesor()
         switchAsesor('leads')
       }, 500)
+    }
+
+    function confirmarVentaAsesor(leadId, asesorName) {
+      const proj = document.getElementById('asesor-venta-proj')?.value || ''
+      const mz = document.getElementById('asesor-venta-mz')?.value || ''
+      const lote = document.getElementById('asesor-venta-lote')?.value || ''
+      const obs = document.getElementById('asesor-venta-obs')?.value || ''
+
+      const newSale = {
+        id: 'VTA-' + Math.floor(1000 + Math.random() * 9000),
+        project: proj,
+        mz: mz,
+        lote: lote,
+        adv: asesorName,
+        com: 0,
+        date: new Date().toISOString().split('T')[0],
+        obs: obs,
+        estatus: 'Validada',
+        leadId: leadId
+      }
+
+      salesLocal.unshift(newSale)
+      localStorage.setItem('ibr_ventas', JSON.stringify(salesLocal))
+
+      // Also update the lead status
+      const todos = JSON.parse(localStorage.getItem('ibr_leads') || '[]')
+      const idx = todos.findIndex(l => l.id === leadId)
+      if(idx > -1) {
+        todos[idx].status = 'Vendido'
+        localStorage.setItem('ibr_leads', JSON.stringify(todos))
+      }
+
+      // Close modal and refresh
+      document.querySelector('[style*="rgba(0,0,0,0.9)"]')?.remove()
+      cargarLeadsAsesor()
+      switchAsesor('lotes')
+      alert('🎉 Venta registrada exitosamente')
     }
 
     
