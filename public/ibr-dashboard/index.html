@@ -398,7 +398,7 @@
         border:none;font-size:10px;
         display:flex;flex-direction:column;
         align-items:center;gap:4px">
-        👥<span>LEADS</span>
+        👥<span>CITAS</span>
       </button>
     </nav>
 </div>
@@ -2028,53 +2028,18 @@ let citasData = [];
 let citasInterval = null;
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFN-TsGYuDedVD02o994sGiSBVCUcf0S4TzyGq7ABFiVc8btTCkrJt3ldt--eG_DpOPg/exec';
 
-function loadCitasJSONP() {
-    const status = document.getElementById('citas-status');
-    const container = document.getElementById('citas-container');
-    if(status && container.innerHTML === '') {
-        status.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; gap:12px;"><div style="width:24px; height:24px; border:3px solid #333333; border-top-color:#B8924A; border-radius:50%; animation:spin 1s linear infinite;"></div><span>Sincronizando con Google Sheet...</span></div>';
-    }
-    
-    const script = document.createElement('script');
-    script.src = SCRIPT_URL + '?action=citas_sheet&callback=cbCitas&t=' + Date.now();
-    script.onerror = function() {
-        if(status) status.innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al conectar con el servidor</span>';
-    };
-    document.body.appendChild(script);
+function cargarCitas() {
+  var script = document.createElement('script');
+  script.src = 'https://script.google.com/macros/s/AKfycbwFN-TsGYuDedVD02o994sGiSBVCUcf0S4TzyGq7ABFiVc8btTCkrJt3ldt--eG_DpOPg/exec?action=citas_sheet&callback=cbCitas&t=' + Date.now();
+  document.body.appendChild(script);
 }
 
-function cbCitas(data) {
-    const status = document.getElementById('citas-status');
-    if(!data) {
-        if(status) status.innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al cargar citas</span>';
-        return;
-    }
-    
-    citasData = Array.isArray(data) ? data : (data.citas || data.datos || []);
-    
-    citasData = citasData.map(c => {
-        return {
-            id: c.id || c.idCita || '',
-            fecha: c.fecha || c.date || '',
-            hora: c.hora || c.time || '',
-            nombre: c.nombre_cliente || c.prospecto_nombre || c.nombre || 'Sin nombre',
-            telefono: c.telefono || c.prospecto_telefono || '',
-            asesor: c.asesor || c.advisor || 'Sin asignar',
-            desarrollo: c.desarrollo || '',
-            estatus: c.estatus || 'Programada',
-            observaciones: c.observaciones || ''
-        };
-    });
-    
-    citasData.sort((a,b) => {
-        let da = new Date(a.fecha + (a.hora ? 'T' + a.hora : ''));
-        let db = new Date(b.fecha + (b.hora ? 'T' + b.hora : ''));
-        if(isNaN(da.getTime())) da = new Date(a.fecha);
-        if(isNaN(db.getTime())) db = new Date(b.fecha);
-        return db.getTime() - da.getTime(); 
-    });
-
-    renderCitasUI();
+function cbCitas(resp) {
+  if (!resp || !resp.ok) {
+    mostrarErrorCitas('Error al cargar citas');
+    return;
+  }
+  renderCitas(resp.datos || []);
 }
 
 function renderCitasUI() {
