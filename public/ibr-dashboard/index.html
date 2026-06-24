@@ -2053,10 +2053,29 @@ function cbCitas(data) {
     citasData = Array.isArray(data) ? data : (data.citas || data.datos || []);
     
     citasData = citasData.map(c => {
+        // Parsear fecha_hora si viene en un solo campo
+        let f = c.fecha || c.date || '';
+        let h = c.hora || c.time || '';
+        
+        if(c.fecha_hora) {
+            try {
+                let d = new Date(c.fecha_hora);
+                if(!isNaN(d.getTime())) {
+                    f = d.toISOString().split('T')[0];
+                    h = d.toTimeString().split(' ')[0].substring(0,5);
+                } else {
+                    f = c.fecha_hora.split(' ')[0];
+                    h = c.fecha_hora.split(' ')[1] || '';
+                }
+            } catch(e) {
+                f = c.fecha_hora;
+            }
+        }
+        
         return {
-            id: c.id || c.idCita || '',
-            fecha: c.fecha || c.date || '',
-            hora: c.hora || c.time || '',
+            id: c.id || c.idCita || c.id_cita || '',
+            fecha: f,
+            hora: h,
             nombre: c.nombre_cliente || c.prospecto_nombre || c.nombre || 'Sin nombre',
             telefono: c.telefono || c.prospecto_telefono || '',
             asesor: c.asesor || c.advisor || 'Sin asignar',
