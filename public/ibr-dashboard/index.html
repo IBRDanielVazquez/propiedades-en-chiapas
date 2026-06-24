@@ -19,7 +19,9 @@
                             light: 'rgba(184, 146, 74, 0.15)'
                         },
                         card: '#1E1E1E',
-                        border: '#2C2C2C'
+                        border: '#2A2A2A',
+                        inactive: '#2A2A2A',
+                        secondary: '#9E9E9E'
                     }
                 }
             }
@@ -73,7 +75,7 @@
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Token de Acceso</label>
                     <input type="text" id="input-token" placeholder="Introduce tu token o pega tu enlace" 
-                           class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-4 py-3 text-sm focus-gold">
+                           class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-4 py-3 text-sm focus-gold">
                 </div>
                 <button onclick="checkToken()" class="w-full bg-gold hover:bg-gold-hover text-bg font-bold py-3 px-4 rounded-lg transition-colors text-sm uppercase tracking-wider">
                     Continuar →
@@ -83,19 +85,19 @@
             <!-- PIN form (hidden initially) -->
             <div id="step-pin" class="w-full space-y-4 hidden">
                 <div class="text-center mb-2">
-                    <p class="text-xs text-cream/60">Usuario identificado:</p>
+                    <p class="text-xs text-secondary">Usuario identificado:</p>
                     <p id="label-user-name" class="text-lg font-title font-semibold text-gold"></p>
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Código PIN</label>
                     <input type="password" id="input-pin" inputmode="numeric" placeholder="****" maxlength="12"
-                           class="w-full bg-[#1A1A1A] border border-border text-cream text-center text-xl tracking-[0.5em] rounded-lg px-4 py-3 focus-gold">
+                           class="w-full bg-[#2A2A2A] border border-border text-cream text-center text-xl tracking-[0.5em] rounded-lg px-4 py-3 focus-gold">
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="backToToken()" class="w-1/3 bg-transparent border border-border hover:bg-white/5 text-cream font-bold py-3 px-2 rounded-lg transition-colors text-xs uppercase tracking-wider">
+                    <button onclick="backToToken()" class="w-1/3 bg-transparent border border-border hover:bg-inactive text-cream font-bold py-3 px-2 rounded-lg transition-colors text-xs uppercase tracking-wider">
                         Atrás
                     </button>
-                    <button onclick="checkPin()" class="w-2/3 bg-gold hover:bg-gold-hover text-bg font-bold py-3 px-4 rounded-lg transition-colors text-sm uppercase tracking-wider">
+                    <button onclick="checkPin()" class="w-2/3 bg-[#B8924A] hover:bg-[#9E7B3B] text-[#141414] font-bold py-3 px-4 rounded-lg transition-colors text-sm uppercase tracking-wider">
                         Acceder
                     </button>
                 </div>
@@ -113,7 +115,7 @@
                 <span id="user-greeting" class="text-gold text-xs tracking-widest font-semibold uppercase">Hola, Asesor</span>
                 <h2 class="font-title text-2xl font-semibold text-cream">Panel IBR</h2>
             </div>
-            <button onclick="logOut()" class="border border-border text-cream/70 hover:text-cream hover:bg-white/5 text-xs font-bold py-2 px-4 rounded-lg transition-colors uppercase tracking-wider">
+            <button onclick="logOut()" class="border border-border text-secondary hover:text-cream hover:bg-inactive text-xs font-bold py-2 px-4 rounded-lg transition-colors uppercase tracking-wider">
                 Salir
             </button>
         </header>
@@ -126,7 +128,7 @@
                 <div id="tab-mis-citas" class="tab-pane hidden space-y-4">
                     <div class="flex justify-between items-center">
                         <h3 class="text-lg font-semibold uppercase tracking-wider text-gold font-title">Mis Citas</h3>
-                        <span id="citas-refresh-indicator" class="text-[10px] text-cream/40">Autoconsulta cada 5m</span>
+                        <span id="citas-refresh-indicator" class="text-[10px] text-secondary">Autoconsulta cada 5m</span>
                     </div>
                     <div id="list-mis-citas" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Citas dynamically loaded -->
@@ -139,7 +141,7 @@
                     <div class="overflow-x-auto bg-card border border-border rounded-xl">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-border bg-white/5 text-xs text-gold uppercase tracking-wider">
+                                <tr class="border-b border-border bg-inactive text-xs text-gold uppercase tracking-wider">
                                     <th class="p-4 font-bold">Fecha</th>
                                     <th class="p-4 font-bold">Desarrollo</th>
                                     <th class="p-4 font-bold">Cliente</th>
@@ -148,7 +150,7 @@
                                     <th class="p-4 font-bold">Estatus</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-mis-ventas-body" class="text-sm divide-y divide-border text-cream/90">
+                            <tbody id="table-mis-ventas-body" class="text-sm divide-y divide-border text-cream">
                                 <!-- Sales loaded here -->
                             </tbody>
                         </table>
@@ -161,7 +163,7 @@
                     <div class="overflow-x-auto bg-card border border-border rounded-xl">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-border bg-white/5 text-xs text-gold uppercase tracking-wider">
+                                <tr class="border-b border-border bg-inactive text-xs text-gold uppercase tracking-wider">
                                     <th class="p-4 font-bold">Cte</th>
                                     <th class="p-4 font-bold">Desarrollo</th>
                                     <th class="p-4 font-bold">Cliente</th>
@@ -171,7 +173,7 @@
                                     <th class="p-4 font-bold">Estatus</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-historico-asesor-body" class="text-sm divide-y divide-border text-cream/90">
+                            <tbody id="table-historico-asesor-body" class="text-sm divide-y divide-border text-cream">
                                 <!-- Historical sales loaded here -->
                             </tbody>
                         </table>
@@ -196,7 +198,7 @@
                         </div>
                         <div class="h-[1px] md:h-12 w-full md:w-[1px] bg-border"></div>
                         <div class="flex flex-col items-center md:items-end">
-                            <span class="text-xs uppercase tracking-widest text-cream/60">Ventas Registradas</span>
+                            <span class="text-xs uppercase tracking-widest text-secondary">Ventas Registradas</span>
                             <span id="kpi-top-asesor-sales" class="text-3xl font-black text-gold">0</span>
                         </div>
                     </div>
@@ -229,7 +231,7 @@
                         <!-- Filters -->
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
                             <select id="filter-citas-asesor" onchange="renderAdminCitas()" 
-                                    class="bg-card border border-border text-cream text-xs rounded-lg p-2.5 focus-gold w-full md:w-auto">
+                                    class="bg-[#2A2A2A] border border-border text-cream text-xs rounded-lg p-2.5 focus-gold w-full md:w-auto">
                                 <option value="todos">Todos los asesores</option>
                                 <option value="Daniel Vázquez">Daniel Vázquez</option>
                                 <option value="Lupyta Mendoza">Lupyta Mendoza</option>
@@ -237,7 +239,7 @@
                                 <option value="Luis García">Luis García</option>
                             </select>
                             <input type="date" id="filter-citas-fecha" onchange="renderAdminCitas()" 
-                                   class="bg-card border border-border text-cream text-xs rounded-lg p-2.5 focus-gold w-full md:w-auto">
+                                   class="bg-[#2A2A2A] border border-border text-cream text-xs rounded-lg p-2.5 focus-gold w-full md:w-auto">
                             <button onclick="clearAdminCitasFilters()" class="text-xs text-gold/70 hover:text-gold p-2">Limpiar</button>
                         </div>
                     </div>
@@ -254,15 +256,15 @@
                         <div>
                             <h3 class="text-lg font-semibold uppercase tracking-wider text-gold font-title">Ventas Registradas (VENTAS_IBR)</h3>
                             <div class="flex items-center gap-4 mt-2">
-                                <span class="text-xs text-cream/70">Total Ventas: <strong id="admin-ventas-kpi-count" class="text-gold">0</strong></span>
-                                <span class="text-xs text-cream/70">Total Comisiones: <strong id="admin-ventas-kpi-comision" class="text-gold">$0</strong></span>
+                                <span class="text-xs text-secondary">Total Ventas: <strong id="admin-ventas-kpi-count" class="text-gold">0</strong></span>
+                                <span class="text-xs text-secondary">Total Comisiones: <strong id="admin-ventas-kpi-comision" class="text-gold">$0</strong></span>
                             </div>
                         </div>
 
                         <!-- Filters -->
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
                             <select id="filter-ventas-asesor" onchange="renderAdminVentas()" 
-                                    class="bg-card border border-border text-cream text-xs rounded-lg p-2 focus-gold">
+                                    class="bg-[#2A2A2A] border border-border text-cream text-xs rounded-lg p-2 focus-gold">
                                 <option value="todos">Todos los asesores</option>
                                 <option value="Daniel Vázquez">Daniel Vázquez</option>
                                 <option value="Lupyta Mendoza">Lupyta Mendoza</option>
@@ -270,12 +272,12 @@
                                 <option value="Luis García">Luis García</option>
                             </select>
                             <select id="filter-ventas-desarrollo" onchange="renderAdminVentas()" 
-                                    class="bg-card border border-border text-cream text-xs rounded-lg p-2 focus-gold max-w-[150px]">
+                                    class="bg-[#2A2A2A] border border-border text-cream text-xs rounded-lg p-2 focus-gold max-w-[150px]">
                                 <option value="todos">Todos los desarrollos</option>
                                 <!-- Populate dynamically -->
                             </select>
                             <input type="month" id="filter-ventas-mes" onchange="renderAdminVentas()" 
-                                   class="bg-card border border-border text-cream text-xs rounded-lg p-2 focus-gold">
+                                   class="bg-[#2A2A2A] border border-border text-cream text-xs rounded-lg p-2 focus-gold">
                             <button onclick="clearAdminVentasFilters()" class="text-xs text-gold/70 hover:text-gold p-2">Limpiar</button>
                         </div>
                     </div>
@@ -284,7 +286,7 @@
                     <div class="overflow-x-auto bg-card border border-border rounded-xl">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="border-b border-border bg-white/5 text-xs text-gold uppercase tracking-wider">
+                                <tr class="border-b border-border bg-inactive text-xs text-gold uppercase tracking-wider">
                                     <th class="p-4 font-bold">Fecha</th>
                                     <th class="p-4 font-bold">Asesor</th>
                                     <th class="p-4 font-bold">Desarrollo</th>
@@ -295,7 +297,7 @@
                                     <th class="p-4 font-bold">Estatus</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-admin-ventas-body" class="text-sm divide-y divide-border text-cream/90">
+                            <tbody id="table-admin-ventas-body" class="text-sm divide-y divide-border text-cream">
                                 <!-- Sales loaded here -->
                             </tbody>
                         </table>
@@ -308,7 +310,7 @@
                         <h3 class="text-lg font-semibold uppercase tracking-wider text-gold font-title">Histórico de Ventas (2022-2025)</h3>
                         <div class="w-full md:w-64">
                             <input type="text" id="search-historico" oninput="renderAdminHistorico()" placeholder="Buscar cliente, asesor o lote..." 
-                                   class="w-full bg-card border border-border text-cream rounded-lg px-4 py-2 text-xs focus-gold">
+                                   class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-4 py-2 text-xs focus-gold">
                         </div>
                     </div>
 
@@ -324,16 +326,16 @@
         <nav class="hidden md:flex justify-center border-t border-border mt-8 pt-4">
             <!-- Advisor Menu -->
             <div id="desktop-nav-advisor" class="hidden flex gap-4">
-                <button onclick="switchTab('mis-citas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10"> Mis Citas</button>
-                <button onclick="switchTab('mis-ventas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10">Mis Ventas</button>
-                <button onclick="switchTab('historico-asesor')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10">Mi Histórico</button>
+                <button onclick="switchTab('mis-citas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]"> Mis Citas</button>
+                <button onclick="switchTab('mis-ventas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]">Mis Ventas</button>
+                <button onclick="switchTab('historico-asesor')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]">Mi Histórico</button>
             </div>
             <!-- Admin Menu -->
             <div id="desktop-nav-admin" class="hidden flex gap-4">
-                <button onclick="switchTab('admin-resumen')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10">Resumen</button>
-                <button onclick="switchTab('admin-citas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10">Citas</button>
-                <button onclick="switchTab('admin-ventas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10">Ventas</button>
-                <button onclick="switchTab('admin-historico')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors hover:bg-gold/10">Histórico</button>
+                <button onclick="switchTab('admin-resumen')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]">Resumen</button>
+                <button onclick="switchTab('admin-citas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]">Citas</button>
+                <button onclick="switchTab('admin-ventas')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]">Ventas</button>
+                <button onclick="switchTab('admin-historico')" class="desktop-nav-btn px-6 py-2.5 rounded-lg text-sm font-semibold uppercase tracking-wider transition-colors bg-[#2A2A2A] text-[#F7F1E8] hover:bg-[#3A3A3A]">Histórico</button>
             </div>
         </nav>
 
@@ -341,28 +343,28 @@
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border py-2 px-4 flex justify-around items-center z-40 shadow-lg">
             <!-- Advisor Menu -->
             <div id="mobile-nav-advisor" class="hidden w-full flex justify-around">
-                <button onclick="switchTab('mis-citas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('mis-citas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">🗓️</span><span>Citas</span>
                 </button>
-                <button onclick="switchTab('mis-ventas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('mis-ventas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">💰</span><span>Ventas</span>
                 </button>
-                <button onclick="switchTab('historico-asesor')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('historico-asesor')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">📊</span><span>Historial</span>
                 </button>
             </div>
             <!-- Admin Menu -->
             <div id="mobile-nav-admin" class="hidden w-full flex justify-around">
-                <button onclick="switchTab('admin-resumen')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('admin-resumen')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">🏠</span><span>Resumen</span>
                 </button>
-                <button onclick="switchTab('admin-citas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('admin-citas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">👥</span><span>Citas</span>
                 </button>
-                <button onclick="switchTab('admin-ventas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('admin-ventas')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">💰</span><span>Ventas</span>
                 </button>
-                <button onclick="switchTab('admin-historico')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-cream/60">
+                <button onclick="switchTab('admin-historico')" class="mobile-nav-btn flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 text-secondary">
                     <span class="text-xl">📊</span><span>Histórico</span>
                 </button>
             </div>
@@ -376,37 +378,37 @@
             
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-cream/60 font-bold mb-1">Desarrollo</label>
+                    <label class="block text-xs uppercase tracking-widest text-secondary font-bold mb-1">Desarrollo</label>
                     <input type="text" id="form-venta-desarrollo" placeholder="Escribe el desarrollo..."
-                           class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
+                           class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-cream/60 font-bold mb-1">Cliente</label>
+                    <label class="block text-xs uppercase tracking-widest text-secondary font-bold mb-1">Cliente</label>
                     <input type="text" id="form-venta-cliente" placeholder="Nombre completo..."
-                           class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
+                           class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-cream/60 font-bold mb-1">Teléfono</label>
+                    <label class="block text-xs uppercase tracking-widest text-secondary font-bold mb-1">Teléfono</label>
                     <input type="text" id="form-venta-tel" placeholder="Número telefónico..."
-                           class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
+                           class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-cream/60 font-bold mb-1">Lote</label>
+                    <label class="block text-xs uppercase tracking-widest text-secondary font-bold mb-1">Lote</label>
                     <input type="text" id="form-venta-lote" placeholder="Ej. Manzana 3 Lote 4..."
-                           class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
+                           class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
                 </div>
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-cream/60 font-bold mb-1">Plan de pago</label>
-                    <select id="form-venta-plan" class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
+                    <label class="block text-xs uppercase tracking-widest text-secondary font-bold mb-1">Plan de pago</label>
+                    <select id="form-venta-plan" class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold">
                         <option value="Contado">Contado</option>
                         <option value="Financiado">Financiado</option>
                         <option value="Enganche">Enganche</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs uppercase tracking-widest text-cream/60 font-bold mb-1">Observaciones</label>
+                    <label class="block text-xs uppercase tracking-widest text-secondary font-bold mb-1">Observaciones</label>
                     <textarea id="form-venta-obs" rows="3" placeholder="Detalles de la compra, comisión acordada..."
-                              class="w-full bg-[#1A1A1A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold"></textarea>
+                              class="w-full bg-[#2A2A2A] border border-border text-cream rounded-lg px-3 py-2 text-sm focus-gold"></textarea>
                 </div>
             </div>
 
@@ -416,10 +418,10 @@
             </div>
 
             <div class="flex gap-3 pt-2">
-                <button onclick="closeVentaModal()" class="w-1/3 border border-border text-cream font-bold py-2.5 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider">
+                <button onclick="closeVentaModal()" class="w-1/3 border border-border text-cream font-bold py-2.5 rounded-lg hover:bg-inactive transition-colors text-xs uppercase tracking-wider">
                     Cancelar
                 </button>
-                <button onclick="saveVentaForm()" class="w-2/3 bg-gold hover:bg-gold-hover text-bg font-bold py-2.5 rounded-lg transition-colors text-xs uppercase tracking-wider">
+                <button onclick="saveVentaForm()" class="w-2/3 bg-[#B8924A] hover:bg-[#9E7B3B] text-[#141414] font-bold py-2.5 rounded-lg transition-colors text-xs uppercase tracking-wider">
                     Registrar
                 </button>
             </div>
@@ -433,7 +435,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="text-center py-6 border-t border-border text-[10px] text-cream/40 tracking-wider uppercase">
+    <footer class="text-center py-6 border-t border-border text-[10px] text-secondary tracking-wider uppercase">
         © 2026 IBR · Todos los derechos reservados
     </footer>
 
@@ -697,13 +699,13 @@
                 const onClickStr = btn.getAttribute('onclick') || '';
                 if (onClickStr.includes(`'${tabId}'`)) {
                     btn.classList.add('text-gold');
-                    btn.classList.remove('text-cream/60');
+                    btn.classList.remove('text-secondary');
                     if (btn.classList.contains('desktop-nav-btn')) {
                         btn.classList.add('bg-gold/10', 'border', 'border-gold/30');
                     }
                 } else {
                     btn.classList.remove('text-gold', 'bg-gold/10', 'border', 'border-gold/30');
-                    btn.classList.add('text-cream/60');
+                    btn.classList.add('text-secondary');
                 }
             });
         }
@@ -724,7 +726,7 @@
             const myCitas = citations.filter(c => c.asesor && c.asesor.toLowerCase().includes(loggedUser.nombre.toLowerCase()));
 
             if (myCitas.length === 0) {
-                container.innerHTML = '<div class="col-span-full py-12 text-center text-cream/40 text-sm font-semibold">Sin citas asignadas.</div>';
+                container.innerHTML = '<div class="col-span-full py-12 text-center text-secondary text-sm font-semibold">Sin citas asignadas.</div>';
                 return;
             }
 
@@ -732,17 +734,17 @@
                 const status = getEffectiveCitaStatus(c);
                 
                 // Badges/Borders styling based on status
-                let borderCol = 'border-l-4 border-l-blue-500';
-                let badgeClass = 'bg-blue-900/30 text-blue-400 border border-blue-800';
+                let borderCol = 'border-l-4 border-l-[#B8924A]';
+                let badgeClass = 'bg-gold/10 text-gold border border-gold/30';
                 if (status === 'Realizada') {
-                    borderCol = 'border-l-4 border-l-orange-500';
-                    badgeClass = 'bg-orange-900/30 text-orange-400 border border-orange-800';
+                    borderCol = 'border-l-4 border-l-[#9E9E9E]';
+                    badgeClass = 'bg-[#2A2A2A] text-secondary border border-border';
                 } else if (status === 'No asistió') {
-                    borderCol = 'border-l-4 border-l-red-500';
-                    badgeClass = 'bg-red-900/30 text-red-400 border border-red-800';
+                    borderCol = 'border-l-4 border-l-red-950/80';
+                    badgeClass = 'bg-red-950/40 text-red-400 border border-red-900/50';
                 } else if (status === 'Venta') {
-                    borderCol = 'border-l-4 border-l-green-500';
-                    badgeClass = 'bg-green-900/30 text-green-400 border border-green-800';
+                    borderCol = 'border-l-4 border-l-green-950/80';
+                    badgeClass = 'bg-green-950/40 text-green-400 border border-green-900/50';
                 }
 
                 // WhatsApp icon
@@ -756,22 +758,22 @@
                     <div>
                         <div class="flex justify-between items-start gap-2 mb-2">
                             <div>
-                                <span class="text-[10px] text-cream/50 uppercase tracking-widest font-bold block">${c.fecha} · ${c.hora}</span>
+                                <span class="text-[10px] text-secondary uppercase tracking-widest font-bold block">${c.fecha} · ${c.hora}</span>
                                 <h4 class="text-base font-semibold text-cream mt-0.5">${c.nombre_cliente}</h4>
                             </div>
                             <span class="text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold ${badgeClass}">${status}</span>
                         </div>
                         <p class="text-xs text-gold font-semibold mb-2">🏘️ ${c.titulo || 'Desarrollo sin especificar'}</p>
-                        ${c.telefono ? `<p class="text-xs text-cream/70">📞 Tel: ${c.telefono}</p>` : ''}
-                        ${c.descripcion ? `<p class="text-xs text-cream/50 italic mt-2 line-clamp-3">${c.descripcion}</p>` : ''}
+                        ${c.telefono ? `<p class="text-xs text-secondary">📞 Tel: ${c.telefono}</p>` : ''}
+                        ${c.descripcion ? `<p class="text-xs text-secondary italic mt-2 line-clamp-3">${c.descripcion}</p>` : ''}
                     </div>
 
                     <div class="flex flex-wrap justify-between items-center border-t border-border/50 pt-3 gap-2">
                         ${waHtml}
                         <div class="flex gap-1.5 ml-auto">
-                            <button onclick="updateLocalCitaStatus('${c.id}', 'Realizada')" class="bg-orange-600 hover:bg-orange-700 text-bg text-[10px] font-bold px-2.5 py-1.5 rounded uppercase tracking-wider">Cita Ok</button>
-                            <button onclick="updateLocalCitaStatus('${c.id}', 'No asistió')" class="bg-red-600 hover:bg-red-700 text-bg text-[10px] font-bold px-2.5 py-1.5 rounded uppercase tracking-wider">Faltó</button>
-                            <button onclick="openVentaModal('${c.id}', '${escapeHtml(c.titulo)}', '${escapeHtml(c.nombre_cliente)}', '${escapeHtml(c.telefono)}')" class="bg-gold hover:bg-gold-hover text-bg text-[10px] font-bold px-3 py-1.5 rounded uppercase tracking-wider">Venta</button>
+                            <button onclick="updateLocalCitaStatus('${c.id}', 'Realizada')" class="bg-[#2A2A2A] hover:bg-[#3A3A3A] text-[#F7F1E8] border border-[#2A2A2A] text-[10px] font-bold px-2.5 py-1.5 rounded uppercase tracking-wider">Cita Ok</button>
+                            <button onclick="updateLocalCitaStatus('${c.id}', 'No asistió')" class="bg-[#2A2A2A] hover:bg-[#3A3A3A] text-[#F7F1E8] border border-[#2A2A2A] text-[10px] font-bold px-2.5 py-1.5 rounded uppercase tracking-wider">Faltó</button>
+                            <button onclick="openVentaModal('${c.id}', '${escapeHtml(c.titulo)}', '${escapeHtml(c.nombre_cliente)}', '${escapeHtml(c.telefono)}')" class="bg-[#B8924A] hover:bg-[#9E7B3B] text-[#141414] text-[10px] font-bold px-3 py-1.5 rounded uppercase tracking-wider">Venta</button>
                         </div>
                     </div>
                 </div>`;
@@ -899,19 +901,19 @@
             const myVentas = ventas.filter(v => v.asesor && v.asesor.toLowerCase().includes(loggedUser.nombre.toLowerCase()));
 
             if (myVentas.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-cream/40">Sin ventas registradas en VENTAS_IBR.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-secondary">Sin ventas registradas en VENTAS_IBR.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = myVentas.map(v => {
                 return `
-                <tr class="hover:bg-white/5 transition-colors">
+                <tr class="hover:bg-inactive transition-colors">
                     <td class="p-4">${v.fecha || 'Sin fecha'}</td>
                     <td class="p-4 font-semibold text-gold">${v.desarrollo}</td>
                     <td class="p-4">${v.cliente}</td>
                     <td class="p-4 text-xs font-mono">${v.lote || '-'}</td>
-                    <td class="p-4"><span class="text-xs px-2 py-1 bg-white/5 border border-border rounded">${v.plan || 'Contado'}</span></td>
-                    <td class="p-4"><span class="text-xs px-2 py-0.5 bg-green-900/30 text-green-400 border border-green-800 rounded-full font-bold uppercase tracking-wider">${v.estatus || 'Venta'}</span></td>
+                    <td class="p-4"><span class="text-xs px-2 py-1 bg-inactive border border-border rounded">${v.plan || 'Contado'}</span></td>
+                    <td class="p-4"><span class="text-xs px-2 py-0.5 bg-green-950/40 text-green-400 border border-green-900/50 rounded-full font-bold uppercase tracking-wider">${v.estatus || 'Venta'}</span></td>
                 </tr>`;
             }).join('');
         }
@@ -924,20 +926,20 @@
             const myHist = historical.filter(h => h.asesor && h.asesor.toLowerCase().includes(loggedUser.nombre.toLowerCase()));
 
             if (myHist.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-cream/40">Sin datos en el histórico.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-secondary">Sin datos en el histórico.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = myHist.map(h => {
                 return `
-                <tr class="hover:bg-white/5 transition-colors">
-                    <td class="p-4 font-mono text-cream/50">${h.cte}</td>
+                <tr class="hover:bg-inactive transition-colors">
+                    <td class="p-4 font-mono text-secondary">${h.cte}</td>
                     <td class="p-4 font-semibold text-gold">${h.desarrollo}</td>
                     <td class="p-4">${h.nombre}</td>
                     <td class="p-4 text-xs font-mono">${h.lote || '-'}</td>
-                    <td class="p-4"><span class="text-xs px-2 py-1 bg-white/5 border border-border rounded">${h.plan || 'Contado'}</span></td>
+                    <td class="p-4"><span class="text-xs px-2 py-1 bg-inactive border border-border rounded">${h.plan || 'Contado'}</span></td>
                     <td class="p-4 font-bold text-green-500">$${Math.round(h.comision || 0).toLocaleString()}</td>
-                    <td class="p-4"><span class="text-xs px-2 py-0.5 bg-green-900/30 text-green-400 border border-green-800 rounded-full font-bold uppercase tracking-wider">${h.estatus || 'Venta'}</span></td>
+                    <td class="p-4"><span class="text-xs px-2 py-0.5 bg-green-950/40 text-green-400 border border-green-900/50 rounded-full font-bold uppercase tracking-wider">${h.estatus || 'Venta'}</span></td>
                 </tr>`;
             }).join('');
         }
@@ -996,8 +998,8 @@
             const listContainer = document.getElementById('list-developments-stats');
 
             if (sortedDevs.length === 0) {
-                chartContainer.innerHTML = '<p class="text-xs text-cream/40 py-8 text-center font-bold">Sin datos de desarrollos.</p>';
-                listContainer.innerHTML = '<p class="text-xs text-cream/40 py-8 text-center font-bold">Sin desarrollos.</p>';
+                chartContainer.innerHTML = '<p class="text-xs text-secondary py-8 text-center font-bold">Sin datos de desarrollos.</p>';
+                listContainer.innerHTML = '<p class="text-xs text-secondary py-8 text-center font-bold">Sin desarrollos.</p>';
                 return;
             }
 
@@ -1012,7 +1014,7 @@
                         <span class="truncate pr-4">${dev}</span>
                         <span class="text-gold font-mono">${count}</span>
                     </div>
-                    <div class="w-full bg-[#1A1A1A] h-2.5 rounded-full overflow-hidden border border-border">
+                    <div class="w-full bg-[#2A2A2A] h-2.5 rounded-full overflow-hidden border border-border">
                         <div class="bg-gold h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
                     </div>
                 </div>`;
@@ -1029,7 +1031,7 @@
                 <div class="flex justify-between items-center py-2.5">
                     <div>
                         <p class="font-semibold text-cream">${dev}</p>
-                        <p class="text-[10px] text-cream/50">${newSalesCount} nuevos · ${histCount} históricos</p>
+                        <p class="text-[10px] text-secondary">${newSalesCount} nuevos · ${histCount} históricos</p>
                     </div>
                     <span class="font-mono font-bold text-gold text-base">${count}</span>
                 </div>`;
@@ -1053,24 +1055,24 @@
             }
 
             if (filtered.length === 0) {
-                container.innerHTML = '<div class="col-span-full py-12 text-center text-cream/40 text-sm font-semibold">No se encontraron citas con los filtros seleccionados.</div>';
+                container.innerHTML = '<div class="col-span-full py-12 text-center text-secondary text-sm font-semibold">No se encontraron citas con los filtros seleccionados.</div>';
                 return;
             }
 
             container.innerHTML = filtered.map(c => {
                 const status = getEffectiveCitaStatus(c);
                 
-                let borderCol = 'border-l-4 border-l-blue-500';
-                let badgeClass = 'bg-blue-900/30 text-blue-400 border border-blue-800';
+                let borderCol = 'border-l-4 border-l-[#B8924A]';
+                let badgeClass = 'bg-gold/10 text-gold border border-gold/30';
                 if (status === 'Realizada') {
-                    borderCol = 'border-l-4 border-l-orange-500';
-                    badgeClass = 'bg-orange-900/30 text-orange-400 border border-orange-800';
+                    borderCol = 'border-l-4 border-l-[#9E9E9E]';
+                    badgeClass = 'bg-[#2A2A2A] text-secondary border border-border';
                 } else if (status === 'No asistió') {
-                    borderCol = 'border-l-4 border-l-red-500';
-                    badgeClass = 'bg-red-900/30 text-red-400 border border-red-800';
+                    borderCol = 'border-l-4 border-l-red-950/80';
+                    badgeClass = 'bg-red-950/40 text-red-400 border border-red-900/50';
                 } else if (status === 'Venta') {
-                    borderCol = 'border-l-4 border-l-green-500';
-                    badgeClass = 'bg-green-900/30 text-green-400 border border-green-800';
+                    borderCol = 'border-l-4 border-l-green-950/80';
+                    badgeClass = 'bg-green-950/40 text-green-400 border border-green-900/50';
                 }
 
                 return `
@@ -1078,15 +1080,15 @@
                     <div>
                         <div class="flex justify-between items-start gap-2 mb-2">
                             <div>
-                                <span class="text-[10px] text-cream/50 uppercase tracking-widest font-bold block">${c.fecha} · ${c.hora}</span>
+                                <span class="text-[10px] text-secondary uppercase tracking-widest font-bold block">${c.fecha} · ${c.hora}</span>
                                 <h4 class="text-base font-semibold text-cream mt-0.5">${c.nombre_cliente}</h4>
                             </div>
                             <span class="text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider font-extrabold ${badgeClass}">${status}</span>
                         </div>
                         <p class="text-xs text-gold font-semibold mb-1">🏘️ ${c.titulo || 'Sin desarrollo'}</p>
-                        <p class="text-xs text-cream/60">👤 Asesor: <strong class="text-cream">${c.asesor}</strong></p>
-                        ${c.telefono ? `<p class="text-xs text-cream/60 mt-1">📞 Tel: ${c.telefono}</p>` : ''}
-                        ${c.descripcion ? `<p class="text-xs text-cream/40 italic mt-2 line-clamp-2">${c.descripcion}</p>` : ''}
+                        <p class="text-xs text-secondary">👤 Asesor: <strong class="text-cream">${c.asesor}</strong></p>
+                        ${c.telefono ? `<p class="text-xs text-secondary mt-1">📞 Tel: ${c.telefono}</p>` : ''}
+                        ${c.descripcion ? `<p class="text-xs text-secondary italic mt-2 line-clamp-2">${c.descripcion}</p>` : ''}
                     </div>
                 </div>`;
             }).join('');
@@ -1138,21 +1140,21 @@
             document.getElementById('admin-ventas-kpi-comision').innerText = `$${Math.round(totalComission).toLocaleString()}`;
 
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-cream/40">No se encontraron ventas registradas con los filtros seleccionados.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="p-8 text-center text-secondary">No se encontraron ventas registradas con los filtros seleccionados.</td></tr>';
                 return;
             }
 
             tbody.innerHTML = filtered.map(v => {
                 return `
-                <tr class="hover:bg-white/5 transition-colors">
+                <tr class="hover:bg-inactive transition-colors">
                     <td class="p-4">${v.fecha || 'Sin fecha'}</td>
                     <td class="p-4 font-semibold text-cream">${v.asesor}</td>
                     <td class="p-4 font-semibold text-gold">${v.desarrollo}</td>
                     <td class="p-4">${v.cliente}</td>
                     <td class="p-4 text-xs font-mono">${v.lote || '-'}</td>
-                    <td class="p-4"><span class="text-xs px-2 py-1 bg-white/5 border border-border rounded">${v.plan || 'Contado'}</span></td>
+                    <td class="p-4"><span class="text-xs px-2 py-1 bg-inactive border border-border rounded">${v.plan || 'Contado'}</span></td>
                     <td class="p-4 font-bold text-green-500">$${Math.round(v.comision || 0).toLocaleString()}</td>
-                    <td class="p-4"><span class="text-xs px-2 py-0.5 bg-green-900/30 text-green-400 border border-green-800 rounded-full font-bold uppercase tracking-wider">${v.estatus || 'Venta'}</span></td>
+                    <td class="p-4"><span class="text-xs px-2 py-0.5 bg-green-950/40 text-green-400 border border-green-900/50 rounded-full font-bold uppercase tracking-wider">${v.estatus || 'Venta'}</span></td>
                 </tr>`;
             }).join('');
         }
@@ -1192,7 +1194,7 @@
             const sortedDevs = Object.keys(groups).sort((a,b) => groups[b].length - groups[a].length);
 
             if (sortedDevs.length === 0) {
-                container.innerHTML = '<p class="text-sm text-cream/40 text-center py-12">No se encontraron registros históricos.</p>';
+                container.innerHTML = '<p class="text-sm text-secondary text-center py-12">No se encontraron registros históricos.</p>';
                 return;
             }
 
@@ -1206,33 +1208,33 @@
 
                 const rowsHtml = devSales.map(s => {
                     return `
-                    <div class="p-3 bg-white/5 rounded-lg border border-border/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-xs">
+                    <div class="p-3 bg-[#1E1E1E] rounded-lg border border-border flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-xs">
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="bg-[#2A2A2A] text-cream/60 px-1.5 py-0.5 rounded font-mono font-bold">Cte ${s.cte}</span>
+                                <span class="bg-[#2A2A2A] text-secondary px-1.5 py-0.5 rounded font-mono font-bold">Cte ${s.cte}</span>
                                 <strong class="text-sm font-semibold text-cream">${s.nombre}</strong>
                             </div>
-                            <div class="text-cream/50 mt-1">📍 Lote: <span class="text-cream font-semibold">${s.lote || '-'}</span> · Asesor: <span class="text-gold font-semibold">${s.asesor}</span></div>
+                            <div class="text-secondary mt-1">📍 Lote: <span class="text-cream font-semibold">${s.lote || '-'}</span> · Asesor: <span class="text-gold font-semibold">${s.asesor}</span></div>
                         </div>
                         <div class="flex items-center gap-4 ml-auto md:ml-0">
                             <div class="text-right">
-                                <p class="text-[9px] text-cream/40 uppercase">Comisión</p>
+                                <p class="text-[9px] text-secondary uppercase">Comisión</p>
                                 <p class="font-bold text-green-500">$${Math.round(s.comision || 0).toLocaleString()}</p>
                             </div>
-                            <span class="px-2 py-0.5 rounded bg-green-900/30 text-green-400 border border-green-800 uppercase tracking-widest font-extrabold text-[9px]">${s.estatus}</span>
+                            <span class="px-2 py-0.5 rounded bg-green-950/40 text-green-400 border border-green-900/50 uppercase tracking-widest font-extrabold text-[9px]">${s.estatus}</span>
                         </div>
                     </div>`;
                 }).join('<div class="h-2"></div>');
 
                 return `
                 <div class="bg-card border border-border rounded-xl overflow-hidden">
-                    <button onclick="toggleAccordion('${slug}')" class="w-full flex justify-between items-center p-4 bg-white/5 border-b border-border/50 text-left font-bold text-cream">
+                    <button onclick="toggleAccordion('${slug}')" class="w-full flex justify-between items-center p-4 bg-[#1E1E1E] border-b border-border text-left font-bold text-cream">
                         <span class="flex items-center gap-3">
                             <span class="w-2.5 h-2.5 rounded-full bg-gold"></span>
                             <span class="text-sm uppercase tracking-wider font-semibold font-title text-gold">${dev}</span>
-                            <span class="text-xs bg-[#2D2D2D] text-cream/70 px-2 py-0.5 rounded-full font-mono">${salesCount}</span>
+                            <span class="text-xs bg-[#2A2A2A] text-secondary px-2 py-0.5 rounded-full font-mono">${salesCount}</span>
                         </span>
-                        <span id="arrow-${slug}" class="text-xs text-cream/50 transition-transform">▼</span>
+                        <span id="arrow-${slug}" class="text-xs text-secondary transition-transform">▼</span>
                     </button>
                     <div id="content-${slug}" style="display: none;" class="p-4 space-y-2">
                         ${rowsHtml}
