@@ -3112,161 +3112,163 @@ function populateSelects() {
         const container = document.getElementById('historialProyectoContainer');
         if (!container) return;
 
-        window.DATOS_HISTORICO = JSON.parse(localStorage.getItem('ibr_hist_data') || '[]');
-        const allSales = [...window.DATOS_HISTORICO];
+        // Show loading
+        container.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">⏳ Cargando histórico...</p>';
 
-        // Seeding fallback if empty so that accordion works immediately on first render before sync
-        let activeSales = allSales;
-        if (activeSales.length === 0) {
-            activeSales = VENTAS_IBR_HISTORICAS.map((v, idx) => ({
+        // Try fetch from JSON file first, fallback to localStorage
+        fetch('./ibr-historico-ventas.json?v=' + Date.now())
+            .then(r => r.json())
+            .then(response => {
+                if (response.ok && response.datos) {
+                    // Save to localStorage for other pages
+                    localStorage.setItem('ibr_hist_data', JSON.stringify(response.datos));
+                    window.DATOS_HISTORICO = response.datos;
+                    _renderHistorialUI(response.datos);
+                } else {
+                    _renderHistorialFallback();
+                }
+            })
+            .catch(() => _renderHistorialFallback());
+    }
+
+    function _renderHistorialFallback() {
+        const cached = JSON.parse(localStorage.getItem('ibr_hist_data') || '[]');
+        if (cached.length > 0) {
+            window.DATOS_HISTORICO = cached;
+            _renderHistorialUI(cached);
+        } else {
+            // Last resort: map from VENTAS_IBR_HISTORICAS
+            const fallback = VENTAS_IBR_HISTORICAS.map((v, idx) => ({
                 cte: idx + 300,
-                nombre: "Venta IBR (" + v.id + ")",
-                tel: "",
-                desarrollo: v.proyecto,
+                nombre: v.lote,
+                tel: '',
+                desarrollo: v.proyecto || 'Bella Vista Ocozocoautla',
                 asesor: v.asesor1 || v.asesor2 || 'Daniel Vázquez',
-                lotes: 1,
                 lote: v.lote,
-                plan: "Financiado",
-                estatus: "Venta",
+                estatus: 'Venta',
                 comision: v.comision_asesor || 5400
             }));
+            window.DATOS_HISTORICO = fallback;
+            _renderHistorialUI(fallback);
         }
+    }
 
-        // Helper to normalize strings for comparison (removes accents/spaces/case)
-        function normalizeStr(str) {
-            return (str || '').toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]/g, "")
-                .trim();
+    function _renderHistorialUI(allSales) {
+        const container = document.getElementById('historialProyectoContainer');
+        if (!container) return;
+
+        // Group by desarrollo
+        const groups = {};
+        allSales.forEach(s => {
+            const dev = (s.desarrollo || 'Sin desarrollo').trim();
+            if (!groups[dev]) groups[dev] = [];
+            groups[dev].push(s);
+        });
+
+        // Sort groups by count descending
+        const sortedDevs = Object.keys(groups).sort((a, b) => groups[b].length - groups[a].length);
+
+        // Total counter
+        const totalVentas = allSales.filter(s => (s.estatus || '').toLowerCase() === 'venta').length;
+        const totalRegistros = allSales.length;
+
+        // Color map for advisors
+        const colorAsesor = {
+            'Carmen Jiménez': '#0891B2',
+            'Lupyta Mendoza': '#7C3AED',
+            'Luis García': '#059669',
+            'Daniel Vázquez': '#8B0000'
+        };
+
+        // Desarrollos actuales list (for color coding)
+        const actuales = ['bella vista', 'bosques de chapultepec', 'sima park', 'el arenal', 'orquidea campestre', 'orquídea campestre', 'cascadas del sur', 'bosques del sur', 'real campestre'];
+
+        function isActual(devName) {
+            const n = devName.toLowerCase();
+            return actuales.some(a => n.includes(a));
         }
-
-        function filterSales(devName) {
-            const target = normalizeStr(devName);
-            return activeSales.filter(s => {
-                const sDev = normalizeStr(s.desarrollo || s.proyecto || '');
-                if (target.includes('bellavista') && sDev.includes('bellavista')) return true;
-                return sDev === target;
-            });
-        }
-
-        const desarrollosActuales = [
-            'Bella Vista Ocozocoautla',
-            'Bosques de Chapultepec',
-            'Sima Park',
-            'El Arenal',
-            'Orquídea Campestre'
-        ];
-
-        const desarrollosHistoricos = [
-            'Grand Mayan',
-            'HN Bosques de Sayab',
-            'Monte Misen',
-            'San Antonio',
-            'Cascadas del Sur',
-            'La Cañada',
-            'Bosques del Sur',
-            'Real Campestre',
-            'Don Clemente',
-            'Las Animas'
-        ];
 
         function getSaleRowHtml(s) {
             const status = s.estatus || 'Pendiente';
-            const colorAsesor = {
-                'Carmen Jiménez': '#0891B2',
-                'Lupyta Mendoza': '#7C3AED',
-                'Luis García': '#059669',
-                'Daniel Vázquez': '#8B0000'
-            }[s.asesor] || '#333';
-            
-            const borderClass = status === 'Venta' ? 'border-l-green-500' :
-                                status === 'Cancelado' ? 'border-l-red-500' : 'border-l-gray-400';
-            const badgeClass = status === 'Venta' ? 'bg-green-100 text-green-800' :
-                               status === 'Cancelado' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800';
-            
-            const comisionText = s.comision > 0 ? 
-                `<div class="text-right">
-                    <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">COMISIÓN</p>
-                    <p class="text-xs font-black text-green-600">$${Math.round(s.comision).toLocaleString()}</p>
+            const ac = colorAsesor[s.asesor] || '#333';
+            const borderColor = status === 'Venta' ? '#16A34A' :
+                                status === 'Cancelado' ? '#DC2626' :
+                                status === 'Pendiente' ? '#D97706' : '#9CA3AF';
+            const badgeBg = status === 'Venta' ? 'background:#DCFCE7;color:#166534' :
+                            status === 'Cancelado' ? 'background:#FEE2E2;color:#991B1B' :
+                            status === 'Pendiente' ? 'background:#FEF3C7;color:#92400E' :
+                            'background:#F3F4F6;color:#374151';
+
+            const comHtml = s.comision > 0 ?
+                `<div style="text-align:right">
+                    <div style="font-size:9px;color:#9CA3AF;font-weight:800;text-transform:uppercase;letter-spacing:1px">Comisión</div>
+                    <div style="font-size:12px;font-weight:900;color:#16A34A">$${Math.round(s.comision).toLocaleString()}</div>
                  </div>` : '';
-                
+
             return `
-            <div class="p-3 bg-gray-50 rounded-xl border-l-4 ${borderClass} border border-gray-200/60 shadow-sm flex justify-between items-center gap-2">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                        <span class="text-[10px] font-black text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">Cte ${s.cte}</span>
-                        <span class="text-xs font-black text-gray-900">${s.nombre}</span>
+            <div style="padding:10px 12px;background:#F9FAFB;border-radius:12px;border-left:4px solid ${borderColor};border:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                        <span style="font-size:10px;font-weight:900;color:#9CA3AF;background:#E5E7EB;padding:2px 6px;border-radius:4px">Cte ${s.cte}</span>
+                        <span style="font-size:12px;font-weight:900;color:#111">${s.nombre}</span>
                     </div>
-                    <p class="text-[10px] text-gray-500 font-semibold">📍 Lote: ${s.lote || 'Sin especificar'}</p>
-                    <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
-                        <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${badgeClass}">${status}</span>
-                        <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider text-white" style="background-color: ${colorAsesor}">${s.asesor.split(' ')[0]}</span>
+                    <div style="font-size:10px;color:#6B7280;font-weight:600;margin-top:3px">📍 ${s.lote || 'Sin lote'}</div>
+                    <div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap">
+                        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;${badgeBg}">${status}</span>
+                        <span style="padding:2px 6px;border-radius:4px;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#fff;background:${ac}">${(s.asesor||'').split(' ')[0]}</span>
                     </div>
                 </div>
-                ${comisionText}
-            </div>
-            `;
-        }
-
-        function getAccordionHtml(devName, pSales) {
-            const slug = devName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            // Sort by cte descending
-            const sortedSales = [...pSales].sort((a, b) => {
-                const cteA = parseInt(String(a.cte || 0).replace(/\D/g, '')) || 0;
-                const cteB = parseInt(String(b.cte || 0).replace(/\D/g, '')) || 0;
-                return cteB - cteA;
-            });
-
-            const salesListHtml = sortedSales.map(s => getSaleRowHtml(s)).join('<div class="h-2"></div>');
-            const color = devName.toLowerCase().includes('chapultepec') ? '#1D4ED8' : '#8B0000';
-            
-            return `
-            <div class="border-b border-gray-100 py-2">
-                <button onclick="toggleProyectoAccordion('${slug}')" class="w-full flex justify-between items-center text-left py-2 font-bold text-gray-800 hover:text-black focus:outline-none">
-                    <span class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${color}"></span>
-                        <span class="text-xs uppercase tracking-wider font-extrabold text-gray-900">${devName}</span>
-                        <span class="text-[10px] text-gray-400 font-bold bg-gray-100 px-1.5 py-0.5 rounded-full">${pSales.length}</span>
-                    </span>
-                    <span id="arrow-${slug}" class="text-xs text-gray-400 font-bold">▼</span>
-                </button>
-                <div id="content-${slug}" style="display: none;" class="pl-4 pr-1 py-3 space-y-2">
-                    ${salesListHtml}
-                </div>
-            </div>
-            `;
+                ${comHtml}
+            </div>`;
         }
 
         let html = '';
 
-        // 1. DESARROLLOS ACTUALES
-        html += `<div class="text-[11px] font-black tracking-widest text-[#8B0000] border-b border-red-100 pb-1.5 mb-2 mt-4 uppercase">── DESARROLLOS ACTUALES ──</div>`;
-        let actualsCount = 0;
-        desarrollosActuales.forEach(devName => {
-            const pSales = filterSales(devName);
-            if (pSales.length > 0) {
-                actualsCount++;
-                html += getAccordionHtml(devName, pSales);
-            }
-        });
-        if (actualsCount === 0) {
-            html += `<p class="text-xs text-gray-400 italic py-2 pl-2">No hay ventas registradas</p>`;
-        }
+        // Total counter bar
+        html += `
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+            <div style="flex:1;background:#111;color:#fff;padding:12px;border-radius:12px;text-align:center">
+                <div style="font-size:9px;color:#9CA3AF;font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Total Registros</div>
+                <div style="font-size:24px;font-weight:900;margin-top:2px">${totalRegistros}</div>
+            </div>
+            <div style="flex:1;background:#16A34A;color:#fff;padding:12px;border-radius:12px;text-align:center">
+                <div style="font-size:9px;color:#BBF7D0;font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Ventas</div>
+                <div style="font-size:24px;font-weight:900;margin-top:2px">${totalVentas}</div>
+            </div>
+            <div style="flex:1;background:#8B0000;color:#fff;padding:12px;border-radius:12px;text-align:center">
+                <div style="font-size:9px;color:#FCA5A5;font-weight:800;text-transform:uppercase;letter-spacing:1.5px">Desarrollos</div>
+                <div style="font-size:24px;font-weight:900;margin-top:2px">${sortedDevs.length}</div>
+            </div>
+        </div>`;
 
-        // 2. DESARROLLOS HISTÓRICOS
-        html += `<div class="text-[11px] font-black tracking-widest text-gray-400 border-b border-gray-100 pb-1.5 mb-2 mt-6 uppercase">── DESARROLLOS HISTÓRICOS ──</div>`;
-        let historicsCount = 0;
-        desarrollosHistoricos.forEach(devName => {
-            const pSales = filterSales(devName);
-            if (pSales.length > 0) {
-                historicsCount++;
-                html += getAccordionHtml(devName, pSales);
-            }
+        // Accordions per desarrollo
+        sortedDevs.forEach(devName => {
+            const pSales = groups[devName];
+            const slug = devName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const sorted = [...pSales].sort((a, b) => {
+                const ca = parseInt(String(a.cte || 0).replace(/\D/g, '')) || 0;
+                const cb = parseInt(String(b.cte || 0).replace(/\D/g, '')) || 0;
+                return cb - ca;
+            });
+            const ventasCount = pSales.filter(s => (s.estatus || '').toLowerCase() === 'venta').length;
+            const salesHtml = sorted.map(s => getSaleRowHtml(s)).join('<div style="height:6px"></div>');
+            const dotColor = isActual(devName) ? '#8B0000' : '#9CA3AF';
+
+            html += `
+            <div style="border-bottom:1px solid #F3F4F6;padding:4px 0">
+                <button onclick="toggleProyectoAccordion('${slug}')" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:10px 0;background:none;border:none;cursor:pointer;text-align:left">
+                    <span style="display:flex;align-items:center;gap:8px">
+                        <span style="width:10px;height:10px;border-radius:50%;background:${dotColor};flex-shrink:0"></span>
+                        <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.5px;color:#111">${devName}</span>
+                        <span style="font-size:10px;font-weight:800;color:#6B7280;background:#F3F4F6;padding:2px 8px;border-radius:10px">${pSales.length} reg · ${ventasCount} ventas</span>
+                    </span>
+                    <span id="arrow-${slug}" style="font-size:12px;color:#9CA3AF;font-weight:700">▼</span>
+                </button>
+                <div id="content-${slug}" style="display:none;padding:8px 0 8px 16px">
+                    ${salesHtml}
+                </div>
+            </div>`;
         });
-        if (historicsCount === 0) {
-            html += `<p class="text-xs text-gray-400 italic py-2 pl-2">No hay ventas registradas</p>`;
-        }
 
         container.innerHTML = html;
     }
