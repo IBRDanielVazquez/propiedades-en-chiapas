@@ -2029,6 +2029,7 @@ let citasInterval = null;
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFN-TsGYuDedVD02o994sGiSBVCUcf0S4TzyGq7ABFiVc8btTCkrJt3ldt--eG_DpOPg/exec';
 
 function loadCitasJSONP() {
+    console.log('Cargando citas desde:', SCRIPT_URL + '?action=citas_sheet&callback=cbCitas');
     const status = document.getElementById('citas-status');
     const container = document.getElementById('citas-container');
     if(status && container.innerHTML === '') {
@@ -2044,6 +2045,7 @@ function loadCitasJSONP() {
 }
 
 function cbCitas(data) {
+    console.log('cbCitas llamada con:', data);
     const status = document.getElementById('citas-status');
     if(!data) {
         if(status) status.innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al cargar citas</span>';
