@@ -18,7 +18,7 @@ function loadCitasJSONP() {
     
     // Create script for JSONP
     const script = document.createElement('script');
-    script.src = 'https://script.google.com/macros/s/AKfycbxfcqkCx8Xvx4MGCI1D99tlyCM7k1Z2ByW6LAChQraUPoLv646jaOx6g-ayuNk0XgrQUA/exec?action=citas&callback=cbCitas&t=' + Date.now();
+    script.src = 'https://script.google.com/macros/s/AKfycbwFN-TsGYuDedVD02o994sGiSBVCUcf0S4TzyGq7ABFiVc8btTCkrJt3ldt--eG_DpOPg/exec?action=citas&callback=cbCitas&t=' + Date.now();
     script.onerror = function() {
         if(status) status.innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al conectar con Google Calendar</span>';
     };
