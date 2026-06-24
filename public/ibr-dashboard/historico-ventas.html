@@ -2215,7 +2215,7 @@ function renderizar(){
   const q=document.getElementById('buscador').value.toLowerCase()
   const edits=getEdits()
 
-  let datos=DATOS.map(d=>{
+  let datos=datosVentas.map(d=>{
     const e=edits[d.cte]||{}
     const anio = ANIOS_DESARROLLO[d.desarrollo] || 2022;
     return{...d,
@@ -2240,7 +2240,7 @@ function renderizar(){
   });
 
   // KPIs (siempre sobre todos los datos con edits aplicados)
-  const todos=DATOS.map(d=>{
+  const todos=datosVentas.map(d=>{
     const e=edits[d.cte]||{}
     return{...d,estatus:e.estatus||d.estatus,
       comision:e.comision!==undefined?e.comision:d.comision}
@@ -2350,7 +2350,7 @@ function renderizar(){
 }
 
 function initDesarrollos() {
-  const devs = [...new Set(DATOS.map(d => d.desarrollo))].sort();
+  const devs = [...new Set(datosVentas.map(d => d.desarrollo))].sort();
   const select = document.getElementById('filtroDesarrollo');
   if(select) {
     select.innerHTML = '<option value="todos">Todos los Desarrollos</option>' + 
@@ -2358,9 +2358,43 @@ function initDesarrollos() {
   }
 }
 
-initDesarrollos()
-localStorage.setItem('ibr_hist_data', JSON.stringify(DATOS))
-renderizar()
+let datosVentas = [];
+const cacheData = localStorage.getItem('ibr_hist_data');
+if (cacheData) {
+  datosVentas = JSON.parse(cacheData);
+} else {
+  datosVentas = [...DATOS];
+}
+
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxsVD1cbCr0OKNyw990CDVOjA3YXMpy2-4szsqo-MdgXlo3YU_dz7lkUsrbpuq1yJusdA/exec';
+
+function cargarDatosSheet() {
+  const cbName = 'histCB_' + Date.now();
+  window[cbName] = function(response) {
+    delete window[cbName];
+    document.getElementById('jsonp-hist-script')?.remove();
+    
+    if (response && response.ok && response.datos) {
+      datosVentas = response.datos;
+      localStorage.setItem('ibr_hist_data', JSON.stringify(datosVentas));
+      initDesarrollos();
+      renderizar();
+    }
+  };
+  
+  const script = document.createElement('script');
+  script.id = 'jsonp-hist-script';
+  script.src = APPS_SCRIPT_URL + '?action=historico&callback=' + cbName + '&v=' + Date.now();
+  script.onerror = () => {
+    console.warn('Error al cargar datos desde Google Sheet, usando datos locales.');
+  };
+  document.body.appendChild(script);
+}
+
+initDesarrollos();
+localStorage.setItem('ibr_hist_data', JSON.stringify(datosVentas));
+renderizar();
+cargarDatosSheet();
 </script>
 </body>
 </html>
