@@ -17,6 +17,7 @@ async function deploy() {
         await client.uploadFrom("public/ibr-dashboard/logo-ibr.png", "/public_html/ibr-dashboard/logo-ibr.png");
         await client.uploadFrom("public/ibr-dashboard/citas-historico.json", "/public_html/ibr-dashboard/citas-historico.json");
         await client.uploadFrom("public/ibr-dashboard/historico-ventas.html", "/public_html/ibr-dashboard/historico-ventas.html");
+        await client.uploadFrom("public/ibr-dashboard/ibr-historico-ventas.json", "/public_html/ibr-dashboard/ibr-historico-ventas.json");
         
         console.log("Deploy finished successfully.");
     }
