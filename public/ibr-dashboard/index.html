@@ -1979,7 +1979,7 @@ function populateSelects() {
         
         const tab = document.getElementById('tab-'+targetId);
         if(tab) {
-            tab.style.display='block';\n
+            tab.style.display='block';
         if (targetId === 'leads') {
             loadCitasJSONP();
             if(!citasInterval) citasInterval = setInterval(loadCitasJSONP, 300000);
