@@ -269,7 +269,7 @@
 </div>
 <div id="citas-admin-filter" class="mb-4 hidden">
     <select id="citas-asesor-select" onchange="renderCitasUI()" style="background:#1E1E1E; border:1px solid #333333; color:#F7F1E8; padding:12px; border-radius:8px; width:100%; outline:none; font-family:'Inter',sans-serif; font-size:14px;">
-        <option value="Todos">Todos los Asesores</option>
+        <option value="Todos" selected>Todos los Asesores</option>
         <option value="Daniel Vázquez">Daniel Vázquez</option>
         <option value="Lupyta Mendoza">Lupyta Mendoza</option>
         <option value="Carmen Jiménez">Carmen Jiménez</option>
@@ -1981,6 +1981,8 @@ function populateSelects() {
             effectiveName = vistaPreview;
             effectiveRol = 'asesor';
         }
+        const headerName = document.getElementById('headerUserName');
+        if (headerName) headerName.innerText = effectiveName;
         
         const banner = document.getElementById('previewBanner');
         if (banner) {
