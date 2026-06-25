@@ -2099,7 +2099,7 @@ function cbCitas(data) {
 }
 
 function renderCitasUI() {
-    const isAd = typeof checkIsAdmin === 'function' ? checkIsAdmin(window.currentUser?.nombre || currentUser) : (window.currentUser?.rol === 'admin' || typeof esAdmin === 'function' ? esAdmin() : false);
+    const isAd = typeof esAdmin === 'function' ? esAdmin() : false;
     const currentName = window.currentUser?.nombre || currentUser;
     
     const filterEl = document.getElementById('citas-admin-filter');
