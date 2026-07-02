@@ -1,0 +1,642 @@
+[
+  {
+    "id": "CIT-001",
+    "fecha": "2024-01-03",
+    "prospecto": "Sr David castelar",
+    "telefono": "9611559760",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Sr David castelar\n+52 961 155 9760",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-002",
+    "fecha": "2024-01-18",
+    "prospecto": "Yasmin Navarro",
+    "telefono": "9613208078",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Yasmin Navarro\n+52 961 320 8078",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-003",
+    "fecha": "2024-01-25",
+    "prospecto": "Requistso para registros de vivienda nueva",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Requistso para registros de vivienda nueva",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-004",
+    "fecha": "2024-01-29",
+    "prospecto": "Franklin Moreno",
+    "telefono": "9614574587",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Franklin Moreno\n+52 961 457 4587",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-005",
+    "fecha": "2024-02-15",
+    "prospecto": "Gabriela",
+    "telefono": "9612038883",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Gabriela\n+52 961 203 8883",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-006",
+    "fecha": "2024-03-06",
+    "prospecto": "Cascadas del Sur",
+    "telefono": "9624200496",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "#ERROR!",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-007",
+    "fecha": "2024-03-14",
+    "prospecto": "Pascual Roque",
+    "telefono": "9614530985",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Pascual Roque\n+52 961 453 0985",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-008",
+    "fecha": "2024-03-14",
+    "prospecto": "Francisco Gomez",
+    "telefono": "4481219750",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Francisco Gomez\n+52 448 121 9750",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-009",
+    "fecha": "2024-03-24",
+    "prospecto": "Linda  Farfan Sanchez",
+    "telefono": "9611349856",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Linda  Farfan Sanchez\n+52 961 134 9856",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-010",
+    "fecha": "2024-04-01",
+    "prospecto": "Mandar msj para agendar cita",
+    "telefono": "9612691947",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Mandar msj para agendar cita \nDaniela Zúñiga\n+52 961 269 1947",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-011",
+    "fecha": "2024-04-10",
+    "prospecto": "Sr Moreno",
+    "telefono": "9671015478",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Sr Moreno\n+52 967 101 5478",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-012",
+    "fecha": "2024-04-15",
+    "prospecto": "Juan Antonio mendoza",
+    "telefono": "9615791200",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Juan Antonio mendoza\n+52 961 579 1200",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-013",
+    "fecha": "2024-05-01",
+    "prospecto": "Detalles del evento:",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Detalles del evento:\nInvitado: Daniel Pascual\nCorreo electrónico del invitado: dpascualnava@gmail.com\n\nDetalles adicionales:\nDe que trata la reunion / Please share anything that will help prepare for our meeting.:\nHabilitar pago en nuestra cuenta de gohighlevel, veri si podemos habilitar telefono y",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-014",
+    "fecha": "2024-05-22",
+    "prospecto": "Fredy Sánchez",
+    "telefono": "9621514611",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Fredy Sánchez\n+52 962 151 4611",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-015",
+    "fecha": "2024-05-24",
+    "prospecto": "Manda msj para confirmar cita para el fin de semana",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Manda msj para confirmar cita para el fin de semana",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-016",
+    "fecha": "2024-05-30",
+    "prospecto": "Mandarle msj para confirmar cita",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Mandarle msj para confirmar cita",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-017",
+    "fecha": "2024-06-05",
+    "prospecto": "Contactar",
+    "telefono": "4433615146",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Contactar \n\n+52 443 361 5146",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-018",
+    "fecha": "2024-07-01",
+    "prospecto": "Contactar para seguimiento",
+    "telefono": "9612024610",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Contactar para seguimiento\nAlex Carrillo\n+52 961 202 4610",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-019",
+    "fecha": "2024-07-26",
+    "prospecto": "Actualizar información",
+    "telefono": "9618531209",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Actualizar información \nFabián Mendoza Orozco\n+52 961 853 1209",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-020",
+    "fecha": "2024-07-27",
+    "prospecto": "Dony Perez",
+    "telefono": "9613554340",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Dony Perez\n+52 961 355 4340",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-021",
+    "fecha": "2024-08-01",
+    "prospecto": "Nombre del evento: Reunión de Información Tenerife",
+    "telefono": "51446389",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Nombre del evento: Reunión de Información Tenerife\n\nÚnete a nuestra sesión informativa para descubrir las increíbles oportunidades de inversión en Tenerife y Gran Vía del Mar. Durante esta reunión, nuestros expertos te proporcionarán todos los detalles sobre las características del proyecto, las ven",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-022",
+    "fecha": "2024-08-10",
+    "prospecto": "Alfredo Perez",
+    "telefono": "9613323717",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Alfredo Perez\n+52 961 332 3717\nAgendar",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-023",
+    "fecha": "2024-09-09",
+    "prospecto": "Tired of guessing what works on Instagram? We've cracked the code!",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Tired of guessing what works on Instagram? We've cracked the code!\n\nThe Metricool team is here to break down our latest study and uncover the main takeaways from the year’s Instagram study, compared to the 2023 data.\n\nOur 2024 Instagram Study analyzed over 340,000 professional Instagram accounts, sa",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-024",
+    "fecha": "2024-09-09",
+    "prospecto": "Tired of guessing what works on Instagram? We've cracked the code!",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Tired of guessing what works on Instagram? We've cracked the code!\n\nThe Metricool team is here to break down our latest study and uncover the main takeaways from the year’s Instagram study, compared to the 2023 data.\n\nOur 2024 Instagram Study analyzed over 340,000 professional Instagram accounts, sa",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-025",
+    "fecha": "2024-09-18",
+    "prospecto": "Agendar",
+    "telefono": "9613868605",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Agendar \n+52 961 386 8605\nJ Enrique Meneses Nájera",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-026",
+    "fecha": "2024-09-25",
+    "prospecto": "Rita Lopez",
+    "telefono": "9681180707",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Rita Lopez\n+52 968 118 0707",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-027",
+    "fecha": "2024-09-28",
+    "prospecto": "Julio Castellanos",
+    "telefono": "9622407895",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Julio Castellanos \n+52 962 240 7895",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-028",
+    "fecha": "2024-10-01",
+    "prospecto": "Contactar",
+    "telefono": "9611853853",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Contactar\n+52 961 185 3853",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-029",
+    "fecha": "2024-10-01",
+    "prospecto": "Diego Armando Ortega",
+    "telefono": "9612282468",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Diego Armando Ortega\n+52 961 228 2468",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-030",
+    "fecha": "2024-10-02",
+    "prospecto": "Roberto Villafuerte",
+    "telefono": "9671047166",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Roberto Villafuerte\n+52 967 104 7166",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-031",
+    "fecha": "2024-10-03",
+    "prospecto": "Diego armando ortega",
+    "telefono": "9612282468",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Diego armando ortega\n+52 961 228 2468",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-032",
+    "fecha": "2024-10-07",
+    "prospecto": "Raúl Camacho",
+    "telefono": "9613609864",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Raúl Camacho\n+52 961 360 9864",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-033",
+    "fecha": "2024-10-13",
+    "prospecto": "Deysi Castellanos",
+    "telefono": "9192060289",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Deysi Castellanos\n+52 919 206 0289",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-034",
+    "fecha": "2024-10-18",
+    "prospecto": "Jose Vaquerizo",
+    "telefono": "9613482715",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Jose Vaquerizo\n+52 961 348 2715",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-035",
+    "fecha": "2024-10-28",
+    "prospecto": "Brau Porras Castillo",
+    "telefono": "9671800386",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Brau Porras Castillo\n+52 967 180 0386",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-036",
+    "fecha": "2024-10-31",
+    "prospecto": "ING. Wilmer Díaz",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "ING. Wilmer Díaz\nEstá en Tapachula interesado en Agendar",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-037",
+    "fecha": "2024-11-12",
+    "prospecto": "Antonio Pérez",
+    "telefono": "9211123313",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Antonio Pérez\n+52 921 112 3313",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-038",
+    "fecha": "2024-11-27",
+    "prospecto": "Juan Martínez Jiménez",
+    "telefono": "9681004946",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Juan Martínez Jiménez \n+52 968 100 4946",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-039",
+    "fecha": "2024-12-06",
+    "prospecto": "Oscar Ricardo Sarmiento Coutiño",
+    "telefono": "9611371059",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Oscar Ricardo Sarmiento Coutiño\n+52 961 137 1059",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-040",
+    "fecha": "2024-12-09",
+    "prospecto": "Colinas del Campestre",
+    "telefono": "9673000843",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "#ERROR!",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-041",
+    "fecha": "2024-12-09",
+    "prospecto": "Emir Cruz",
+    "telefono": "9191137291",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Emir Cruz\n+52 919 113 7291",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-042",
+    "fecha": "2024-12-18",
+    "prospecto": "Grand Mayan",
+    "telefono": "9673000843",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "#ERROR!",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-043",
+    "fecha": "2024-12-19",
+    "prospecto": "Jacinto",
+    "telefono": "9671831016",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Jacinto \n967 183 1016",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-044",
+    "fecha": "2024-12-23",
+    "prospecto": "Raymundo Gomez",
+    "telefono": "9613189108",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Raymundo Gomez\n+52 961 318 9108",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-045",
+    "fecha": "2024-12-28",
+    "prospecto": "Consuelo",
+    "telefono": "9611658600",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Consuelo \n+52 961 165 8600",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-046",
+    "fecha": "2025-01-07",
+    "prospecto": "Grand Mayan",
+    "telefono": "9611179585",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "#ERROR!",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-047",
+    "fecha": "2025-01-08",
+    "prospecto": "Sra Norma",
+    "telefono": "9612251717",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Sra Norma\n+52 961 225 1717",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-048",
+    "fecha": "2025-01-10",
+    "prospecto": "Lic Elizabeth Toledo",
+    "telefono": "9613177796",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Lic Elizabeth Toledo\n+52 961 317 7796",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-049",
+    "fecha": "2025-01-16",
+    "prospecto": "Cony de Arce",
+    "telefono": "9671875398",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Cony de Arce\n+52 967 187 5398",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-050",
+    "fecha": "2025-01-16",
+    "prospecto": "Gabriela Ascencio",
+    "telefono": "5549498382",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Gabriela Ascencio\n+52 55 4949 8382",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-051",
+    "fecha": "2025-01-17",
+    "prospecto": "Gabriela García Morales",
+    "telefono": "9611123431",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Gabriela García Morales\n+52 961 112 3431",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-052",
+    "fecha": "2025-01-24",
+    "prospecto": "Ing. Rafael delgado torres",
+    "telefono": "9612481753",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Ing. Rafael delgado torres\n+52 961 248 1753",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-053",
+    "fecha": "2025-04-21",
+    "prospecto": "Con Javier Gallegos",
+    "telefono": "9614104232",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Con Javier Gallegos\n+52 961 410 4232",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-054",
+    "fecha": "2025-04-22",
+    "prospecto": "Isidro oseguera",
+    "telefono": "9671926882",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Isidro oseguera\n+52 967 192 6882",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-055",
+    "fecha": "2025-04-24",
+    "prospecto": "Carlos molina",
+    "telefono": "9613608206",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Carlos molina\n+52 961 360 8206",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-056",
+    "fecha": "2025-05-13",
+    "prospecto": "Luis de Paz",
+    "telefono": "3348303608",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Luis de Paz\n+52 33 4830 3608",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-057",
+    "fecha": "2025-05-15",
+    "prospecto": "Buenos dias, con Daniel Mendez",
+    "telefono": "9613049788",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Buenos dias, con Daniel Mendez\n+52 961 304 9788",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-058",
+    "fecha": "2025-05-19",
+    "prospecto": "Enviada su currículo con el  Ing. Sergio Riley y confirmar con Mtro. Horacio",
+    "telefono": "",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Enviada su currículo con el  Ing. Sergio Riley y confirmar con Mtro. Horacio",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-059",
+    "fecha": "2025-05-27",
+    "prospecto": "Pablo Espinosa",
+    "telefono": "9612530912",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Pablo Espinosa\n+52 961 253 0912",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-060",
+    "fecha": "2025-10-12",
+    "prospecto": "Luis Gonzalez",
+    "telefono": "9611315358",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Luis Gonzalez\n+52 961 131 5358",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-061",
+    "fecha": "2025-10-14",
+    "prospecto": "María Antonieta Herrera",
+    "telefono": "9614241298",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "María Antonieta Herrera\n+52 961 424 1298",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-062",
+    "fecha": "2025-10-16",
+    "prospecto": "Erika constantino",
+    "telefono": "9612943347",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Erika constantino\n+52 961 294 3347",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-063",
+    "fecha": "2025-11-04",
+    "prospecto": "Sr. Romeo de la Torre",
+    "telefono": "9614719247",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Sr. Romeo de la Torre\n+52 961 471 9247\nMandarle plano actualizado",
+    "estado": "Programada"
+  },
+  {
+    "id": "CIT-064",
+    "fecha": "2025-11-18",
+    "prospecto": "Juana olmos",
+    "telefono": "5660162040",
+    "asesor": "Daniel Vázquez",
+    "proyecto": "",
+    "notas": "Juana olmos\n+52 56 6016 2040",
+    "estado": "Programada"
+  }
+]

@@ -400,6 +400,12 @@
         align-items:center;gap:4px">
         👥<span>CITAS</span>
       </button>
+      <button onclick="switchTab('citas-historial')" style="color:#fff;background:none;
+        border:none;font-size:10px;
+        display:flex;flex-direction:column;
+        align-items:center;gap:4px">
+        📅<span>CITAS_HISTORIAL</span>
+      </button>
     </nav>
 </div>
 </div>
@@ -2338,6 +2344,47 @@ function enviarActualizacionCita(payload, onSuccess, onError) {
 }
 window.cbCitas = cbCitas;
     </script>
+
+<div id="tab-citas-historial" style="display:none; padding: 20px; position:absolute; top:80px; width:100%; background:#fff; z-index:900; min-height: 100vh;">
+  <table id="hist-table" border="1" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr style="background: #B8924A; color: #141414;">
+        <th>ID</th><th>Fecha</th><th>Prospecto</th><th>Teléfono</th><th>Asesor</th><th>Proyecto</th><th>Estado</th>
+      </tr>
+    </thead>
+    <tbody id="hist-body"></tbody>
+  </table>
+</div>
+
+<script>
+async function loadHistorico() {
+  const data = await fetch('/data/citas-historico-2022-2025.json').then(r => r.json());
+  document.getElementById('hist-body').innerHTML = data.map(c => `
+    <tr>
+      <td>${c.id}</td>
+      <td>${c.fecha}</td>
+      <td contenteditable="true">${c.prospecto}</td>
+      <td contenteditable="true">${c.telefono}</td>
+      <td>${c.asesor}</td>
+      <td>${c.proyecto}</td>
+      <td contenteditable="true"><select><option>${c.estado}</option><option>Venta Sí</option><option>Venta No</option><option>Pendiente</option></select></td>
+    </tr>
+  `).join('');
+}
+
+const originalSwitchTab = window.switchTab || function() {};
+window.switchTab = function(tab) {
+  if (tab === 'citas-historial') {
+    document.getElementById('tab-citas-historial').style.display = 'block';
+    loadHistorico();
+  } else {
+    if (document.getElementById('tab-citas-historial')) {
+        document.getElementById('tab-citas-historial').style.display = 'none';
+    }
+  }
+  if (originalSwitchTab) originalSwitchTab(tab);
+};
+</script>
 
 
 </body></html>
