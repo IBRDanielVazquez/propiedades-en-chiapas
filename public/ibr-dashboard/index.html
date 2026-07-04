@@ -301,16 +301,31 @@
         </div>
         
         <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Desarrollo</label>
-            <select id="nc-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                <!-- Populated dynamically -->
-            </select>
-            <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
-                <button type="button" onclick="mostrarAgregarDesarrollo('nc')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
-                <div id="nc-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
-                    <input type="text" id="nc-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
-                    <button type="button" onclick="guardarNuevoDesarrollo('nc')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:6px;">¿Es cita para un desarrollo?</label>
+            <div style="display:flex; gap:12px; margin-bottom:8px;">
+                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
+                    <input type="radio" name="nc-es-desarrollo" value="si" checked onchange="toggleDesarrolloInput('nc')" style="accent-color:#B8924A;"> Sí
+                </label>
+                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
+                    <input type="radio" name="nc-es-desarrollo" value="no" onchange="toggleDesarrolloInput('nc')" style="accent-color:#B8924A;"> No
+                </label>
+            </div>
+            
+            <div id="nc-select-container">
+                <select id="nc-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <!-- Populated dynamically -->
+                </select>
+                <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
+                    <button type="button" onclick="mostrarAgregarDesarrollo('nc')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
+                    <div id="nc-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
+                        <input type="text" id="nc-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
+                        <button type="button" onclick="guardarNuevoDesarrollo('nc')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
+                    </div>
                 </div>
+            </div>
+            
+            <div id="nc-manual-container" style="display:none;">
+                <input type="text" id="nc-desarrollo-manual" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
             </div>
         </div>
         
@@ -327,6 +342,35 @@
         <div style="margin-bottom:20px;">
             <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Observaciones</label>
             <textarea id="nc-obs" rows="2" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; resize:none;"></textarea>
+        </div>
+        
+        <div style="margin-bottom:12px; display:flex; gap:12px;">
+            <div style="flex:1;">
+                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Medio de Contacto</label>
+                <select id="nc-medio" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <option value="">Seleccionar...</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Llamada">Llamada</option>
+                    <option value="Recomendado">Recomendado</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div style="flex:1;">
+                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Nivel de Interés</label>
+                <select id="nc-interes" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <option value="">Seleccionar...</option>
+                    <option value="Frío">Frío ❄️</option>
+                    <option value="Tibio">Tibio 🔥</option>
+                    <option value="Caliente">Caliente 🌶️</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha de Seguimiento</label>
+            <input type="date" id="nc-seguimiento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
         </div>
         
         <div style="display:flex; gap:12px;">
@@ -357,16 +401,31 @@
         </div>
         
         <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Desarrollo</label>
-            <select id="ec-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                <!-- Populated dynamically -->
-            </select>
-            <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
-                <button type="button" onclick="mostrarAgregarDesarrollo('ec')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
-                <div id="ec-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
-                    <input type="text" id="ec-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
-                    <button type="button" onclick="guardarNuevoDesarrollo('ec')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:6px;">¿Es cita para un desarrollo?</label>
+            <div style="display:flex; gap:12px; margin-bottom:8px;">
+                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
+                    <input type="radio" name="ec-es-desarrollo" value="si" checked onchange="toggleDesarrolloInput('ec')" style="accent-color:#B8924A;"> Sí
+                </label>
+                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
+                    <input type="radio" name="ec-es-desarrollo" value="no" onchange="toggleDesarrolloInput('ec')" style="accent-color:#B8924A;"> No
+                </label>
+            </div>
+            
+            <div id="ec-select-container">
+                <select id="ec-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <!-- Populated dynamically -->
+                </select>
+                <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
+                    <button type="button" onclick="mostrarAgregarDesarrollo('ec')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
+                    <div id="ec-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
+                        <input type="text" id="ec-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
+                        <button type="button" onclick="guardarNuevoDesarrollo('ec')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
+                    </div>
                 </div>
+            </div>
+            
+            <div id="ec-manual-container" style="display:none;">
+                <input type="text" id="ec-desarrollo-manual" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
             </div>
         </div>
         
@@ -383,6 +442,35 @@
         <div style="margin-bottom:20px;">
             <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Observaciones</label>
             <textarea id="ec-obs" rows="2" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; resize:none;"></textarea>
+        </div>
+        
+        <div style="margin-bottom:12px; display:flex; gap:12px;">
+            <div style="flex:1;">
+                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Medio de Contacto</label>
+                <select id="ec-medio" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <option value="">Seleccionar...</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Llamada">Llamada</option>
+                    <option value="Recomendado">Recomendado</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div style="flex:1;">
+                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Nivel de Interés</label>
+                <select id="ec-interes" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <option value="">Seleccionar...</option>
+                    <option value="Frío">Frío ❄️</option>
+                    <option value="Tibio">Tibio 🔥</option>
+                    <option value="Caliente">Caliente 🌶️</option>
+                </select>
+            </div>
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha de Seguimiento</label>
+            <input type="date" id="ec-seguimiento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
         </div>
         
         <div style="display:flex; gap:12px;">
@@ -2261,6 +2349,13 @@ function generarCardCitaHTML(c, isAd, isHistory) {
             </div>
         </div>
         ${obsTxt ? `<div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px; background:#2A2A2A; border-radius:8px;">${obsTxt}</div>` : ''}
+        ${(c.medio_contacto || c.interes || c.seguimiento) ? `
+        <div style="margin-top:-6px; margin-bottom:12px; display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:#9E9E9E; background:#2A2A2A40; border:1px solid #333333; padding:6px 10px; border-radius:8px;">
+            ${c.medio_contacto ? `<span>📢 Medio: <b>${c.medio_contacto}</b></span>` : ''}
+            ${c.interes ? `<span>🔥 Interés: <b>${c.interes}</b></span>` : ''}
+            ${c.seguimiento ? `<span>📅 Seguimiento: <b>${c.seguimiento}</b></span>` : ''}
+        </div>
+        ` : ''}
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div style="display:flex; gap:8px;">${waBtn}${copyBtn}</div>
             <div style="display:flex; gap:8px;">${adminBtns}</div>
@@ -2400,6 +2495,14 @@ function abrirModalNuevaCita() {
     document.getElementById('nc-nombre').value = '';
     document.getElementById('nc-telefono').value = '';
     document.getElementById('nc-obs').value = '';
+    document.getElementById('nc-medio').value = '';
+    document.getElementById('nc-interes').value = '';
+    document.getElementById('nc-seguimiento').value = '';
+    document.getElementById('nc-desarrollo-manual').value = '';
+    
+    // Reset radio button to Yes
+    document.querySelector('input[name="nc-es-desarrollo"][value="si"]').checked = true;
+    toggleDesarrolloInput('nc');
     
     // Reset inline add desarrollo
     document.getElementById('nc-add-desarrollo-container').style.display = 'none';
@@ -2418,10 +2521,14 @@ function guardarNuevaCita() {
     const btn = document.getElementById('btn-submit-cita');
     const fecha = document.getElementById('nc-fecha').value;
     const asesor = document.getElementById('nc-asesor').value;
-    const desarrollo = document.getElementById('nc-desarrollo').value;
+    const esDesarrollo = document.querySelector('input[name="nc-es-desarrollo"]:checked').value === 'si';
+    const desarrollo = esDesarrollo ? document.getElementById('nc-desarrollo').value : document.getElementById('nc-desarrollo-manual').value.trim();
     const nombre = document.getElementById('nc-nombre').value;
     const telefono = document.getElementById('nc-telefono').value;
     const obs = document.getElementById('nc-obs').value;
+    const medio = document.getElementById('nc-medio').value;
+    const interes = document.getElementById('nc-interes').value;
+    const seguimiento = document.getElementById('nc-seguimiento').value;
     
     if(!fecha || !nombre) {
         alert('Fecha y Nombre son obligatorios');
@@ -2435,11 +2542,14 @@ function guardarNuevaCita() {
         action: 'crear_cita',
         fecha_hora: fecha,
         asesor: asesor,
-        desarrollo: desarrollo,
+        desarrollo: desarrollo || 'Otro',
         prospecto_nombre: nombre,
         prospecto_telefono: telefono,
         observaciones: obs,
-        usuario_actual: window.currentUser?.nombre || currentUser || ''
+        usuario_actual: window.currentUser?.nombre || currentUser || '',
+        medio_contacto: medio,
+        interes: interes,
+        seguimiento: seguimiento
     };
     
     fetch(SCRIPT_URL, {
@@ -2498,12 +2608,26 @@ function abrirModalEditarCita(cDataStr) {
     document.getElementById('ec-nombre').value = c.nombre || c.prospecto || '';
     document.getElementById('ec-telefono').value = c.telefono || '';
     document.getElementById('ec-obs').value = c.observaciones || c.comentarios || '';
+    document.getElementById('ec-medio').value = c.medio_contacto || '';
+    document.getElementById('ec-interes').value = c.interes || '';
+    document.getElementById('ec-seguimiento').value = c.seguimiento || '';
+    document.getElementById('ec-desarrollo-manual').value = '';
     
     // Reset inline add desarrollo
     document.getElementById('ec-add-desarrollo-container').style.display = 'none';
     document.getElementById('ec-nuevo-desarrollo-input').value = '';
     
-    cargarDesarrollosDropdown('ec-desarrollo', c.desarrollo || c.proyecto || '');
+    cargarDesarrollosDropdown('ec-desarrollo', c.desarrollo || c.proyecto || '', function(loadedNames) {
+        const devVal = c.desarrollo || c.proyecto || '';
+        if (loadedNames.includes(devVal) || devVal === 'Otro' || devVal === 'Cita personal' || !devVal) {
+            document.querySelector('input[name="ec-es-desarrollo"][value="si"]').checked = true;
+            document.getElementById('ec-desarrollo').value = devVal || 'Otro';
+        } else {
+            document.querySelector('input[name="ec-es-desarrollo"][value="no"]').checked = true;
+            document.getElementById('ec-desarrollo-manual').value = devVal;
+        }
+        toggleDesarrolloInput('ec');
+    });
 }
 
 function cerrarModalEditarCita() {
@@ -2516,10 +2640,14 @@ function guardarEdicionCita() {
     const id = document.getElementById('ec-id').value;
     const fecha = document.getElementById('ec-fecha').value;
     const asesor = document.getElementById('ec-asesor').value;
-    const desarrollo = document.getElementById('ec-desarrollo').value;
+    const esDesarrollo = document.querySelector('input[name="ec-es-desarrollo"]:checked').value === 'si';
+    const desarrollo = esDesarrollo ? document.getElementById('ec-desarrollo').value : document.getElementById('ec-desarrollo-manual').value.trim();
     const nombre = document.getElementById('ec-nombre').value;
     const telefono = document.getElementById('ec-telefono').value;
     const obs = document.getElementById('ec-obs').value;
+    const medio = document.getElementById('ec-medio').value;
+    const interes = document.getElementById('ec-interes').value;
+    const seguimiento = document.getElementById('ec-seguimiento').value;
     
     if(!fecha || !nombre) {
         alert('Fecha y Nombre son obligatorios');
@@ -2534,11 +2662,14 @@ function guardarEdicionCita() {
         id_cita: id,
         fecha_hora: fecha,
         asesor: asesor,
-        desarrollo: desarrollo,
+        desarrollo: desarrollo || 'Otro',
         prospecto_nombre: nombre,
         prospecto_telefono: telefono,
         observaciones: obs,
-        usuario_actual: window.currentUser?.nombre || currentUser || ''
+        usuario_actual: window.currentUser?.nombre || currentUser || '',
+        medio_contacto: medio,
+        interes: interes,
+        seguimiento: seguimiento
     };
     
     fetch(SCRIPT_URL, {
@@ -2669,17 +2800,33 @@ function enviarActualizacionCita(payload, onSuccess, onError) {
         if(onError) onError();
     });
 }
+function toggleDesarrolloInput(prefix) {
+    const radioVal = document.querySelector('input[name="' + prefix + '-es-desarrollo"]:checked').value;
+    const selectContainer = document.getElementById(prefix + '-select-container');
+    const manualContainer = document.getElementById(prefix + '-manual-container');
+    
+    if (radioVal === 'si') {
+        selectContainer.style.display = 'block';
+        manualContainer.style.display = 'none';
+    } else {
+        selectContainer.style.display = 'none';
+        manualContainer.style.display = 'block';
+    }
+}
+
 function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
     const cbName = 'cbDesarrollos_' + selectId;
     window[cbName] = function(res) {
         const select = document.getElementById(selectId);
         select.innerHTML = '';
+        const loadedNames = [];
         if (res.ok && res.datos) {
             res.datos.forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d.nombre;
                 opt.textContent = d.nombre;
                 select.appendChild(opt);
+                loadedNames.push(d.nombre);
             });
         }
         
@@ -2688,11 +2835,13 @@ function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
         optOtro.value = 'Otro';
         optOtro.textContent = 'Otro';
         select.appendChild(optOtro);
+        loadedNames.push('Otro');
         
         const optPersonal = document.createElement('option');
         optPersonal.value = 'Cita personal';
         optPersonal.textContent = 'Cita personal';
         select.appendChild(optPersonal);
+        loadedNames.push('Cita personal');
         
         if (valueToSelect) {
             let found = false;
@@ -2716,7 +2865,7 @@ function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
         const scr = document.getElementById('scr-' + cbName);
         if (scr) scr.remove();
         
-        if (callback) callback();
+        if (callback) callback(loadedNames);
     };
     
     const script = document.createElement('script');
