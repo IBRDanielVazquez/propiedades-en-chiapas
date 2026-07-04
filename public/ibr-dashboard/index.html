@@ -302,7 +302,16 @@
         
         <div style="margin-bottom:12px;">
             <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Desarrollo</label>
-            <input type="text" id="nc-desarrollo" placeholder="Ej. Bella Vista" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+            <select id="nc-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                <!-- Populated dynamically -->
+            </select>
+            <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
+                <button type="button" onclick="mostrarAgregarDesarrollo('nc')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
+                <div id="nc-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
+                    <input type="text" id="nc-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
+                    <button type="button" onclick="guardarNuevoDesarrollo('nc')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
+                </div>
+            </div>
         </div>
         
         <div style="margin-bottom:12px;">
@@ -349,7 +358,16 @@
         
         <div style="margin-bottom:12px;">
             <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Desarrollo</label>
-            <input type="text" id="ec-desarrollo" placeholder="Ej. Bella Vista" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+            <select id="ec-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                <!-- Populated dynamically -->
+            </select>
+            <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
+                <button type="button" onclick="mostrarAgregarDesarrollo('ec')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
+                <div id="ec-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
+                    <input type="text" id="ec-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
+                    <button type="button" onclick="guardarNuevoDesarrollo('ec')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
+                </div>
+            </div>
         </div>
         
         <div style="margin-bottom:12px;">
@@ -2379,10 +2397,15 @@ function abrirModalNuevaCita() {
     m.classList.remove('hidden');
     m.style.display = 'flex';
     document.getElementById('nc-fecha').value = '';
-    document.getElementById('nc-desarrollo').value = '';
     document.getElementById('nc-nombre').value = '';
     document.getElementById('nc-telefono').value = '';
     document.getElementById('nc-obs').value = '';
+    
+    // Reset inline add desarrollo
+    document.getElementById('nc-add-desarrollo-container').style.display = 'none';
+    document.getElementById('nc-nuevo-desarrollo-input').value = '';
+    
+    cargarDesarrollosDropdown('nc-desarrollo');
 }
 
 function cerrarModalNuevaCita() {
@@ -2415,7 +2438,8 @@ function guardarNuevaCita() {
         desarrollo: desarrollo,
         prospecto_nombre: nombre,
         prospecto_telefono: telefono,
-        observaciones: obs
+        observaciones: obs,
+        usuario_actual: window.currentUser?.nombre || currentUser || ''
     };
     
     fetch(SCRIPT_URL, {
@@ -2471,10 +2495,15 @@ function abrirModalEditarCita(cDataStr) {
     document.getElementById('ec-fecha').value = dt;
     
     document.getElementById('ec-asesor').value = c.asesor || '';
-    document.getElementById('ec-desarrollo').value = c.desarrollo || c.proyecto || '';
     document.getElementById('ec-nombre').value = c.nombre || c.prospecto || '';
     document.getElementById('ec-telefono').value = c.telefono || '';
     document.getElementById('ec-obs').value = c.observaciones || c.comentarios || '';
+    
+    // Reset inline add desarrollo
+    document.getElementById('ec-add-desarrollo-container').style.display = 'none';
+    document.getElementById('ec-nuevo-desarrollo-input').value = '';
+    
+    cargarDesarrollosDropdown('ec-desarrollo', c.desarrollo || c.proyecto || '');
 }
 
 function cerrarModalEditarCita() {
@@ -2508,7 +2537,8 @@ function guardarEdicionCita() {
         desarrollo: desarrollo,
         prospecto_nombre: nombre,
         prospecto_telefono: telefono,
-        observaciones: obs
+        observaciones: obs,
+        usuario_actual: window.currentUser?.nombre || currentUser || ''
     };
     
     fetch(SCRIPT_URL, {
@@ -2540,7 +2570,8 @@ function confirmarEliminarCita(id) {
     
     const payload = {
         action: 'eliminar_cita',
-        id_cita: id
+        id_cita: id,
+        usuario_actual: window.currentUser?.nombre || currentUser || ''
     };
     
     fetch(SCRIPT_URL, {
@@ -2616,6 +2647,7 @@ function guardarVenta() {
 }
 
 function enviarActualizacionCita(payload, onSuccess, onError) {
+    payload.usuario_actual = window.currentUser?.nombre || currentUser || '';
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -2637,6 +2669,117 @@ function enviarActualizacionCita(payload, onSuccess, onError) {
         if(onError) onError();
     });
 }
+function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
+    const cbName = 'cbDesarrollos_' + selectId;
+    window[cbName] = function(res) {
+        const select = document.getElementById(selectId);
+        select.innerHTML = '';
+        if (res.ok && res.datos) {
+            res.datos.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.nombre;
+                opt.textContent = d.nombre;
+                select.appendChild(opt);
+            });
+        }
+        
+        // Add fixed options
+        const optOtro = document.createElement('option');
+        optOtro.value = 'Otro';
+        optOtro.textContent = 'Otro';
+        select.appendChild(optOtro);
+        
+        const optPersonal = document.createElement('option');
+        optPersonal.value = 'Cita personal';
+        optPersonal.textContent = 'Cita personal';
+        select.appendChild(optPersonal);
+        
+        if (valueToSelect) {
+            let found = false;
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === valueToSelect) {
+                    select.selectedIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && valueToSelect) {
+                const opt = document.createElement('option');
+                opt.value = valueToSelect;
+                opt.textContent = valueToSelect;
+                select.insertBefore(opt, select.firstChild);
+                select.value = valueToSelect;
+            }
+        }
+        
+        // Remove script tag
+        const scr = document.getElementById('scr-' + cbName);
+        if (scr) scr.remove();
+        
+        if (callback) callback();
+    };
+    
+    const script = document.createElement('script');
+    script.id = 'scr-' + cbName;
+    script.src = SCRIPT_URL + '?action=desarrollos&callback=' + cbName + '&t=' + Date.now();
+    document.body.appendChild(script);
+}
+
+function mostrarAgregarDesarrollo(prefix) {
+    const container = document.getElementById(prefix + '-add-desarrollo-container');
+    container.style.display = container.style.display === 'none' ? 'flex' : 'none';
+}
+
+function guardarNuevoDesarrollo(prefix) {
+    const input = document.getElementById(prefix + '-nuevo-desarrollo-input');
+    const nombre = input.value.trim();
+    if (!nombre) {
+        alert('Escribe el nombre del desarrollo');
+        return;
+    }
+    
+    const btn = input.nextElementSibling;
+    const origText = btn.innerHTML;
+    btn.innerHTML = '...';
+    btn.disabled = true;
+    
+    const payload = {
+        action: 'agregar_desarrollo',
+        nombre: nombre,
+        usuario_actual: window.currentUser?.nombre || currentUser || ''
+    };
+    
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.ok) {
+            const select = document.getElementById(prefix + '-desarrollo');
+            const opt = document.createElement('option');
+            opt.value = nombre;
+            opt.textContent = nombre;
+            select.insertBefore(opt, select.firstChild);
+            select.value = nombre;
+            
+            document.getElementById(prefix + '-add-desarrollo-container').style.display = 'none';
+            input.value = '';
+        } else {
+            alert('Error: ' + res.mensaje);
+        }
+    })
+    .catch(err => {
+        alert('Error de conexión');
+        console.error(err);
+    })
+    .finally(() => {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+    });
+}
+
 window.cbCitas = cbCitas;
     </script>
 
