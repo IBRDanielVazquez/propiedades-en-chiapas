@@ -268,7 +268,8 @@
     <button id="btn-nueva-cita" onclick="abrirModalNuevaCita()" style="background:#B8924A; color:#141414; padding:8px 16px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; font-size:14px; display:none;">+ Nueva Cita</button>
 </div>
 <div id="citas-admin-filter" class="mb-4 hidden">
-    <select id="citas-asesor-select" onchange="renderCitasUI()" style="background:#1E1E1E; border:1px solid #333333; color:#F7F1E8; padding:12px; border-radius:8px; width:100%; outline:none; font-family:'Inter',sans-serif; font-size:14px;">
+    <div id="citas-stats-container" style="display:flex; gap:12px; overflow-x:auto; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid #333333; scrollbar-width:thin; white-space:nowrap;"></div>
+    <select id="citas-asesor-select" onchange="renderCitasUI()" style="display:none; background:#1E1E1E; border:1px solid #333333; color:#F7F1E8; padding:12px; border-radius:8px; width:100%; outline:none; font-family:'Inter',sans-serif; font-size:14px;">
         <option value="Todos" selected>Todos los Asesores</option>
         <option value="Daniel Vázquez">Daniel Vázquez</option>
         <option value="Lupyta Mendoza">Lupyta Mendoza</option>
@@ -322,6 +323,53 @@
         <div style="display:flex; gap:12px;">
             <button onclick="cerrarModalNuevaCita()" style="flex:1; background:#2A2A2A; color:#F7F1E8; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Cancelar</button>
             <button id="btn-submit-cita" onclick="guardarNuevaCita()" style="flex:1; background:#B8924A; color:#141414; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Cita -->
+<div id="modal-editar-cita" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99999; justify-content:center; align-items:center; padding:16px;">
+    <div style="background:#1E1E1E; border:1px solid #333333; border-radius:16px; width:100%; max-width:400px; padding:24px; color:#F7F1E8; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto;">
+        <h3 style="color:#B8924A; font-family:'Cormorant Garamond', serif; font-size:24px; font-weight:bold; margin-bottom:16px;">Editar Cita</h3>
+        <input type="hidden" id="ec-id">
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha y Hora</label>
+            <input type="datetime-local" id="ec-fecha" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
+        </div>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Asesor</label>
+            <select id="ec-asesor" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                <option value="Daniel Vázquez">Daniel Vázquez</option>
+                <option value="Lupyta Mendoza">Lupyta Mendoza</option>
+                <option value="Carmen Jiménez">Carmen Jiménez</option>
+                <option value="Luis García">Luis García</option>
+            </select>
+        </div>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Desarrollo</label>
+            <input type="text" id="ec-desarrollo" placeholder="Ej. Bella Vista" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+        </div>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Nombre Prospecto</label>
+            <input type="text" id="ec-nombre" placeholder="Nombre completo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+        </div>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Teléfono</label>
+            <input type="tel" id="ec-telefono" placeholder="10 dígitos" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+        </div>
+        
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Observaciones</label>
+            <textarea id="ec-obs" rows="2" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; resize:none;"></textarea>
+        </div>
+        
+        <div style="display:flex; gap:12px;">
+            <button onclick="cerrarModalEditarCita()" style="flex:1; background:#2A2A2A; color:#F7F1E8; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Cancelar</button>
+            <button id="btn-submit-editar-cita" onclick="guardarEdicionCita()" style="flex:1; background:#B8924A; color:#141414; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Guardar</button>
         </div>
     </div>
 </div>
@@ -2030,7 +2078,13 @@ function populateSelects() {
 // ============================================
 let citasData = [];
 let citasInterval = null;
+let currentCitasFilter = 'Todos';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwtAH_zlCJi_FDHTY33Z07OycOnyxNzoKqe53p0RYyhqVsVnYV4vC-cve7azipyhigHAw/exec';
+
+function setCitasFilter(f) {
+    currentCitasFilter = f;
+    renderCitasUI();
+}
 
 function loadCitasJSONP() {
     console.log('Cargando citas desde:', SCRIPT_URL + '?action=citas_sheet&callback=cbCitas');
@@ -2120,14 +2174,47 @@ function generarCardCitaHTML(c, isAd, isHistory) {
 
     let badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">${est}</span>`;
 
+    let hoyBadge = '';
+    let vencidaBadge = '';
+    if (c.fecha_hora) {
+        let fDate = new Date(c.fecha_hora);
+        let now = new Date();
+        let isToday = (fDate.getDate() === now.getDate() && fDate.getMonth() === now.getMonth() && fDate.getFullYear() === now.getFullYear());
+        if (isToday) {
+            hoyBadge = `<span style="background:#B8924A; color:#141414; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">HOY</span>`;
+        } else if (fDate < now && est === 'Programada') {
+            vencidaBadge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">VENCIDA</span>`;
+        }
+    } else if (c.fecha) {
+        let now = new Date();
+        let todayStr = now.toISOString().split('T')[0]; // simple compare
+        if (c.fecha === todayStr) {
+            hoyBadge = `<span style="background:#B8924A; color:#141414; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">HOY</span>`;
+        } else if (c.fecha < todayStr && est === 'Programada') {
+            vencidaBadge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">VENCIDA</span>`;
+        }
+    }
+
     let actionBtns = '';
     if(!isAd && est === 'Programada' && !isHistory) {
         actionBtns = `
-        <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; border-top:1px solid #333333; padding-top:12px;">
-            <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
-            <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" style="background:#EF444420; border:1px solid #EF4444; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✕ No asistió</button>
-            <button onclick="abrirModalVenta('${c.id}')" style="background:#3B82F620; border:1px solid #3B82F6; color:#3B82F6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">💰 Venta</button>
+        <div style="margin-top:16px; border-top:1px solid #333333; padding-top:12px;">
+            <div style="font-size:12px; color:#9E9E9E; margin-bottom:8px;">Reportar resultado:</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
+                <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" style="background:#EF444420; border:1px solid #EF4444; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✕ No asistió</button>
+                <button onclick="abrirModalVenta('${c.id}')" style="background:#3B82F620; border:1px solid #3B82F6; color:#3B82F6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">💰 Venta</button>
+            </div>
         </div>
+        `;
+    }
+
+    let adminBtns = '';
+    if(isAd && !isHistory) {
+        const cDataStr = encodeURIComponent(JSON.stringify(c));
+        adminBtns = `
+        <button onclick="abrirModalEditarCita('${cDataStr}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Editar">✏️</button>
+        <button onclick="confirmarEliminarCita('${c.id}')" style="background:#2A2A2A; border:1px solid #333333; color:#EF4444; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Borrar">🗑️</button>
         `;
     }
 
@@ -2140,9 +2227,9 @@ function generarCardCitaHTML(c, isAd, isHistory) {
         ${asesorTag}
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
             <div style="flex:1; padding-right:12px;">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                    <h3 style="font-family:'Cormorant Garamond', serif; font-size:22px; font-weight:bold; color:#F7F1E8; line-height:1.2;">${nombreTxt}</h3>
-                    ${badge}
+                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+                    <h3 style="font-family:'Cormorant Garamond', serif; font-size:22px; font-weight:bold; color:#F7F1E8; line-height:1.2; margin:0;">${nombreTxt}</h3>
+                    ${badge}${hoyBadge}${vencidaBadge}
                 </div>
                 ${desarrolloTxt ? `<div style="color:#B8924A; font-size:13px; font-weight:bold; margin-bottom:4px;">🏗️ ${desarrolloTxt}</div>` : ''}
                 <div style="color:#9E9E9E; font-size:13px; font-weight:500;">📞 ${c.telefono || 'Sin teléfono'}</div>
@@ -2154,7 +2241,8 @@ function generarCardCitaHTML(c, isAd, isHistory) {
         </div>
         ${obsTxt ? `<div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px; background:#2A2A2A; border-radius:8px;">${obsTxt}</div>` : ''}
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            ${waBtn ? `<div>${waBtn}</div>` : '<div></div>'}
+            <div>${waBtn}</div>
+            <div style="display:flex; gap:8px;">${adminBtns}</div>
         </div>
         ${actionBtns}
     </div>
@@ -2167,6 +2255,8 @@ function renderCitasUI() {
     
     const filterEl = document.getElementById('citas-admin-filter');
     const btnNueva = document.getElementById('btn-nueva-cita');
+    const statsContainer = document.getElementById('citas-stats-container');
+
     if(!filterEl) return;
     
     if(isAd) {
@@ -2177,13 +2267,89 @@ function renderCitasUI() {
         if(btnNueva) btnNueva.style.display = 'none';
     }
 
+    // Calcular stats si es admin
+    if (isAd && statsContainer) {
+        let stats = {
+            'Hoy': 0, 'Por Confirmar': 0, 'Vencidas': 0, 'Realizadas': 0, 'Ventas': 0
+        };
+        let asesoresStats = {};
+        
+        let now = new Date();
+        let todayStr = now.toISOString().split('T')[0];
+
+        citasData.forEach(c => {
+            let est = c.estatus || c.estado || 'Programada';
+            let isHoy = false;
+            let isVencida = false;
+            if (c.fecha_hora) {
+                let fDate = new Date(c.fecha_hora);
+                isHoy = (fDate.getDate() === now.getDate() && fDate.getMonth() === now.getMonth() && fDate.getFullYear() === now.getFullYear());
+                isVencida = (fDate < now && est === 'Programada');
+            } else if (c.fecha) {
+                isHoy = (c.fecha === todayStr);
+                isVencida = (c.fecha < todayStr && est === 'Programada');
+            }
+
+            if (isHoy) stats['Hoy']++;
+            if (est === 'Programada' && !isVencida) stats['Por Confirmar']++;
+            if (isVencida) stats['Vencidas']++;
+            if (est === 'Realizada' || est === 'Realizadas') stats['Realizadas']++;
+            if (est === 'Venta' || est === 'Venta Sí') stats['Ventas']++;
+
+            let as = c.asesor ? c.asesor.trim() : 'Sin Asesor';
+            if (!asesoresStats[as]) asesoresStats[as] = 0;
+            asesoresStats[as]++;
+        });
+
+        // Render chips
+        let chipsHtml = `<div onclick="setCitasFilter('Todos')" style="cursor:pointer; padding:6px 12px; border-radius:16px; background:${currentCitasFilter==='Todos'?'#B8924A':'#2A2A2A'}; color:${currentCitasFilter==='Todos'?'#141414':'#F7F1E8'}; border:1px solid #333333; font-size:12px; font-weight:bold; transition:0.2s;">Todos (${citasData.length})</div>`;
+        
+        Object.keys(stats).forEach(k => {
+            let color = currentCitasFilter===k ? '#141414' : '#B8924A';
+            let bg = currentCitasFilter===k ? '#B8924A' : '#2A2A2A';
+            if (k === 'Vencidas' && currentCitasFilter!==k && stats[k]>0) color = '#EF4444';
+            chipsHtml += `<div onclick="setCitasFilter('${k}')" style="cursor:pointer; padding:6px 12px; border-radius:16px; background:${bg}; color:${color}; border:1px solid #333333; font-size:12px; font-weight:bold; transition:0.2s;">${k} (${stats[k]})</div>`;
+        });
+        
+        Object.keys(asesoresStats).forEach(a => {
+            let bg = currentCitasFilter===a ? '#F7F1E8' : '#2A2A2A';
+            let color = currentCitasFilter===a ? '#141414' : '#9E9E9E';
+            chipsHtml += `<div onclick="setCitasFilter('${a}')" style="cursor:pointer; padding:6px 12px; border-radius:16px; background:${bg}; color:${color}; border:1px solid #333333; font-size:12px; font-weight:bold; transition:0.2s;">👤 ${a} (${asesoresStats[a]})</div>`;
+        });
+        
+        statsContainer.innerHTML = chipsHtml;
+    }
+
     let filtered = citasData;
+    
     if(!isAd) {
         filtered = citasData.filter(c => c.asesor.trim().toLowerCase() === currentName.trim().toLowerCase());
     } else {
-        const sel = document.getElementById('citas-asesor-select').value;
-        if(sel !== 'Todos') {
-            filtered = citasData.filter(c => c.asesor.trim().toLowerCase() === sel.trim().toLowerCase());
+        let now = new Date();
+        let todayStr = now.toISOString().split('T')[0];
+
+        if (currentCitasFilter !== 'Todos') {
+            filtered = citasData.filter(c => {
+                let est = c.estatus || c.estado || 'Programada';
+                let isHoy = false;
+                let isVencida = false;
+                if (c.fecha_hora) {
+                    let fDate = new Date(c.fecha_hora);
+                    isHoy = (fDate.getDate() === now.getDate() && fDate.getMonth() === now.getMonth() && fDate.getFullYear() === now.getFullYear());
+                    isVencida = (fDate < now && est === 'Programada');
+                } else if (c.fecha) {
+                    isHoy = (c.fecha === todayStr);
+                    isVencida = (c.fecha < todayStr && est === 'Programada');
+                }
+
+                if (currentCitasFilter === 'Hoy') return isHoy;
+                if (currentCitasFilter === 'Por Confirmar') return (est === 'Programada' && !isVencida);
+                if (currentCitasFilter === 'Vencidas') return isVencida;
+                if (currentCitasFilter === 'Realizadas') return (est === 'Realizada' || est === 'Realizadas');
+                if (currentCitasFilter === 'Ventas') return (est === 'Venta' || est === 'Venta Sí');
+                
+                return c.asesor && c.asesor.trim() === currentCitasFilter;
+            });
         }
     }
 
@@ -2191,7 +2357,7 @@ function renderCitasUI() {
     const status = document.getElementById('citas-status');
 
     if(filtered.length === 0) {
-        status.innerHTML = 'Sin citas programadas';
+        status.innerHTML = 'Sin citas para este filtro.';
         container.innerHTML = '';
         return;
     }
