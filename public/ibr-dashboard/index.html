@@ -1631,7 +1631,12 @@
             'Entra con tu link y guárdalo\nen favoritos.\n' +
             '- Daniel IBR'
         );
-        window.open('https://wa.me/52' + phone + '?text=' + msg, '_blank');
+        const formatted = formatWhatsAppNumber(phone);
+        if (formatted) {
+            window.open('https://wa.me/' + formatted + '?text=' + msg, '_blank');
+        } else {
+            alert('Número de teléfono incompleto o incorrecto para WhatsApp.');
+        }
     }
 
     function saveTeamPhone(token, tel) {
@@ -1768,7 +1773,12 @@
         if(!phone) phone = prompt('¿Número de WhatsApp de ' + u.nombre + '? (10 dígitos)');
         if(!phone) return;
         
-        window.open('https://wa.me/52' + phone + '?text=' + msg, '_blank');
+        const formatted = formatWhatsAppNumber(phone);
+        if (formatted) {
+            window.open('https://wa.me/' + formatted + '?text=' + msg, '_blank');
+        } else {
+            alert('Número de teléfono incompleto o incorrecto para WhatsApp.');
+        }
     }
 
     function init() {
@@ -2245,6 +2255,15 @@ let citasInterval = null;
 let currentCitasFilter = 'Todos';
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJePW3Un5vjXbpzqwWzIkYhQAlCQ8Ov-b2SDppNHgPasrcQDC_Ah6qyFWFSNa7yeYI7Q/exec';
 
+function formatWhatsAppNumber(phone) {
+    if (!phone) return '';
+    const clean = phone.replace(/[^\d]/g, '');
+    if (clean.length < 10) return '';
+    if (clean.startsWith('52') && clean.length === 12) return clean;
+    if (clean.length === 10) return '52' + clean;
+    return clean;
+}
+
 function setCitasFilter(f) {
     currentCitasFilter = f;
     renderCitasUI();
@@ -2325,8 +2344,12 @@ function generarCardCitaHTML(c, isAd, isHistory) {
     let waBtn = '';
     let copyBtn = '';
     if (numStr.length > 0) {
-        let waNum = numStr.length === 10 ? '52' + numStr : numStr;
-        waBtn = `<a href="https://wa.me/${waNum}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
+        let waNum = formatWhatsAppNumber(numStr);
+        if (waNum) {
+            waBtn = `<a href="https://wa.me/${waNum}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
+        } else {
+            waBtn = `<button disabled style="background:#2A2A2A; color:#666666; border:1px solid #333333; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; cursor:not-allowed; display:inline-flex; align-items:center; gap:6px;" title="Número incompleto o incorrecto">💬 Incompleto</button>`;
+        }
         copyBtn = `<button onclick="copiarNumero('${c.telefono}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:6px;" title="Copiar número">📋 Copiar</button>`;
     }
 
