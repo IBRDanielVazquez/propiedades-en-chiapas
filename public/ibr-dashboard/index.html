@@ -2106,6 +2106,65 @@ function cbCitas(data) {
     renderCitasUI();
 }
 
+function generarCardCitaHTML(c, isAd, isHistory) {
+    let numStr = (c.telefono||'').replace(/\D/g, '');
+    let waBtn = '';
+    if(numStr.length >= 10) {
+        waBtn = `<a href="https://wa.me/${numStr}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
+    }
+
+    let asesorTag = isAd ? `<div style="font-size:10px; color:#B8924A; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; border-bottom:1px solid #333333; padding-bottom:6px; font-weight:bold;">👤 Asesor: ${c.asesor}</div>` : '';
+    
+    let estatusColor = '#B8924A'; // Programada
+    let est = c.estatus || c.estado || 'Programada';
+    if(est === 'Realizada') estatusColor = '#22C55E';
+    if(est === 'No asistió') estatusColor = '#EF4444';
+    if(est === 'Venta' || est === 'Venta Sí') estatusColor = '#3B82F6';
+    if(est === 'Cancelada') estatusColor = '#9E9E9E';
+
+    let badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">${est}</span>`;
+
+    let actionBtns = '';
+    if(!isAd && est === 'Programada' && !isHistory) {
+        actionBtns = `
+        <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; border-top:1px solid #333333; padding-top:12px;">
+            <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
+            <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" style="background:#EF444420; border:1px solid #EF4444; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✕ No asistió</button>
+            <button onclick="abrirModalVenta('${c.id}')" style="background:#3B82F620; border:1px solid #3B82F6; color:#3B82F6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">💰 Venta</button>
+        </div>
+        `;
+    }
+
+    let desarrolloTxt = c.desarrollo || c.proyecto || '';
+    let nombreTxt = c.nombre || c.prospecto || 'Sin nombre';
+    let obsTxt = c.observaciones || c.comentarios || '';
+
+    return `
+    <div style="background:#1E1E1E; border:1px solid #333333; padding:20px; border-radius:16px; color:#F7F1E8; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+        ${asesorTag}
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+            <div style="flex:1; padding-right:12px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                    <h3 style="font-family:'Cormorant Garamond', serif; font-size:22px; font-weight:bold; color:#F7F1E8; line-height:1.2;">${nombreTxt}</h3>
+                    ${badge}
+                </div>
+                ${desarrolloTxt ? `<div style="color:#B8924A; font-size:13px; font-weight:bold; margin-bottom:4px;">🏗️ ${desarrolloTxt}</div>` : ''}
+                <div style="color:#9E9E9E; font-size:13px; font-weight:500;">📞 ${c.telefono || 'Sin teléfono'}</div>
+            </div>
+            <div style="text-align:right; min-width:90px;">
+                <div style="color:#B8924A; font-weight:bold; font-size:14px; margin-bottom:4px; font-family:'Inter', sans-serif;">📅 ${c.fecha}</div>
+                ${c.hora ? `<div style="color:#9E9E9E; font-size:12px; font-weight:600;">⏰ ${c.hora}</div>` : ''}
+            </div>
+        </div>
+        ${obsTxt ? `<div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px; background:#2A2A2A; border-radius:8px;">${obsTxt}</div>` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            ${waBtn ? `<div>${waBtn}</div>` : '<div></div>'}
+        </div>
+        ${actionBtns}
+    </div>
+    `;
+}
+
 function renderCitasUI() {
     const isAd = typeof esAdmin === 'function' ? esAdmin() : false;
     const currentName = window.currentUser?.nombre || currentUser;
@@ -2145,56 +2204,7 @@ function renderCitasUI() {
     
     let html = '';
     filtered.forEach(c => {
-        let numStr = (c.telefono||'').replace(/\D/g, '');
-        let waBtn = '';
-        if(numStr.length >= 10) {
-            waBtn = `<a href="https://wa.me/${numStr}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
-        }
-
-        let asesorTag = isAd ? `<div style="font-size:10px; color:#9E9E9E; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; border-bottom:1px solid #333333; padding-bottom:6px; font-weight:bold;">👤 Asesor: ${c.asesor}</div>` : '';
-        
-        let estatusColor = '#B8924A'; // Programada
-        if(c.estatus === 'Realizada') estatusColor = '#22C55E';
-        if(c.estatus === 'No asistió') estatusColor = '#EF4444';
-        if(c.estatus === 'Venta') estatusColor = '#3B82F6';
-
-        let badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">${c.estatus}</span>`;
-
-        let actionBtns = '';
-        if(!isAd && c.estatus === 'Programada') {
-            actionBtns = `
-            <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap; border-top:1px solid #333333; padding-top:12px;">
-                <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
-                <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" style="background:#EF444420; border:1px solid #EF4444; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✕ No asistió</button>
-                <button onclick="abrirModalVenta('${c.id}')" style="background:#3B82F620; border:1px solid #3B82F6; color:#3B82F6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">💰 Venta</button>
-            </div>
-            `;
-        }
-
-        html += `
-        <div style="background:#1E1E1E; border:1px solid #333333; padding:20px; border-radius:16px; color:#F7F1E8; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-            ${asesorTag}
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-                <div style="flex:1; padding-right:12px;">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-                        <h3 style="font-family:'Cormorant Garamond', serif; font-size:22px; font-weight:bold; color:#F7F1E8; line-height:1.2;">${c.nombre}</h3>
-                        ${badge}
-                    </div>
-                    ${c.desarrollo ? `<div style="color:#B8924A; font-size:13px; font-weight:bold; margin-bottom:4px;">🏗️ ${c.desarrollo}</div>` : ''}
-                    <div style="color:#9E9E9E; font-size:13px; font-weight:500;">📞 ${c.telefono || 'Sin teléfono'}</div>
-                </div>
-                <div style="text-align:right; min-width:90px;">
-                    <div style="color:#B8924A; font-weight:bold; font-size:14px; margin-bottom:4px; font-family:'Inter', sans-serif;">📅 ${c.fecha}</div>
-                    <div style="color:#9E9E9E; font-size:12px; font-weight:600;">⏰ ${c.hora}</div>
-                </div>
-            </div>
-            ${c.observaciones ? `<div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px; background:#2A2A2A; border-radius:8px;">${c.observaciones}</div>` : ''}
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                ${waBtn ? `<div>${waBtn}</div>` : '<div></div>'}
-            </div>
-            ${actionBtns}
-        </div>
-        `;
+        html += generarCardCitaHTML(c, isAd, false);
     });
     container.innerHTML = html;
 }
@@ -2345,31 +2355,94 @@ function enviarActualizacionCita(payload, onSuccess, onError) {
 window.cbCitas = cbCitas;
     </script>
 
-<div id="tab-citas-historial" style="display:none; padding: 20px; position:absolute; top:80px; width:100%; background:#fff; z-index:900; min-height: 100vh;">
-  <table id="hist-table" border="1" style="width:100%; border-collapse: collapse;">
-    <thead>
-      <tr style="background: #B8924A; color: #141414;">
-        <th>ID</th><th>Fecha</th><th>Prospecto</th><th>Teléfono</th><th>Asesor</th><th>Proyecto</th><th>Estado</th>
-      </tr>
-    </thead>
-    <tbody id="hist-body"></tbody>
-  </table>
+<div id="tab-citas-historial" style="display:none; padding: 20px; position:absolute; top:80px; width:100%; background:#141414; z-index:900; min-height: 100vh;">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold" style="color:#B8924A; font-family:'Cormorant Garamond', serif;">Historial de Citas</h2>
+    </div>
+    
+    <div id="historico-admin-filter" class="mb-4 hidden" style="display:flex; gap:12px; flex-wrap:wrap;">
+        <select id="historico-asesor-select" onchange="renderHistoricoUI()" style="flex:1; min-width:150px; background:#1E1E1E; border:1px solid #333333; color:#F7F1E8; padding:12px; border-radius:8px; outline:none; font-family:'Inter',sans-serif; font-size:14px;">
+            <option value="Todos" selected>Todos los Asesores</option>
+            <option value="Daniel Vázquez">Daniel Vázquez</option>
+            <option value="Lupyta Mendoza">Lupyta Mendoza</option>
+            <option value="Carmen Jiménez">Carmen Jiménez</option>
+            <option value="Luis García">Luis García</option>
+        </select>
+        <select id="historico-estado-select" onchange="renderHistoricoUI()" style="flex:1; min-width:150px; background:#1E1E1E; border:1px solid #333333; color:#F7F1E8; padding:12px; border-radius:8px; outline:none; font-family:'Inter',sans-serif; font-size:14px;">
+            <option value="Todos" selected>Todos los Estados</option>
+            <option value="Programada">Programada</option>
+            <option value="Realizada">Realizada</option>
+            <option value="Venta">Venta</option>
+            <option value="Cancelada">Cancelada</option>
+            <option value="No asistió">No asistió</option>
+        </select>
+    </div>
+    
+    <div id="historico-status" style="color:#9E9E9E; text-align:center; padding:40px; font-size:14px; font-weight:500;">Cargando historial...</div>
+    <div id="historico-container" class="space-y-4"></div>
 </div>
 
 <script>
+let historicoData = [];
+
 async function loadHistorico() {
-  const data = await fetch('/data/citas-historico-2022-2025.json').then(r => r.json());
-  document.getElementById('hist-body').innerHTML = data.map(c => `
-    <tr>
-      <td>${c.id}</td>
-      <td>${c.fecha}</td>
-      <td contenteditable="true">${c.prospecto}</td>
-      <td contenteditable="true">${c.telefono}</td>
-      <td>${c.asesor}</td>
-      <td>${c.proyecto}</td>
-      <td contenteditable="true"><select><option>${c.estado}</option><option>Venta Sí</option><option>Venta No</option><option>Pendiente</option></select></td>
-    </tr>
-  `).join('');
+    document.getElementById('historico-status').innerHTML = '<div style="display:flex; justify-content:center; align-items:center; gap:12px;"><div style="width:24px; height:24px; border:3px solid #333333; border-top-color:#B8924A; border-radius:50%; animation:spin 1s linear infinite;"></div><span>Sincronizando historial...</span></div>';
+    document.getElementById('historico-container').innerHTML = '';
+    try {
+        const data = await fetch('/data/citas-historico-2022-2025.json').then(r => r.json());
+        historicoData = data;
+        renderHistoricoUI();
+    } catch(err) {
+        document.getElementById('historico-status').innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al cargar historial</span>';
+    }
+}
+
+function renderHistoricoUI() {
+    const isAd = typeof esAdmin === 'function' ? esAdmin() : false;
+    const currentName = window.currentUser?.nombre || currentUser;
+    
+    const filterEl = document.getElementById('historico-admin-filter');
+    if(filterEl) {
+        if(isAd) filterEl.classList.remove('hidden');
+        else filterEl.classList.add('hidden');
+    }
+
+    let filtered = historicoData;
+    
+    if(!isAd) {
+        filtered = historicoData.filter(c => (c.asesor||'').trim().toLowerCase() === currentName.trim().toLowerCase());
+    } else {
+        const selAsesor = document.getElementById('historico-asesor-select')?.value || 'Todos';
+        if(selAsesor !== 'Todos') {
+            filtered = filtered.filter(c => (c.asesor||'').trim().toLowerCase() === selAsesor.trim().toLowerCase());
+        }
+        
+        const selEstado = document.getElementById('historico-estado-select')?.value || 'Todos';
+        if(selEstado !== 'Todos') {
+            filtered = filtered.filter(c => {
+                let est = c.estado || c.estatus || 'Programada';
+                if(selEstado === 'Venta' && est === 'Venta Sí') return true;
+                return est === selEstado;
+            });
+        }
+    }
+
+    const container = document.getElementById('historico-container');
+    const status = document.getElementById('historico-status');
+
+    if(filtered.length === 0) {
+        status.innerHTML = 'No hay citas en el historial con estos filtros';
+        container.innerHTML = '';
+        return;
+    }
+
+    status.innerHTML = '';
+    
+    let html = '';
+    filtered.forEach(c => {
+        html += generarCardCitaHTML(c, isAd, true);
+    });
+    container.innerHTML = html;
 }
 
 const originalSwitchTab = window.switchTab || function() {};
