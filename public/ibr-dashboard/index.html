@@ -2439,6 +2439,114 @@ function guardarNuevaCita() {
     });
 }
 
+function abrirModalEditarCita(cDataStr) {
+    const c = JSON.parse(decodeURIComponent(cDataStr));
+    const m = document.getElementById('modal-editar-cita');
+    m.style.display = 'flex';
+    
+    document.getElementById('ec-id').value = c.id || '';
+    
+    let dt = '';
+    if (c.fecha_hora) {
+        dt = c.fecha_hora.replace(' ', 'T');
+    } else if (c.fecha) {
+        dt = c.fecha;
+        if (c.hora) dt += 'T' + c.hora;
+    }
+    document.getElementById('ec-fecha').value = dt;
+    
+    document.getElementById('ec-asesor').value = c.asesor || '';
+    document.getElementById('ec-desarrollo').value = c.desarrollo || c.proyecto || '';
+    document.getElementById('ec-nombre').value = c.nombre || c.prospecto || '';
+    document.getElementById('ec-telefono').value = c.telefono || '';
+    document.getElementById('ec-obs').value = c.observaciones || c.comentarios || '';
+}
+
+function cerrarModalEditarCita() {
+    const m = document.getElementById('modal-editar-cita');
+    m.style.display = 'none';
+}
+
+function guardarEdicionCita() {
+    const btn = document.getElementById('btn-submit-editar-cita');
+    const id = document.getElementById('ec-id').value;
+    const fecha = document.getElementById('ec-fecha').value;
+    const asesor = document.getElementById('ec-asesor').value;
+    const desarrollo = document.getElementById('ec-desarrollo').value;
+    const nombre = document.getElementById('ec-nombre').value;
+    const telefono = document.getElementById('ec-telefono').value;
+    const obs = document.getElementById('ec-obs').value;
+    
+    if(!fecha || !nombre) {
+        alert('Fecha y Nombre son obligatorios');
+        return;
+    }
+    
+    btn.innerHTML = 'Guardando...';
+    btn.disabled = true;
+    
+    const payload = {
+        action: 'actualizar_cita',
+        id_cita: id,
+        fecha_hora: fecha,
+        asesor: asesor,
+        desarrollo: desarrollo,
+        prospecto_nombre: nombre,
+        prospecto_telefono: telefono,
+        observaciones: obs
+    };
+    
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.ok) {
+            cerrarModalEditarCita();
+            loadCitasJSONP();
+        } else {
+            alert('Error: ' + res.mensaje);
+        }
+    })
+    .catch(err => {
+        alert('Error de conexión');
+        console.error(err);
+    })
+    .finally(() => {
+        btn.innerHTML = 'Guardar';
+        btn.disabled = false;
+    });
+}
+
+function confirmarEliminarCita(id) {
+    if(!confirm('¿Seguro que quieres eliminar esta cita? Esta acción no se puede deshacer')) return;
+    
+    const payload = {
+        action: 'eliminar_cita',
+        id_cita: id
+    };
+    
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+    })
+    .then(res => res.json())
+    .then(res => {
+        if(res.ok) {
+            loadCitasJSONP();
+        } else {
+            alert('Error: ' + res.mensaje);
+        }
+    })
+    .catch(err => {
+        alert('Error de conexión');
+        console.error(err);
+    });
+}
+
 function actualizarEstatusCita(idCita, nuevoEstatus) {
     if(!confirm('¿Marcar cita como ' + nuevoEstatus + '?')) return;
     enviarActualizacionCita({
