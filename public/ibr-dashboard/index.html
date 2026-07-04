@@ -315,13 +315,6 @@
                 <select id="nc-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
                     <!-- Populated dynamically -->
                 </select>
-                <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
-                    <button type="button" onclick="mostrarAgregarDesarrollo('nc')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
-                    <div id="nc-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
-                        <input type="text" id="nc-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
-                        <button type="button" onclick="guardarNuevoDesarrollo('nc')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
-                    </div>
-                </div>
             </div>
             
             <div id="nc-manual-container" style="display:none;">
@@ -415,13 +408,6 @@
                 <select id="ec-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
                     <!-- Populated dynamically -->
                 </select>
-                <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
-                    <button type="button" onclick="mostrarAgregarDesarrollo('ec')" style="background:none; border:none; color:#B8924A; font-size:11px; text-decoration:underline; cursor:pointer; text-align:left; padding:0; width:fit-content;">+ Agregar nuevo desarrollo</button>
-                    <div id="ec-add-desarrollo-container" style="display:none; gap:6px; margin-top:4px;">
-                        <input type="text" id="ec-nuevo-desarrollo-input" placeholder="Nombre desarrollo" style="flex:1; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:6px; border-radius:6px; outline:none; font-size:12px;">
-                        <button type="button" onclick="guardarNuevoDesarrollo('ec')" style="background:#B8924A; color:#141414; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Guardar</button>
-                    </div>
-                </div>
             </div>
             
             <div id="ec-manual-container" style="display:none;">
@@ -476,6 +462,78 @@
         <div style="display:flex; gap:12px;">
             <button onclick="cerrarModalEditarCita()" style="flex:1; background:#2A2A2A; color:#F7F1E8; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Cancelar</button>
             <button id="btn-submit-editar-cita" onclick="guardarEdicionCita()" style="flex:1; background:#B8924A; color:#141414; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Guardar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Seguimiento Cita (Asesor) -->
+<div id="modal-seguimiento-cita" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99999; justify-content:center; align-items:center; padding:16px;">
+    <div style="background:#1E1E1E; border:1px solid #333333; border-radius:16px; width:100%; max-width:400px; padding:24px; color:#F7F1E8; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto;">
+        <h3 style="color:#B8924A; font-family:'Cormorant Garamond', serif; font-size:24px; font-weight:bold; margin-bottom:16px;">Dar Seguimiento a Cita</h3>
+        <input type="hidden" id="sc-id">
+        
+        <!-- Contexto de solo lectura -->
+        <div style="background:#2A2A2A40; border:1px solid #333333; padding:12px; border-radius:8px; margin-bottom:16px; font-size:13px; display:flex; flex-direction:column; gap:4px;">
+            <div>Prospecto: <b id="sc-txt-nombre" style="color:#F7F1E8;">-</b></div>
+            <div>Teléfono: <b id="sc-txt-telefono" style="color:#F7F1E8;">-</b></div>
+            <div>Desarrollo: <b id="sc-txt-desarrollo" style="color:#B8924A;">-</b></div>
+            <div>Asesor: <b id="sc-txt-asesor" style="color:#F7F1E8;">-</b></div>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha y Hora (Reagendar)</label>
+            <input type="datetime-local" id="sc-fecha" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
+        </div>
+        
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Estatus</label>
+            <select id="sc-estatus" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                <option value="Programada">Programada</option>
+                <option value="Realizada">Realizada</option>
+                <option value="Venta">Venta</option>
+                <option value="Cancelada">Cancelada</option>
+                <option value="No asistió">No asistió</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Comentarios / Notas de seguimiento</label>
+            <textarea id="sc-obs" rows="3" placeholder="Añade notas del seguimiento..." style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; resize:none;"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px; display:flex; gap:12px;">
+            <div style="flex:1;">
+                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Medio de Contacto</label>
+                <select id="sc-medio" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <option value="">Seleccionar...</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="Llamada">Llamada</option>
+                    <option value="Recomendado">Recomendado</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div style="flex:1;">
+                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Nivel de Interés</label>
+                <select id="sc-interes" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                    <option value="">Seleccionar...</option>
+                    <option value="Frío">Frío ❄️</option>
+                    <option value="Tibio">Tibio 🔥</option>
+                    <option value="Caliente">Caliente 🌶️</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="margin-bottom:20px;">
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha de Seguimiento</label>
+            <input type="date" id="sc-seguimiento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
+        </div>
+        
+        <div style="display:flex; gap:12px;">
+            <button onclick="cerrarModalSeguimientoCita()" style="flex:1; background:#2A2A2A; color:#F7F1E8; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Cancelar</button>
+            <button id="btn-submit-seguimiento-cita" onclick="guardarSeguimientoCita()" style="flex:1; background:#B8924A; color:#141414; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Guardar</button>
         </div>
     </div>
 </div>
@@ -2319,12 +2377,19 @@ function generarCardCitaHTML(c, isAd, isHistory) {
     }
 
     let adminBtns = '';
-    if(isAd && !isHistory) {
+    if(!isHistory) {
         const cDataStr = encodeURIComponent(JSON.stringify(c));
-        adminBtns = `
-        <button onclick="abrirModalEditarCita('${cDataStr}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Editar">✏️</button>
-        <button onclick="confirmarEliminarCita('${c.id}')" style="background:#2A2A2A; border:1px solid #333333; color:#EF4444; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Borrar">🗑️</button>
-        `;
+        const currentName = window.currentUser?.nombre || currentUser;
+        if(isAd) {
+            adminBtns = `
+            <button onclick="abrirModalEditarCita('${cDataStr}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Editar">✏️</button>
+            <button onclick="confirmarEliminarCita('${c.id}')" style="background:#2A2A2A; border:1px solid #333333; color:#EF4444; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Borrar">🗑️</button>
+            `;
+        } else if ((c.asesor || '').trim().toLowerCase() === (currentName || '').trim().toLowerCase()) {
+            adminBtns = `
+            <button onclick="abrirModalSeguimientoCita('${cDataStr}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:bold;" title="Dar seguimiento">📝 Dar seguimiento</button>
+            `;
+        }
     }
 
     let desarrolloTxt = c.desarrollo || c.proyecto || '';
@@ -2504,10 +2569,6 @@ function abrirModalNuevaCita() {
     document.querySelector('input[name="nc-es-desarrollo"][value="si"]').checked = true;
     toggleDesarrolloInput('nc');
     
-    // Reset inline add desarrollo
-    document.getElementById('nc-add-desarrollo-container').style.display = 'none';
-    document.getElementById('nc-nuevo-desarrollo-input').value = '';
-    
     cargarDesarrollosDropdown('nc-desarrollo');
 }
 
@@ -2612,10 +2673,6 @@ function abrirModalEditarCita(cDataStr) {
     document.getElementById('ec-interes').value = c.interes || '';
     document.getElementById('ec-seguimiento').value = c.seguimiento || '';
     document.getElementById('ec-desarrollo-manual').value = '';
-    
-    // Reset inline add desarrollo
-    document.getElementById('ec-add-desarrollo-container').style.display = 'none';
-    document.getElementById('ec-nuevo-desarrollo-input').value = '';
     
     cargarDesarrollosDropdown('ec-desarrollo', c.desarrollo || c.proyecto || '', function(loadedNames) {
         const devVal = c.desarrollo || c.proyecto || '';
@@ -2874,27 +2931,65 @@ function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
     document.body.appendChild(script);
 }
 
-function mostrarAgregarDesarrollo(prefix) {
-    const container = document.getElementById(prefix + '-add-desarrollo-container');
-    container.style.display = container.style.display === 'none' ? 'flex' : 'none';
+function abrirModalSeguimientoCita(cDataStr) {
+    const c = JSON.parse(decodeURIComponent(cDataStr));
+    const m = document.getElementById('modal-seguimiento-cita');
+    m.style.display = 'flex';
+    
+    document.getElementById('sc-id').value = c.id_cita || c.id || '';
+    document.getElementById('sc-txt-nombre').textContent = c.nombre || c.prospecto || 'Sin nombre';
+    document.getElementById('sc-txt-telefono').textContent = c.telefono || 'Sin teléfono';
+    document.getElementById('sc-txt-desarrollo').textContent = c.desarrollo || c.proyecto || 'Otro';
+    document.getElementById('sc-txt-asesor').textContent = c.asesor || '';
+    
+    let dt = '';
+    if (c.fecha_hora) {
+        dt = c.fecha_hora.replace(' ', 'T');
+    } else if (c.fecha) {
+        dt = c.fecha;
+        if (c.hora) dt += 'T' + c.hora;
+    }
+    document.getElementById('sc-fecha').value = dt;
+    
+    document.getElementById('sc-estatus').value = c.estatus || c.estado || 'Programada';
+    document.getElementById('sc-obs').value = c.observaciones || c.comentarios || '';
+    document.getElementById('sc-medio').value = c.medio_contacto || '';
+    document.getElementById('sc-interes').value = c.interes || '';
+    document.getElementById('sc-seguimiento').value = c.seguimiento || '';
 }
 
-function guardarNuevoDesarrollo(prefix) {
-    const input = document.getElementById(prefix + '-nuevo-desarrollo-input');
-    const nombre = input.value.trim();
-    if (!nombre) {
-        alert('Escribe el nombre del desarrollo');
+function cerrarModalSeguimientoCita() {
+    const m = document.getElementById('modal-seguimiento-cita');
+    m.style.display = 'none';
+}
+
+function guardarSeguimientoCita() {
+    const btn = document.getElementById('btn-submit-seguimiento-cita');
+    const id = document.getElementById('sc-id').value;
+    const fecha = document.getElementById('sc-fecha').value;
+    const estatus = document.getElementById('sc-estatus').value;
+    const obs = document.getElementById('sc-obs').value;
+    const medio = document.getElementById('sc-medio').value;
+    const interes = document.getElementById('sc-interes').value;
+    const seguimiento = document.getElementById('sc-seguimiento').value;
+    
+    if(!fecha) {
+        alert('La fecha y hora son obligatorias');
         return;
     }
     
-    const btn = input.nextElementSibling;
-    const origText = btn.innerHTML;
-    btn.innerHTML = '...';
+    btn.innerHTML = 'Guardando...';
     btn.disabled = true;
     
     const payload = {
-        action: 'agregar_desarrollo',
-        nombre: nombre,
+        action: 'actualizar_cita',
+        id_cita: id,
+        fecha_hora: fecha,
+        estatus: estatus,
+        comentarios: obs,
+        medio_contacto: medio,
+        interes: interes,
+        seguimiento: seguimiento,
         usuario_actual: window.currentUser?.nombre || currentUser || ''
     };
     
@@ -2905,16 +3000,9 @@ function guardarNuevoDesarrollo(prefix) {
     })
     .then(res => res.json())
     .then(res => {
-        if (res.ok) {
-            const select = document.getElementById(prefix + '-desarrollo');
-            const opt = document.createElement('option');
-            opt.value = nombre;
-            opt.textContent = nombre;
-            select.insertBefore(opt, select.firstChild);
-            select.value = nombre;
-            
-            document.getElementById(prefix + '-add-desarrollo-container').style.display = 'none';
-            input.value = '';
+        if(res.ok) {
+            cerrarModalSeguimientoCita();
+            loadCitasJSONP();
         } else {
             alert('Error: ' + res.mensaje);
         }
@@ -2924,7 +3012,7 @@ function guardarNuevoDesarrollo(prefix) {
         console.error(err);
     })
     .finally(() => {
-        btn.innerHTML = origText;
+        btn.innerHTML = 'Guardar';
         btn.disabled = false;
     });
 }
