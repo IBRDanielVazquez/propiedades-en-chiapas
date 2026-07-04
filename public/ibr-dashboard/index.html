@@ -2895,7 +2895,7 @@ function toggleDesarrolloInput(prefix) {
 }
 
 function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
-    const cbName = 'cbDesarrollos_' + selectId;
+    const cbName = ('cbDesarrollos_' + selectId).replace(/-/g, '_');
     console.log('Iniciando cargarDesarrollosDropdown con URL:', SCRIPT_URL);
     window[cbName] = function(res) {
         console.log('Callback cbDesarrollos ejecutado. Respuesta:', res);
