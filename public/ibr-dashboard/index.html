@@ -2159,8 +2159,11 @@ function cbCitas(data) {
 function generarCardCitaHTML(c, isAd, isHistory) {
     let numStr = (c.telefono||'').replace(/\D/g, '');
     let waBtn = '';
-    if(numStr.length >= 10) {
-        waBtn = `<a href="https://wa.me/${numStr}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
+    let copyBtn = '';
+    if (numStr.length > 0) {
+        let waNum = numStr.length === 10 ? '52' + numStr : numStr;
+        waBtn = `<a href="https://wa.me/${waNum}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
+        copyBtn = `<button onclick="copiarNumero('${c.telefono}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:6px;" title="Copiar número">📋 Copiar</button>`;
     }
 
     let asesorTag = isAd ? `<div style="font-size:10px; color:#B8924A; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; border-bottom:1px solid #333333; padding-bottom:6px; font-weight:bold;">👤 Asesor: ${c.asesor}</div>` : '';
@@ -2241,7 +2244,7 @@ function generarCardCitaHTML(c, isAd, isHistory) {
         </div>
         ${obsTxt ? `<div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px; background:#2A2A2A; border-radius:8px;">${obsTxt}</div>` : ''}
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div>${waBtn}</div>
+            <div style="display:flex; gap:8px;">${waBtn}${copyBtn}</div>
             <div style="display:flex; gap:8px;">${adminBtns}</div>
         </div>
         ${actionBtns}
@@ -2437,6 +2440,18 @@ function guardarNuevaCita() {
         btn.innerHTML = 'Guardar';
         btn.disabled = false;
     });
+}
+
+function copiarNumero(numero) {
+  navigator.clipboard.writeText(numero).then(function() {
+    const toast = document.createElement('div');
+    toast.textContent = 'Número copiado: ' + numero;
+    toast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1E1E1E;border:1px solid #B8924A;color:#B8924A;padding:10px 20px;border-radius:20px;font-size:12px;font-weight:700;z-index:9999;';
+    document.body.appendChild(toast);
+    setTimeout(function(){ toast.remove(); }, 1800);
+  }).catch(function(err) {
+    alert('No se pudo copiar: ' + err);
+  });
 }
 
 function abrirModalEditarCita(cDataStr) {
