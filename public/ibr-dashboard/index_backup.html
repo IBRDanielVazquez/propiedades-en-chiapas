@@ -1,0 +1,2568 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>IBR CRM Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ibr: { red: '#8B0000', black: '#000000', white: '#FFFFFF', green: '#16A34A', yellow: '#D97706', gray: '#F5F5F5', blue: '#1D4ED8' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F5F5F5; font-family: system-ui, sans-serif; overflow-x: hidden; max-width: 100vw; font-size: 14px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .chip { @apply inline-block bg-ibr-red text-white rounded-full px-2 py-0.5 text-[10px] m-0.5 font-bold shadow-sm; }
+        .nav-item { color: #9ca3af; transition: color 0.2s; position: relative; }
+        .nav-item.active { color: #8B0000; font-weight: bold; }
+        .nav-item.active::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background-color: #8B0000; border-radius: 50%; }
+        .badge { @apply px-2 py-1 rounded text-[10px] font-bold inline-block border; }
+        .expandable-content { display: none; }
+        .expandable-content.active { display: block; animation: slideDown 0.2s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        select, input, textarea { @apply border border-gray-300 rounded p-2 text-[16px] w-full outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red transition; }
+        label { @apply text-[12px] font-bold text-gray-600 block mb-1 uppercase tracking-wider; }
+        .btn-red { @apply bg-ibr-red text-white py-2 px-4 rounded font-bold shadow hover:bg-red-800 transition text-[14px] min-h-[48px]; }
+        .btn-green { @apply bg-ibr-green text-white py-2 px-4 rounded font-bold shadow hover:bg-green-700 transition text-[14px] min-h-[48px]; }
+        .btn-gray { @apply bg-gray-200 text-gray-700 py-2 px-4 rounded font-bold shadow hover:bg-gray-300 transition text-[14px] min-h-[48px]; }
+        .btn-wa { @apply bg-[#16A34A] text-white px-3 py-1.5 rounded-lg text-[14px] font-bold flex items-center justify-center gap-1 shadow-sm uppercase hover:bg-green-700 transition min-h-[48px]; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        /* Cards & Layout */
+        .card-container { @apply p-4 m-2 bg-white rounded-xl shadow-sm border border-gray-100; }
+        .grid-kpi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        /* Login screen */
+        #loginScreen { position: fixed; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; }
+        #loginScreen.hidden { display: none; }
+        #welcomeModal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 110; display: flex; align-items: flex-end; justify-content: center; }
+        #welcomeModal.hidden { display: none; }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .slide-up { animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(139,0,0,0.4); } 50% { box-shadow: 0 0 0 16px rgba(139,0,0,0); } }
+        .pulse-ibr { animation: pulse-red 2s infinite; }
+    </style>
+</head>
+<body class="text-gray-800 w-full overflow-x-hidden">
+
+<!-- ═══════════════════════════════════════════
+     PANTALLA DE LOGIN CON PIN
+═══════════════════════════════════════════ -->
+<div id="loginScreen">
+    <div class="w-full max-w-[340px] flex flex-col items-center">
+
+        <!-- Logo IBR -->
+        <div class="mb-8 text-center">
+            <div class="w-20 h-20 bg-ibr-red rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-2xl pulse-ibr">
+                <span class="text-white font-black text-3xl tracking-tighter">IBR</span>
+            </div>
+            <p class="text-gray-500 text-sm font-bold">Control de Ventas IBR</p>
+        </div>
+
+        <!-- Dynamic content: injected by JS based on state -->
+        <div id="loginContent" class="w-full"></div>
+
+        <!-- Error -->
+        <div id="loginError" class="hidden mt-4 text-red-400 text-xs font-bold text-center bg-red-900 bg-opacity-40 border border-red-700 rounded-xl px-4 py-3 w-full"></div>
+
+        <!-- Lockout -->
+        <div id="loginLockout" class="hidden mt-4 text-orange-400 text-xs font-bold text-center bg-orange-900 bg-opacity-30 border border-orange-700 rounded-xl px-4 py-3 w-full">
+            ⏳ Demasiados intentos. Espera 5 minutos.
+        </div>
+
+        <p class="text-gray-700 text-[10px] mt-6 text-center">
+            ¿Olvidaste tu PIN? Contacta a Daniel Vázquez
+        </p>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MODAL BIENVENIDA
+═══════════════════════════════════════════ -->
+<div id="welcomeModal" class="hidden">
+    <div class="slide-up bg-white rounded-t-3xl w-full max-w-[480px] p-8 pb-12 text-center">
+        <div class="w-16 h-16 bg-ibr-red rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg">
+            <span class="text-white font-black text-2xl">IBR</span>
+        </div>
+        <h2 class="font-black text-2xl text-black mb-1">¡Hola <span id="wm-name"></span>! 👋</h2>
+        <p class="text-gray-500 text-sm font-bold mb-2">Bienvenido a Control de Ventas IBR</p>
+        <div class="inline-block bg-black text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-6" id="wm-role">Rol</div>
+        <button onclick="dismissWelcome()" class="w-full bg-ibr-red text-white font-black py-4 rounded-xl text-sm uppercase tracking-widest shadow-lg hover:bg-red-800 transition">
+            ENTRAR A MI DASHBOARD
+        </button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-[200] hidden">
+    <div class="bg-black text-white text-xs font-black px-5 py-3 rounded-full shadow-2xl border border-gray-700 flex items-center gap-2"></div>
+</div>
+
+<div class="max-w-[480px] mx-auto bg-white min-h-screen flex flex-col relative shadow-2xl pb-20">
+    
+    <!-- HEADER -->
+    <header class="sticky top-0 z-40 bg-gradient-to-r from-black to-[#8B0000] text-white p-3 shadow-md flex justify-between items-center">
+        <div>
+            <div class="flex items-center gap-2">
+                <span class="text-white font-black text-2xl tracking-tighter leading-none">IBR</span>
+                <span class="text-[10px] font-bold leading-tight uppercase tracking-widest text-gray-200">Control<br>de Ventas</span>
+            </div>
+        </div>
+        <div class="text-right flex items-center gap-2">
+            <div>
+                <p class="text-white font-black text-[10px] text-right" id="headerUserName">Cargando...</p>
+                <p class="text-gray-400 text-[8px] uppercase tracking-widest" id="headerUserRole"></p>
+            </div>
+            <button onclick="logout()" title="Cerrar sesión"
+                class="bg-white bg-opacity-10 hover:bg-opacity-20 border border-white border-opacity-20 text-white text-[10px] font-bold px-2 py-1.5 rounded-lg transition whitespace-nowrap">
+                Salir 🚪
+            </button>
+        </div>
+    </header>
+            <!-- Demo selector: hidden in prod, visible for quick testing via admin -->
+            <select id="userSelector" class="hidden" onchange="changeUser(this.value)">
+                <option value="Daniel Vázquez">Daniel Vázquez(Admin)</option>
+                <option value="Lupyta Mendoza">Lupyta Mendoza</option>
+                <option value="Luis García">Luis García</option>
+                <option value="Carmen Jiménez">Carmen Jiménez</option>
+            </select>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto pb-24 bg-gray-100">
+        <div id="preview-banner-container"></div>
+        <div id="banners-container" class="px-4 pt-4"></div>
+
+        <!-- ACCESO RESTRINGIDO -->
+        <div id="tab-restricted" class="tab-content min-h-[70vh] flex flex-col items-center justify-center p-8">
+            <div class="text-6xl mb-6">🔒</div>
+            <h2 class="font-black text-2xl text-ibr-black mb-2">Acceso Restringido</h2>
+            <p class="text-sm text-gray-500 text-center font-bold">Esta sección no está disponible para tu rol.<br>Regresando a tu panel...</p>
+        </div>
+
+        <!-- ADMIN: DASHBOARD -->
+        <div id="tab-dashboard-admin" class="tab-content p-4 space-y-5">
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-black text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Total Vendidos</p>
+                    <p class="text-4xl font-black">193</p>
+                </div>
+                <div class="bg-ibr-red text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
+                    <p class="text-[9px] font-bold text-red-200 uppercase tracking-widest mb-1">Ventas IBR únicas</p>
+                    <p class="text-4xl font-black">23</p>
+                </div>
+                <div class="bg-ibr-blue text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
+                    <p class="text-[9px] font-bold text-blue-200 uppercase tracking-widest mb-1">Ventas Externas</p>
+                    <p class="text-4xl font-black">170</p>
+                </div>
+                <div class="bg-ibr-yellow text-white p-4 rounded-xl shadow-md flex flex-col justify-center">
+                    <p class="text-[9px] font-bold text-yellow-100 uppercase tracking-widest mb-1">Canceladas</p>
+                    <p class="text-4xl font-black">3</p>
+                </div>
+                <div class="bg-gray-100 border border-gray-200 text-gray-800 p-4 rounded-xl shadow-md flex flex-col justify-center col-span-2">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Lotes Disponibles</p>
+                    <p class="text-4xl font-black text-black">320</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-green-50 border border-green-200 p-2 rounded-xl text-center shadow-sm">
+                    <p class="text-[8px] font-bold text-green-600 uppercase tracking-widest">Gen.</p>
+                    <p class="text-sm font-black text-green-800" id="ad-com-gen">$0</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 p-2 rounded-xl text-center shadow-sm">
+                    <p class="text-[8px] font-bold text-blue-600 uppercase tracking-widest">Pag.</p>
+                    <p class="text-sm font-black text-blue-800" id="ad-com-pag">$0</p>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 p-2 rounded-xl text-center shadow-sm">
+                    <p class="text-[8px] font-bold text-yellow-600 uppercase tracking-widest">Pend.</p>
+                    <p class="text-sm font-black text-yellow-800" id="ad-com-pen">$0</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-xl shadow-lg p-5">
+                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2"><span>Campañas</span> <div class="h-px bg-gray-700 flex-1"></div></h3>
+                <div class="flex justify-between items-center mb-4">
+                    <div><p class="text-[10px] text-gray-400 font-bold uppercase">Inversión</p><p class="text-2xl font-black text-white" id="ad-camp-inv">$0</p></div>
+                    <div class="text-right"><p class="text-[10px] text-gray-400 font-bold uppercase">ROI</p><p class="text-2xl font-black text-ibr-green" id="ad-camp-roi">0%</p></div>
+                </div>
+                <div class="rounded-lg text-xs flex justify-between items-center">
+                    <div id="ad-camp-status" class="font-black px-3 py-1 rounded bg-green-500 text-white">✅ OK</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-5">
+                <div class="bg-ibr-red text-white p-4 flex justify-between items-center cursor-pointer hover:bg-red-800 transition" onclick="document.getElementById('ad-mis-ventas-content').classList.toggle('hidden')">
+                    <h3 class="font-black text-lg tracking-tight">Mis Ventas Personales</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-black text-white text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-widest" id="ad-mis-ventas-badge">0 participaciones</span>
+                        <span class="text-white font-black text-xl leading-none">−</span>
+                    </div>
+                </div>
+                <div id="ad-mis-ventas-content" class="bg-gray-50">
+                    <div class="p-3 bg-white border-b border-gray-100 flex justify-end gap-2">
+                         <select id="ad-mis-ventas-filter" onchange="renderDashAdmin()" class="text-[10px] font-bold p-1 border border-gray-200 rounded text-gray-600 bg-white shadow-sm w-auto">
+                            <option value="Todos">Todos los proyectos</option>
+                            <option value="Bella Vista Ocozocoautla">Bella Vista Ocozocoautla</option>
+                            <option value="Bosques de Chapultepec">Bosques de Chapultepec</option>
+                         </select>
+                    </div>
+                    <div id="ad-mis-ventas-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-ibr-red to-black text-white rounded-xl shadow-lg mb-5 overflow-hidden">
+                <div class="p-4 border-b border-red-900">
+                    <h3 class="text-[10px] font-bold text-red-200 uppercase tracking-widest mb-1">💰 COMISIONES IBR</h3>
+                    <p class="text-xs text-gray-300 font-bold">Bella Vista Ocozocoautla</p>
+                </div>
+                <div class="p-4 bg-black bg-opacity-20 border-b border-red-900 space-y-2 text-xs">
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Total generado:</span> <span class="font-black" id="ad-com-gen-card">$0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Mensualidad/mes:</span> <span class="font-black text-blue-300" id="ad-com-men-card">$0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Cobrado:</span> <span class="font-black text-ibr-green" id="ad-com-pag-card">$0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Pendiente:</span> <span class="font-black text-red-300" id="ad-com-pen-card">$0</span></div>
+                </div>
+                <div class="p-4 space-y-2 text-xs" id="ad-com-breakdown">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-xl shadow-lg mb-5 overflow-hidden">
+                <div class="p-4 border-b border-gray-800">
+                    <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">💰 EXCLUSIVO DANIEL</h3>
+                    <p class="text-xs text-white font-bold">Bosques de Chapultepec</p>
+                </div>
+                <div class="p-4 bg-black bg-opacity-40 space-y-2 text-xs">
+                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2 border-b border-gray-800 pb-1"><span id="ad-bc-lotes">0</span> lotes vendidos</div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Total generado:</span> <span class="font-black" id="ad-bc-gen">$0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Mensualidad/mes:</span> <span class="font-black text-blue-400" id="ad-bc-men">$0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Cobrado:</span> <span class="font-black text-ibr-green" id="ad-bc-pag">$0</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400 font-bold">Pendiente:</span> <span class="font-black text-red-400" id="ad-bc-pen">$0</span></div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-ibr-red font-black text-xs uppercase tracking-widest mb-3">Equipo IBR</h3>
+                <div class="space-y-3" id="ad-team-list"></div>
+            </div>
+
+            <div>
+                <h3 class="text-ibr-black font-black text-xs uppercase tracking-widest mb-3">Top 5 Externos</h3>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+                    <div class="space-y-4 font-medium" id="ad-top-ext">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASESOR: MI PANEL -->
+        <div id="tab-dashboard-asesor" class="tab-content p-4 space-y-4">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h2 class="font-black text-2xl text-ibr-black" id="as-greeting">Hola 👋</h2>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase" id="as-prom-lbl">Promedio: 0 lotes/mes</p>
+                </div>
+                <a id="as-card-btn" href="#" target="_blank" class="bg-black text-white px-3 py-2 rounded-xl text-[10px] font-bold shadow-md flex items-center gap-1 hover:bg-gray-800 transition">🪪 Mi Tarjeta</a>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-black text-white p-4 rounded-xl shadow-md text-center">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Mis Part.</p>
+                    <p class="text-4xl font-black" id="as-lotes">0</p>
+                </div>
+                <div class="bg-ibr-green text-white p-4 rounded-xl shadow-md text-center">
+                    <p class="text-[9px] font-bold text-green-200 uppercase tracking-widest mb-1">Generado</p>
+                    <p class="text-2xl font-black mt-2" id="as-com-gen">$0</p>
+                </div>
+                <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm text-center">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Cobrado</p>
+                    <p class="text-xl font-black text-blue-700" id="as-com-cob">$0</p>
+                </div>
+                <div class="bg-white border border-gray-200 p-3 rounded-xl shadow-sm text-center">
+                    <p class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Pendiente</p>
+                    <p class="text-xl font-black text-ibr-yellow" id="as-com-pen">$0</p>
+                </div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4">
+                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 flex justify-between"><span>Progreso Comisión</span> <span id="as-prog-pct">45%</span></h3>
+                <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                    <div class="bg-gradient-to-r from-ibr-red to-black h-3 rounded-full transition-all" style="width: 45%" id="as-prog-bar"></div>
+                </div>
+            </div>
+
+            <div><h3 class="text-ibr-black font-black text-xs uppercase tracking-widest mb-3">Leads de Hoy</h3><div class="space-y-2" id="as-leads"></div></div>
+            <div><h3 class="text-ibr-black font-black text-xs uppercase tracking-widest mb-3 mt-5">Últimas Ventas</h3><div class="space-y-2" id="as-sales"></div></div>
+        </div>
+
+        <!-- SHARED: PROYECTOS -->
+        <div id="tab-projects" class="tab-content min-h-full">
+            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
+                <h2 class="font-black text-xl">Mis Desarrollos</h2>
+                <button onclick="alert('Módulo en construcción')" class="admin-only hidden btn-red px-2 py-1 text-[10px]">+ Nuevo</button>
+            </div>
+            <div class="p-4">
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden mb-4">
+                    <div class="bg-gradient-to-r from-black to-gray-900 text-white p-5 cursor-pointer relative" onclick="document.getElementById('proj-1').classList.toggle('active')">
+                        <h3 class="font-black text-xl mb-1">BELLA VISTA</h3>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-3">📍 Ocozocoautla, Chiapas</p>
+                        
+                        <div class="flex gap-2 text-[10px] font-bold mb-4">
+                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">22 Mz</span>
+                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">513 Lotes</span>
+                            <span class="bg-ibr-green text-white px-2 py-1 rounded">$350/lote base</span>
+                        </div>
+                        
+                        <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
+                            <span class="text-ibr-green">✅ Vend: 193</span>
+                            <span class="text-blue-400">🟢 Disp: 320</span>
+                            <span class="text-ibr-red">❌ Canc: 3</span>
+                        </div>
+                        <div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-gradient-to-r from-ibr-red to-ibr-green h-1.5 rounded-full" style="width: 38%"></div>
+                        </div>
+                        <p class="text-[9px] text-right mt-1 font-bold text-gray-500">38% Vendido</p>
+                        
+                        <div class="absolute top-4 right-4 text-white opacity-50">▼</div>
+                    </div>
+                    
+                    <div id="proj-1" class="expandable-content bg-white">
+                        <div class="p-0 overflow-x-auto">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 text-[9px] text-gray-500 uppercase tracking-widest border-b border-gray-200">
+                                        <th class="p-3 text-left font-black">Mz</th><th class="p-3">Tot</th><th class="p-3 text-ibr-green">V</th><th class="p-3 text-blue-600">D</th><th class="p-3 text-left">Nota</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mz-table-body" class="divide-y divide-gray-100 font-medium">
+                                    <!-- Injected by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 bg-gray-50 text-center border-t border-gray-200 admin-only">
+                            <button onclick="alert('Edición en construcción')" class="bg-black text-white text-xs font-bold py-3 w-full rounded-xl shadow-md hover:bg-gray-800 transition">Editar Lotes / Estatus</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-md overflow-hidden mb-4">
+                    <div class="bg-gradient-to-r from-gray-800 to-black text-white p-5 cursor-pointer relative" onclick="document.getElementById('proj-2').classList.toggle('active')">
+                        <h3 class="font-black text-xl mb-1 text-red-400">BOSQUES DE CHAPULTEPEC</h3>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-3">📍 Chiapas</p>
+                        
+                        <div class="flex gap-2 text-[10px] font-bold mb-4">
+                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">Vendedor Único</span>
+                            <span class="bg-white bg-opacity-20 text-white px-2 py-1 rounded">6 Lotes</span>
+                            <span class="bg-red-800 text-white px-2 py-1 rounded">Exclusivo Daniel</span>
+                        </div>
+                        
+                        <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
+                            <span class="text-ibr-green">✅ Vend: 6</span>
+                        </div>
+                        <div class="absolute top-4 right-4 text-white opacity-50">▼</div>
+                    </div>
+                    <div id="proj-2" class="expandable-content bg-white p-4">
+                        <p class="text-xs text-gray-500 font-bold text-center">Gestión simplificada para ventas exclusivas. Ver detalles en "Mis Ventas Personales".</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHARED: LEADS -->
+        <div id="tab-leads" class="tab-content min-h-full">
+            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
+                <h2 class="font-black text-xl">Leads & Citas</h2>
+                <button onclick="openModal('leadModal')" class="admin-only hidden btn-red px-3 py-1.5 text-xs">+ Cita</button>
+            </div>
+            <div class="px-4 py-3 flex gap-2 overflow-x-auto whitespace-nowrap border-b bg-gray-50 scrollbar-hide">
+                <button onclick="filterLeads('Todos')" class="px-4 py-1.5 bg-white border border-gray-200 shadow-sm text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Todos</button>
+                <button onclick="filterLeads('Hoy')" class="px-4 py-1.5 bg-white border border-blue-200 shadow-sm text-blue-600 rounded-full text-[10px] uppercase tracking-widest font-black">Hoy</button>
+                <button onclick="filterLeads('Pendientes')" class="px-4 py-1.5 bg-white border border-yellow-200 shadow-sm text-yellow-600 rounded-full text-[10px] uppercase tracking-widest font-black">Pendientes</button>
+                <button onclick="filterLeads('Cerrados')" class="px-4 py-1.5 bg-white border border-green-200 shadow-sm text-green-600 rounded-full text-[10px] uppercase tracking-widest font-black">Cerrados</button>
+            </div>
+            <div class="p-4 space-y-4" id="leadsContainer"></div>
+        </div>
+
+        <!-- SHARED: VENTAS -->
+        <div id="tab-sales" class="tab-content min-h-full">
+            <div class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-30">
+                <h2 class="font-black text-xl">Historial de Ventas</h2>
+                <button onclick="openModal('saleModal')" class="admin-only hidden btn-green px-3 py-1.5 text-xs">+ Venta</button>
+            </div>
+            <div class="p-4 space-y-4" id="salesContainer"></div>
+        </div>
+
+        <!-- ADMIN: FINANZAS -->
+        <div id="tab-finances" class="tab-content min-h-full p-4 space-y-6">
+            <h2 class="font-black text-2xl text-ibr-black">Finanzas</h2>
+            
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Comisiones Bella Vista</h3>
+                <div class="flex gap-2 text-xs font-black mb-4 bg-gray-50 p-3 rounded-xl justify-between text-center border border-gray-100">
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest mb-1">Generadas</p><p class="text-green-600 text-sm" id="fin-gen">$0</p></div>
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest mb-1">Pagadas</p><p class="text-blue-600 text-sm" id="fin-pag">$0</p></div>
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest mb-1">Pendientes</p><p class="text-yellow-600 text-sm" id="fin-pen">$0</p></div>
+                </div>
+                <div class="space-y-3" id="fin-com-list"></div>
+                <button onclick="openModal('pagoModal')" class="w-full mt-5 bg-black text-white font-bold text-xs py-3 rounded-xl shadow-md transition hover:bg-gray-800">Registrar Pago Asesor</button>
+            </div>
+
+            <div class="bg-gradient-to-br from-gray-900 to-black text-white rounded-2xl shadow-lg p-5 relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 opacity-10 text-9xl">📈</div>
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4 relative z-10 flex items-center gap-2"><span>Punto de Equilibrio</span> <div class="h-px bg-gray-700 flex-1"></div></h3>
+                <div class="grid grid-cols-2 gap-4 text-xs relative z-10 font-medium mb-4">
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Inversión Campañas</p><p class="font-black text-lg" id="pe-inv">$0</p></div>
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Com. Promedio</p><p class="font-black text-lg">$350</p></div>
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Lotes Necesarios</p><p class="font-black text-lg" id="pe-req">0</p></div>
+                    <div><p class="text-gray-400 text-[8px] uppercase tracking-widest">Lotes Vendidos</p><p class="font-black text-lg text-ibr-green" id="pe-vendidos">0</p></div>
+                </div>
+                <div class="pt-4 border-t border-gray-700 flex justify-between items-center relative z-10">
+                    <span class="font-black text-sm px-3 py-1 rounded bg-green-500 text-white" id="pe-estado">✅ SUPERADO</span>
+                    <span class="text-[10px] font-black bg-white bg-opacity-20 px-3 py-1 rounded text-white" id="pe-roi">ROI: 0%</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400">Inversión Campañas</h3>
+                    <button onclick="openModal('invModal')" class="bg-blue-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow">+ Gasto</button>
+                </div>
+                <div class="space-y-3" id="fin-inv-list"></div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5">
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Historial Pagos Antiguos (Finanzas)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead class="text-[8px] text-gray-400 uppercase tracking-widest border-b border-gray-200">
+                            <tr><th class="pb-2 font-bold">Fec</th><th class="pb-2 font-bold">Asesor</th><th class="pb-2 font-bold text-right">Monto</th></tr>
+                        </thead>
+                        <tbody id="fin-pagos-list" class="divide-y divide-gray-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN: PAGOS -->
+        <div id="tab-pagos" class="tab-content min-h-full p-4 space-y-6">
+            <div class="flex justify-between items-center">
+                <h2 class="font-black text-2xl text-ibr-black">Registro de Pagos</h2>
+                <button onclick="openModal('registroPagoModal')" class="bg-ibr-red text-white text-xs font-black px-4 py-2 rounded-xl shadow">+ Registrar Pago</button>
+            </div>
+            
+            <div class="flex gap-2 text-xs font-black bg-gray-50 p-4 rounded-xl justify-between text-center border border-gray-200 shadow-inner">
+                <div><p class="text-gray-400 text-[9px] uppercase tracking-widest mb-1">Total Generado</p><p class="text-black text-lg" id="pagos-tot-gen">$0</p></div>
+                <div><p class="text-gray-400 text-[9px] uppercase tracking-widest mb-1">Total Cobrado</p><p class="text-ibr-green text-lg" id="pagos-tot-cob">$0</p></div>
+                <div><p class="text-gray-400 text-[9px] uppercase tracking-widest mb-1">Total Pendiente</p><p class="text-ibr-red text-lg" id="pagos-tot-pen">$0</p></div>
+            </div>
+
+            <div class="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide py-1">
+                <button onclick="filterPagos('Todos')" class="px-3 py-1.5 bg-black text-white rounded-full text-[10px] uppercase tracking-widest font-black">Todos</button>
+                <button onclick="filterPagos('Bella Vista')" class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Bella Vista</button>
+                <select id="pagos-filter-adv" onchange="filterPagos('Asesor')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black border-none outline-none"><option value="">Por Asesor ▼</option></select>
+                <select id="pagos-filter-mes" onchange="filterPagos('Mes')" class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black border-none outline-none"><option value="">Por Mes ▼</option></select>
+            </div>
+
+            <div class="space-y-4" id="pagosContainer">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-md border border-gray-100 p-5 mt-6">
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Totales por Asesor</h3>
+                <div class="space-y-3" id="pagos-adv-totals"></div>
+            </div>
+
+            <!-- COBRANZA A CLIENTES -->
+            <div class="mt-8 border-t border-gray-200 pt-8">
+                <h2 class="font-black text-2xl text-ibr-black mb-4">📅 Calendario de Cobros (Clientes)</h2>
+                
+                <div class="bg-gray-800 text-white rounded-2xl shadow-md p-5 mb-6">
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">📊 Proyección Mensual - Bella Vista</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm font-bold">
+                        <div class="space-y-2 text-gray-300">
+                            <p class="flex justify-between"><span>Cobros día 15:</span> <span id="proj-d15" class="text-white">$0</span></p>
+                            <p class="flex justify-between"><span>Cobros fin mes:</span> <span id="proj-d28" class="text-white">$0</span></p>
+                            <p class="flex justify-between"><span>Otros / Sin fecha:</span> <span id="proj-dother" class="text-white">$0</span></p>
+                        </div>
+                        <div class="border-l border-gray-600 pl-4 flex flex-col justify-center">
+                            <p class="text-[9px] uppercase tracking-widest text-gray-400">Total Esperado</p>
+                            <p class="text-xl text-ibr-green font-black" id="proj-total">$0<span class="text-xs">/mes</span></p>
+                            <p class="text-[9px] text-gray-500 mt-1">Si nadie se atrasa ✅</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide py-1 mb-4">
+                    <button onclick="renderCobranzaAdmin('15')" id="btn-cob-15" class="cob-filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Día 15</button>
+                    <button onclick="renderCobranzaAdmin('28')" id="btn-cob-28" class="cob-filter-btn px-3 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] uppercase tracking-widest font-black">Fin de mes</button>
+                    <button onclick="renderCobranzaAdmin('Todos')" id="btn-cob-Todos" class="cob-filter-btn px-3 py-1.5 bg-black text-white rounded-full text-[10px] uppercase tracking-widest font-black">Todos</button>
+                    <button onclick="renderCobranzaAdmin('Atrasados')" id="btn-cob-Atrasados" class="cob-filter-btn px-3 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-full text-[10px] uppercase tracking-widest font-black">Atrasados</button>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-lg mb-4 text-center font-black text-xs border border-gray-200 shadow-inner" id="cob-filtro-resumen">
+                    <!-- Ej. 💰 Cobros esperados día 15: $X -->
+                </div>
+
+                <div class="space-y-3" id="cobranzaContainer">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN: CONFIG -->
+        <div id="tab-config" class="tab-content min-h-full p-4 space-y-6">
+            <h2 class="font-black text-2xl text-ibr-black">Configuración</h2>
+            
+            <!-- GESTIÓN DE USUARIOS IBR - Admin Only -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">👥 Gestión de Usuarios IBR</h3>
+                
+                <!-- Cards view for mobile -->
+                <div id="users-cards-list" class="space-y-3 lg:hidden">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Table view for desktop -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="w-full text-left text-[11px] border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-gray-400 font-black uppercase tracking-wider text-[8px] pb-2">
+                                <th class="pb-2">Nombre</th>
+                                <th class="pb-2">Rol</th>
+                                <th class="pb-2">Email</th>
+                                <th class="pb-2">PIN Actual</th>
+                                <th class="pb-2">Último Acceso</th>
+                                <th class="pb-2 text-center">Sesión</th>
+                                <th class="pb-2 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-list" class="divide-y divide-gray-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400">Asesores Externos</h3>
+                    <button onclick="openModal('extModal')" class="bg-ibr-green text-white text-[10px] font-bold px-3 py-1.5 rounded-lg">+ Agregar</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2" id="conf-ext"></div>
+            </div>
+
+            <button onclick="clearData()" class="w-full bg-red-50 text-red-600 border border-red-200 font-bold py-3 rounded-xl text-xs mt-4">⚠️ BORRAR TODOS LOS DATOS LOCALES</button>
+        </div>
+
+        <!-- ASESOR: PERFIL -->
+        <div id="tab-profile" class="tab-content p-4">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
+                <div class="w-24 h-24 bg-ibr-red text-white rounded-full flex items-center justify-center text-4xl font-black mx-auto mb-4 shadow-md" id="prof-initials"></div>
+                <h2 class="text-3xl font-black text-ibr-black mb-1" id="prof-name">Nombre</h2>
+                <div class="inline-block bg-black text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-6" id="prof-role">Rol</div>
+                
+                <a id="prof-card-btn" href="#" target="_blank" class="bg-black text-white px-6 py-3 rounded-xl font-black shadow-md w-full mb-8 text-[14px] flex items-center justify-center gap-2 hover:bg-gray-800 transition">🪪 Ver mi Tarjeta Digital →</a>
+                
+                <div class="border-t border-gray-100 pt-6 border-b pb-6 mb-6">
+                    <p class="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Participaciones Activas: <span class="text-ibr-red font-black text-lg" id="prof-part">0</span></p>
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-left space-y-2 text-sm font-black text-gray-700">
+                        <div class="flex justify-between"><span>💰 Comisión Total:</span> <span class="text-ibr-green" id="prof-gen">$0</span></div>
+                        <div class="flex justify-between"><span>📅 Mensualidad:</span> <span class="text-blue-600" id="prof-men">$0/mes</span></div>
+                        <div class="flex justify-between"><span>✅ Cobrado:</span> <span class="text-ibr-green" id="prof-pag">$0</span></div>
+                        <div class="flex justify-between"><span>⏳ Pendiente:</span> <span class="text-ibr-red" id="prof-pen">$0</span></div>
+                    </div>
+                </div>
+                
+                <div class="text-left">
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">Detalle Mis Ventas</h3>
+                    <div class="space-y-4" id="prof-sales"></div>
+                </div>
+
+                <!-- CAMBIAR PIN -->
+                <div class="mt-6 border-t border-gray-100 pt-6 text-left">
+                    <h3 class="font-black text-[10px] uppercase tracking-widest text-gray-400 mb-4">🔑 Cambiar mi PIN</h3>
+                    <form id="changePinForm" onsubmit="savePin(event)" class="space-y-3">
+                        <input type="hidden" id="cp-token">
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">PIN Actual</label>
+                            <input type="password" id="cp-current" required placeholder="••••••"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Nuevo PIN</label>
+                            <input type="password" id="cp-new" required placeholder="••••••"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Confirmar Nuevo PIN</label>
+                            <input type="password" id="cp-confirm" required placeholder="••••••"
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red">
+                        </div>
+                        <p class="text-[8px] text-gray-400 font-bold">Asesor: 4 dígitos numéricos · Admin: mín. 6 caracteres alfanuméricos</p>
+                        <button type="submit" class="w-full bg-ibr-red text-white font-black py-3 rounded-xl text-xs uppercase tracking-widest hover:bg-red-800 transition">Guardar PIN</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+
+        <footer class="mt-8 text-center text-[10px] text-gray-400 pb-10 uppercase tracking-widest font-bold">
+            <p class="text-gray-500 mb-1">IBR Marketing Digital &copy; 2026</p>
+            <p>Bella Vista: 513 lotes | Vendidos: 193 | Disponibles: 320</p>
+        </footer>
+
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav id="bottomNav" class="fixed bottom-0 w-full max-w-[480px] bg-black border-t border-gray-800 flex justify-around items-center px-2 py-2 pb-6 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.2)] min-h-[64px]">
+        <!-- Injected via JS -->
+    </nav>
+</div>
+
+<!-- MODALS -->
+<div id="leadModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-[95vw] max-w-[480px] mx-auto p-4 pb-10 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6"><h3 class="font-black text-xl">Nueva Cita</h3><button onclick="closeModal('leadModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form id="leadForm" class="space-y-4" onsubmit="saveLead(event)">
+            <div><label>Nombre Completo*</label><input required id="lf-name" class="bg-gray-50"></div>
+            <div><label>Teléfono 10 dígitos auto+52*</label><input required type="tel" pattern="[0-9]{10}" id="lf-phone" placeholder="9611234567" class="bg-gray-50"></div>
+            <div><label>Proyecto*</label><select id="lf-project" class="bg-gray-50"><option>Bella Vista Ocozocoautla</option></select></div>
+            <div class="flex gap-3"><div class="w-1/2"><label>Fecha*</label><input required type="date" id="lf-date" class="bg-gray-50"></div><div class="w-1/2"><label>Hora*</label><input required type="time" id="lf-time" class="bg-gray-50"></div></div>
+            <div><label>Asesor Asignado*</label><select id="lf-advisor" required class="bg-gray-50"></select></div>
+            <div><label>Observaciones</label><textarea id="lf-obs" rows="2" class="bg-gray-50"></textarea></div>
+            <button type="submit" class="w-full btn-red mt-4">Guardar Cita</button>
+        </form>
+    </div>
+</div>
+
+<div id="resultModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6"><h3 class="font-black text-xl">Resultado de Cita</h3><button onclick="closeModal('resultModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form id="resultForm" class="space-y-4" onsubmit="saveResult(event)">
+            <input type="hidden" id="rf-id">
+            <div><label>¿Qué pasó?*</label>
+                <select id="rf-status" required onchange="toggleBuyFields()" class="bg-gray-50 font-bold">
+                    <option value="">Selecciona una opción...</option>
+                    <option value="Vendido">✅ Compró</option>
+                    <option value="Seguimiento">🔄 Seguimiento</option>
+                    <option value="Reagendado">📅 Reagendar</option>
+                    <option value="Cancelado">❌ Canceló</option>
+                    <option value="No llegó">👻 No llegó</option>
+                    <option value="SinCierre">💬 Sin Cierre</option>
+                </select>
+            </div>
+            <div><label>Fecha visita real</label><input type="date" id="rf-date" class="bg-gray-50"></div>
+            <div><label>Comentarios del recorrido*</label><textarea id="rf-comments" required rows="2" class="bg-gray-50"></textarea></div>
+            
+            <div id="buyFields" class="hidden space-y-4 bg-gray-50 p-5 rounded-2xl border border-ibr-green mt-4 shadow-inner">
+                <h4 class="font-black text-ibr-green uppercase tracking-widest text-[10px]">🎉 Detalle de Venta</h4>
+                <div><label>Proyecto*</label><select id="rf-proj" class="bg-white"><option>Bella Vista Ocozocoautla</option></select></div>
+                <div class="flex gap-3">
+                    <div class="w-1/2"><label>Mz*</label><input type="number" id="rf-mz" class="bg-white"></div>
+                    <div class="w-1/2"><label>Lt*</label><input type="number" id="rf-lote" class="bg-white"></div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-1/2"><label>Tipo Venta*</label><select id="rf-type" class="bg-white"><option>Contado</option><option>Financiado</option></select></div>
+                    <div class="w-1/2"><label>Comisión($)*</label><input type="number" id="rf-com" value="350" class="bg-white font-bold text-ibr-green"></div>
+                </div>
+                <div><label>Obs Venta</label><input type="text" id="rf-vobs" class="bg-white"></div>
+            </div>
+            <button type="submit" class="w-full btn-red mt-4 py-3 rounded-xl">Guardar Actualización</button>
+        </form>
+    </div>
+</div>
+
+<div id="invModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10">
+        <div class="flex justify-between items-center mb-6"><h3 class="font-black text-xl">Registrar Gasto</h3><button onclick="closeModal('invModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form class="space-y-4" onsubmit="saveInv(event)">
+            <div><label>Proyecto*</label><select id="if-proj" class="bg-gray-50"><option>Bella Vista Ocozocoautla</option></select></div>
+            <div><label>Concepto*</label><select id="if-concept" class="bg-gray-50"><option>Facebook Ads</option><option>Google Ads</option><option>Impresión</option><option>Eventos</option><option>Otros</option></select></div>
+            <div><label>Monto($)*</label><input type="number" id="if-amount" required min="1" class="bg-gray-50 font-bold text-ibr-red"></div>
+            <div><label>Fecha*</label><input type="date" id="if-date" required class="bg-gray-50"></div>
+            <div><label>Obs</label><input type="text" id="if-obs" class="bg-gray-50"></div>
+            <button type="submit" class="w-full btn-red mt-4 py-3 rounded-xl">Guardar Gasto</button>
+        </form>
+    </div>
+</div>
+
+<div id="pagoModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10">
+        <div class="flex justify-between items-center mb-6"><h3 class="font-black text-xl">Registrar Pago</h3><button onclick="closeModal('pagoModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form class="space-y-4" onsubmit="savePago(event)">
+            <div><label>Asesor IBR*</label><select id="pf-adv" required class="bg-gray-50"></select></div>
+            <div><label>Monto($)*</label><input type="number" id="pf-amount" required min="1" class="bg-gray-50 font-bold text-ibr-green"></div>
+            <div><label>Lotes Cubiertos (Obs)</label><input type="text" id="pf-obs" placeholder="Ej. Lotes de M5 y M8" class="bg-gray-50"></div>
+            <div><label>Fecha*</label><input type="date" id="pf-date" required class="bg-gray-50"></div>
+            <button type="submit" class="w-full btn-green mt-4 py-3 rounded-xl">Guardar Pago</button>
+        </form>
+    </div>
+</div>
+
+<div id="extModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10">
+        <div class="flex justify-between items-center mb-6"><h3 class="font-black text-xl">Nuevo Externo</h3><button onclick="closeModal('extModal')" class="text-gray-400 font-bold text-2xl">&times;</button></div>
+        <form class="space-y-4" onsubmit="saveExt(event)">
+            <div><label>Nombre*</label><input type="text" id="ef-name" required class="bg-gray-50"></div>
+            <div><label>Teléfono</label><input type="tel" id="ef-phone" class="bg-gray-50"></div>
+            <div><label>Obs</label><input type="text" id="ef-obs" class="bg-gray-50"></div>
+            <button type="submit" class="w-full btn-green mt-4 py-3 rounded-xl">Guardar Externo</button>
+        </form>
+    </div>
+</div>
+
+<!-- COMISION MODAL -->
+<div id="comModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-black text-xl">Modificar Comisión</h3>
+            <button onclick="closeModal('comModal')" class="text-gray-400 font-bold text-2xl">&times;</button>
+        </div>
+        <form class="space-y-4" onsubmit="saveComModal(event)">
+            <input type="hidden" id="cf-id">
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Comisión Total</label><input type="number" id="cf-total" required class="bg-gray-50 font-black text-ibr-red w-full p-2 border rounded"></div>
+                <div><label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Mensualidad</label><input type="number" id="cf-mensualidad" required class="bg-gray-50 font-black text-ibr-red w-full p-2 border rounded"></div>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Razón de ajuste</label>
+                <select id="cf-razon" class="bg-gray-50 w-full p-2 border rounded text-xs font-bold">
+                    <option value="">Ninguna</option>
+                    <option value="Contado">Contado</option>
+                    <option value="Lote esquinero">Lote esquinero</option>
+                    <option value="Mayor superficie">Mayor superficie</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Observaciones</label>
+                <input type="text" id="cf-obs" class="bg-gray-50 w-full p-2 border rounded text-xs">
+            </div>
+            <button type="submit" class="w-full bg-ibr-red text-white font-black mt-4 py-3 rounded-xl">Guardar Cambios</button>
+        </form>
+    </div>
+</div>
+
+<div id="registroPagoModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-black text-xl">Registrar Pago</h3>
+            <button onclick="closeModal('registroPagoModal')" class="text-gray-400 font-bold text-2xl">&times;</button>
+        </div>
+        <form id="registroPagoForm" class="space-y-4" onsubmit="savePago(event)">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Proyecto</label>
+                <select id="rp-project" required class="bg-gray-50 w-full p-2 border rounded font-bold text-xs">
+                    <option value="Bella Vista Ocozocoautla">Bella Vista Ocozocoautla</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Asesor</label>
+                <div class="grid grid-cols-2 gap-2 text-xs font-bold" id="rp-asesores-radios">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Seleccionar Venta</label>
+                <select id="rp-sale" required onchange="loadLotDetails()" class="bg-gray-50 w-full p-2 border rounded font-bold text-xs">
+                    <option value="">Primero selecciona un asesor</option>
+                </select>
+            </div>
+
+            <div id="rp-lot-details" class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-xs font-black hidden">
+                <!-- Loaded dynamically -->
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Monto ($)*</label>
+                    <input type="number" id="rp-amount" required class="bg-gray-50 font-black text-ibr-green w-full p-2 border rounded text-lg" oninput="updateRpSummary()">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Fecha de pago*</label>
+                    <input type="date" id="rp-date" required class="bg-gray-50 w-full p-2 border rounded font-bold text-sm h-[46px]" oninput="updateRpSummary()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-2">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Periodo (Ej. Junio 2026)*</label>
+                    <input type="text" id="rp-period" required class="bg-gray-50 w-full p-2 border rounded text-xs font-bold h-[38px]">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Método</label>
+                    <select id="rp-method" required class="bg-gray-50 w-full p-2 border rounded text-xs font-bold h-[38px]">
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Observaciones</label>
+                <input type="text" id="rp-obs" class="bg-gray-50 w-full p-2 border rounded text-xs">
+            </div>
+            
+            <div id="rp-summary" class="bg-gray-100 rounded-lg p-3 text-[10px] font-bold text-gray-600 hidden mt-4 border border-gray-200 shadow-inner">
+                <!-- Populated on validate -->
+            </div>
+
+            <button type="submit" class="w-full bg-ibr-red text-white font-black mt-4 py-3 rounded-xl shadow-lg">CONFIRMAR PAGO</button>
+        </form>
+    </div>
+</div>
+
+<!-- COBRO MODAL -->
+<div id="cobroModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-black text-xl">Registrar Cobro al Cliente</h3>
+            <button onclick="closeModal('cobroModal')" class="text-gray-400 font-bold text-2xl">&times;</button>
+        </div>
+        <form id="cobroForm" class="space-y-4" onsubmit="saveClientePago(event)">
+            <input type="hidden" id="cc-sale-id">
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Periodo (Ej. Jun 2026)</label>
+                <input type="text" id="cc-period" required class="bg-gray-50 w-full p-2 border rounded font-bold text-xs">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Fecha de pago real</label>
+                <input type="date" id="cc-date" required class="bg-gray-50 w-full p-2 border rounded font-bold text-xs h-[46px]">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Monto Cobrado ($)</label>
+                <input type="number" id="cc-monto" required class="bg-gray-50 font-black text-ibr-green w-full p-2 border rounded text-lg">
+            </div>
+            <button type="submit" class="w-full bg-ibr-red text-white font-black mt-4 py-3 rounded-xl shadow-lg">Guardar Cobro</button>
+        </form>
+    </div>
+</div>
+
+<!-- CONFIRM RESET PIN MODAL -->
+<div id="resetPinModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-white rounded-t-3xl w-full max-w-[480px] mx-auto p-6 pb-10 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-black text-xl">🔄 Resetear PIN</h3>
+            <button onclick="closeModal('resetPinModal')" class="text-gray-400 font-bold text-2xl">&times;</button>
+        </div>
+        <p class="text-gray-700 text-sm mb-6 font-bold" id="reset-confirm-text">
+            ¿Resetear PIN? Se restablecerá a su PIN original.
+        </p>
+        <div class="flex gap-4">
+            <button onclick="closeModal('resetPinModal')" class="flex-1 bg-gray-100 text-gray-700 font-black py-3 rounded-xl text-xs uppercase tracking-widest hover:bg-gray-200 transition">Cancelar</button>
+            <button id="reset-confirm-btn" class="flex-1 bg-ibr-red text-white font-black py-3 rounded-xl text-xs uppercase tracking-widest hover:bg-red-800 transition">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+    const USUARIOS = {
+        "daniel": {nombre:"Daniel Vázquez", email:"realstatechiapas@gmail.com", rol:"admin", pin:"IBRDAVM1512"},
+        "lupyta": {nombre:"Lupyta Mendoza", email:"gabryelatgz@gmail.com", rol:"asesor", pin:"2001"},
+        "carmen": {nombre:"Carmen Jiménez", email:"jose0208.cj@gmail.com", rol:"asesor", pin:"3001"},
+        "luis": {nombre:"Luis García", email:"lord.garcia.0205@gmail.com", rol:"asesor", pin:"4001"}
+    };
+
+    const IBR_USERS = Object.values(USUARIOS).map(u => ({
+        name: u.nombre, role: u.rol === 'admin' ? "Team Leader" : "Asesor", type: u.rol === 'admin' ? "Admin" : "Asesor", email: u.email, link: TARJETAS_DIGITALES[u.nombre], lots: []
+    }));
+    
+    const TARJETAS_DIGITALES = {
+        "Lupyta Mendoza": "https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/",
+        "Carmen Jiménez": "https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/",
+        "Luis García": "https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/",
+        "Daniel Vázquez": "https://propiedadesenchiapas.com/daniel-vazquez/"
+    };
+    
+    const DEFAULT_EXT = ["Walter Moguel", "Martín Altamirano", "Luisa Rodríguez", "Eduardo Méndez", "Arturo Coutiño", "Luis Miguel Coutiño", "Bernardo Cruz", "Antonio Ramírez", "Gabriel Zenteno", "Concepción Villarreal", "Eyra Fernández", "Koreicy López", "Vanessa Guzmán", "Sayani León", "Gabriela López", "Ángeles López", "Mario Ortega", "Javier Ballinas", "Manuel Hipólito", "Cecilia Ramírez"];
+
+    const MANZANAS_DATA = [
+        {m:1, t:9, v:4, d:5, av:'L3'}, {m:2, t:20, v:20, d:0}, {m:3, t:10, v:10, d:0}, {m:4, t:3, v:2, d:1, av:'L2'},
+        {m:5, t:22, v:22, d:0}, {m:6, t:88, v:21, d:67, av:'L84'}, {m:7, t:13, v:10, d:3}, {m:8, t:22, v:20, d:2},
+        {m:9, t:76, v:11, d:65}, {m:10, t:9, v:7, d:2}, {m:11, t:22, v:5, d:17}, {m:12, t:22, v:4, d:18},
+        {m:13, t:17, v:8, d:9, av:'L5'}, {m:14, t:20, v:7, d:13}, {m:15, t:20, v:2, d:18}, {m:16, t:20, v:2, d:18},
+        {m:17, t:20, v:0, d:20}, {m:18, t:20, v:0, d:20}, {m:19, t:21, v:5, d:16}, {m:20, t:20, v:0, d:20},
+        {m:21, t:20, v:0, d:20}, {m:22, t:20, v:0, d:20}
+    ];
+
+    const VENTAS_IBR_HISTORICAS = [
+        {id:"VTA-030",lote:"BV-M05-L10",manzana:5,lote_num:10,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-031",lote:"BV-M05-L11",manzana:5,lote_num:11,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-032",lote:"BV-M05-L14",manzana:5,lote_num:14,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-033",lote:"BV-M05-L15",manzana:5,lote_num:15,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-058",lote:"BV-M08-L02",manzana:8,lote_num:2,asesor1:"Luis García",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-063",lote:"BV-M06-L09",manzana:6,lote_num:9,asesor1:"Luis García",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-064",lote:"BV-M06-L10",manzana:6,lote_num:10,asesor1:"Luis García",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-065",lote:"BV-M12-L13",manzana:12,lote_num:13,asesor1:"Daniel Vázquez",asesor2:"Carmen Jiménez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-088",lote:"BV-M07-L01",manzana:7,lote_num:1,asesor1:"Luis García",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-089",lote:"BV-M07-L02",manzana:7,lote_num:2,asesor1:"Luis García",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-120",lote:"BV-M13-L09",manzana:13,lote_num:9,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-121",lote:"BV-M14-L12",manzana:14,lote_num:12,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-139",lote:"BV-M08-L07",manzana:8,lote_num:7,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-144",lote:"BV-M14-L13",manzana:14,lote_num:13,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-145",lote:"BV-M13-L07",manzana:13,lote_num:7,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-146",lote:"BV-M13-L08",manzana:13,lote_num:8,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-149",lote:"BV-M14-L19",manzana:14,lote_num:19,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-166",lote:"BV-M14-L20",manzana:14,lote_num:20,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-167",lote:"BV-M14-L03",manzana:14,lote_num:3,asesor1:"Carmen Jiménez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-190",lote:"BV-M15-L11",manzana:15,lote_num:11,asesor1:"Lupyta Mendoza",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-194",lote:"BV-M09-L21",manzana:9,lote_num:21,asesor1:"Eduardo Méndez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-195",lote:"BV-M09-L22",manzana:9,lote_num:22,asesor1:"Eduardo Méndez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-196",lote:"BV-M09-L23",manzana:9,lote_num:23,asesor1:"Eduardo Méndez",asesor2:"Daniel Vázquez",proyecto:"Bella Vista Ocozocoautla",estatus:"Validada",comision_total_lote:10800,comision_asesor:5400,mensualidad:350,pagado:0,fecha_venta:""},
+        {id:"VTA-BC1",lote:"BC-M03-L02",manzana:3,lote_num:2,asesor1:"Daniel Vázquez",asesor2:"",proyecto:"Bosques de Chapultepec",estatus:"Validada",comision_total_lote:31600,comision_asesor:31600,mensualidad:3500,pagado:0,fecha_venta:""},
+        {id:"VTA-BC2",lote:"BC-M03-L03",manzana:3,lote_num:3,asesor1:"Daniel Vázquez",asesor2:"",proyecto:"Bosques de Chapultepec",estatus:"Validada",comision_total_lote:31600,comision_asesor:31600,mensualidad:3500,pagado:0,fecha_venta:""},
+        {id:"VTA-BC3",lote:"BC-M03-L04",manzana:3,lote_num:4,asesor1:"Daniel Vázquez",asesor2:"",proyecto:"Bosques de Chapultepec",estatus:"Validada",comision_total_lote:31600,comision_asesor:31600,mensualidad:3500,pagado:0,fecha_venta:""},
+        {id:"VTA-BC4",lote:"BC-M03-L10",manzana:3,lote_num:10,asesor1:"Daniel Vázquez",asesor2:"",proyecto:"Bosques de Chapultepec",estatus:"Validada",comision_total_lote:29808,comision_asesor:29808,mensualidad:3726,pagado:0,fecha_venta:""},
+        {id:"VTA-BC5",lote:"BC-M03-L11",manzana:3,lote_num:11,asesor1:"Daniel Vázquez",asesor2:"",proyecto:"Bosques de Chapultepec",estatus:"Validada",comision_total_lote:29808,comision_asesor:29808,mensualidad:3726,pagado:0,fecha_venta:""},
+        {id:"VTA-BC6",lote:"BC-M03-L12",manzana:3,lote_num:12,asesor1:"Daniel Vázquez",asesor2:"",proyecto:"Bosques de Chapultepec",estatus:"Validada",comision_total_lote:29808,comision_asesor:29808,mensualidad:3726,pagado:0,fecha_venta:""}
+    ];
+
+    /* ================= TOKENS DE ACCESO ================= */
+    const TELEFONOS_EQUIPO = {
+        "Daniel Vázquez": "9612466204",
+        "Lupyta Mendoza": "9611171478",
+        "Carmen Jiménez": "9616101816", 
+        "Luis García": "9611769814"
+    };
+
+    const USUARIOS = {
+        "IBR-Daniel-Vázquez": { nombre: "Daniel Vázquez",  email: "realstatechiapas@gmail.com",  rol: "admin",  pin: "IBRDAVM1512" },
+        "IBR-Daniel-Vazquez": { nombre: "Daniel Vázquez",  email: "realstatechiapas@gmail.com",  rol: "admin",  pin: "IBRDAVM1512" },
+        "IBR-Lupyta-Mendoza":  { nombre: "Lupyta Mendoza",  email: "gabryelatgz@gmail.com",       rol: "asesor", pin: "2001" },
+        "IBR-Carmen-Jiménez": { nombre: "Carmen Jiménez",  email: "jose0208.cj@gmail.com",        rol: "asesor", pin: "3001" },
+        "IBR-Carmen-Jimenez": { nombre: "Carmen Jiménez",  email: "jose0208.cj@gmail.com",        rol: "asesor", pin: "3001" },
+        "IBR-Luis-García":    { nombre: "Luis García",     email: "lord.garcia.0205@gmail.com",  rol: "asesor", pin: "4001" },
+        "IBR-Luis-Garcia":    { nombre: "Luis García",     email: "lord.garcia.0205@gmail.com",  rol: "asesor", pin: "4001" }
+    };
+    const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000;
+    const LOCKOUT_DURATION = 5 * 60 * 1000;
+    const MAX_ATTEMPTS     = 3;
+    let loginAttempts = 0;
+    let lockoutUntil  = 0;
+    let pendingToken  = null;
+
+
+
+    /* ================= ROLES & PERMISOS ================= */
+    const PERMISOS = {
+        "Daniel Vázquez": "admin",
+        "Lupyta Mendoza": "asesor",
+        "Carmen Jiménez": "asesor",
+        "Luis García": "asesor"
+    };
+    const ADMIN_TABS    = ['dashboard-admin','projects','leads','pagos','finances','config'];
+    const ASESOR_TABS   = ['dashboard-asesor','projects','leads','sales','profile'];
+
+    let originalUser = localStorage.getItem('ibr_user') || "Daniel Vázquez";
+    let vistaComo = sessionStorage.getItem('ibr_vista_como');
+    let currentUser = vistaComo || originalUser;
+    
+    let isAdmin = PERMISOS[currentUser] === 'admin';
+    let esVerdaderoAdmin = PERMISOS[originalUser] === 'admin';
+
+    const esAdmin = () => PERMISOS[currentUser] === 'admin';
+    const esPropietario = (v) => v.asesor1 === currentUser || v.asesor2 === currentUser || v.adv === currentUser || v.adv2 === currentUser;
+    const getVentasVisibles = () => esAdmin() ? getAllSales() : getAllSales().filter(esPropietario);
+    const getLeadsVisibles = () => esAdmin() ? leads : leads.filter(l => l.advisor === currentUser);
+
+    function guardTab(tabId) {
+        let allowed = esAdmin() ? ADMIN_TABS : ASESOR_TABS;
+        if(!allowed.includes(tabId)) {
+            let fallback = esAdmin() ? 'dashboard-admin' : 'dashboard-asesor';
+            let fb = document.getElementById('tab-restricted');
+            if(fb) {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                fb.classList.add('active');
+                setTimeout(() => switchTab(fallback), 2000);
+                return true;
+            }
+            switchTab(fallback);
+            return true;
+        }
+        return false;
+    }
+    
+    let extUsers = JSON.parse(localStorage.getItem('ibr_externos')) || DEFAULT_EXT;
+    let leads = JSON.parse(localStorage.getItem('ibr_leads')) || [];
+    let salesLocal = JSON.parse(localStorage.getItem('ibr_ventas')) || [];
+    let salesUpdates = JSON.parse(localStorage.getItem('ibr_updates_ventas')) || {}; // { id: {com, obs} }
+    let investments = JSON.parse(localStorage.getItem('ibr_inversiones')) || [];
+    let payments = JSON.parse(localStorage.getItem('ibr_pagos')) || [];
+    let clientPayments = JSON.parse(localStorage.getItem('ibr_cobros_clientes')) || [];
+
+
+    let filterL = 'Todos';
+
+    function saveFechaVenta(id, val) {
+        let fechas = JSON.parse(localStorage.getItem('ibr_fechas_venta') || '{}');
+        fechas[id] = val;
+        localStorage.setItem('ibr_fechas_venta', JSON.stringify(fechas));
+        showToast('✅ Fecha actualizada');
+    }
+
+    function getMisVentas(u) {
+        let hist = VENTAS_IBR_HISTORICAS.filter(v => v.asesor1 === u || v.asesor2 === u).map(v => {
+            let overrides = salesUpdates[v.id] || {};
+            let isShared = v.asesor1 && v.asesor2;
+            let defComTotal = isShared ? 5400 : 10800;
+            let defMensualidad = isShared ? 350 : 700;
+            return {
+                id: v.id, mz: v.manzana, lote: v.lote_num, lote_str: v.lote, adv: v.asesor1, adv2: v.asesor2, 
+                com_total: overrides.com_total !== undefined ? Number(overrides.com_total) : (v.comision_asesor !== undefined ? v.comision_asesor : defComTotal),
+                comision_total_lote: v.comision_total_lote || 10800,
+                mensualidad: overrides.mensualidad !== undefined ? Number(overrides.mensualidad) : (v.mensualidad !== undefined ? v.mensualidad : defMensualidad),
+                pagado: payments.filter(p => p.sale_id === v.id && p.adv === u).reduce((sum, p) => sum + Number(p.amount), 0),
+                razon: overrides.razon || '',
+                obs: overrides.obs || '',
+                estatus: v.estatus || 'Validada', date: 'Histórica', type: 'Contado', hist: true
+            };
+        });
+        let loc = salesLocal.filter(s => s.adv === u || s.adv2 === u).map(s => {
+             if (s.com_total === undefined) {
+                 let isShared = s.adv && s.adv2;
+                 s.com_total = isShared ? 5400 : 10800;
+                 s.mensualidad = isShared ? 350 : 700;
+             }
+             s.comision_total_lote = s.comision_total_lote || 10800;
+             s.pagado = payments.filter(p => p.sale_id === s.id && p.adv === u).reduce((sum, p) => sum + Number(p.amount), 0);
+             return s;
+        });
+        return [...hist, ...loc].sort((a,b)=>a.date==='Histórica'?1:-1); // local newer first
+    }
+    
+    function getAllSales() {
+        let hist = VENTAS_IBR_HISTORICAS.map(v => {
+            let overrides = salesUpdates[v.id] || {};
+            let isShared = v.asesor1 && v.asesor2;
+            let defComTotal = isShared ? 5400 : 10800;
+            let defMensualidad = isShared ? 350 : 700;
+            return {
+                id: v.id, mz: v.manzana, lote: v.lote_num, adv: v.asesor1, adv2: v.asesor2, 
+                com_total: overrides.com_total !== undefined ? Number(overrides.com_total) : (v.comision_asesor !== undefined ? v.comision_asesor : defComTotal),
+                comision_total_lote: v.comision_total_lote || 10800,
+                mensualidad: overrides.mensualidad !== undefined ? Number(overrides.mensualidad) : (v.mensualidad !== undefined ? v.mensualidad : defMensualidad),
+                pagado: payments.filter(p => p.sale_id === v.id).reduce((sum, p) => sum + Number(p.amount), 0),
+                razon: overrides.razon || '',
+                obs: overrides.obs || '',
+                estatus: v.estatus || 'Validada'
+            };
+        });
+        let loc = salesLocal.map(s => {
+             if (s.com_total === undefined) {
+                 let isShared = s.adv && s.adv2;
+                 s.com_total = isShared ? 5400 : 10800;
+                 s.mensualidad = isShared ? 350 : 700;
+             }
+             s.comision_total_lote = s.comision_total_lote || 10800;
+             s.pagado = payments.filter(p => p.sale_id === s.id).reduce((sum, p) => sum + Number(p.amount), 0);
+             return s;
+        });
+        return [...hist, ...loc];
+    }
+
+    /* ================= AUTH FUNCTIONS ================= */
+
+    function getEffectivePin(token) {
+        let overrides = JSON.parse(localStorage.getItem('ibr_pin_overrides') || '{}');
+        return overrides[token] || USUARIOS[token]?.pin || '';
+    }
+
+    function resolveUserByToken(token) {
+        return USUARIOS[token] || null;
+    }
+
+    function showToast(msg, duration) {
+        duration = duration || 2500;
+        let toast = document.getElementById('toast');
+        toast.querySelector('div').textContent = msg;
+        toast.classList.remove('hidden');
+        setTimeout(function() { toast.classList.add('hidden'); }, duration);
+    }
+
+    function renderLoginPin(token, userData) {
+        pendingToken = token;
+        loginAttempts = 0;
+        var isAdminUser = userData.rol === 'admin';
+        var content = document.getElementById('loginContent');
+        if(!content) return;
+
+        var pinInputHtml = isAdminUser
+            ? '<input type="text" id="pin-admin" placeholder="Ingresa tu PIN" autocomplete="off" spellcheck="false" class="w-full bg-gray-900 text-white border border-gray-700 rounded-xl px-4 py-4 text-sm font-bold outline-none focus:border-ibr-red focus:ring-1 focus:ring-ibr-red placeholder-gray-600 tracking-widest transition">'
+            : '<div class="flex gap-3 justify-center" id="pin-boxes">' +
+              '<input type="password" maxlength="1" pattern="[0-9]" inputmode="numeric" class="pin-box w-14 h-16 bg-gray-900 text-white border-2 border-gray-700 rounded-xl text-2xl font-black text-center outline-none focus:border-ibr-red transition" />'.repeat(4) +
+              '</div>';
+
+        content.innerHTML =
+            '<div class="text-center mb-6">' +
+              '<p class="text-white font-black text-xl">Bienvenido,</p>' +
+              '<p class="text-ibr-red font-black text-2xl mt-1">' + userData.nombre.split(' ')[0] + '</p>' +
+              '<p class="text-gray-500 text-[10px] font-bold mt-1 uppercase tracking-widest">' + (isAdminUser ? 'Administrador' : 'Asesor') + '</p>' +
+            '</div>' +
+            '<form onsubmit="handlePinSubmit(event)" class="w-full space-y-4">' +
+              '<div class="flex flex-col items-center">' +
+                '<label class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-3">' + (isAdminUser ? 'PIN de Administrador' : 'Tu PIN de 4 dígitos') + '</label>' +
+                pinInputHtml +
+              '</div>' +
+              '<button type="submit" class="w-full bg-ibr-red text-white font-black py-4 rounded-xl text-sm uppercase tracking-widest shadow-lg hover:bg-red-800 transition active:scale-95 mt-2">ENTRAR</button>' +
+            '</form>';
+
+        if(!isAdminUser) {
+            var boxes = document.querySelectorAll('.pin-box');
+            boxes.forEach(function(box, i) {
+                box.addEventListener('input', function() {
+                    box.value = box.value.replace(/[^0-9]/g, '');
+                    if(box.value && i < boxes.length - 1) boxes[i + 1].focus();
+                    if(box.value && i === boxes.length - 1) handlePinSubmit();
+                });
+                box.addEventListener('keydown', function(e) {
+                    if(e.key === 'Backspace' && !box.value && i > 0) boxes[i - 1].focus();
+                });
+            });
+            setTimeout(function() { var f = document.querySelector('.pin-box'); if(f) f.focus(); }, 100);
+        } else {
+            setTimeout(function() { var f = document.getElementById('pin-admin'); if(f) f.focus(); }, 100);
+        }
+    }
+
+    function handlePinSubmit(e) {
+        if(e) e.preventDefault();
+        if(!pendingToken) return;
+
+        if(Date.now() < lockoutUntil) {
+            document.getElementById('loginLockout').classList.remove('hidden');
+            return;
+        }
+
+        var userData = USUARIOS[pendingToken];
+        var isAdminUser = userData.rol === 'admin';
+        var enteredPin;
+        if(isAdminUser) {
+            enteredPin = (document.getElementById('pin-admin') ? document.getElementById('pin-admin').value : '').trim();
+        } else {
+            enteredPin = Array.from(document.querySelectorAll('.pin-box')).map(function(b) { return b.value; }).join('');
+        }
+
+        var correctPin = getEffectivePin(pendingToken);
+
+        if(enteredPin === correctPin) {
+            loginAttempts = 0;
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('loginLockout').classList.add('hidden');
+            applySession(pendingToken, userData, true);
+        } else {
+            loginAttempts++;
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            if(!isAdminUser) {
+                document.querySelectorAll('.pin-box').forEach(function(b) { b.value = ''; });
+                setTimeout(function() { var f = document.querySelector('.pin-box'); if(f) f.focus(); }, 50);
+            } else {
+                var f2 = document.getElementById('pin-admin'); if(f2) { f2.value = ''; f2.focus(); }
+            }
+            if(loginAttempts >= MAX_ATTEMPTS) {
+                lockoutUntil = Date.now() + LOCKOUT_DURATION;
+                loginAttempts = 0;
+                document.getElementById('loginError').classList.add('hidden');
+                document.getElementById('loginLockout').classList.remove('hidden');
+                setTimeout(function() {
+                    lockoutUntil = 0;
+                    document.getElementById('loginLockout').classList.add('hidden');
+                }, LOCKOUT_DURATION);
+            } else {
+                var el = document.getElementById('loginError');
+                el.textContent = 'PIN incorrecto ❌ (intento ' + loginAttempts + '/' + MAX_ATTEMPTS + ')';
+                el.classList.remove('hidden');
+            }
+        }
+    }
+
+    function applySession(token, userData, showWelcome) {
+        var sess = { token: token, nombre: userData.nombre, rol: userData.rol, timestamp: Date.now() };
+        localStorage.setItem('ibr_session', JSON.stringify(sess));
+        localStorage.setItem('ibr_user', userData.nombre);
+        
+        var ultimos = JSON.parse(localStorage.getItem('ibr_ultimo_acceso') || '{}');
+        ultimos[token] = Date.now();
+        localStorage.setItem('ibr_ultimo_acceso', JSON.stringify(ultimos));
+        currentUser = userData.nombre;
+        isAdmin = PERMISOS[currentUser] === 'admin';
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('headerUserName').textContent = currentUser;
+        document.getElementById('headerUserRole').textContent = isAdmin ? 'Admin' : 'Asesor';
+        var sel = document.getElementById('userSelector');
+        if(sel) sel.value = currentUser;
+        if(showWelcome) {
+            document.getElementById('wm-name').textContent = currentUser.split(' ')[0];
+            document.getElementById('wm-role').textContent = isAdmin ? '👑 Admin' : '💼 Asesor';
+            document.getElementById('welcomeModal').classList.remove('hidden');
+        } else {
+            bootApp();
+        }
+    }
+
+    function dismissWelcome() {
+        document.getElementById('welcomeModal').classList.add('hidden');
+        bootApp();
+    }
+
+    function bootApp() {
+        let vistaComo = sessionStorage.getItem('ibr_vista_como');
+        if (vistaComo) {
+            currentUser = vistaComo;
+            isAdmin = PERMISOS[currentUser] === 'admin';
+            document.getElementById('headerUserName').textContent = currentUser;
+            document.getElementById('headerUserRole').textContent = 'Asesor (Preview)';
+            document.getElementById('preview-banner-container').innerHTML = `
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 m-4 rounded shadow-sm">
+                    <p class="font-black text-[14px]">👁️ Viendo como: ${vistaComo} [Asesor]</p>
+                    <button onclick="volverAdmin()" class="mt-2 bg-yellow-200 hover:bg-yellow-300 text-yellow-900 font-bold py-1.5 px-3 rounded text-[12px] transition">
+                        ← Volver a mi Admin
+                    </button>
+                </div>
+            `;
+        }
+        populateSelects();
+        updateAuth();
+        switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
+        renderProyectos();
+        checkBanners();
+    }
+
+    function logout() {
+        if(!confirm('Cerrar sesión ¿Seguro?')) return;
+        localStorage.removeItem('ibr_session');
+        sessionStorage.removeItem('ibr_vista_como');
+        localStorage.removeItem('ibr_user');
+        currentUser = '';
+        isAdmin = false;
+        pendingToken = null;
+        loginAttempts = 0;
+        document.getElementById('loginContent').innerHTML =
+            '<div class="text-center space-y-4">' +
+              '<div class="text-5xl">🔗</div>' +
+              '<p class="text-gray-300 text-sm font-bold">Abre tu link personal para ingresar.</p>' +
+              '<p class="text-gray-600 text-[10px]">Si no tienes tu link, contáctale a tu administrador.</p>' +
+            '</div>';
+        document.getElementById('loginError').classList.add('hidden');
+        document.getElementById('loginLockout').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+    }
+
+    function copyAccessLink(token) {
+        var url = window.location.href.split('?')[0] + '?token=' + encodeURIComponent(token);
+        navigator.clipboard.writeText(url)
+            .then(function() { showToast('✅ Link copiado'); })
+            .catch(function() { prompt('Copia este link:', url); });
+    }
+
+    function sendAccessWhatsApp(token, tel, nombre) {
+        var u = USUARIOS[token];
+        var url = window.location.href.split('?')[0] + '?token=' + encodeURIComponent(token);
+        var pin = getEffectivePin(token);
+        var phones = JSON.parse(localStorage.getItem('ibr_team_phones') || '{}');
+        var phone = phones[token] || tel || (u ? u.tel : '') || '';
+        if(!phone) phone = prompt('¿Número de WhatsApp de ' + nombre + '? (10 dígitos)');
+        if(!phone) return;
+        var msg = encodeURIComponent(
+            'Hola ' + nombre + ' 👋\n' +
+            'Tu acceso IBR fue restablecido:\n' +
+            '📧 Correo: ' + (u ? u.email : '') + '\n' +
+            '🔗 Link: ' + url + '\n' +
+            '🔑 PIN: ' + pin + '\n' +
+            '- Daniel IBR 🏘️'
+        );
+        window.open('https://wa.me/52' + phone + '?text=' + msg, '_blank');
+    }
+
+    function saveTeamPhone(token, tel) {
+        var stored = JSON.parse(localStorage.getItem('ibr_team_phones') || '{}');
+        stored[token] = tel;
+        localStorage.setItem('ibr_team_phones', JSON.stringify(stored));
+    }
+
+    function savePin(e) {
+        e.preventDefault();
+        var token = document.getElementById('cp-token').value;
+        var current = document.getElementById('cp-current').value.trim();
+        var nuevo = document.getElementById('cp-new').value.trim();
+        var confirm2 = document.getElementById('cp-confirm').value.trim();
+        var ud = USUARIOS[token];
+        var isAdminUser = ud ? ud.rol === 'admin' : false;
+        if(current !== getEffectivePin(token)) return alert('❌ PIN actual incorrecto.');
+        if(nuevo !== confirm2) return alert('❌ Los PINs nuevos no coinciden.');
+        if(isAdminUser && nuevo.length < 6) return alert('❌ El PIN de Admin debe tener mínimo 6 caracteres.');
+        if(!isAdminUser && !/^[0-9]{4}$/.test(nuevo)) return alert('❌ El PIN de asesor debe ser exactamente 4 dígitos.');
+        var overrides = JSON.parse(localStorage.getItem('ibr_pin_overrides') || '{}');
+        overrides[token] = nuevo;
+        localStorage.setItem('ibr_pin_overrides', JSON.stringify(overrides));
+        showToast('✅ PIN actualizado correctamente');
+        e.target.reset();
+    }
+
+    function formatLastAccess(timestamp) {
+        if(!timestamp) return 'Nunca';
+        var date = new Date(timestamp);
+        var today = new Date();
+        
+        var isToday = date.getDate() === today.getDate() &&
+                      date.getMonth() === today.getMonth() &&
+                      date.getFullYear() === today.getFullYear();
+                      
+        var isYesterday = false;
+        var yesterday = new Date();
+        yesterday.setDate(today.getDate() - 1);
+        if (date.getDate() === yesterday.getDate() &&
+            date.getMonth() === yesterday.getMonth() &&
+            date.getFullYear() === yesterday.getFullYear()) {
+            isYesterday = true;
+        }
+
+        var hours = String(date.getHours()).padStart(2, '0');
+        var minutes = String(date.getMinutes()).padStart(2, '0');
+        var timeStr = hours + ':' + minutes;
+
+        if (isToday) {
+            return 'Hoy';
+        } else if (isYesterday) {
+            return 'Ayer';
+        } else {
+            var months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            return date.getDate() + '/' + months[date.getMonth()] + '/' + date.getFullYear();
+        }
+    }
+
+    let pendingResetToken = '';
+    
+    window.verComoAsesor = function(nombre) {
+        sessionStorage.setItem('ibr_vista_como', nombre);
+        location.reload();
+    };
+
+    window.volverAdmin = function() {
+        sessionStorage.removeItem('ibr_vista_como');
+        location.reload();
+    };
+
+    function openResetPinModal(token) {
+        var u = USUARIOS[token];
+        if(!u) return;
+        if(u.rol === 'admin') {
+            alert('❌ El PIN de Administrador no se puede restablecer.');
+            return;
+        }
+        pendingResetToken = token;
+        document.getElementById('reset-confirm-text').innerText = '¿Resetear PIN de ' + u.nombre + '?\nSe restablecerá a su PIN original.';
+        document.getElementById('reset-confirm-btn').onclick = function() {
+            confirmResetPin(token);
+        };
+        openModal('resetPinModal');
+    }
+
+    function confirmResetPin(token) {
+        var u = USUARIOS[token];
+        if(!u) return;
+        
+        var overrides = JSON.parse(localStorage.getItem('ibr_pin_overrides') || '{}');
+        delete overrides[token];
+        localStorage.setItem('ibr_pin_overrides', JSON.stringify(overrides));
+        
+        closeModal('resetPinModal');
+        showToast('✅ PIN de ' + u.nombre + ' restablecido a default');
+        renderConfig();
+        
+        sendResetPinWhatsApp(token);
+    }
+
+    function sendResetPinWhatsApp(token) {
+        var u = USUARIOS[token];
+        if(!u) return;
+        
+        var url = window.location.href.split('?')[0] + '?token=' + encodeURIComponent(token);
+        var pinDefault = u.pin;
+        
+        var msg = encodeURIComponent(
+            'Hola ' + u.nombre.split(' ')[0] + ' 👋\n' +
+            'Tu acceso IBR fue restablecido:\n' +
+            '📧 Correo: ' + u.email + '\n' +
+            '🔗 Link: ' + url + '\n' +
+            '🔑 PIN: ' + pinDefault + '\n' +
+            '- Daniel IBR 🏘️'
+        );
+        
+        var teamPhones = JSON.parse(localStorage.getItem('ibr_team_phones') || '{}');
+        var phone = teamPhones[token] || u.tel || '';
+        if(!phone) phone = prompt('¿Número de WhatsApp de ' + u.nombre + '? (10 dígitos)');
+        if(!phone) return;
+        
+        window.open('https://wa.me/52' + phone + '?text=' + msg, '_blank');
+    }
+
+    function init() {
+        var params = new URLSearchParams(window.location.search);
+        var urlTokenRaw = params.get('token');
+        var tokenToUse = urlTokenRaw ? decodeURIComponent(urlTokenRaw) : (localStorage.getItem('ibr_token') ? decodeURIComponent(localStorage.getItem('ibr_token')) : null);
+        
+        if (tokenToUse) {
+            localStorage.setItem('ibr_token', encodeURIComponent(tokenToUse));
+        }
+
+        try {
+            var sess = JSON.parse(localStorage.getItem('ibr_session'));
+            if(sess && (Date.now() - sess.timestamp) < SESSION_DURATION) {
+                var ud2 = resolveUserByToken(sess.token);
+                if(ud2) { applySession(sess.token, ud2, false); return; }
+            }
+        } catch(err) {}
+
+        if(tokenToUse) {
+            history.replaceState(null, '', window.location.pathname);
+            var userData = resolveUserByToken(tokenToUse);
+            if(userData) {
+                renderLoginPin(tokenToUse, userData);
+            } else {
+                document.getElementById('loginContent').innerHTML =
+                    '<div class="text-center"><div class="text-5xl mb-4">🚫</div>' +
+                    '<h2 class="text-white font-black text-lg">Link no válido</h2>' +
+                    '<p class="text-gray-500 text-sm mt-2">Solicita tu link a Daniel Vázquez.</p></div>';
+            }
+            return;
+        }
+
+        document.getElementById('loginContent').innerHTML =
+            '<div class="text-center space-y-4">' +
+              '<div class="text-5xl">🔗</div>' +
+              '<p class="text-gray-300 text-sm font-bold">Abre tu link personal para ingresar.</p>' +
+              '<p class="text-gray-600 text-[10px]">Si no tienes tu link, contáctale a tu administrador.</p>' +
+            '</div>';
+    }
+
+
+    function changeUser(val) {
+        currentUser = val;
+        localStorage.setItem('ibr_user', val);
+        isAdmin = PERMISOS[currentUser] === 'admin';
+        // Reload leads/data that may have been filtered
+        leads = JSON.parse(localStorage.getItem('ibr_leads')) || [];
+        salesLocal = JSON.parse(localStorage.getItem('ibr_ventas')) || [];
+        updateAuth();
+        switchTab(isAdmin ? 'dashboard-admin' : 'dashboard-asesor');
+        checkBanners();
+    }
+
+    function clearData() {
+        if(confirm("ESTO BORRARÁ TODO (Leads, ventas, inversiones). ¿Seguro?")) {
+            localStorage.clear(); location.reload();
+        }
+    }
+
+    // --- PAGOS TAB FUNCTIONS ---
+    let pagosFilter = 'Todos';
+    let pagosAdvFilter = '';
+    let pagosMesFilter = '';
+    
+    function filterPagos(type) {
+        if(type === 'Todos') { pagosFilter = 'Todos'; pagosAdvFilter = ''; pagosMesFilter = ''; document.getElementById('pagos-filter-adv').value = ''; document.getElementById('pagos-filter-mes').value = ''; }
+        if(type === 'Bella Vista') pagosFilter = 'Bella Vista Ocozocoautla';
+        if(type === 'Asesor') { pagosFilter = 'Asesor'; pagosAdvFilter = document.getElementById('pagos-filter-adv').value; }
+        if(type === 'Mes') { pagosFilter = 'Mes'; pagosMesFilter = document.getElementById('pagos-filter-mes').value; }
+        renderPagos();
+    }
+
+    function renderPagos() {
+        // Populate dropdowns if empty
+        if(document.getElementById('pagos-filter-adv').options.length <= 1) {
+            let adOpts = IBR_USERS.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+            document.getElementById('pagos-filter-adv').innerHTML += adOpts;
+            
+            let months = [...new Set(payments.map(p => p.period))].filter(Boolean);
+            let moOpts = months.map(m => `<option value="${m}">${m}</option>`).join('');
+            document.getElementById('pagos-filter-mes').innerHTML += moOpts;
+            
+            let rHtml = IBR_USERS.map((u, i) => `
+                <label class="flex items-center gap-1 border border-gray-200 p-2 rounded cursor-pointer bg-white text-[9px] truncate">
+                    <input type="radio" name="rp-asesor" value="${u.name}" onchange="loadAsesorLots()" required> ${u.name.split(' ')[0]}
+                </label>
+            `).join('');
+            document.getElementById('rp-asesores-radios').innerHTML = rHtml;
+        }
+
+        let allS = getAllSales();
+        let totalGen = 0, totalCob = 0;
+        IBR_USERS.forEach(u => {
+            let uSales = getMisVentas(u.name);
+            uSales.forEach(s => {
+                totalGen += Number(s.com_total || 0);
+            });
+        });
+        totalCob = payments.reduce((sum, p) => sum + Number(p.amount||0), 0);
+        
+        document.getElementById('pagos-tot-gen').innerText = '$' + totalGen.toLocaleString();
+        document.getElementById('pagos-tot-cob').innerText = '$' + totalCob.toLocaleString();
+        document.getElementById('pagos-tot-pen').innerText = '$' + (totalGen - totalCob).toLocaleString();
+
+        let filtered = [...payments];
+        if(pagosFilter === 'Bella Vista Ocozocoautla') filtered = filtered.filter(p => p.project === 'Bella Vista Ocozocoautla');
+        if(pagosFilter === 'Asesor' && pagosAdvFilter) filtered = filtered.filter(p => p.adv === pagosAdvFilter);
+        if(pagosFilter === 'Mes' && pagosMesFilter) filtered = filtered.filter(p => p.period === pagosMesFilter);
+
+        let pListHtml = filtered.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => {
+            let parts = p.date.split('-'); // YYYY-MM-DD
+            let formattedDate = parts.length === 3 ? `${parts[2]}/${['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][parseInt(parts[1])-1]}/${parts[0]}` : p.date;
+            
+            return `
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-ibr-red border-y border-r border-gray-100 flex justify-between items-center">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 mb-2"><span class="text-[9px] font-black text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-widest">#${p.id || 'PAG'}</span> <span class="text-[9px] font-bold text-gray-400">${formattedDate}</span></div>
+                    <p class="font-black text-sm text-black">${p.adv}</p>
+                    <p class="text-[10px] text-gray-500 font-bold">${p.lote_str || ''} · ${p.project || 'Bella Vista'}</p>
+                    <p class="text-[9px] text-gray-400 font-bold">Periodo: ${p.period || '-'}</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-ibr-green font-black text-lg bg-green-50 px-2 py-1 rounded-lg">💰 $${Number(p.amount||0).toLocaleString()}</span>
+                </div>
+            </div>`;
+        }).join('');
+        document.getElementById('pagosContainer').innerHTML = pListHtml || '<p class="text-center text-[10px] font-bold text-gray-400 py-10 uppercase tracking-widest">Sin pagos registrados</p>';
+
+        let advTotalsHtml = IBR_USERS.map(u => {
+            let uGen = 0, uCob = 0;
+            getMisVentas(u.name).forEach(s => uGen += Number(s.com_total || 0));
+            payments.filter(p => p.adv === u.name).forEach(p => uCob += Number(p.amount||0));
+            return `<div class="flex justify-between items-center text-[10px] border-b border-gray-50 pb-2">
+                <span class="font-black text-gray-800">${u.name.split(' ')[0]}</span>
+                <div>
+                    <span class="text-ibr-green font-black mr-2">Pagado $${uCob.toLocaleString()}</span> 
+                    <span class="text-ibr-red font-black">/ Pendiente $${(uGen - uCob).toLocaleString()}</span>
+                </div>
+            </div>`;
+        }).join('');
+        document.getElementById('pagos-adv-totals').innerHTML = advTotalsHtml;
+    }
+
+    function loadAsesorLots() {
+        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
+        if(!adv) return;
+        const mySales = getMisVentas(adv);
+        const html = mySales.map(s => {
+            let lTxt = `M${s.mz}-L${s.lote}`;
+            let advTxt = s.adv2 ? (s.adv2===adv?'con '+s.adv:'con '+s.adv2) : 'Individual';
+            return `<option value="${s.id}">${lTxt} · ${advTxt}</option>`;
+        }).join('');
+        document.getElementById('rp-sale').innerHTML = html || '<option value="">Sin ventas registradas</option>';
+        loadLotDetails();
+    }
+
+    function loadLotDetails() {
+        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
+        const saleId = document.getElementById('rp-sale').value;
+        if(!adv || !saleId) return;
+        
+        const sale = getMisVentas(adv).find(s => s.id === saleId);
+        if(sale) {
+            document.getElementById('rp-amount').value = sale.mensualidad;
+            document.getElementById('rp-lot-details').innerHTML = `
+                💰 Comisión total: <span class="text-ibr-green">$${sale.com_total.toLocaleString()}</span><br>
+                ✅ Ya pagado: <span class="text-ibr-green">$${sale.pagado.toLocaleString()}</span><br>
+                ⏳ Pendiente: <span class="text-ibr-red">$${(sale.com_total - sale.pagado).toLocaleString()}</span>
+            `;
+            document.getElementById('rp-lot-details').classList.remove('hidden');
+            updateRpSummary();
+        }
+    }
+    
+    function updateRpSummary() {
+        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
+        const saleSel = document.getElementById('rp-sale');
+        const saleStr = saleSel.options[saleSel.selectedIndex]?.text;
+        const amount = document.getElementById('rp-amount').value;
+        const date = document.getElementById('rp-date').value;
+        if(adv && saleStr && amount && date) {
+            document.getElementById('rp-summary').innerHTML = `Asesor: ${adv}<br>Lote: ${saleStr.split(' ·')[0]}<br>Monto: $${amount}<br>Fecha: ${date}`;
+            document.getElementById('rp-summary').classList.remove('hidden');
+        } else {
+            document.getElementById('rp-summary').classList.add('hidden');
+        }
+    }
+
+    function savePago(e) {
+        e.preventDefault();
+        if(!esAdmin()) return alert('🔒 Solo el Administrador puede registrar pagos.');
+
+        const adv = document.querySelector('input[name="rp-asesor"]:checked')?.value;
+        const saleId = document.getElementById('rp-sale').value;
+        const saleSel = document.getElementById('rp-sale');
+        const loteStr = saleSel.options[saleSel.selectedIndex]?.text.split(' ·')[0] || '';
+        
+        if(!adv || !saleId) return alert('Selecciona un asesor y una venta.');
+        
+        let newIdNum = payments.length > 0 ? Math.max(...payments.map(p => Number(p.id ? p.id.split('-')[1] : 0))) + 1 : 1;
+        let newId = 'PAG-' + String(newIdNum).padStart(3, '0');
+
+        payments.push({
+            id: newId,
+            project: document.getElementById('rp-project').value,
+            adv: adv,
+            sale_id: saleId,
+            lote_str: loteStr,
+            amount: document.getElementById('rp-amount').value,
+            date: document.getElementById('rp-date').value,
+            period: document.getElementById('rp-period').value,
+            method: document.getElementById('rp-method').value,
+            obs: document.getElementById('rp-obs').value
+        });
+        localStorage.setItem('ibr_pagos', JSON.stringify(payments));
+        closeModal('registroPagoModal');
+        alert('✅ Pago registrado (' + newId + ')');
+        
+        // Reset form manually
+        document.getElementById('registroPagoForm').reset();
+        document.getElementById('rp-lot-details').classList.add('hidden');
+        document.getElementById('rp-summary').classList.add('hidden');
+        document.getElementById('rp-sale').innerHTML = '<option value="">Primero selecciona un asesor</option>';
+        
+        if(document.getElementById('tab-pagos').classList.contains('active')) renderPagos();
+        if(isAdmin) renderDashAdmin();
+        renderProfile();
+    }
+
+    function populateSelects() {
+        const teamOpts = IBR_USERS.map(u => `<option value="${u.name}">${u.name}</option>`).join('');
+        document.getElementById('lf-advisor').innerHTML = teamOpts;
+        document.getElementById('pf-adv').innerHTML = teamOpts;
+    }
+
+    function updateAuth() {
+        document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !esAdmin()));
+        const nav = document.getElementById('bottomNav');
+        if(esAdmin()) {
+            nav.innerHTML = `
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('dashboard-admin')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Resumen</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('pagos')"><span class="text-2xl">💳</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Pagos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('finances')"><span class="text-2xl">💰</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Finanzas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 flex-1" onclick="switchTab('config')"><span class="text-2xl">⚙️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Config</span></button>
+            `;
+        } else {
+            nav.innerHTML = `
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('dashboard-asesor')"><span class="text-2xl">🏠</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mi Panel</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('projects')"><span class="text-2xl">🏘️</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Proyectos</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('leads')"><span class="text-2xl">👥</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Leads</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('sales')"><span class="text-2xl">📋</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Mis Ventas</span></button>
+                <button class="nav-item flex flex-col items-center gap-1 w-1/5" onclick="switchTab('profile')"><span class="text-2xl">👤</span><span class="text-[10px] uppercase font-bold tracking-widest mt-1">Perfil</span></button>
+            `;
+        }
+    }
+
+    function switchTab(tabId) {
+        if(guardTab(tabId)) return;
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        let tabEl = document.getElementById('tab-' + tabId);
+        if(!tabEl) return;
+        tabEl.classList.add('active');
+        const btn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+        if(btn) btn.classList.add('active');
+
+        if(tabId === 'dashboard-admin' && esAdmin()) renderDashAdmin();
+        if(tabId === 'dashboard-asesor') renderDashAsesor();
+        if(tabId === 'leads') { filterL = 'Todos'; loadCalendarLeads(); }
+        if(tabId === 'sales') renderSales();
+        if(tabId === 'finances' && esAdmin()) renderFinances();
+        if(tabId === 'pagos' && esAdmin()) { renderPagos(); renderCobranzaAdmin(currentCobFilter); }
+        if(tabId === 'config' && esAdmin()) renderConfig();
+        if(tabId === 'profile') renderProfile();
+        if(tabId === 'projects') renderProyectos();
+    }
+
+    /* ================= RENDERERS ================= */
+    function renderDashAdmin() {
+        let allS = getAllSales();
+        let gen = 0; allS.forEach(s => gen += Number(s.com||0));
+        let pag = 0; payments.forEach(p => pag += Number(p.amount||0));
+        let totalInv = investments.reduce((a, b) => a + Number(b.amount), 0);
+        document.getElementById('ad-camp-inv').innerText = `$${totalInv}`;
+        
+        let teamGen = 0, teamMen = 0, teamPag = 0;
+        let breakdownItems = [];
+        let html = IBR_USERS.map((m, i) => {
+            let uSalesRaw = getMisVentas(m.name);
+            let uSales = uSalesRaw.filter(s => {
+                let pName = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id)?.proyecto : 'Bella Vista Ocozocoautla';
+                if(!pName) pName = 'Bella Vista Ocozocoautla';
+                return pName === 'Bella Vista Ocozocoautla';
+            });
+            let uSumCom = 0, uSumMen = 0;
+            
+            let chips = uSales.map(s => {
+                uSumCom += s.com_total; uSumMen += s.mensualidad;
+                return `<div class="inline-block bg-white text-[9px] font-bold text-gray-600 px-2 py-1 rounded shadow-sm border border-gray-100 m-1">BV-M${s.mz}-L${s.lote}</div>`;
+            });
+            teamGen += uSumCom; teamMen += uSumMen;
+            let uTotalPag = uSales.reduce((sum,s)=>sum+s.pagado, 0);
+            teamPag += uTotalPag;
+            
+            breakdownItems.push(`<div class="flex justify-between"><span class="text-gray-300 font-bold w-16">${m.name.split(' ')[0]}</span> <span class="font-black">$${uSumCom.toLocaleString()} · <span class="text-gray-400 font-normal">$${uSumMen.toLocaleString()}ms</span></span></div>`);
+            
+            let totalL = uSales.length;
+            let prom = (totalL/5.7).toFixed(1); 
+            let initials = m.name.split(' ').map(n=>n[0]).join('');
+            return `
+            <div class="bg-white border-l-4 border-l-ibr-red rounded-xl shadow-sm mb-3 overflow-hidden">
+                <div class="p-4 cursor-pointer" onclick="document.getElementById('det-${i}').classList.toggle('active')">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-ibr-red text-white rounded-full flex items-center justify-center font-black">${initials}</div>
+                            <div>
+                                <p class="font-black text-sm text-black leading-tight">${m.name}</p>
+                                <span class="bg-black text-white text-[8px] px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">${m.role}</span>
+                            </div>
+                        </div>
+                        <span class="font-black text-ibr-red text-2xl">${totalL}</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-2 border-t border-gray-100 pt-3">
+                        <div><p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Generado</p><p class="text-xs font-black text-ibr-red">$${uSumCom.toLocaleString()}</p></div>
+                        <div class="text-right"><p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Mensualidad</p><p class="text-xs font-black text-black">$${uSumMen.toLocaleString()}/mes</p></div>
+                    </div>
+                </div>
+                <div id="det-${i}" class="expandable-content bg-gray-50 p-4 border-t border-gray-100">
+                    <div class="mb-3 flex justify-between text-[10px] text-gray-500 font-medium">
+                        <a href="${m.link}" target="_blank" class="text-blue-600 hover:underline">Ver Tarjeta Digital →</a>
+                        <span>Promedio: ${prom}</span>
+                    </div>
+                    ${chips.join('')}
+                </div>
+            </div>`;
+        }).join('');
+        document.getElementById('ad-team-list').innerHTML = html;
+        
+        // Populate Admin Global Comissions Card (Bella Vista)
+        if(document.getElementById('ad-com-gen-card')) {
+            document.getElementById('ad-com-gen-card').innerText = '$' + teamGen.toLocaleString();
+            document.getElementById('ad-com-men-card').innerText = '$' + teamMen.toLocaleString();
+            document.getElementById('ad-com-pag-card').innerText = '$' + teamPag.toLocaleString();
+            document.getElementById('ad-com-pen-card').innerText = '$' + (teamGen - teamPag).toLocaleString();
+            document.getElementById('ad-com-breakdown').innerHTML = breakdownItems.join('');
+        }
+
+        // Populate EXCLUSIVO DANIEL (Bosques de Chapultepec)
+        let bcSales = getMisVentas("Daniel Vázquez").filter(s => {
+            let pName = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id)?.proyecto : 'Bella Vista Ocozocoautla';
+            return pName === 'Bosques de Chapultepec';
+        });
+        if(document.getElementById('ad-bc-lotes')) {
+            let bcGen = 0, bcMen = 0, bcPag = 0;
+            bcSales.forEach(s => { bcGen += s.com_total; bcMen += s.mensualidad; bcPag += s.pagado; });
+            document.getElementById('ad-bc-lotes').innerText = bcSales.length;
+            document.getElementById('ad-bc-gen').innerText = '$' + bcGen.toLocaleString();
+            document.getElementById('ad-bc-men').innerText = '$' + bcMen.toLocaleString() + '/mes';
+            document.getElementById('ad-bc-pag').innerText = '$' + bcPag.toLocaleString();
+            document.getElementById('ad-bc-pen').innerText = '$' + (bcGen - bcPag).toLocaleString();
+        }
+
+        // Top Externos
+        const extVals = [35,32,24,21,13];
+        document.getElementById('ad-top-ext').innerHTML = DEFAULT_EXT.slice(0,5).map((e,i) => `
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 w-1/2">
+                    <div class="w-6 h-6 bg-ibr-red text-white rounded-full flex items-center justify-center text-xs font-black shadow-sm">${i+1}</div>
+                    <span class="text-xs truncate font-bold text-gray-800">${e}</span>
+                </div>
+                <div class="w-1/2 flex items-center gap-2">
+                    <div class="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden"><div class="bg-gradient-to-r from-ibr-red to-black h-2 rounded-full" style="width:${(extVals[i]/35)*100}%"></div></div>
+                    <span class="text-xs font-black text-ibr-red">${extVals[i]}</span>
+                </div>
+            </div>
+        `).join('');
+
+        // Mis Ventas Personales (Daniel)
+        let myAdminSales = getMisVentas(currentUser);
+        document.getElementById('ad-mis-ventas-badge').innerText = myAdminSales.length + " participaciones";
+        
+        let filterVal = 'Todos';
+        let filterEl = document.getElementById('ad-mis-ventas-filter');
+        if(filterEl) filterVal = filterEl.value;
+
+        let projGroups = {};
+        myAdminSales.forEach(s => {
+            let pName = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id)?.proyecto : 'Bella Vista Ocozocoautla';
+            if(!pName) pName = 'Bella Vista Ocozocoautla';
+            if(filterVal !== 'Todos' && pName !== filterVal) return;
+            if(!projGroups[pName]) projGroups[pName] = [];
+            projGroups[pName].push(s);
+        });
+
+        let mvHtml = Object.keys(projGroups).map(p => {
+            let group = projGroups[p];
+            group.sort((a,b) => (a.mz - b.mz) || (a.lote - b.lote));
+            
+            let sumCom = 0;
+            let groupHtml = group.map(s => {
+                sumCom += Number(s.com_total||0);
+                let coAsesorTxt = '';
+                if (s.adv2) coAsesorTxt = `con ${s.adv2===currentUser ? s.adv : s.adv2}`;
+                else if (s.adv !== currentUser) coAsesorTxt = `con ${s.adv}`;
+
+                let histData = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id) : null;
+                let fVenta = '';
+                if(histData && histData.fecha_venta) fVenta = histData.fecha_venta;
+                let savedFVenta = JSON.parse(localStorage.getItem('ibr_fechas_venta')||'{}')[s.id];
+                if(savedFVenta) fVenta = savedFVenta;
+
+                let specialBadge = s.razon ? `<span class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-1 py-0.5 rounded ml-1 uppercase tracking-widest">⚡ ${s.razon}</span>` : '';
+                return `
+                <div class="bg-white p-4 border-b border-r border-gray-100 flex flex-col justify-between">
+                    <div>
+                        <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">${p}</div>
+                        <div class="mb-2">
+                            <h3 class="font-black text-xl text-black">${s.lote_str || ('BV-M'+s.mz+'-L'+s.lote)}${specialBadge}</h3>
+                            ${coAsesorTxt ? `<p class="text-[12px] font-bold text-gray-500 mt-1">👥 ${coAsesorTxt}</p>` : ''}
+                        </div>
+                        
+                        <div class="space-y-1 text-[12px] font-bold text-gray-600">
+                            <p class="flex justify-between"><span>💰 Total lote:</span> <span class="font-black text-gray-800">$${(s.comision_total_lote || 10800).toLocaleString()}</span></p>
+                            <p class="flex justify-between"><span>👤 Tu comisión:</span> <span class="text-ibr-red font-black">$${s.com_total.toLocaleString()}</span></p>
+                            <p class="flex justify-between"><span>📅 Mensualidad:</span> <span class="font-black">$${(s.mensualidad || 350).toLocaleString()}/mes</span></p>
+                            <p class="flex justify-between"><span>✅ Cobrado:</span> <span class="text-ibr-green font-black">$${s.pagado.toLocaleString()}</span></p>
+                            <p class="flex justify-between"><span>⏳ Pendiente:</span> <span class="text-ibr-red font-black">$${(s.com_total - s.pagado).toLocaleString()}</span></p>
+                        </div>
+                    </div>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[12px] font-bold text-gray-600">📆 Fecha de venta:</span>
+                            <input type="date" value="${fVenta}" onchange="saveFechaVenta('${s.id}', this.value)" style="border:1px solid #8B0000; border-radius:4px; padding:4px; font-size:14px" class="flex-1 bg-gray-50 outline-none">
+                        </div>
+                        <button onclick="openComModal('${s.id}')" class="w-full bg-gray-50 text-ibr-red py-2 rounded text-[12px] font-black hover:bg-gray-200 transition border border-gray-200 text-left px-3 mt-2">✏️ Caso especial</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            return `
+            <div class="mb-2">
+                <div class="bg-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest px-4 py-2 border-y border-gray-300 text-center shadow-inner">━━ ${p.toUpperCase()} (${group.length}) ━━</div>
+                <div class="max-h-80 overflow-y-auto overflow-x-hidden">
+                    <div class="grid grid-cols-2 gap-0 bg-gray-100 border-l border-gray-100">
+                        ${groupHtml}
+                    </div>
+                </div>
+                <div class="bg-black text-white text-[10px] font-black uppercase tracking-widest px-4 py-3 flex justify-between border-t border-gray-800">
+                    <span>Total: ${group.length} lotes</span>
+                    <span class="text-ibr-green">Acumulado: $${sumCom.toLocaleString()}</span>
+                </div>
+            </div>`;
+        }).join('');
+
+        let listEl = document.getElementById('ad-mis-ventas-list');
+        if(listEl) {
+            listEl.innerHTML = mvHtml || '<p class="p-5 text-center text-xs text-gray-400 font-bold uppercase tracking-widest">No hay participaciones aún</p>';
+        } else {
+            document.getElementById('ad-mis-ventas-content').innerHTML = mvHtml || '<p class="p-5 text-center text-xs text-gray-400 font-bold uppercase tracking-widest">No hay participaciones aún</p>';
+        }
+    }
+
+    function renderDashAsesor() {
+        const u = IBR_USERS.find(x => x.name === currentUser);
+        document.getElementById('as-greeting').innerText = `Hola ${currentUser.split(' ')[0]} 👋`;
+        document.getElementById('as-card-btn').href = u ? u.link : '#';
+        
+        let myS = getMisVentas(currentUser);
+        let myPart = myS.length;
+        document.getElementById('as-lotes').innerText = myPart;
+        
+        // Real commission totals based on sales
+        let comTotal = myS.reduce((sum, s) => sum + Number(s.com_total || 0), 0);
+        let pagTotal = payments.filter(p => p.adv === currentUser).reduce((sum, p) => sum + Number(p.amount || 0), 0);
+        document.getElementById('as-com-gen').innerText = `$${comTotal.toLocaleString()}`;
+        document.getElementById('as-com-cob').innerText = `$${pagTotal.toLocaleString()}`;
+        document.getElementById('as-com-pen').innerText = `$${(comTotal - pagTotal).toLocaleString()}`;
+        let prom = (myPart/6).toFixed(1);
+        document.getElementById('as-prom-lbl').innerText = `Promedio: ${prom} lotes/mes`;
+        
+        let pct = comTotal > 0 ? Math.min(100, Math.round((pagTotal/comTotal)*100)) : 0;
+        document.getElementById('as-prog-pct').innerText = `${pct}% Cobrado`;
+        document.getElementById('as-prog-bar').style.width = `${pct}%`;
+
+        const myLeads = getLeadsVisibles().filter(l => l.date === new Date().toISOString().split('T')[0]);
+        document.getElementById('as-leads').innerHTML = myLeads.map(l => `<div class="bg-white p-3 rounded-xl shadow-sm border-l-4 border-l-blue-500 text-sm font-black text-gray-800">${l.name}</div>`).join('') || '<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border-2 border-dashed border-gray-200 rounded-xl">Sin leads hoy</p>';
+        
+        document.getElementById('as-sales').innerHTML = myS.slice(0,5).map(s => `<div class="bg-white p-3 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"><span class="font-black text-xs">M${s.mz} L${s.lote}</span><span class="text-ibr-green font-black text-sm">$${s.mensualidad}/mes</span></div>`).join('') || '<p class="text-xs text-gray-400 font-bold uppercase tracking-widest text-center py-4 border-2 border-dashed border-gray-200 rounded-xl">Sin ventas</p>';
+    }
+
+    function renderProyectos() {
+        const html = MANZANAS_DATA.map(m => `
+            <tr>
+                <td class="p-3 font-black border-r border-gray-100">Mz ${m.m}</td>
+                <td class="p-3 text-gray-500">${m.t}</td>
+                <td class="p-3 text-ibr-green font-black bg-green-50 bg-opacity-50">${m.v}</td>
+                <td class="p-3 text-blue-600 font-black bg-blue-50 bg-opacity-50">${m.d}</td>
+                <td class="p-3 text-[10px] text-gray-400 font-medium">${m.av || '-'}</td>
+            </tr>
+        `).join('');
+        document.getElementById('mz-table-body').innerHTML = html;
+    }
+
+    function getLeadBorder(status) {
+        return { 'Programada': 'border-l-[#1D4ED8]', 'Seguimiento': 'border-l-[#D97706]', 'Vendido': 'border-l-[#16A34A]', 'Cancelado': 'border-l-[#DC2626]', 'No llegó': 'border-l-[#6B7280]', 'Reagendado': 'border-l-[#8B0000]' }[status] || 'border-l-gray-300';
+    }
+    function getLeadBadge(status) {
+        const cls = { 'Programada': 'bg-blue-100 text-blue-800', 'Seguimiento': 'bg-yellow-100 text-yellow-800', 'Vendido': 'bg-green-100 text-green-800', 'Cancelado': 'bg-red-100 text-red-800', 'No llegó': 'bg-gray-200 text-gray-800', 'Reagendado': 'bg-purple-100 text-purple-800' }[status] || 'bg-gray-100 text-gray-800';
+        return `<span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${cls}">${status}</span>`;
+    }
+
+    const CALENDAR_API_URL = "https://script.google.com/macros/s/AKfycbyEDY_uepSq4SRBMJL1HFpJorXeDeRMe22hBzwjaR_f3OPS2g5H9jGgAct4AQ0FqGJ1/exec";
+
+    async function loadCalendarLeads() {
+        document.getElementById('leadsContainer').innerHTML = '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest animate-pulse">🔄 Sincronizando con Google Calendar...</p>';
+        try {
+            const res = await fetch(CALENDAR_API_URL, {mode:'cors'});
+            const data = await res.json();
+            if(data.ok) {
+                let mappedLeads = data.eventos.map(e => ({
+                    id: e.id,
+                    name: e.titulo,
+                    phone: e.telefono ? e.telefono.replace(/\\D/g,'') : '0000000000',
+                    project: e.ubicacion || 'Por definir',
+                    advisor: e.asesor,
+                    date: new Date(e.fecha).toISOString().split('T')[0],
+                    time: e.hora,
+                    status: e.estatus,
+                    lastComment: e.descripcion
+                }));
+                
+                let localLeads = JSON.parse(localStorage.getItem('ibr_leads')) || [];
+                let localLeadsMap = {};
+                localLeads.forEach(l => localLeadsMap[l.id] = l);
+                
+                mappedLeads.forEach(ml => {
+                    if(localLeadsMap[ml.id]) {
+                        ml.status = localLeadsMap[ml.id].status;
+                        if(localLeadsMap[ml.id].lastComment && localLeadsMap[ml.id].lastComment !== ml.lastComment) {
+                           ml.lastComment = localLeadsMap[ml.id].lastComment;
+                        }
+                    }
+                    localLeadsMap[ml.id] = ml; 
+                });
+                
+                leads = Object.values(localLeadsMap);
+                leads.sort((a,b) => new Date(b.date) - new Date(a.date));
+                localStorage.setItem('ibr_leads', JSON.stringify(leads));
+                renderLeads();
+            } else {
+                throw new Error("API not ok");
+            }
+        } catch(err) {
+            console.error('Error fetching calendar:', err);
+            showToast('⚠️ Sin conexión al calendario');
+            leads = JSON.parse(localStorage.getItem('ibr_leads')||'[]');
+            renderLeads();
+        }
+    }
+
+    function renderLeads() {
+        let f = getLeadsVisibles();
+        if(filterL === 'Hoy') { const td = new Date().toISOString().split('T')[0]; f = f.filter(l => l.date === td || l.status === 'Programada'); }
+        if(filterL === 'Pendientes') f = f.filter(l => l.status === 'Seguimiento' || l.status === 'Reagendado');
+        if(filterL === 'Cerrados') f = f.filter(l => l.status === 'Vendido' || l.status === 'Cancelado');
+
+        const html = f.map(l => `
+            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 ${getLeadBorder(l.status)} border-y border-r border-gray-100">
+                <div class="flex justify-between items-start mb-3">
+                    <div><h3 class="font-black text-sm text-black mb-1">${l.name}</h3><p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">${l.project} <br> ${l.date} ${l.time}</p></div>
+                    ${getLeadBadge(l.status)}
+                </div>
+                ${l.lastComment ? `<div class="bg-gray-50 p-2 text-gray-600 mb-3 text-[10px] font-medium border border-gray-100 rounded-lg">💬 ${l.lastComment}</div>` : ''}
+                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                    <a href="https://wa.me/52${l.phone}" target="_blank" class="btn-wa">📱 WhatsApp</a>
+                    ${esAdmin() ? `<span class="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">${l.advisor.split(' ')[0]}</span>` : ''}
+                    <button onclick="openResultModal('${l.id}')" class="text-ibr-red text-[10px] font-black uppercase tracking-widest bg-red-50 px-3 py-1.5 rounded-lg hover:bg-red-100 transition ${['Vendido','Cancelado'].includes(l.status) ? 'hidden' : ''}">Actualizar</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('leadsContainer').innerHTML = html || '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest">Sin leads registrados</p>';
+    }
+
+    function openComModal(id) {
+        let all = getAllSales();
+        let s = all.find(x => x.id === id);
+        if(!s) return;
+        if(!esAdmin()) return alert('🔒 Solo el Administrador puede modificar comisiones.');
+        document.getElementById('cf-id').value = id;
+        document.getElementById('cf-total').value = s.com_total;
+        document.getElementById('cf-mensualidad').value = s.mensualidad;
+        document.getElementById('cf-razon').value = s.razon || '';
+        document.getElementById('cf-obs').value = s.obs || '';
+        document.getElementById('comModal').classList.remove('hidden');
+    }
+
+    function saveComModal(e) {
+        e.preventDefault();
+        let id = document.getElementById('cf-id').value;
+        let cTotal = Number(document.getElementById('cf-total').value);
+        let cMen = Number(document.getElementById('cf-mensualidad').value);
+        let cRazon = document.getElementById('cf-razon').value;
+        let cObs = document.getElementById('cf-obs').value;
+        
+        let loc = salesLocal.find(s=>s.id===id);
+        if(loc) { 
+            loc.com_total = cTotal; loc.mensualidad = cMen; loc.razon = cRazon; loc.obs = cObs; 
+            localStorage.setItem('ibr_ventas', JSON.stringify(salesLocal)); 
+        } else {
+            salesUpdates[id] = {com_total: cTotal, mensualidad: cMen, razon: cRazon, obs: cObs};
+            localStorage.setItem('ibr_updates_ventas', JSON.stringify(salesUpdates));
+        }
+        closeModal('comModal');
+        if(esAdmin()) renderDashAdmin();
+        renderSales(); renderDashAsesor(); renderProfile();
+    }
+
+    function renderSales() {
+        let myS = getMisVentas(currentUser);
+        const html = myS.map((s, idx) => {
+            let coAsesorTxt = '';
+            if (s.adv2) coAsesorTxt = `con ${s.adv2===currentUser ? s.adv : s.adv2}`;
+            else if (s.adv !== currentUser) coAsesorTxt = `con ${s.adv}`;
+            
+            let specialBadge = s.razon ? `<span class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-1 py-0.5 rounded ml-1 uppercase tracking-widest">⚡ ${s.razon}</span>` : '';
+            
+            let histData = s.hist ? VENTAS_IBR_HISTORICAS.find(v=>v.id===s.id) : null;
+            let fVenta = '';
+            if(histData && histData.fecha_venta) fVenta = histData.fecha_venta;
+            let savedFVenta = JSON.parse(localStorage.getItem('ibr_fechas_venta')||'{}')[s.id];
+            if(savedFVenta) fVenta = savedFVenta;
+
+            return `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-[9px] font-black text-gray-400 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-widest">${s.id}</span>
+                    ${getLeadBadge(s.estatus||'Validada')}
+                </div>
+                <div class="mb-3">
+                    <h3 class="font-black text-xl text-black">${s.lote_str || ('BV-M'+s.mz+'-L'+s.lote)}${specialBadge}</h3>
+                    ${coAsesorTxt ? `<p class="text-[12px] font-bold text-gray-500 mt-1">👥 ${coAsesorTxt}</p>` : ''}
+                </div>
+                
+                <div class="space-y-1 text-[12px] font-bold text-gray-600">
+                    <p class="flex justify-between"><span>💰 Total lote:</span> <span class="font-black text-gray-800">$${(s.comision_total_lote || 10800).toLocaleString()}</span></p>
+                    <p class="flex justify-between"><span>👤 Tu comisión:</span> <span class="text-ibr-red font-black">$${s.com_total.toLocaleString()}</span></p>
+                    <p class="flex justify-between"><span>📅 Mensualidad:</span> <span class="font-black">$${(s.mensualidad || 350).toLocaleString()}/mes</span></p>
+                    <p class="flex justify-between"><span>✅ Cobrado:</span> <span class="text-ibr-green font-black">$${s.pagado.toLocaleString()}</span></p>
+                    <p class="flex justify-between"><span>⏳ Pendiente:</span> <span class="text-ibr-red font-black">$${(s.com_total - s.pagado).toLocaleString()}</span></p>
+                </div>
+                
+                <div class="mt-3 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[12px] font-bold text-gray-600">📆 Fecha de venta:</span>
+                        <input type="date" value="${fVenta}" onchange="saveFechaVenta('${s.id}', this.value)" style="border:1px solid #8B0000; border-radius:4px; padding:4px; font-size:14px" class="flex-1 bg-gray-50 outline-none">
+                    </div>
+                </div>
+                
+                <div class="mt-3 pt-3 border-t border-gray-100">
+                    <p class="text-[9px] font-black uppercase text-gray-400 mb-2 tracking-widest">Cobranza al Cliente</p>
+                    <div class="flex gap-2">
+                        <select id="cob-day-${s.id}" class="bg-gray-50 w-full p-2 border border-gray-200 rounded text-[10px] font-bold" onchange="saveCobroDate('${s.id}')">
+                            <option value="">¿Cuándo paga tu cliente?</option>
+                            <option value="15" ${getCobroDay(s.id) == 15 ? 'selected' : ''}>Día 15 del mes</option>
+                            <option value="28" ${getCobroDay(s.id) == 28 ? 'selected' : ''}>Fin de mes (28-31)</option>
+                            <option value="custom" ${getCobroDay(s.id) && getCobroDay(s.id) != 15 && getCobroDay(s.id) != 28 ? 'selected' : ''}>Otro día...</option>
+                        </select>
+                    </div>
+                    <div class="mt-2 text-right flex justify-between items-center">
+                        <button onclick="toggleCobroHistory('${s.id}')" class="text-[9px] font-black uppercase tracking-widest text-blue-600">💳 Historial de cobros ↓</button>
+                        <button onclick="openComModal('${s.id}')" class="text-[9px] font-black uppercase tracking-widest text-ibr-red hover:underline">[⚡ Caso especial]</button>
+                    </div>
+                    <div id="cob-hist-${s.id}" class="hidden mt-2 bg-gray-50 p-2 rounded-lg border border-gray-200 text-left">
+                        ${renderCobroHistory(s.id, s.mensualidad)}
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        document.getElementById('salesContainer').innerHTML = html || '<p class="text-center text-[10px] uppercase font-bold text-gray-400 py-10 tracking-widest">Sin ventas registradas</p>';
+    }
+
+    function renderFinances() {
+        let allS = getAllSales();
+        const ibrCom = IBR_USERS.map(u => {
+            let gen = 0; 
+            // In getAllSales, one record per sale, we don't double count teamGen here if we just sum for the user's participation.
+            // Wait, if it's shared, the user's portion is already `com_total`? 
+            // Yes, com_total is what the user gets. But wait, in getAllSales, com_total is either 10800 or 5400.
+            // If it's 5400, it's correct to sum it for both. So we filter by adv or adv2.
+            allS.filter(s=>s.adv===u.name || s.adv2===u.name).forEach(s=>gen+=Number(s.com_total||0));
+            let pag = 0; payments.filter(p=>p.adv===u.name).forEach(p=>pag+=Number(p.amount));
+            return { name: u.name, gen: gen, pag: pag };
+        });
+        document.getElementById('fin-com-list').innerHTML = ibrCom.map(c => `
+            <div class="flex justify-between text-[10px] border-b border-gray-100 pb-2 mb-2 items-center">
+                <span class="font-black w-1/3 truncate text-gray-800">${c.name}</span>
+                <span class="text-ibr-green font-black w-1/3 text-center bg-green-50 py-1 rounded">$${c.gen.toLocaleString()}</span>
+                <span class="text-blue-600 font-black w-1/3 text-right">$${c.pag.toLocaleString()}</span>
+            </div>
+        `).join('');
+
+        let t = 0;
+        document.getElementById('fin-inv-list').innerHTML = investments.map(i => { t += Number(i.amount); return `<div class="flex justify-between text-[10px] border-b border-gray-100 pb-2 mb-2 font-bold"><span class="text-gray-500">${i.date} - ${i.concept}</span><span class="font-black text-ibr-red bg-red-50 px-2 rounded">$${i.amount}</span></div>`; }).join('');
+        
+        // genAll is the total generated by all sales. Since allS has 1 record per sale, 
+        // if we just sum com_total it's wrong (it would be 5400 instead of 10800 for shared).
+        // Let's sum based on total property value. If shared, it's 10800. If individual, 10800.
+        // Wait, yes, the total generated by a sale is ALWAYS 10800.
+        let genAll = allS.length * 10800;
+        let req = Math.ceil(t / 350);
+        let totV = 193;
+        let roi = t > 0 ? ((genAll - t) / t * 100).toFixed(0) : 0;
+        document.getElementById('pe-inv').innerText = `$${t.toLocaleString()}`;
+        document.getElementById('pe-req').innerText = req;
+        document.getElementById('pe-vendidos').innerText = totV;
+        document.getElementById('pe-roi').innerText = `ROI: ${roi}%`;
+        let st = document.getElementById('pe-estado');
+        if(totV >= req) { st.innerHTML = "✅ SUPERADO"; st.className = "font-black text-sm px-3 py-1 rounded bg-green-500 text-white"; }
+        else if(totV >= req*0.7) { st.innerHTML = "⚠️ EN CURSO"; st.className = "font-black text-sm px-3 py-1 rounded bg-yellow-500 text-white"; }
+        else { st.innerHTML = "❌ PÉRDIDA"; st.className = "font-black text-sm px-3 py-1 rounded bg-red-600 text-white"; }
+
+        document.getElementById('fin-pagos-list').innerHTML = payments.map(p => `
+            <tr class="border-b border-gray-50"><td class="py-2 text-gray-500 font-medium">${p.date.substring(5)}</td><td class="py-2 font-black text-gray-800">${p.adv.split(' ')[0]}</td><td class="py-2 font-black text-ibr-green text-right">$${p.amount}</td></tr>
+        `).join('');
+    }
+
+    function renderConfig() {
+        document.getElementById('conf-ext').innerHTML = extUsers.map(u => `<div class="text-[10px] font-black border border-gray-100 p-2 bg-gray-50 rounded-lg text-gray-700 truncate">${u}</div>`).join('');
+
+        const cardsEl = document.getElementById('users-cards-list');
+        const tableBodyEl = document.getElementById('users-table-list');
+        if(!cardsEl && !tableBodyEl) return;
+
+        let teamPhones = JSON.parse(localStorage.getItem('ibr_team_phones') || '{}');
+        let ultimos = JSON.parse(localStorage.getItem('ibr_ultimo_acceso') || '{}');
+        
+        let sess = null;
+        try {
+            sess = JSON.parse(localStorage.getItem('ibr_session'));
+        } catch(e) {}
+
+        const usersList = Object.entries(USUARIOS);
+
+        // Populate cards for mobile
+        if(cardsEl) {
+            cardsEl.innerHTML = usersList.map(([token, u]) => {
+                let phone = teamPhones[token] || TELEFONOS_EQUIPO[u.nombre] || 'PENDIENTE';
+                let lastAccess = formatLastAccess(ultimos[token]);
+                let isSessionActive = sess && sess.token === token && (Date.now() - sess.timestamp) < SESSION_DURATION;
+                let statusBadge = isSessionActive 
+                    ? '<span class="text-green-600 font-bold text-[10px] bg-green-50 px-2 py-0.5 rounded-full">🟢 Activa</span>'
+                    : '<span class="text-red-500 font-bold text-[10px] bg-red-50 px-2 py-0.5 rounded-full">🔴 Inactiva</span>';
+                
+                return `
+                <div class="border border-gray-200 rounded-xl p-4 bg-gray-50 flex flex-col space-y-2">
+                    <div class="flex items-center gap-1.5 mb-1">
+                        <span class="text-gray-500 text-sm">👤</span>
+                        <p class="font-black text-sm text-gray-900">${u.nombre}</p>
+                    </div>
+                    <div class="text-[12px] text-gray-600 font-bold mb-1">
+                        ${u.rol === 'admin' ? 'Team Leader' : 'Asesor'}
+                    </div>
+                    <div class="text-[12px] text-gray-800 font-bold mb-2">
+                        📱 ${phone}
+                    </div>
+                    <div class="flex flex-col gap-2 pt-2">
+                        <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" style="background:#000;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;width:100%; font-weight:bold;">🪪 Ver Tarjeta Digital →</button>
+                        <div class="flex gap-2">
+                            <button onclick="window.open('https://wa.me/52${phone.replace(/\\D/g,'')}', '_blank')" class="flex-1 bg-[#16A34A] text-white text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-green-700 transition">💬 WhatsApp</button>
+                            ${u.rol !== 'admin' && esVerdaderoAdmin ? `<button onclick="verComoAsesor('${u.nombre}')" class="flex-1 bg-blue-50 text-blue-600 border border-blue-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-blue-100 transition">👁️ Ver panel</button>` : `<button onclick="openResetPinModal('${token}')" class="flex-1 bg-red-50 text-red-600 border border-red-200 text-[12px] font-black py-2 rounded-lg uppercase tracking-widest hover:bg-red-100 transition">🔄 Reset PIN</button>`}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // Populate table for desktop
+        if(tableBodyEl) {
+            tableBodyEl.innerHTML = usersList.map(([token, u]) => {
+                let phone = teamPhones[token] || TELEFONOS_EQUIPO[u.nombre] || 'PENDIENTE';
+                let lastAccess = formatLastAccess(ultimos[token]);
+                let isSessionActive = sess && sess.token === token && (Date.now() - sess.timestamp) < SESSION_DURATION;
+                
+                let phoneDisplay = phone && phone !== 'PENDIENTE' ? `<a href="https://wa.me/52${phone}" target="_blank" class="text-blue-600 font-bold hover:underline">📱 ${phone}</a>` : `<div class="flex items-center gap-2"><span class="text-gray-400 text-[10px]">📱 Sin número registrado</span><button onclick="promptForPhone('${token}')" class="bg-gray-200 text-gray-700 text-[9px] px-2 py-0.5 rounded shadow-sm hover:bg-gray-300 transition">+ Agregar</button></div>`;
+                
+                let actionButtons = u.rol === 'admin'
+                    ? `<span class="text-gray-400 italic font-bold">No se puede resetear</span>`
+                    : `<div class="flex flex-col gap-2 justify-end">
+                        <div class="flex justify-end gap-2">
+                            <button onclick="sendAccessWhatsApp('${token}', '${phone}', '${u.nombre.split(' ')[0]}')" class="bg-[#16A34A] text-white text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-green-700 transition">📲 Enviar link</button>
+                            <button onclick="openResetPinModal('${token}')" class="bg-red-50 text-red-600 border border-red-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-red-100 transition">🔄 Resetear PIN</button>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button onclick="window.open(TARJETAS_DIGITALES['${u.nombre}'],'_blank')" class="bg-black text-white text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-gray-800 transition">🪪 Tarjeta Digital</button>
+                            ${u.rol !== 'admin' && esVerdaderoAdmin ? `<button onclick="verComoAsesor('${u.nombre}')" class="bg-blue-50 text-blue-600 border border-blue-200 text-[9px] font-black px-2.5 py-1.5 rounded uppercase tracking-widest hover:bg-blue-100 transition">👁️ Dashboard</button>` : ''}
+                        </div>
+                       </div>`;
+                       
+                return `
+                <tr class="hover:bg-gray-50 transition border-b border-gray-100 last:border-0">
+                    <td class="py-3 font-black text-gray-900">👤 ${u.nombre}</td>
+                    <td class="py-3 font-bold text-gray-500 uppercase text-[9px]"><span class="bg-black text-white px-2 py-0.5 rounded">${u.rol.toUpperCase()}</span></td>
+                    <td class="py-3 text-gray-600">${u.email}</td>
+                    <td class="py-3 font-mono font-bold text-gray-700">${getEffectivePin(token)}</td>
+                    <td class="py-3 font-bold text-gray-700">${lastAccess}</td>
+                    <td class="py-3 text-center text-sm">${isSessionActive ? '🟢' : '🔴'}</td>
+                    <td class="py-3 text-right">${actionButtons}</td>
+                </tr>`;
+            }).join('');
+        }
+    }
+
+
+    function renderProfile() {
+        const u = IBR_USERS.find(x => x.name === currentUser);
+        if(!u) return;
+        document.getElementById('prof-initials').innerText = currentUser.split(' ').map(n=>n[0]).join('');
+        document.getElementById('prof-name').innerText = currentUser;
+        document.getElementById('prof-role').innerText = u.role;
+        document.getElementById('prof-card-btn').href = u.link;
+        
+        const token = Object.keys(USUARIOS).find(k => USUARIOS[k].nombre === currentUser);
+        if(token) {
+            document.getElementById('cp-token').value = token;
+        }
+        
+        let myS = getMisVentas(currentUser);
+        document.getElementById('prof-part').innerText = myS.length;
+        
+        let gen = 0, men = 0, pag = 0; 
+        myS.forEach(s => { 
+            gen += Number(s.com_total||0); 
+            men += Number(s.mensualidad||0); 
+            pag += Number(s.pagado||0); 
+        });
+        
+        document.getElementById('prof-gen').innerText = `$${gen.toLocaleString()}`;
+        document.getElementById('prof-men').innerText = `$${men.toLocaleString()}/mes`;
+        document.getElementById('prof-pag').innerText = `$${pag.toLocaleString()}`;
+        document.getElementById('prof-pen').innerText = `$${(gen - pag).toLocaleString()}`;
+
+        document.getElementById('prof-sales').innerHTML = myS.map(s => `
+            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm">
+                <div><span class="font-black text-sm">M${s.mz} L${s.lote}</span><p class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">${s.date}</p></div>
+                <div class="text-right">
+                    <p class="text-ibr-green font-black text-sm bg-green-50 px-2 py-0.5 rounded inline-block mb-1">$${(s.com_total||0).toLocaleString()}</p>
+                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">$${(s.mensualidad||0).toLocaleString()}/mes</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    /* ================= FORMS & MODALS ================= */
+    function filterLeads(f) { filterL = f; renderLeads(); }
+
+    function openModal(id) { 
+        if(id==='leadModal') document.getElementById('lf-date').value = new Date().toISOString().split('T')[0];
+        document.getElementById(id).classList.remove('hidden'); 
+    }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function saveLead(e) {
+        e.preventDefault();
+        leads.unshift({
+            id: 'L'+Date.now(), name: document.getElementById('lf-name').value, phone: document.getElementById('lf-phone').value,
+            project: document.getElementById('lf-project').value, date: document.getElementById('lf-date').value,
+            time: document.getElementById('lf-time').value, advisor: document.getElementById('lf-advisor').value,
+            obs: document.getElementById('lf-obs').value, status: 'Programada'
+        });
+        localStorage.setItem('ibr_leads', JSON.stringify(leads));
+        closeModal('leadModal'); e.target.reset(); renderLeads();
+    }
+
+    function openResultModal(id) {
+        document.getElementById('rf-id').value = id;
+        document.getElementById('buyFields').classList.add('hidden');
+        document.getElementById('rf-date').value = new Date().toISOString().split('T')[0];
+        openModal('resultModal');
+    }
+
+    function toggleBuyFields() {
+        const v = document.getElementById('rf-status').value === 'Vendido';
+        document.getElementById('buyFields').classList.toggle('hidden', !v);
+        document.getElementById('rf-mz').required = v;
+        document.getElementById('rf-lote').required = v;
+    }
+
+    function saveResult(e) {
+        e.preventDefault();
+        const stat = document.getElementById('rf-status').value;
+        const idx = leads.findIndex(l => l.id === document.getElementById('rf-id').value);
+        if(idx > -1) {
+            leads[idx].status = stat;
+            leads[idx].lastComment = document.getElementById('rf-comments').value;
+            if(stat === 'Vendido') {
+                salesLocal.unshift({
+                    id: 'VTA-'+Math.floor(1000+Math.random()*9000), mz: document.getElementById('rf-mz').value,
+                    lote: document.getElementById('rf-lote').value, type: document.getElementById('rf-type').value,
+                    adv: leads[idx].advisor, com: document.getElementById('rf-com').value,
+                    date: document.getElementById('rf-date').value || new Date().toISOString().split('T')[0],
+                    obs: document.getElementById('rf-vobs').value, estatus: 'Validada'
+                });
+                localStorage.setItem('ibr_ventas', JSON.stringify(salesLocal));
+                if(isAdmin) renderDashAdmin(); else renderDashAsesor();
+            }
+            localStorage.setItem('ibr_leads', JSON.stringify(leads));
+            renderLeads();
+        }
+        closeModal('resultModal'); e.target.reset();
+    }
+
+    function saveInv(e) {
+        e.preventDefault();
+        investments.push({ concept: document.getElementById('if-concept').value, amount: document.getElementById('if-amount').value, date: document.getElementById('if-date').value });
+        localStorage.setItem('ibr_inversiones', JSON.stringify(investments));
+        closeModal('invModal'); e.target.reset(); renderFinances(); renderDashAdmin();
+    }
+
+    function saveExt(e) {
+        e.preventDefault();
+        extUsers.push(document.getElementById('ef-name').value);
+        localStorage.setItem('ibr_externos', JSON.stringify(extUsers));
+        closeModal('extModal'); e.target.reset(); renderConfig();
+    }
+
+    // -- COBRANZA A CLIENTES LOGIC --
+    function getCobroDay(id) {
+        let cobro = clientPayments.find(c => c.sale_id === id);
+        return cobro ? cobro.dia_pago : null;
+    }
+
+    function saveCobroDate(id) {
+        let day = document.getElementById('cob-day-'+id).value;
+        if(day === 'custom') {
+            day = prompt('¿Qué día del mes paga? (Ej. 1, 10, 20)');
+            if(!day) { renderSales(); return; }
+        }
+        let cobro = clientPayments.find(c => c.sale_id === id);
+        if(cobro) {
+            cobro.dia_pago = day ? Number(day) : null;
+        } else {
+            if(day) clientPayments.push({ sale_id: id, dia_pago: Number(day), historial: [] });
+        }
+        localStorage.setItem('ibr_cobros_clientes', JSON.stringify(clientPayments));
+        if(isAdmin && document.getElementById('tab-pagos').classList.contains('active')) renderCobranzaAdmin(currentCobFilter);
+        renderSales();
+    }
+
+    function toggleCobroHistory(id) {
+        let el = document.getElementById('cob-hist-'+id);
+        el.classList.toggle('hidden');
+    }
+
+    function renderCobroHistory(id, mensualidad) {
+        let cobro = clientPayments.find(c => c.sale_id === id);
+        let hist = cobro ? cobro.historial : [];
+        let html = `
+            <table class="w-full text-left text-[9px] mb-2">
+                <thead><tr class="text-gray-400 border-b border-gray-200"><th class="pb-1">Periodo</th><th class="pb-1">Fec Pago</th><th class="pb-1 text-right">Monto</th><th class="pb-1 text-right">Estado</th></tr></thead>
+                <tbody>
+                    ${hist.length===0 ? '<tr><td colspan="4" class="text-center py-2 text-gray-400">Sin cobros registrados</td></tr>' : hist.sort((a,b)=>new Date(b.fecha_pago)-new Date(a.fecha_pago)).map(h => `
+                        <tr class="border-b border-gray-100 last:border-0">
+                            <td class="py-1 font-bold">${h.periodo}</td>
+                            <td class="py-1">${h.fecha_pago}</td>
+                            <td class="py-1 text-ibr-green font-black text-right">$${h.monto}</td>
+                            <td class="py-1 text-green-600 font-bold text-right">✅ Pagado</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <button onclick="openCobroModal('${id}', ${mensualidad})" class="w-full bg-blue-50 text-blue-600 py-1.5 rounded font-black text-[9px] hover:bg-blue-100 uppercase tracking-widest">+ Marcar como pagado</button>
+        `;
+        
+        let s = getAllSales().find(x=>x.id===id);
+        if(s) {
+            let cobrado = hist.reduce((sum, h)=>sum+Number(h.monto), 0);
+            html += `
+            <div class="mt-2 text-[9px] font-bold text-gray-600 border-t border-gray-200 pt-2 space-y-0.5">
+                <p class="flex justify-between"><span>Meses pagados:</span> <span class="font-black text-black">${hist.length}</span></p>
+                <p class="flex justify-between"><span>Cobrado al cliente:</span> <span class="text-ibr-green font-black">$${cobrado.toLocaleString()}</span></p>
+                <p class="flex justify-between"><span>Pendiente cliente:</span> <span class="text-ibr-red font-black">$${(s.com_total - cobrado).toLocaleString()}</span></p>
+            </div>
+            `;
+        }
+        return html;
+    }
+
+    function openCobroModal(id, mensualidad) {
+        document.getElementById('cc-sale-id').value = id;
+        document.getElementById('cc-monto').value = mensualidad;
+        document.getElementById('cc-period').value = '';
+        document.getElementById('cc-date').value = '';
+        document.getElementById('cobroModal').classList.remove('hidden');
+    }
+
+    function saveClientePago(e) {
+        e.preventDefault();
+        let id = document.getElementById('cc-sale-id').value;
+        let per = document.getElementById('cc-period').value;
+        let fec = document.getElementById('cc-date').value;
+        let mon = Number(document.getElementById('cc-monto').value);
+        
+        let cobro = clientPayments.find(c => c.sale_id === id);
+        if(!cobro) {
+            cobro = { sale_id: id, dia_pago: null, historial: [] };
+            clientPayments.push(cobro);
+        }
+        cobro.historial.push({ periodo: per, fecha_pago: fec, monto: mon, pagado: true });
+        localStorage.setItem('ibr_cobros_clientes', JSON.stringify(clientPayments));
+        
+        closeModal('cobroModal');
+        alert('✅ Cobro al cliente guardado correctamente');
+        if(document.getElementById('tab-sales') && document.getElementById('tab-sales').classList.contains('active')) renderSales();
+        else renderSales(); // re-render just in case since Mis Ventas displays it
+        if(isAdmin && document.getElementById('tab-pagos').classList.contains('active')) renderCobranzaAdmin(currentCobFilter);
+        checkBanners();
+    }
+
+    let currentCobFilter = 'Todos';
+    function renderCobranzaAdmin(filter = 'Todos') {
+        currentCobFilter = filter;
+        document.querySelectorAll('.cob-filter-btn').forEach(btn => {
+            btn.classList.remove('bg-black', 'text-white', 'bg-red-600', 'border-transparent');
+            if(btn.id === 'btn-cob-Atrasados') btn.classList.add('bg-red-50', 'text-red-600', 'border-red-200');
+            else btn.classList.add('bg-gray-100', 'text-gray-600');
+        });
+        const activeBtn = document.getElementById('btn-cob-' + filter);
+        if(activeBtn) {
+            if(filter === 'Atrasados') {
+                activeBtn.classList.remove('bg-red-50', 'text-red-600');
+                activeBtn.classList.add('bg-red-600', 'text-white', 'border-transparent');
+            } else {
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+                activeBtn.classList.add('bg-black', 'text-white');
+            }
+        }
+
+        let allS = getAllSales();
+        let proj15 = 0, proj28 = 0, projOther = 0;
+        
+        allS.forEach(s => {
+            let cobro = clientPayments.find(c => c.sale_id === s.id);
+            if(cobro && cobro.dia_pago) {
+                if(cobro.dia_pago === 15) proj15 += s.mensualidad;
+                else if(cobro.dia_pago === 28) proj28 += s.mensualidad;
+                else projOther += s.mensualidad;
+            } else {
+                projOther += s.mensualidad;
+            }
+        });
+        
+        document.getElementById('proj-d15').innerText = '$' + proj15.toLocaleString();
+        document.getElementById('proj-d28').innerText = '$' + proj28.toLocaleString();
+        document.getElementById('proj-dother').innerText = '$' + projOther.toLocaleString();
+        document.getElementById('proj-total').innerHTML = '$' + (proj15+proj28+projOther).toLocaleString() + '<span class="text-xs">/mes</span>';
+
+        let t = new Date();
+        let td = t.getDate();
+        let tm = t.getMonth(); 
+        
+        let displayList = [];
+        let esperado = 0;
+
+        allS.forEach(s => {
+            let cobro = clientPayments.find(c => c.sale_id === s.id);
+            let dP = cobro ? cobro.dia_pago : null;
+            let hist = cobro ? cobro.historial : [];
+            let hasPaidThisMonth = hist.some(h => {
+                let d = new Date(h.fecha_pago + 'T12:00:00');
+                return d.getMonth() === tm && d.getFullYear() === t.getFullYear();
+            });
+            
+            let statusObj = { text: '⚫ Sin definir', color: 'text-gray-400' };
+            if(dP) {
+                if(hasPaidThisMonth) {
+                    statusObj = { text: '✅ Pagado', color: 'text-green-600' };
+                } else {
+                    if(td > dP) statusObj = { text: '🔴 Atrasado', color: 'text-red-600' };
+                    else if(dP - td <= 3 && dP - td >= 0) statusObj = { text: '🟡 Por vencer', color: 'text-yellow-600' };
+                    else statusObj = { text: '⏳ Pendiente', color: 'text-blue-600' };
+                }
+            }
+
+            let include = false;
+            if(filter === 'Todos') include = true;
+            if(filter === '15' && dP === 15) include = true;
+            if(filter === '28' && dP === 28) include = true;
+            if(filter === 'Atrasados' && statusObj.text === '🔴 Atrasado') include = true;
+
+            if(include) {
+                displayList.push({ sale: s, status: statusObj, day: dP, paid: hasPaidThisMonth });
+                esperado += s.mensualidad;
+            }
+        });
+
+        if(filter === '15') document.getElementById('cob-filtro-resumen').innerHTML = `💰 Cobros esperados día 15: <span class="text-ibr-green">$${esperado.toLocaleString()}</span>`;
+        else if(filter === '28') document.getElementById('cob-filtro-resumen').innerHTML = `💰 Cobros esperados fin de mes: <span class="text-ibr-green">$${esperado.toLocaleString()}</span>`;
+        else if(filter === 'Atrasados') document.getElementById('cob-filtro-resumen').innerHTML = `🔴 Atrasos totales (este mes): <span class="text-ibr-red">$${esperado.toLocaleString()}</span>`;
+        else document.getElementById('cob-filtro-resumen').innerHTML = `Vista global de todos los lotes`;
+
+        document.getElementById('cobranzaContainer').innerHTML = displayList.map(item => `
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex justify-between items-center">
+                <div>
+                    <h4 class="font-black text-sm text-black">M${item.sale.mz}-L${item.sale.lote}</h4>
+                    <p class="text-[9px] font-bold text-gray-500">${item.sale.adv} ${item.sale.adv2 ? ' / '+item.sale.adv2 : ''}</p>
+                    <p class="text-[9px] text-gray-400 mt-1 uppercase tracking-widest">Día de cobro: ${item.day || 'No def.'}</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-black text-sm">$${item.sale.mensualidad.toLocaleString()}</p>
+                    <p class="text-[9px] font-black uppercase tracking-widest ${item.status.color}">${item.status.text}</p>
+                </div>
+            </div>
+        `).join('') || '<p class="text-center text-[10px] uppercase tracking-widest font-bold text-gray-400 py-6">Sin resultados</p>';
+    }
+
+    function checkBanners() {
+        // Banners are scoped to the user's own sales
+        let scopedSales = getVentasVisibles();
+        let atrasados = 0;
+        let porVencer = 0;
+        let t = new Date();
+        let td = t.getDate();
+        let tm = t.getMonth();
+        
+        scopedSales.forEach(s => {
+            let cobro = clientPayments.find(c => c.sale_id === s.id);
+            if(cobro && cobro.dia_pago) {
+                let hasPaidThisMonth = cobro.historial.some(h => {
+                    let d = new Date(h.fecha_pago + 'T12:00:00');
+                    return d.getMonth() === tm && d.getFullYear() === t.getFullYear();
+                });
+                if(!hasPaidThisMonth) {
+                    if(td > cobro.dia_pago) atrasados++;
+                    else if(cobro.dia_pago - td <= 3 && cobro.dia_pago - td >= 0) porVencer++;
+                }
+            }
+        });
+        
+        let bContainer = document.getElementById('banners-container');
+        if(!bContainer) return;
+        
+        let html = '';
+        if(atrasados > 0) html += `<div class="bg-red-600 text-white text-[10px] font-black uppercase tracking-widest text-center py-2 mb-2 rounded shadow-sm">🔴 ${atrasados} cliente${atrasados>1?'s':''} atrasado${atrasados>1?'s':''}</div>`;
+        if(porVencer > 0) html += `<div class="bg-yellow-500 text-white text-[10px] font-black uppercase tracking-widest text-center py-2 mb-2 rounded shadow-sm">⚠️ ${porVencer} cobro${porVencer>1?'s':''} vencen pronto</div>`;
+        if(html) html += `<p class="text-center text-[8px] text-gray-400 italic mb-4">* Las fechas son una guía de seguimiento. El pago depende de cada cliente.</p>`;
+        
+        bContainer.innerHTML = html;
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

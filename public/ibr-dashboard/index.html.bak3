@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBR Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#141414',
+                        card: '#1E1E1E',
+                        input: '#2A2A2A',
+                        cream: '#F7F1E8',
+                        gold: '#B8924A',
+                        border: '#333333',
+                        secondaryText: '#9E9E9E'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-fondo: #141414;
+            --color-card: #1E1E1E;
+            --color-input: #2A2A2A;
+            --color-texto: #F7F1E8;
+            --color-gold: #B8924A;
+            --color-borde: #333333;
+            --color-btn-primario-fondo: #B8924A;
+            --color-btn-primario-texto: #141414;
+            --color-tab-activo: #B8924A;
+            --color-tab-inactivo-fondo: #2A2A2A;
+            --color-tab-inactivo-texto: #9E9E9E;
+            --color-error: #EF4444;
+            --color-exito: #22C55E;
+        }
+        body {
+            background-color: var(--color-fondo);
+            color: var(--color-texto);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-title {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        /* Custom scrollbar for dark layout */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141414;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #B8924A;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-gold selection:text-bg">
+
+    <!-- LOGIN CONTAINER -->
+    <div id="login-container" class="min-h-screen flex flex-col justify-center items-center px-4 py-8">
+        <div class="w-full max-w-4xl text-center mb-12">
+            <h1 class="font-title text-5xl md:text-6xl text-gold font-semibold tracking-wide">IBR Dashboard</h1>
+            <p class="text-secondaryText text-sm mt-3 tracking-widest uppercase">Sistema de Control Interno</p>
+        </div>
+
+        <!-- User selection cards -->
+        <div id="user-selection-cards" class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-4xl">
+            <!-- Card 1 -->
+            <div onclick="selectUser('Daniel-Vazquez')" class="cursor-pointer bg-card border border-border hover:border-gold p-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 text-center">
+                <div class="w-16 h-16 bg-gold text-bg rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4 font-title shadow-lg">DV</div>
+                <h3 class="font-title text-xl text-cream font-semibold">Daniel Vázquez</h3>
+                <p class="text-gold text-xs uppercase tracking-wider mt-1">Administrador</p>
+            </div>
+            <!-- Card 2 -->
+            <div onclick="selectUser('Lupyta-Mendoza')" class="cursor-pointer bg-card border border-border hover:border-gold p-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 text-center">
+                <div class="w-16 h-16 bg-input text-gold border border-border rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4 font-title shadow-lg">LM</div>
+                <h3 class="font-title text-xl text-cream font-semibold">Lupyta Mendoza</h3>
+                <p class="text-secondaryText text-xs uppercase tracking-wider mt-1">Asesor</p>
+            </div>
+            <!-- Card 3 -->
+            <div onclick="selectUser('Carmen-Jimenez')" class="cursor-pointer bg-card border border-border hover:border-gold p-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 text-center">
+                <div class="w-16 h-16 bg-input text-gold border border-border rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4 font-title shadow-lg">CJ</div>
+                <h3 class="font-title text-xl text-cream font-semibold">Carmen Jiménez</h3>
+                <p class="text-secondaryText text-xs uppercase tracking-wider mt-1">Asesor</p>
+            </div>
+            <!-- Card 4 -->
+            <div onclick="selectUser('Luis-Garcia')" class="cursor-pointer bg-card border border-border hover:border-gold p-6 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 text-center">
+                <div class="w-16 h-16 bg-input text-gold border border-border rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4 font-title shadow-lg">LG</div>
+                <h3 class="font-title text-xl text-cream font-semibold">Luis García</h3>
+                <p class="text-secondaryText text-xs uppercase tracking-wider mt-1">Asesor</p>
+            </div>
+        </div>
+
+        <!-- PIN input screen (initially hidden) -->
+        <div id="pin-form-container" class="hidden w-full max-w-md bg-card border border-border p-8 rounded-3xl shadow-2xl mt-4">
+            <div class="text-center mb-6">
+                <div id="selected-user-avatar" class="w-16 h-16 bg-gold text-bg rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-3 font-title shadow-lg"></div>
+                <h2 id="selected-user-name" class="font-title text-2xl text-cream font-semibold"></h2>
+                <p id="selected-user-role" class="text-gold text-xs uppercase tracking-wider mt-1"></p>
+            </div>
+
+            <form onsubmit="submitPin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-2 text-center">Ingresa tu Código PIN</label>
+                    <input id="pin-input" type="password" maxlength="12" placeholder="••••" required class="w-full bg-input border border-border text-cream text-center text-2xl tracking-[0.3em] py-3 rounded-xl focus:border-gold focus:outline-none transition-colors">
+                </div>
+                <button type="submit" class="w-full bg-gold text-bg hover:bg-[#9e7b3b] font-bold py-3.5 rounded-xl transition-all uppercase tracking-wider text-sm">Entrar →</button>
+                <button type="button" onclick="cancelPin()" class="w-full bg-transparent text-secondaryText hover:text-cream py-2 rounded-xl transition-colors text-xs font-semibold uppercase tracking-wider">Volver a usuarios</button>
+            </form>
+            <p id="login-error-msg" class="text-red-500 text-sm font-semibold text-center mt-4 hidden"></p>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container" class="hidden flex-1 flex flex-col justify-between w-full max-w-6xl mx-auto px-4 md:px-6 py-6 pb-24 md:pb-6">
+        <!-- Header -->
+        <header class="flex justify-between items-center border-b border-border pb-4 mb-6">
+            <div>
+                <span class="text-gold text-xs tracking-widest font-semibold uppercase">Bienvenido</span>
+                <h2 id="header-user-display" class="font-title text-2xl font-semibold text-cream">Cargando...</h2>
+            </div>
+            <button onclick="logOut()" class="bg-input border border-border hover:bg-[#333] text-cream text-xs font-bold py-2 px-4 rounded-xl transition-colors uppercase tracking-wider">Salir 🚪</button>
+        </header>
+
+        <!-- Desktop Navigation (top) -->
+        <nav id="desktop-nav" class="hidden md:flex justify-center gap-4 border-b border-border pb-4 mb-6"></nav>
+
+        <!-- Dynamic Content Area -->
+        <main class="flex-1 flex flex-col">
+            
+            <!-- Tab: Resumen (Admin Only) -->
+            <div id="tab-content-resumen" class="tab-pane hidden space-y-6">
+                <h3 class="text-2xl font-semibold uppercase tracking-wider text-gold font-title">Resumen de Ventas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- KPI 1 -->
+                    <div class="bg-card border border-border p-6 rounded-2xl flex flex-col justify-between">
+                        <span class="text-secondaryText text-xs uppercase font-bold tracking-wider">Total Ventas este mes</span>
+                        <h2 id="admin-total-sales-month" class="text-5xl font-black text-cream mt-2">-</h2>
+                    </div>
+                    <!-- KPI 2 -->
+                    <div class="bg-card border border-border p-6 rounded-2xl flex flex-col justify-between">
+                        <span class="text-secondaryText text-xs uppercase font-bold tracking-wider">Top Asesor del mes</span>
+                        <h2 id="admin-top-advisor" class="text-3xl font-black text-gold mt-2">-</h2>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <!-- Pure CSS Bar Chart by Development -->
+                    <div class="bg-card border border-border p-6 rounded-2xl">
+                        <h4 class="font-title text-xl text-gold font-semibold mb-4">Ventas por Desarrollo</h4>
+                        <div id="chart-by-development" class="space-y-4">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                    <!-- Pure CSS Bar Chart by Advisor -->
+                    <div class="bg-card border border-border p-6 rounded-2xl">
+                        <h4 class="font-title text-xl text-gold font-semibold mb-4">Ventas por Asesor</h4>
+                        <div id="chart-by-advisor" class="space-y-4">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Citas (Shared) -->
+            <div id="tab-content-citas" class="tab-pane hidden space-y-6">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <h3 class="text-2xl font-semibold uppercase tracking-wider text-gold font-title">Control de Citas</h3>
+                    
+                    <!-- Admin Filters -->
+                    <div id="admin-citas-filters" class="hidden flex flex-col sm:flex-row gap-3">
+                        <select id="filter-cita-advisor" onchange="renderCitasAdmin()" class="bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                            <option value="Todos">Todos los Asesores</option>
+                            <option value="Daniel Vázquez">Daniel Vázquez</option>
+                            <option value="Lupyta Mendoza">Lupyta Mendoza</option>
+                            <option value="Carmen Jiménez">Carmen Jiménez</option>
+                            <option value="Luis García">Luis García</option>
+                        </select>
+                        <input type="date" id="filter-cita-date" onchange="renderCitasAdmin()" class="bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Advisor view appointments container -->
+                <div id="advisor-citas-view" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Loaded dynamically -->
+                </div>
+                
+                <!-- Admin view appointments table -->
+                <div id="admin-citas-view" class="hidden bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-input text-gold text-xs uppercase tracking-wider border-b border-border">
+                                    <th class="p-4 font-bold">Fecha</th>
+                                    <th class="p-4 font-bold">Hora</th>
+                                    <th class="p-4 font-bold">Cliente</th>
+                                    <th class="p-4 font-bold">Teléfono</th>
+                                    <th class="p-4 font-bold">Asesor</th>
+                                    <th class="p-4 font-bold">Estatus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-citas-table-body" class="divide-y divide-border text-sm">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Ventas (Admin Only) -->
+            <div id="tab-content-ventas" class="tab-pane hidden space-y-6">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <h3 class="text-2xl font-semibold uppercase tracking-wider text-gold font-title">Listado General de Ventas</h3>
+                    
+                    <!-- Filters -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <select id="filter-venta-advisor" onchange="renderVentasAdmin()" class="bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                            <option value="Todos">Todos los Asesores</option>
+                        </select>
+                        <select id="filter-venta-dev" onchange="renderVentasAdmin()" class="bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                            <option value="Todos">Todos los Desarrollos</option>
+                        </select>
+                        <select id="filter-venta-month" onchange="renderVentasAdmin()" class="bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                            <option value="Todos">Todos los Meses</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-input text-gold text-xs uppercase tracking-wider border-b border-border">
+                                    <th class="p-4 font-bold">ID</th>
+                                    <th class="p-4 font-bold">Fecha</th>
+                                    <th class="p-4 font-bold">Desarrollo</th>
+                                    <th class="p-4 font-bold">Cliente</th>
+                                    <th class="p-4 font-bold">Lote</th>
+                                    <th class="p-4 font-bold">Asesor</th>
+                                    <th class="p-4 font-bold">Plan</th>
+                                    <th class="p-4 font-bold">Estatus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-ventas-table-body" class="divide-y divide-border text-sm">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-input text-cream font-bold text-sm">
+                                    <td colspan="7" class="p-4 text-right text-gold">Total Ventas Filtradas:</td>
+                                    <td id="admin-ventas-total-count" class="p-4">-</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Mis Ventas (Advisor Only) -->
+            <div id="tab-content-mis-ventas" class="tab-pane hidden space-y-6">
+                <h3 class="text-2xl font-semibold uppercase tracking-wider text-gold font-title">Mis Ventas</h3>
+                
+                <div class="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-input text-gold text-xs uppercase tracking-wider border-b border-border">
+                                    <th class="p-4 font-bold">ID</th>
+                                    <th class="p-4 font-bold">Fecha</th>
+                                    <th class="p-4 font-bold">Desarrollo</th>
+                                    <th class="p-4 font-bold">Cliente</th>
+                                    <th class="p-4 font-bold">Lote</th>
+                                    <th class="p-4 font-bold">Plan</th>
+                                    <th class="p-4 font-bold">Estatus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="advisor-ventas-table-body" class="divide-y divide-border text-sm">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Histórico (Shared) -->
+            <div id="tab-content-historico" class="tab-pane hidden space-y-6">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                    <h3 class="text-2xl font-semibold uppercase tracking-wider text-gold font-title">Histórico de Ventas</h3>
+                    
+                    <!-- Admin Search/Filter -->
+                    <div id="admin-historico-search-container" class="hidden w-full md:max-w-md">
+                        <input type="text" id="search-historico-input" onkeyup="filterHistoricoAdmin()" placeholder="🔍 Buscar por nombre, desarrollo o asesor..." class="w-full bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-input text-gold text-xs uppercase tracking-wider border-b border-border">
+                                    <th class="p-4 font-bold"># Cte</th>
+                                    <th class="p-4 font-bold">Nombre</th>
+                                    <th class="p-4 font-bold">Desarrollo</th>
+                                    <th class="p-4 font-bold">Lote</th>
+                                    <th id="th-historico-asesor" class="p-4 font-bold">Asesor</th>
+                                    <th class="p-4 font-bold">Estatus</th>
+                                    <th class="p-4 font-bold text-right">Comisión</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historico-table-body" class="divide-y divide-border text-sm">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Pagination Controls -->
+                <div id="admin-historico-pagination" class="hidden flex justify-between items-center pt-4">
+                    <button onclick="prevHistoricoPage()" class="bg-input border border-border hover:bg-[#333] text-cream text-xs font-bold py-2.5 px-4 rounded-xl transition-colors uppercase tracking-wider">Anterior</button>
+                    <span id="historico-page-indicator" class="text-secondaryText text-sm font-semibold">Página 1 de 1</span>
+                    <button onclick="nextHistoricoPage()" class="bg-input border border-border hover:bg-[#333] text-cream text-xs font-bold py-2.5 px-4 rounded-xl transition-colors uppercase tracking-wider">Siguiente</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-center text-[10px] text-secondaryText border-t border-border pt-4 tracking-widest uppercase">
+            © 2026 Inmobiliaria Bienes Raíces · Todos los derechos reservados
+        </footer>
+
+        <!-- Mobile Floating Navigation (bottom) -->
+        <nav id="mobile-nav" class="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border py-2 px-4 flex justify-around items-center z-50 shadow-2xl"></nav>
+    </div>
+
+    <!-- Sale Modal -->
+    <div id="venta-modal" class="fixed inset-0 bg-black/80 z-[1000] hidden flex justify-center items-center p-4">
+        <div class="bg-card border border-border w-full max-w-lg rounded-3xl shadow-2xl p-6 relative">
+            <button onclick="closeModal('venta-modal')" class="absolute top-4 right-4 text-secondaryText hover:text-cream text-xl font-bold">&times;</button>
+            <h2 class="font-title text-2xl text-gold font-semibold mb-4">Registrar Venta</h2>
+            <form id="venta-form" onsubmit="guardarVenta(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Desarrollo *</label>
+                    <input type="text" name="desarrollo" required placeholder="Ej: Bella Vista" class="w-full bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Cliente</label>
+                        <input type="text" name="cliente" id="venta-cliente" readonly class="w-full bg-input/50 border border-border text-secondaryText rounded-xl px-4 py-2.5 text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Teléfono</label>
+                        <input type="text" name="telefono" id="venta-telefono" readonly class="w-full bg-input/50 border border-border text-secondaryText rounded-xl px-4 py-2.5 text-sm focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Lote *</label>
+                    <input type="text" name="lote" required placeholder="Ej: Manzana 4 Lote 12" class="w-full bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Plan *</label>
+                    <select name="plan" required class="w-full bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none">
+                        <option value="Contado">Contado</option>
+                        <option value="Financiado">Financiado</option>
+                        <option value="Enganche">Enganche</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-widest text-gold font-bold mb-1.5">Observaciones</label>
+                    <textarea name="observaciones" rows="3" placeholder="Detalles de la venta..." class="w-full bg-input border border-border text-cream rounded-xl px-4 py-2.5 text-sm focus:border-gold focus:outline-none"></textarea>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('venta-modal')" class="w-1/3 bg-input border border-border text-cream hover:bg-[#333] font-bold py-3 rounded-xl transition-all uppercase tracking-wider text-xs">Cancelar</button>
+                    <button type="submit" class="w-2/3 bg-gold text-bg hover:bg-[#9e7b3b] font-bold py-3 rounded-xl transition-all uppercase tracking-wider text-xs">Guardar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOGIC SECTION -->
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxfcqkCx8Xvx4MGCI1D99tlyCM7k1Z2ByW6LAChQraUPoLv646jaOx6g-ayuNk0XgrQUA/exec';
+        
+        const USERS = {
+            "Daniel-Vazquez": { nombre: "Daniel Vázquez", rol: "admin", pin: "IBRDAVM1512" },
+            "Lupyta-Mendoza": { nombre: "Lupyta Mendoza", rol: "asesor", pin: "2001" },
+            "Carmen-Jimenez": { nombre: "Carmen Jiménez", rol: "asesor", pin: "3001" },
+            "Luis-Garcia":    { nombre: "Luis García",    rol: "asesor", pin: "4001" }
+        };
+
+        // Normalizador de nombres de asesores para evitar discrepancias ortográficas (ej. Lupita/Lupyta, acentos)
+        function getAdvisorStandardName(name) {
+            if (!name) return "";
+            return name.trim()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/y/g, "i")
+                .replace(/-/g, " ");
+        }
+
+        let loggedUser = null;
+        let currentTab = '';
+        let refreshInterval = null;
+
+        // Data Caches
+        window.allCitas = [];
+        window.allVentas = [];
+        window.allHistorico = [];
+
+        // Histórico state
+        let historicoFiltered = [];
+        let historicoCurrentPage = 1;
+        const historicoPageSize = 20;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            let token = params.get('token');
+            
+            if (!token) {
+                token = localStorage.getItem('ibr_token');
+            }
+            
+            if (token && USERS[token]) {
+                selectUser(token);
+                
+                const savedPin = localStorage.getItem('ibr_pin');
+                if (savedPin && savedPin === USERS[token].pin) {
+                    document.getElementById('pin-input').value = savedPin;
+                    loginUser(token, savedPin);
+                }
+            } else {
+                showUserSelection();
+            }
+        });
+
+        // ═══════════════════════════════════════════
+        // AUTH / LOGIN SCREEN FUNCTIONS
+        // ═══════════════════════════════════════════
+        function selectUser(token) {
+            const user = USERS[token];
+            if (!user) return;
+            
+            document.getElementById('user-selection-cards').classList.add('hidden');
+            const pinForm = document.getElementById('pin-form-container');
+            pinForm.classList.remove('hidden');
+            
+            document.getElementById('selected-user-name').textContent = user.nombre;
+            document.getElementById('selected-user-role').textContent = user.rol === 'admin' ? '👑 Administrador' : '💼 Asesor';
+            
+            const initials = user.nombre.split(' ').map(n => n[0]).join('');
+            document.getElementById('selected-user-avatar').textContent = initials;
+            
+            const pinInput = document.getElementById('pin-input');
+            pinInput.value = '';
+            pinInput.focus();
+            
+            pinForm.dataset.token = token;
+        }
+
+        function cancelPin() {
+            if (window.location.search.includes('token=')) {
+                window.history.replaceState(null, '', window.location.pathname);
+            }
+            showUserSelection();
+        }
+
+        function showUserSelection() {
+            document.getElementById('user-selection-cards').classList.remove('hidden');
+            document.getElementById('pin-form-container').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('login-error-msg').classList.add('hidden');
+        }
+
+        function submitPin(event) {
+            event.preventDefault();
+            const token = document.getElementById('pin-form-container').dataset.token;
+            const pin = document.getElementById('pin-input').value.trim();
+            loginUser(token, pin);
+        }
+
+        function loginUser(token, pin) {
+            const user = USERS[token];
+            const errorMsg = document.getElementById('login-error-msg');
+            
+            if (user && user.pin === pin) {
+                localStorage.setItem('ibr_token', token);
+                localStorage.setItem('ibr_pin', pin);
+                localStorage.setItem('ibr_user', user.nombre);
+                localStorage.setItem('ibr_role', user.rol);
+                
+                loggedUser = user;
+                
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                
+                document.getElementById('header-user-display').textContent = `${user.nombre} (${user.rol === 'admin' ? 'Admin' : 'Asesor'})`;
+                
+                renderTabsNav();
+                
+                const startTab = user.rol === 'admin' ? 'resumen' : 'citas';
+                switchTab(startTab);
+                
+                startCitasAutoRefresh();
+            } else {
+                errorMsg.textContent = "Código PIN incorrecto ❌";
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        function logOut() {
+            localStorage.removeItem('ibr_token');
+            localStorage.removeItem('ibr_pin');
+            localStorage.removeItem('ibr_user');
+            localStorage.removeItem('ibr_role');
+            loggedUser = null;
+            if (refreshInterval) clearInterval(refreshInterval);
+            window.location.href = window.location.origin + window.location.pathname;
+        }
+
+        function startCitasAutoRefresh() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(() => {
+                if (loggedUser && currentTab === 'citas') {
+                    loadCitas();
+                }
+            }, 5 * 60 * 1000);
+        }
+
+        // ═══════════════════════════════════════════
+        // TABS NAVIGATION SYSTEM
+        // ═══════════════════════════════════════════
+        function renderTabsNav() {
+            const desktopNav = document.getElementById('desktop-nav');
+            const mobileNav = document.getElementById('mobile-nav');
+            
+            let tabs = [];
+            if (loggedUser.rol === 'admin') {
+                tabs = [
+                    { id: 'resumen', label: 'Resumen', icon: '📊' },
+                    { id: 'citas', label: 'Citas', icon: '📅' },
+                    { id: 'ventas', label: 'Ventas', icon: '💰' },
+                    { id: 'historico', label: 'Histórico', icon: '📜' }
+                ];
+            } else {
+                tabs = [
+                    { id: 'citas', label: 'Citas', icon: '📅' },
+                    { id: 'mis-ventas', label: 'Mis Ventas', icon: '💼' },
+                    { id: 'historico', label: 'Histórico', icon: '📜' }
+                ];
+            }
+
+            desktopNav.innerHTML = tabs.map(tab => `
+                <button onclick="switchTab('${tab.id}')" id="tab-btn-desktop-${tab.id}" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-semibold uppercase tracking-wider transition-all duration-300">
+                    ${tab.icon} <span class="ml-1">${tab.label}</span>
+                </button>
+            `).join('');
+
+            mobileNav.innerHTML = `
+                <div class="w-full flex justify-around">
+                    ${tabs.map(tab => `
+                        <button onclick="switchTab('${tab.id}')" id="tab-btn-mobile-${tab.id}" class="tab-btn-mobile flex flex-col items-center text-[10px] uppercase font-bold tracking-widest gap-1 py-1 flex-1">
+                            <span class="text-xl">${tab.icon}</span>
+                            <span>${tab.label}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+            
+            const activePane = document.getElementById(`tab-content-${tabId}`);
+            if (activePane) activePane.classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.id === `tab-btn-desktop-${tabId}`) {
+                    btn.className = "tab-btn px-6 py-2.5 rounded-xl text-sm font-semibold uppercase tracking-wider transition-all duration-300 bg-gold text-bg";
+                } else {
+                    btn.className = "tab-btn px-6 py-2.5 rounded-xl text-sm font-semibold uppercase tracking-wider transition-all duration-300 bg-input text-secondaryText hover:bg-[#333] hover:text-cream";
+                }
+            });
+
+            document.querySelectorAll('.tab-btn-mobile').forEach(btn => {
+                if (btn.id === `tab-btn-mobile-${tabId}`) {
+                    btn.classList.add('text-gold');
+                    btn.classList.remove('text-secondaryText');
+                } else {
+                    btn.classList.remove('text-gold');
+                    btn.classList.add('text-secondaryText');
+                }
+            });
+
+            if (tabId === 'citas') {
+                loadCitas();
+            } else if (tabId === 'ventas' || tabId === 'mis-ventas') {
+                loadVentas();
+            } else if (tabId === 'historico') {
+                loadHistorico();
+            } else if (tabId === 'resumen') {
+                loadVentas(); 
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // DATA LOADERS (JSONP & FETCH)
+        // ═══════════════════════════════════════════
+        function fetchJSONP(url, callbackName) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const sep = url.includes('?') ? '&' : '?';
+                script.src = `${url}${sep}callback=${callbackName}&_t=${Date.now()}`;
+                
+                window[callbackName] = function(data) {
+                    resolve(data);
+                    script.remove();
+                    delete window[callbackName];
+                };
+                
+                script.onerror = function() {
+                    reject(new Error(`JSONP request failed for ${url}`));
+                    script.remove();
+                    delete window[callbackName];
+                };
+                
+                document.body.appendChild(script);
+            });
+        }
+
+        function loadCitas() {
+            if (loggedUser.rol !== 'admin') {
+                document.getElementById('advisor-citas-view').innerHTML = '<p class="text-secondaryText col-span-full">Cargando citas...</p>';
+            } else {
+                document.getElementById('admin-citas-table-body').innerHTML = '<tr><td colspan="6" class="p-4 text-center text-secondaryText">Cargando citas...</td></tr>';
+            }
+            
+            fetchJSONP(API_URL, 'cbCitas').then(data => {
+                window.allCitas = data.citas || [];
+                renderCitas();
+            }).catch(err => {
+                console.error("Error loading citas:", err);
+                showToast("Error al conectar con el servidor ❌");
+            });
+        }
+
+        function loadVentas() {
+            if (loggedUser.rol !== 'admin') {
+                document.getElementById('advisor-ventas-table-body').innerHTML = '<tr><td colspan="7" class="p-4 text-center text-secondaryText">Cargando ventas...</td></tr>';
+            } else {
+                document.getElementById('admin-ventas-table-body').innerHTML = '<tr><td colspan="8" class="p-4 text-center text-secondaryText">Cargando ventas...</td></tr>';
+            }
+
+            fetchJSONP(`${API_URL}?action=ventas`, 'cbVentas').then(data => {
+                window.allVentas = data.datos || [];
+                if (loggedUser.rol === 'admin') {
+                    populateFilters();
+                    renderVentasAdmin();
+                    updateResumen();
+                } else {
+                    renderVentas();
+                }
+            }).catch(err => {
+                console.error("Error loading ventas:", err);
+                showToast("Error al cargar ventas ❌");
+            });
+        }
+
+        function loadHistorico() {
+            document.getElementById('historico-table-body').innerHTML = '<tr><td colspan="7" class="p-4 text-center text-secondaryText">Cargando histórico...</td></tr>';
+            
+            fetch('./ibr-historico-ventas.json?v=' + Date.now())
+                .then(r => r.json())
+                .then(data => {
+                    window.allHistorico = data.datos || [];
+                    renderHistorico();
+                })
+                .catch(err => {
+                    console.error("Error loading historico:", err);
+                    showToast("Error al cargar histórico local ❌");
+                });
+        }
+
+        // ═══════════════════════════════════════════
+        // RENDERING FUNCTIONS
+        // ═══════════════════════════════════════════
+        function renderCitas() {
+            const container = document.getElementById('advisor-citas-view');
+            const adminContainer = document.getElementById('admin-citas-view');
+            const adminFilters = document.getElementById('admin-citas-filters');
+            
+            if (loggedUser.rol === 'admin') {
+                container.classList.add('hidden');
+                adminContainer.classList.remove('hidden');
+                adminFilters.classList.remove('hidden');
+                renderCitasAdmin();
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            adminContainer.classList.add('hidden');
+            adminFilters.classList.add('hidden');
+
+            const citas = window.allCitas.filter(c => getAdvisorStandardName(c.asesor) === getAdvisorStandardName(loggedUser.nombre));
+            
+            if (citas.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-card border border-border p-8 rounded-2xl text-center text-secondaryText">
+                        <span class="text-4xl">📅</span>
+                        <p class="mt-2 font-semibold">Sin citas programadas</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = citas.map(c => `
+                <div class="bg-card border border-border p-6 rounded-2xl flex flex-col justify-between space-y-4">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-gold text-xs font-bold uppercase tracking-wider">${c.fecha} &middot; ${c.hora}</span>
+                            <h4 class="font-title text-xl font-semibold text-cream mt-1">${c.nombre_cliente}</h4>
+                            <p class="text-secondaryText text-xs mt-1">Ref: ${c.titulo}</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border border-[#B8924A]/30 text-gold bg-gold/5">${c.estatus || 'Programada'}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center gap-3 pt-2">
+                        ${c.telefono ? `
+                            <a href="https://wa.me/52${c.telefono}" target="_blank" class="bg-[#16A34A] text-white hover:bg-green-700 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1">
+                                💬 WhatsApp
+                            </a>
+                        ` : '<span class="text-secondaryText text-xs">Sin teléfono</span>'}
+                        
+                        <div class="flex gap-2">
+                            <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" class="bg-card hover:bg-input border border-border text-cream hover:text-gold px-3 py-2 rounded-xl text-xs font-bold transition-all">✓ Realizada</button>
+                            <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" class="bg-card hover:bg-input border border-border text-cream hover:text-red-400 px-3 py-2 rounded-xl text-xs font-bold transition-all">✗ No asistió</button>
+                            <button onclick="abrirVentaModal('${c.nombre_cliente}', '${c.telefono}')" class="bg-gold text-bg hover:bg-[#9e7b3b] px-3 py-2 rounded-xl text-xs font-bold transition-all">💰 Venta</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCitasAdmin() {
+            const advFilter = document.getElementById('filter-cita-advisor').value;
+            const dateFilter = document.getElementById('filter-cita-date').value;
+            const tableBody = document.getElementById('admin-citas-table-body');
+            
+            let filtered = window.allCitas;
+            
+            if (advFilter !== 'Todos') {
+                filtered = filtered.filter(c => c.asesor === advFilter);
+            }
+            if (dateFilter) {
+                filtered = filtered.filter(c => c.fecha === dateFilter);
+            }
+            
+            if (filtered.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-secondaryText">No hay citas registradas con estos filtros</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = filtered.map(c => `
+                <tr class="hover:bg-input transition-colors">
+                    <td class="p-4 font-semibold text-cream">${c.fecha}</td>
+                    <td class="p-4 text-secondaryText">${c.hora}</td>
+                    <td class="p-4 text-cream font-medium">${c.nombre_cliente}</td>
+                    <td class="p-4 text-secondaryText">
+                        ${c.telefono ? `<a href="https://wa.me/52${c.telefono}" target="_blank" class="text-gold hover:underline">${c.telefono}</a>` : '-'}
+                    </td>
+                    <td class="p-4 text-cream">${c.asesor}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border border-[#B8924A]/30 text-gold bg-gold/5">${c.estatus || 'Programada'}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderVentas() {
+            const tableBody = document.getElementById('advisor-ventas-table-body');
+            if (!tableBody) return;
+            
+            const ventas = window.allVentas.filter(v => getAdvisorStandardName(v.lote) === getAdvisorStandardName(loggedUser.nombre));
+            
+            if (ventas.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-secondaryText">Sin ventas registradas aún</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = ventas.map(v => `
+                <tr class="hover:bg-input transition-colors">
+                    <td class="p-4 text-gold font-bold">${v.id_venta}</td>
+                    <td class="p-4 text-secondaryText">${v.fecha || '-'}</td>
+                    <td class="p-4 text-cream font-semibold">${v.desarrollo}</td>
+                    <td class="p-4 text-cream">${v.cliente}</td>
+                    <td class="p-4 text-secondaryText">${v.telefono}</td>
+                    <td class="p-4 text-cream">${v.plan}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border border-border text-cream bg-input">${v.estatus}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateFilters() {
+            const advSelect = document.getElementById('filter-venta-advisor');
+            const devSelect = document.getElementById('filter-venta-dev');
+            const monthSelect = document.getElementById('filter-venta-month');
+            
+            const prevAdv = advSelect.value;
+            const prevDev = devSelect.value;
+            const prevMonth = monthSelect.value;
+            
+            const advisors = [...new Set(window.allVentas.map(v => v.lote).filter(Boolean))].sort();
+            const developments = [...new Set(window.allVentas.map(v => v.desarrollo).filter(Boolean))].sort();
+            
+            const months = [...new Set(window.allVentas.map(v => {
+                if (v.fecha && v.fecha.length >= 7) {
+                    return v.fecha.substring(0, 7);
+                }
+                return null;
+            }).filter(Boolean))].sort().reverse();
+
+            advSelect.innerHTML = '<option value="Todos">Todos los Asesores</option>' + 
+                advisors.map(a => `<option value="${a}">${a}</option>`).join('');
+                
+            devSelect.innerHTML = '<option value="Todos">Todos los Desarrollos</option>' + 
+                developments.map(d => `<option value="${d}">${d}</option>`).join('');
+                
+            monthSelect.innerHTML = '<option value="Todos">Todos los Meses</option>' + 
+                months.map(m => `<option value="${m}">${m}</option>`).join('');
+                
+            if (advisors.includes(prevAdv)) advSelect.value = prevAdv;
+            if (developments.includes(prevDev)) devSelect.value = prevDev;
+            if (months.includes(prevMonth)) monthSelect.value = prevMonth;
+        }
+
+        function renderVentasAdmin() {
+            const advFilter = document.getElementById('filter-venta-advisor').value;
+            const devFilter = document.getElementById('filter-venta-dev').value;
+            const monthFilter = document.getElementById('filter-venta-month').value;
+            const tableBody = document.getElementById('admin-ventas-table-body');
+            
+            let filtered = window.allVentas;
+            
+            if (advFilter !== 'Todos') {
+                filtered = filtered.filter(v => v.lote === advFilter);
+            }
+            if (devFilter !== 'Todos') {
+                filtered = filtered.filter(v => v.desarrollo === devFilter);
+            }
+            if (monthFilter !== 'Todos') {
+                filtered = filtered.filter(v => v.fecha && v.fecha.startsWith(monthFilter));
+            }
+            
+            if (filtered.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-secondaryText">No hay ventas registradas con estos filtros</td>
+                    </tr>
+                `;
+                document.getElementById('admin-ventas-total-count').textContent = "0";
+                return;
+            }
+
+            tableBody.innerHTML = filtered.map(v => `
+                <tr class="hover:bg-input transition-colors">
+                    <td class="p-4 text-gold font-bold">${v.id_venta}</td>
+                    <td class="p-4 text-secondaryText">${v.fecha || '-'}</td>
+                    <td class="p-4 text-cream font-semibold">${v.desarrollo}</td>
+                    <td class="p-4 text-cream">${v.cliente}</td>
+                    <td class="p-4 text-secondaryText">${v.telefono}</td>
+                    <td class="p-4 text-cream">${v.lote || '-'}</td>
+                    <td class="p-4 text-cream">${v.plan}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border border-border text-cream bg-input">${v.estatus}</span>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('admin-ventas-total-count').textContent = filtered.length.toString();
+        }
+
+        function renderHistorico() {
+            const tableBody = document.getElementById('historico-table-body');
+            const thAsesor = document.getElementById('th-historico-asesor');
+            const searchContainer = document.getElementById('admin-historico-search-container');
+            const paginationContainer = document.getElementById('admin-historico-pagination');
+
+            if (loggedUser.rol === 'admin') {
+                thAsesor.classList.remove('hidden');
+                searchContainer.classList.remove('hidden');
+                paginationContainer.classList.remove('hidden');
+                filterHistoricoAdmin();
+                return;
+            }
+            
+            thAsesor.classList.add('hidden');
+            searchContainer.classList.add('hidden');
+            paginationContainer.classList.add('hidden');
+            
+            const historico = window.allHistorico.filter(h => getAdvisorStandardName(h.asesor) === getAdvisorStandardName(loggedUser.nombre));
+            
+            if (historico.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-secondaryText">Sin registros históricos</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = historico.map(h => `
+                <tr class="hover:bg-input transition-colors">
+                    <td class="p-4 text-gold font-bold">${h.cte}</td>
+                    <td class="p-4 text-cream font-semibold">${h.nombre}</td>
+                    <td class="p-4 text-cream">${h.desarrollo}</td>
+                    <td class="p-4 text-secondaryText">${h.lote}</td>
+                    <td class="p-4 text-cream">${h.estatus || '-'}</td>
+                    <td class="p-4 text-right text-gold font-bold">$${Number(h.comision || 0).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterHistoricoAdmin() {
+            const searchVal = document.getElementById('search-historico-input').value.toLowerCase();
+            
+            historicoFiltered = window.allHistorico.filter(h => {
+                const nameMatch = (h.nombre || '').toLowerCase().includes(searchVal);
+                const devMatch = (h.desarrollo || '').toLowerCase().includes(searchVal);
+                const advMatch = (h.asesor || '').toLowerCase().includes(searchVal);
+                return nameMatch || devMatch || advMatch;
+            });
+            
+            historicoCurrentPage = 1;
+            renderHistoricoAdminTable();
+        }
+
+        function renderHistoricoAdminTable() {
+            const tableBody = document.getElementById('historico-table-body');
+            const pageIndicator = document.getElementById('historico-page-indicator');
+            
+            const totalRecords = historicoFiltered.length;
+            const totalPages = Math.max(1, Math.ceil(totalRecords / historicoPageSize));
+            
+            if (historicoCurrentPage > totalPages) historicoCurrentPage = totalPages;
+            
+            const startIdx = (historicoCurrentPage - 1) * historicoPageSize;
+            const endIdx = startIdx + historicoPageSize;
+            const pageData = historicoFiltered.slice(startIdx, endIdx);
+            
+            pageIndicator.textContent = `Página ${historicoCurrentPage} de ${totalPages} (${totalRecords} registros)`;
+            
+            if (pageData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-secondaryText">No hay registros que coincidan con la búsqueda</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = pageData.map(h => `
+                <tr class="hover:bg-input transition-colors">
+                    <td class="p-4 text-gold font-bold">${h.cte}</td>
+                    <td class="p-4 text-cream font-semibold">${h.nombre}</td>
+                    <td class="p-4 text-cream">${h.desarrollo}</td>
+                    <td class="p-4 text-secondaryText">${h.lote}</td>
+                    <td class="p-4 text-cream">${h.asesor}</td>
+                    <td class="p-4 text-cream">${h.estatus || '-'}</td>
+                    <td class="p-4 text-right text-gold font-bold">$${Number(h.comision || 0).toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function prevHistoricoPage() {
+            if (historicoCurrentPage > 1) {
+                historicoCurrentPage--;
+                renderHistoricoAdminTable();
+            }
+        }
+
+        function nextHistoricoPage() {
+            const totalPages = Math.ceil(historicoFiltered.length / historicoPageSize);
+            if (historicoCurrentPage < totalPages) {
+                historicoCurrentPage++;
+                renderHistoricoAdminTable();
+            }
+        }
+
+        function updateResumen() {
+            const now = new Date();
+            const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            const salesThisMonth = window.allVentas.filter(v => v.fecha && v.fecha.startsWith(currentMonthStr));
+            document.getElementById('admin-total-sales-month').textContent = salesThisMonth.length.toString();
+            
+            const advisorSales = {};
+            salesThisMonth.forEach(v => {
+                if (v.lote) {
+                    advisorSales[v.lote] = (advisorSales[v.lote] || 0) + 1;
+                }
+            });
+            
+            let topAdvisor = "-";
+            let maxSales = 0;
+            Object.keys(advisorSales).forEach(adv => {
+                if (advisorSales[adv] > maxSales) {
+                    maxSales = advisorSales[adv];
+                    topAdvisor = adv;
+                }
+            });
+            
+            if (topAdvisor !== "-") {
+                document.getElementById('admin-top-advisor').textContent = `${topAdvisor} (${maxSales} ventas)`;
+            } else {
+                const overallAdvisorSales = {};
+                window.allVentas.forEach(v => {
+                    if (v.lote) {
+                        overallAdvisorSales[v.lote] = (overallAdvisorSales[v.lote] || 0) + 1;
+                    }
+                });
+                let overallTop = "-";
+                let overallMax = 0;
+                Object.keys(overallAdvisorSales).forEach(adv => {
+                    if (overallAdvisorSales[adv] > overallMax) {
+                        overallMax = overallAdvisorSales[adv];
+                        overallTop = adv;
+                    }
+                });
+                if (overallTop !== "-") {
+                    document.getElementById('admin-top-advisor').textContent = `${overallTop} (${overallMax} totales)`;
+                } else {
+                    document.getElementById('admin-top-advisor').textContent = "-";
+                }
+            }
+            
+            // Render Pure CSS Bar Chart by Development
+            const devSales = {};
+            window.allVentas.forEach(v => {
+                devSales[v.desarrollo] = (devSales[v.desarrollo] || 0) + 1;
+            });
+            
+            const devSorted = Object.keys(devSales).map(k => ({ name: k, sales: devSales[k] }))
+                .sort((a, b) => b.sales - a.sales);
+                
+            const maxDevSales = devSorted.length > 0 ? devSorted[0].sales : 1;
+            
+            document.getElementById('chart-by-development').innerHTML = devSorted.map(d => `
+                <div>
+                    <div class="flex justify-between text-xs mb-1 text-cream font-semibold">
+                        <span>${d.name}</span>
+                        <span class="text-gold">${d.sales} ventas</span>
+                    </div>
+                    <div class="w-full bg-[#2A2A2A] rounded-full h-2.5">
+                        <div class="bg-[#B8924A] h-2.5 rounded-full transition-all duration-500" style="width: ${(d.sales / maxDevSales) * 100}%"></div>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-secondaryText text-xs">No hay datos de ventas</p>';
+
+            // Render Pure CSS Bar Chart by Advisor
+            const advSales = {};
+            window.allVentas.forEach(v => {
+                if (v.lote) {
+                    advSales[v.lote] = (advSales[v.lote] || 0) + 1;
+                }
+            });
+            
+            const advSorted = Object.keys(advSales).map(k => ({ name: k, sales: advSales[k] }))
+                .sort((a, b) => b.sales - a.sales);
+                
+            const maxAdvSales = advSorted.length > 0 ? advSorted[0].sales : 1;
+            
+            document.getElementById('chart-by-advisor').innerHTML = advSorted.map(a => `
+                <div>
+                    <div class="flex justify-between text-xs mb-1 text-cream font-semibold">
+                        <span>${a.name}</span>
+                        <span class="text-gold">${a.sales} ventas</span>
+                    </div>
+                    <div class="w-full bg-[#2A2A2A] rounded-full h-2.5">
+                        <div class="bg-[#B8924A] h-2.5 rounded-full transition-all duration-500" style="width: ${(a.sales / maxAdvSales) * 100}%"></div>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-secondaryText text-xs">No hay datos de ventas</p>';
+        }
+
+        // ═══════════════════════════════════════════
+        // ACTION / EDITING PROCESSES
+        // ═══════════════════════════════════════════
+        function actualizarEstatusCita(citaId, nuevoEstatus) {
+            showToast(`Actualizando cita...`);
+            
+            fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: 'actualizar_cita',
+                    id: citaId,
+                    estatus: nuevoEstatus
+                })
+            }).then(() => {
+                showToast(`Cita marcada como ${nuevoEstatus} ✅`);
+                // Optimistic UI updates
+                const citaIndex = window.allCitas.findIndex(c => c.id === citaId);
+                if (citaIndex !== -1) {
+                    window.allCitas[citaIndex].estatus = nuevoEstatus;
+                    renderCitas();
+                }
+                setTimeout(loadCitas, 2500);
+            }).catch(err => {
+                console.error("Error updating status:", err);
+                showToast(`Error al actualizar status ❌`);
+            });
+        }
+
+        function abrirVentaModal(cliente, telefono) {
+            document.getElementById('venta-cliente').value = cliente;
+            document.getElementById('venta-telefono').value = telefono || '';
+            document.getElementById('venta-form').reset();
+            document.getElementById('venta-cliente').value = cliente;
+            document.getElementById('venta-telefono').value = telefono || '';
+            openModal('venta-modal');
+        }
+
+        function guardarVenta(event) {
+            event.preventDefault();
+            const form = event.target;
+            const desarrollo = form.desarrollo.value.trim();
+            const cliente = form.cliente.value.trim();
+            const telefono = form.telefono.value.trim();
+            const lote = form.lote.value.trim();
+            const plan = form.plan.value;
+            const observaciones = form.observaciones.value.trim();
+            const asesor = loggedUser.nombre;
+            
+            showToast("Guardando venta...");
+
+            fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    action: 'guardar_venta',
+                    desarrollo: desarrollo,
+                    cliente: cliente,
+                    telefono: telefono,
+                    lote: lote,
+                    plan: plan,
+                    observaciones: observaciones,
+                    asesor: asesor
+                })
+            }).then(() => {
+                showToast("Venta guardada exitosamente! 💰");
+                closeModal('venta-modal');
+                // Wait and reload
+                setTimeout(loadVentas, 2000);
+            }).catch(err => {
+                console.error("Error saving sale:", err);
+                showToast("Error al guardar venta ❌");
+            });
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // Helper toast method
+        function showToast(msg) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-[9999] transition-all duration-300 transform translate-y-[-20px] opacity-0';
+                toast.innerHTML = `<div class="bg-card text-cream border border-gold text-xs font-semibold px-5 py-3 rounded-full shadow-2xl flex items-center gap-2"></div>`;
+                document.body.appendChild(toast);
+            }
+            toast.querySelector('div').textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-[-20px]');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
