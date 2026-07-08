@@ -91,6 +91,29 @@
     min-height:calc(100vh - 160px);
   ">
 
+    <!-- BANNER DE PROMOCIÓN EXTRA DESTACADO (Ubicado al inicio, después del logo) -->
+    <div style="
+      background: linear-gradient(135deg, #F7D24C 0%, #E4B745 100%);
+      color: #0b0f12;
+      padding: 16px 28px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(228, 183, 69, 0.35);
+      margin: 0 auto 35px;
+      max-width: 680px;
+      width: 90%;
+      border: 2px solid #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      animation: pulse-promo 2s infinite ease-in-out;
+      box-sizing: border-box;
+    ">
+      <span style="font-family:'Poppins', sans-serif; font-size:0.85rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#0b0f12; opacity:0.8; line-height:1.2;">🔥 OPORTUNIDAD IMPERDIBLE — SÓLO JULIO 🔥</span>
+      <span style="font-family:'Poppins', sans-serif; font-size:clamp(1.3rem, 4.5vw, 2.0rem); font-weight:900; line-height:1.2; letter-spacing:-0.5px;">LOTES DE CONTADO DESDE $61,000 MXN</span>
+      <span style="font-family:'Inter', sans-serif; font-size:0.95rem; font-weight:700; color:#1b2520;">¡Aparta tu lote hoy mismo y asegura tu plusvalía!</span>
+    </div>
+
     <!-- TÍTULO -->
     <h1 style="
       font-size:clamp(2.3rem, 7vw, 3.6rem);
@@ -115,29 +138,6 @@
     ">
       Vive la libertad de invertir en tierra real con certeza y plusvalía.
     </p>
-
-    <!-- BANNER DE PROMOCIÓN EXTRA DESTACADO -->
-    <div style="
-      background: linear-gradient(135deg, #F7D24C 0%, #E4B745 100%);
-      color: #0b0f12;
-      padding: 16px 28px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(228, 183, 69, 0.35);
-      margin: 0 auto 35px;
-      max-width: 680px;
-      width: 90%;
-      border: 2px solid #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      animation: pulse-promo 2s infinite ease-in-out;
-      box-sizing: border-box;
-    ">
-      <span style="font-family:'Poppins', sans-serif; font-size:0.85rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#0b0f12; opacity:0.8; line-height:1.2;">🔥 OPORTUNIDAD IMPERDIBLE — SÓLO JULIO 🔥</span>
-      <span style="font-family:'Poppins', sans-serif; font-size:clamp(1.3rem, 4.5vw, 2.0rem); font-weight:900; line-height:1.2; letter-spacing:-0.5px;">LOTES DE CONTADO DESDE $61,000 MXN</span>
-      <span style="font-family:'Inter', sans-serif; font-size:0.95rem; font-weight:700; color:#1b2520;">¡Aparta tu lote hoy mismo y asegura tu plusvalía!</span>
-    </div>
 
     <!-- BULLETS -->
     <div style="
@@ -165,6 +165,50 @@
           box-shadow:0 0 0 3px #0f1713;flex:0 0 20px;"></span>
         <span>Financiamiento directo, sin revisión de buró</span>
       </div>
+    </div>
+
+    <!-- BOTONES DE ACCIÓN HERO -->
+    <div style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin: 10px auto 35px;
+      width: 90%;
+      max-width: 650px;
+    ">
+      <a href="#recorrido-360" style="
+        flex: 1;
+        min-width: 250px;
+        background: #e4b745;
+        color: #0a0c0e;
+        font: 900 1.1rem/1.2 'Poppins', sans-serif;
+        padding: 18px 24px;
+        border-radius: 14px;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(228, 183, 69, 0.3);
+        transition: transform 0.2s ease, background 0.2s ease;
+        text-align: center;
+        border: 2px solid #e4b745;
+      " onmouseover="this.style.transform='scale(1.03)'; this.style.background='#f0c75a';" onmouseout="this.style.transform='scale(1)'; this.style.background='#e4b745';">
+        🕶️ Ver Recorrido Virtual
+      </a>
+      <a href="https://wa.me/529612466204?text=Hola%20👋%2C%20vi%20la%20información%20de%20Montecristo%20y%20quiero%20agendar%20un%20recorrido.%20¿Podrían%20brindarme%20más%20detalles%3F" target="_blank" rel="noopener noreferrer" style="
+        flex: 1;
+        min-width: 250px;
+        background: #25D366;
+        color: #ffffff;
+        font: 900 1.1rem/1.2 'Poppins', sans-serif;
+        padding: 18px 24px;
+        border-radius: 14px;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        transition: transform 0.2s ease, background 0.2s ease;
+        text-align: center;
+        border: 2px solid #25D366;
+      " onmouseover="this.style.transform='scale(1.03)'; this.style.background='#2ee074';" onmouseout="this.style.transform='scale(1)'; this.style.background='#25D366';">
+        💬 Contactar por WhatsApp
+      </a>
     </div>
 
     <!-- INDICADOR DE DESLIZAMIENTO -->
@@ -1039,6 +1083,13 @@
 
   <div style="max-width:1040px; margin:auto; padding:0 22px; box-sizing:border-box;">
     
+    <!-- BANNER PROMO CONTADO -->
+    <div style="background:linear-gradient(135deg, #F7D24C 0%, #E4B745 100%); border:3px solid #ffffff; border-radius:22px; padding:28px 24px; text-align:center; max-width:720px; margin:0 auto 35px; box-sizing:border-box; box-shadow:0 12px 32px rgba(228,183,69,0.3); animation:pulse-promo 2s infinite ease-in-out;">
+      <span style="background:#0c0c0c; color:#fff; font:900 12px/1 Poppins; letter-spacing:1.5px; text-transform:uppercase; padding:6px 16px; border-radius:999px; display:inline-block; margin-bottom:12px;">🔥 OPORTUNIDAD DE CONTADO 🔥</span>
+      <h3 style="font:900 clamp(24px,5.5vw,34px)/1.1 Poppins; color:#0c0c0c; margin:0 0 8px; font-family:'Poppins', sans-serif; letter-spacing:-0.5px;">Lotes desde $61,000 MXN</h3>
+      <p style="font:700 clamp(15px,3.8vw,17px)/1.5 Inter; color:#1b2520; margin:0; font-family:'Inter', sans-serif;">Aprovecha el precio de promoción especial de contado. <strong>¡Válido únicamente durante todo el mes de Julio!</strong></p>
+    </div>
+
     <!-- Encabezado -->
     <div style="text-align:center; margin-bottom:28px;">
       <h2 style="font:900 clamp(28px,6.2vw,44px)/1.05 Poppins,system-ui;
@@ -1058,13 +1109,6 @@
         A continuación te mostramos un <b>ejemplo de financiamiento</b> correspondiente a un <b>lote de 400 m²</b>,  
         para que visualices lo accesible que puede ser invertir hoy.
       </p>
-    </div>
-
-    <!-- BANNER PROMO CONTADO -->
-    <div style="background:linear-gradient(135deg, #F7D24C 0%, #E4B745 100%); border:3px solid #ffffff; border-radius:22px; padding:28px 24px; text-align:center; max-width:720px; margin:0 auto 35px; box-sizing:border-box; box-shadow:0 12px 32px rgba(228,183,69,0.3); animation:pulse-promo 2s infinite ease-in-out;">
-      <span style="background:#0c0c0c; color:#fff; font:900 12px/1 Poppins; letter-spacing:1.5px; text-transform:uppercase; padding:6px 16px; border-radius:999px; display:inline-block; margin-bottom:12px;">🔥 OPORTUNIDAD DE CONTADO 🔥</span>
-      <h3 style="font:900 clamp(24px,5.5vw,34px)/1.1 Poppins; color:#0c0c0c; margin:0 0 8px; font-family:'Poppins', sans-serif; letter-spacing:-0.5px;">Lotes desde $61,000 MXN</h3>
-      <p style="font:700 clamp(15px,3.8vw,17px)/1.5 Inter; color:#1b2520; margin:0; font-family:'Inter', sans-serif;">Aprovecha el precio de promoción especial de contado. <strong>¡Válido únicamente durante todo el mes de Julio!</strong></p>
     </div>
 
     <!-- Tarjeta de precio -->
