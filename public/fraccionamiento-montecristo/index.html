@@ -563,11 +563,11 @@
     </div>
 
     <!-- CONTENEDOR DEL VISOR CON PORTADA INTERACTIVA -->
-    <div style="position:relative; width:100%; height:75vh; min-height:580px; max-height:800px; border-radius:20px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08); background:#eef2ef; border:1px solid #e5e7eb;">
+    <div style="position:relative; width:100%; height:75vh; min-height:580px; max-height:800px; border-radius:20px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08); background:#eef2ef; border:1px solid #e5e7eb; display:flex; flex-direction:column;">
       
       <!-- Portada de carga (estilo Kuula) -->
-      <div id="pnlm-cover" style="position:absolute; inset:0; z-index:10; background:linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('images/recorrido-360.jpg') center/cover no-repeat; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:20px; transition:opacity 0.5s ease; cursor:pointer;" onclick="activate360Viewer()">
-        <h3 style="font-family:'Poppins',sans-serif; font-size:clamp(1.5rem, 5vw, 2.5rem); font-weight:700; color:#fff; margin-bottom:10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Vista Aérea desde Dron</h3>
+      <div id="pnlm-cover" style="position:absolute; inset:0; z-index:10; background:linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('images/montecristo-01.jpg') center/cover no-repeat; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; text-align:center; padding:20px; transition:opacity 0.5s ease; cursor:pointer;" onclick="activate360Viewer()">
+        <h3 style="font-family:'Poppins',sans-serif; font-size:clamp(1.5rem, 5vw, 2.5rem); font-weight:700; color:#fff; margin-bottom:10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Vista Aérea y Terrenos</h3>
         <p style="font-family:'Poppins',sans-serif; font-size:0.95rem; opacity:0.9; margin-bottom:20px; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">Haz clic para activar el recorrido interactivo 360°</p>
         <button style="width:70px; height:70px; border-radius:50%; background:#0B8F63; border:3px solid #fff; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.3); transition:transform 0.3s ease; outline:none;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
           <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor">
@@ -577,12 +577,17 @@
       </div>
 
       <!-- Contenedor del visor Pannellum -->
-      <div id="panorama-viewer-container" style="width:100%; height:100%;"></div>
+      <div id="panorama-viewer-container" style="width:100%; flex:1; min-height:0;"></div>
+
+      <!-- Carrusel de escenas (miniaturas) en la parte inferior -->
+      <div id="pnlm-thumbnails" style="background:#0F172A; border-top:1px solid #1E293B; padding:12px; display:none; overflow-x:auto; white-space:nowrap; gap:12px; -webkit-overflow-scrolling:touch; scrollbar-width:none; align-items:center; justify-content:flex-start;">
+        <!-- Se generará dinámicamente -->
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Script para cargar e inicializar el visor -->
+<!-- Script para cargar e inicializar el visor multi-escena -->
 <script>
   function activate360Viewer() {
     const cover = document.getElementById('pnlm-cover');
@@ -615,18 +620,108 @@
     }
 
     function initPannellum() {
-      window.pannellum.viewer('panorama-viewer-container', {
-        "type": "equirectangular",
-        "panorama": "images/recorrido-360.jpg",
-        "autoLoad": true,
-        "title": "Fraccionamiento Montecristo",
-        "author": "Propiedades en Chiapas",
-        "compass": false,
-        "showControls": true,
-        "yaw": 0,
-        "pitch": -15,
-        "hfov": 110
+      // Listado de las 13 escenas reales de Montecristo
+      const scenes = [
+        { id: 'sc-01', title: 'Entrada Principal', image: 'montecristo-01.jpg', thumb: 'montecristo-01-thumb.jpg' },
+        { id: 'sc-02', title: 'Calle Principal A', image: 'montecristo-02.jpg', thumb: 'montecristo-02-thumb.jpg' },
+        { id: 'sc-03', title: 'Calle Principal B', image: 'montecristo-03.jpg', thumb: 'montecristo-03-thumb.jpg' },
+        { id: 'sc-04', title: 'Avenida Norte', image: 'montecristo-04.jpg', thumb: 'montecristo-04-thumb.jpg' },
+        { id: 'sc-05', title: 'Zona Alta Oeste', image: 'montecristo-05.jpg', thumb: 'montecristo-05-thumb.jpg' },
+        { id: 'sc-07', title: 'Andador Central A', image: 'montecristo-07.jpg', thumb: 'montecristo-07-thumb.jpg' },
+        { id: 'sc-08', title: 'Andador Central B', image: 'montecristo-08.jpg', thumb: 'montecristo-08-thumb.jpg' },
+        { id: 'sc-09', title: 'Vista Panorámica Dron', image: 'montecristo-09.jpg', thumb: 'montecristo-09-thumb.jpg' },
+        { id: 'sc-10', title: 'Área Común Futura', image: 'montecristo-10.jpg', thumb: 'montecristo-10-thumb.jpg' },
+        { id: 'sc-11', title: 'Lotes Zona Alta', image: 'montecristo-11.jpg', thumb: 'montecristo-11-thumb.jpg' },
+        { id: 'sc-12', title: 'Lotes Zona Central', image: 'montecristo-12.jpg', thumb: 'montecristo-12-thumb.jpg' },
+        { id: 'sc-13', title: 'Calle Este', image: 'montecristo-13.jpg', thumb: 'montecristo-13-thumb.jpg' },
+        { id: 'sc-14', title: 'Lotes Zona Sur', image: 'montecristo-14.jpg', thumb: 'montecristo-14-thumb.jpg' }
+      ];
+
+      const pannellumScenes = {};
+      scenes.forEach(sc => {
+        pannellumScenes[sc.id] = {
+          "type": "equirectangular",
+          "panorama": "images/" + sc.image,
+          "title": sc.title,
+          "author": "Fraccionamiento Montecristo",
+          "compass": false,
+          "showControls": true,
+          "yaw": 0,
+          "pitch": -10,
+          "hfov": 105
+        };
       });
+
+      const viewer = window.pannellum.viewer('panorama-viewer-container', {
+        "default": {
+          "firstScene": "sc-01",
+          "sceneFadeDuration": 800,
+          "autoLoad": true
+        },
+        "scenes": pannellumScenes
+      });
+
+      // Generar carrusel de miniaturas
+      const thumbsContainer = document.getElementById('pnlm-thumbnails');
+      thumbsContainer.style.display = 'flex'; // Mostrar la barra de miniaturas
+      
+      scenes.forEach((sc, idx) => {
+        const btn = document.createElement('button');
+        btn.id = 'thumb-' + sc.id;
+        btn.style.cssText = `
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          background: none;
+          border: none;
+          cursor: pointer;
+          flex-shrink: 0;
+          opacity: ${idx === 0 ? '1' : '0.6'};
+          transition: opacity 0.2s ease, transform 0.2s;
+          outline: none;
+          padding: 0;
+          margin: 0;
+        `;
+        
+        btn.innerHTML = `
+          <div style="position: relative; width: 100px; height: 65px; border-radius: 8px; overflow: hidden; border: 2px solid ${idx === 0 ? '#0B8F63' : '#1E293B'}; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: border-color 0.2s;">
+            <img src="images/${sc.thumb}" alt="${sc.title}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+            <span style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.75); color: #fff; font-family: 'Poppins', sans-serif; font-size: 9px; padding: 2px 4px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600;">
+              ${idx + 1}. ${sc.title}
+            </span>
+          </div>
+        `;
+        
+        btn.onclick = () => {
+          viewer.loadScene(sc.id);
+          updateActiveThumb(sc.id);
+        };
+        
+        thumbsContainer.appendChild(btn);
+      });
+
+      // Escuchar cambios de escena del visor
+      viewer.on('scenechange', function(sceneId) {
+        updateActiveThumb(sceneId);
+      });
+
+      function updateActiveThumb(activeId) {
+        scenes.forEach(sc => {
+          const btn = document.getElementById('thumb-' + sc.id);
+          const borderDiv = btn.querySelector('div');
+          if (sc.id === activeId) {
+            btn.style.opacity = '1';
+            btn.style.transform = 'scale(1.05)';
+            borderDiv.style.borderColor = '#0B8F63';
+            // Scroll automático al botón activo
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          } else {
+            btn.style.opacity = '0.6';
+            btn.style.transform = 'scale(1)';
+            borderDiv.style.borderColor = '#1E293B';
+          }
+        });
+      }
     }
   }
 </script>
