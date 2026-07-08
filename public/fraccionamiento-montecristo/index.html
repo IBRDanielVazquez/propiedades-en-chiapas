@@ -622,18 +622,18 @@
     function initPannellum() {
       // Listado de las 13 escenas reales de Montecristo
       const scenes = [
-        { id: 'sc-01', title: 'Entrada Principal', image: 'montecristo-01.jpg', thumb: 'montecristo-01-thumb.jpg' },
-        { id: 'sc-02', title: 'Calle Principal A', image: 'montecristo-02.jpg', thumb: 'montecristo-02-thumb.jpg' },
+        { id: 'sc-01', title: 'Entrada Principal', image: 'montecristo-01.jpg', thumb: 'montecristo-01-thumb.jpg', isAerial: true },
+        { id: 'sc-02', title: 'Calle Principal A', image: 'montecristo-02.jpg', thumb: 'montecristo-02-thumb.jpg', isAerial: true },
         { id: 'sc-03', title: 'Calle Principal B', image: 'montecristo-03.jpg', thumb: 'montecristo-03-thumb.jpg' },
         { id: 'sc-04', title: 'Avenida Norte', image: 'montecristo-04.jpg', thumb: 'montecristo-04-thumb.jpg' },
         { id: 'sc-05', title: 'Zona Alta Oeste', image: 'montecristo-05.jpg', thumb: 'montecristo-05-thumb.jpg' },
-        { id: 'sc-07', title: 'Andador Central A', image: 'montecristo-07.jpg', thumb: 'montecristo-07-thumb.jpg' },
-        { id: 'sc-08', title: 'Andador Central B', image: 'montecristo-08.jpg', thumb: 'montecristo-08-thumb.jpg' },
-        { id: 'sc-09', title: 'Vista Panorámica Dron', image: 'montecristo-09.jpg', thumb: 'montecristo-09-thumb.jpg' },
-        { id: 'sc-10', title: 'Área Común Futura', image: 'montecristo-10.jpg', thumb: 'montecristo-10-thumb.jpg' },
+        { id: 'sc-07', title: 'Andador Central A', image: 'montecristo-07.jpg', thumb: 'montecristo-07-thumb.jpg', isAerial: true },
+        { id: 'sc-08', title: 'Andador Central B', image: 'montecristo-08.jpg', thumb: 'montecristo-08-thumb.jpg', isAerial: true },
+        { id: 'sc-09', title: 'Vista Panorámica Dron', image: 'montecristo-09.jpg', thumb: 'montecristo-09-thumb.jpg', isAerial: true },
+        { id: 'sc-10', title: 'Área Común Futura', image: 'montecristo-10.jpg', thumb: 'montecristo-10-thumb.jpg', isAerial: true },
         { id: 'sc-11', title: 'Lotes Zona Alta', image: 'montecristo-11.jpg', thumb: 'montecristo-11-thumb.jpg' },
-        { id: 'sc-12', title: 'Lotes Zona Central', image: 'montecristo-12.jpg', thumb: 'montecristo-12-thumb.jpg' },
-        { id: 'sc-13', title: 'Calle Este', image: 'montecristo-13.jpg', thumb: 'montecristo-13-thumb.jpg' },
+        { id: 'sc-12', title: 'Lotes Zona Central', image: 'montecristo-12.jpg', thumb: 'montecristo-12-thumb.jpg', isAerial: true },
+        { id: 'sc-13', title: 'Calle Este', image: 'montecristo-13.jpg', thumb: 'montecristo-13-thumb.jpg', isAerial: true },
         { id: 'sc-14', title: 'Lotes Zona Sur', image: 'montecristo-14.jpg', thumb: 'montecristo-14-thumb.jpg' }
       ];
 
@@ -665,6 +665,10 @@
 
       const pannellumScenes = {};
       scenes.forEach(sc => {
+        // Ajustar límites de inclinación vertical (pitch) según si es foto aérea o a nivel de piso
+        const minPitchLimit = sc.isAerial ? -85 : -38;
+        const maxPitchLimit = sc.isAerial ? 45 : 30;
+        
         pannellumScenes[sc.id] = {
           "type": "equirectangular",
           "panorama": "images/" + sc.image,
@@ -674,8 +678,8 @@
           "showControls": true,
           "yaw": 0,
           "pitch": -12, // Inclinar la cámara levemente hacia abajo
-          "minPitch": -45, // Bloquear mirada extrema al suelo
-          "maxPitch": 35,  // Bloquear mirada extrema al cielo vacío
+          "minPitch": minPitchLimit, // Permitir mirar completamente hacia abajo en aéreas
+          "maxPitch": maxPitchLimit,  // Limitar cielo
           "hfov": fovSettings.hfov,
           "minHfov": fovSettings.minHfov,
           "maxHfov": fovSettings.maxHfov
