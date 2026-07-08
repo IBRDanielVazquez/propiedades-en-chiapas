@@ -694,29 +694,35 @@
     }
   }
 
-  // --- Hook de Marketing: Carga por parámetro ?scene=X ---
+  // --- Hook de Marketing: Carga por parámetro ?scene=X o Hash (#recorrido) ---
   window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const sceneParam = urlParams.get('scene');
+    const hashParam = window.location.hash;
     
-    if (sceneParam) {
+    // Lista de hashes permitidos para activar el recorrido
+    const validHashes = ['#recorrido', '#tour', '#tour360', '#recorrido-360', '#visita-virtual'];
+    
+    if (sceneParam || validHashes.includes(hashParam)) {
       setTimeout(() => {
         // Activar el visor automáticamente
         activate360Viewer();
         
         let targetScene = 'sc-01';
-        if (sceneParam.startsWith('sc-')) {
-          targetScene = sceneParam;
-        } else {
-          const num = parseInt(sceneParam, 10);
-          if (!isNaN(num)) {
-            const tempScenes = [
-              'sc-01', 'sc-02', 'sc-03', 'sc-04', 'sc-05',
-              'sc-07', 'sc-08', 'sc-09', 'sc-10', 'sc-11',
-              'sc-12', 'sc-13', 'sc-14'
-            ];
-            if (num >= 1 && num <= tempScenes.length) {
-              targetScene = tempScenes[num - 1];
+        if (sceneParam) {
+          if (sceneParam.startsWith('sc-')) {
+            targetScene = sceneParam;
+          } else {
+            const num = parseInt(sceneParam, 10);
+            if (!isNaN(num)) {
+              const tempScenes = [
+                'sc-01', 'sc-02', 'sc-03', 'sc-04', 'sc-05',
+                'sc-07', 'sc-08', 'sc-09', 'sc-10', 'sc-11',
+                'sc-12', 'sc-13', 'sc-14'
+              ];
+              if (num >= 1 && num <= tempScenes.length) {
+                targetScene = tempScenes[num - 1];
+              }
             }
           }
         }
