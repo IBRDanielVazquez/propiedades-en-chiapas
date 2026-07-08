@@ -645,16 +645,16 @@
         const height = containerEl.clientHeight || 600;
         const aspect = width / height;
         
-        // Si es portrait (ancho < alto), reducir hfov para evitar efecto estirado en el eje vertical
+        // Si es portrait (ancho < alto), ajustar hfov para balancear la inmersión 360 sin deformar en exceso
         if (aspect < 1) {
           return {
-            hfov: 72,
-            minHfov: 50,
-            maxHfov: 90
+            hfov: 88, // Campo de visión optimizado para móvil vertical que mantiene el look esférico
+            minHfov: 55,
+            maxHfov: 110
           };
         } else {
           return {
-            hfov: 100,
+            hfov: 102, // Campo de visión optimizado para pantallas horizontales
             minHfov: 60,
             maxHfov: 120
           };
