@@ -405,139 +405,7 @@
 
 
 
-<!-- ===== GALERÍA MONTECRISTO (ICONO DISTINGUIDO + PÁRRAFO CON FUERZA) ===== -->
-<section id="galeria" style="padding:56px 0 52px;background:#ffffff;">
-  <div class="mc-wrap">
-    <!-- 1) TÍTULO -->
-    <div class="mc-head">
-      <div class="mc-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="58" height="58" fill="none" stroke="#0B8F63" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="32" cy="32" r="30" stroke="#0B8F63" stroke-width="2.3"></circle>
-          <path d="M10 42c6-6 14-9 22-9s16 3 22 9"></path>
-          <path d="M32 22l4 4-4 4-4-4z" fill="#0B8F63"></path>
-          <path d="M32 10v8M16 26l4 4M48 26l-4 4"></path>
-        </svg>
-      </div>
-      <h2 class="mc-h2">Explora Montecristo</h2>
-    </div>
 
-    <!-- 2) GALERÍA -->
-    <div class="mc-gallery-wrap">
-      <button class="mc-nav mc-prev" aria-label="Anterior">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-          <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </button>
-      <button class="mc-nav mc-next" aria-label="Siguiente">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-          <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </button>
-
-      <div class="swiper mcGallery">
-        <div class="swiper-wrapper">
-
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-1.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-4.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-11.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-5.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-6.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-7.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-10.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-12.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-15.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-19.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-18.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-17.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-24.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-25.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-27.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-14.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-9.png"></div>
-          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-22.png"></div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- 3) PÁRRAFO CON FUERZA VISUAL -->
-    <p class="mc-sub" style="
-      margin-top:26px;
-      font-size:clamp(1.15rem,3.8vw,1.35rem);
-      line-height:1.8;
-      color:#1a1f1c;
-      font-weight:600;
-      text-align:center;
-      letter-spacing:-0.2px;
-      max-width:780px;
-      margin-inline:auto;
-    ">
-      Desliza y descubre el entorno natural, las vistas y los caminos que dan vida a <b style="color:#0B8F63">Montecristo</b>.  
-      Un desarrollo campestre donde la <span style="color:#0B8F63;">naturaleza</span> y la <span style="color:#0B8F63;">tranquilidad</span> se fusionan con la visión de una gran inversión.
-    </p>
-  </div>
-</section>
-
-<link rel="stylesheet" href="css/swiper-bundle.min.css">
-<script src="js/swiper-bundle.min.js"></script>
-
-<style>
-  #galeria .mc-wrap{max-width:1200px;margin:auto;padding-inline:24px}
-  #galeria .mc-head{text-align:center;margin-bottom:10px}
-  #galeria .mc-icon{margin:0 auto 10px;display:flex;justify-content:center;align-items:center;}
-  #galeria .mc-h2{
-    font-family:'Poppins',sans-serif;font-weight:800;color:#0B8F63;
-    margin:0;font-size:clamp(28px,6vw,44px);line-height:1.1;letter-spacing:-.5px
-  }
-
-  #galeria .mc-gallery-wrap{position:relative;margin-top:18px}
-  #galeria .mcGallery{padding:0}
-  #galeria .swiper-wrapper{align-items:center}
-
-  #galeria .mc-slide{
-    width:min(980px,92vw);
-    height:50vh; min-height:300px; max-height:580px;
-    border-radius:20px; overflow:hidden; background:#eef2ef;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 8px 26px rgba(0,0,0,.07);
-  }
-  #galeria .mc-slide img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
-  @media(hover:hover){#galeria .mc-slide:hover img{transform:scale(1.035)}}
-
-  #galeria .mc-nav{
-    position:absolute; top:50%; transform:translateY(-50%);
-    width:44px; height:44px; border-radius:999px; border:0; cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    color:#0B8F63; background:rgba(255,255,255,.85);
-    box-shadow:0 8px 24px rgba(0,0,0,.08); backdrop-filter:blur(6px);
-    transition:background .2s ease, transform .2s ease, color .2s ease; z-index:5;
-  }
-  #galeria .mc-nav:hover{background:#fff;color:#0A7A55;transform:translateY(-50%) scale(1.04)}
-  #galeria .mc-prev{left:10px}  #galeria .mc-next{right:10px}
-  @media(max-width:420px){#galeria .mc-prev{left:4px} #galeria .mc-next{right:4px}}
-</style>
-
-<script>
-  const mcSwiper = new Swiper('#galeria .mcGallery', {
-    loop:true,
-    grabCursor:true,
-    autoplay:{delay:3600,disableOnInteraction:false},
-    slidesPerView:'auto',
-    spaceBetween:20,
-    centeredSlides:true,
-    centeredSlidesBounds:true,
-    centerInsufficientSlides:true,
-    roundLengths:true,
-    slideToClickedSlide:true,
-    watchSlidesProgress:true,
-    navigation:{ nextEl:'#galeria .mc-next', prevEl:'#galeria .mc-prev' },
-    observer:true, observeParents:true, observeSlideChildren:true, updateOnWindowResize:true,
-    on:{
-      transitionEnd(swiper){ swiper.slideTo(swiper.activeIndex,0,false); },
-      resize(swiper){ swiper.update(); swiper.slideTo(swiper.activeIndex,0,false); }
-    }
-  });
-</script>
 
 
 
@@ -872,11 +740,143 @@
         
         setTimeout(() => clearInterval(checkViewerInterval), 6000);
       }, 900);
+    }
   });
 </script>
 
+<!-- ===== GALERÍA MONTECRISTO (ICONO DISTINGUIDO + PÁRRAFO CON FUERZA) ===== -->
+<section id="galeria" style="padding:56px 0 52px;background:#ffffff;">
+  <div class="mc-wrap">
+    <!-- 1) TÍTULO -->
+    <div class="mc-head">
+      <div class="mc-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="58" height="58" fill="none" stroke="#0B8F63" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="32" cy="32" r="30" stroke="#0B8F63" stroke-width="2.3"></circle>
+          <path d="M10 42c6-6 14-9 22-9s16 3 22 9"></path>
+          <path d="M32 22l4 4-4 4-4-4z" fill="#0B8F63"></path>
+          <path d="M32 10v8M16 26l4 4M48 26l-4 4"></path>
+        </svg>
+      </div>
+      <h2 class="mc-h2">Explora Montecristo</h2>
+    </div>
 
+    <!-- 2) GALERÍA -->
+    <div class="mc-gallery-wrap">
+      <button class="mc-nav mc-prev" aria-label="Anterior">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+      <button class="mc-nav mc-next" aria-label="Siguiente">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
 
+      <div class="swiper mcGallery">
+        <div class="swiper-wrapper">
+
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-1.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-4.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-11.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-5.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-6.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-7.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-10.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-12.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-15.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-19.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-18.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-17.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-24.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-25.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-27.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-14.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-9.png"></div>
+          <div class="swiper-slide mc-slide"><img decoding="async" src="images/Fraccionamiento-MonteCristo-001-22.png"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 3) PÁRRAFO CON FUERZA VISUAL -->
+    <p class="mc-sub" style="
+      margin-top:26px;
+      font-size:clamp(1.15rem,3.8vw,1.35rem);
+      line-height:1.8;
+      color:#1a1f1c;
+      font-weight:600;
+      text-align:center;
+      letter-spacing:-0.2px;
+      max-width:780px;
+      margin-inline:auto;
+    ">
+      Desliza y descubre el entorno natural, las vistas y los caminos que dan vida a <b style="color:#0B8F63">Montecristo</b>.  
+      Un desarrollo campestre donde la <span style="color:#0B8F63;">naturaleza</span> y la <span style="color:#0B8F63;">tranquilidad</span> se fusionan con la visión de una gran inversión.
+    </p>
+  </div>
+</section>
+
+<link rel="stylesheet" href="css/swiper-bundle.min.css">
+<script src="js/swiper-bundle.min.js"></script>
+
+<style>
+  #galeria .mc-wrap{max-width:1200px;margin:auto;padding-inline:24px}
+  #galeria .mc-head{text-align:center;margin-bottom:10px}
+  #galeria .mc-icon{margin:0 auto 10px;display:flex;justify-content:center;align-items:center;}
+  #galeria .mc-h2{
+    font-family:'Poppins',sans-serif;font-weight:800;color:#0B8F63;
+    margin:0;font-size:clamp(28px,6vw,44px);line-height:1.1;letter-spacing:-.5px
+  }
+
+  #galeria .mc-gallery-wrap{position:relative;margin-top:18px}
+  #galeria .mcGallery{padding:0}
+  #galeria .swiper-wrapper{align-items:center}
+
+  #galeria .mc-slide{
+    width:min(980px,92vw);
+    height:50vh; min-height:300px; max-height:580px;
+    border-radius:20px; overflow:hidden; background:#eef2ef;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 26px rgba(0,0,0,.07);
+  }
+  #galeria .mc-slide img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+  @media(hover:hover){#galeria .mc-slide:hover img{transform:scale(1.035)}}
+
+  #galeria .mc-nav{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:44px; height:44px; border-radius:999px; border:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    color:#0B8F63; background:rgba(255,255,255,.85);
+    box-shadow:0 8px 24px rgba(0,0,0,.08); backdrop-filter:blur(6px);
+    transition:background .2s ease, transform .2s ease, color .2s ease; z-index:5;
+  }
+  #galeria .mc-nav:hover{background:#fff;color:#0A7A55;transform:translateY(-50%) scale(1.04)}
+  #galeria .mc-prev{left:10px}  #galeria .mc-next{right:10px}
+  @media(max-width:420px){#galeria .mc-prev{left:4px} #galeria .mc-next{right:4px}}
+</style>
+
+<script>
+  const mcSwiper = new Swiper('#galeria .mcGallery', {
+    loop:true,
+    grabCursor:true,
+    autoplay:{delay:3600,disableOnInteraction:false},
+    slidesPerView:'auto',
+    spaceBetween:20,
+    centeredSlides:true,
+    centeredSlidesBounds:true,
+    centerInsufficientSlides:true,
+    roundLengths:true,
+    slideToClickedSlide:true,
+    watchSlidesProgress:true,
+    navigation:{ nextEl:'#galeria .mc-next', prevEl:'#galeria .mc-prev' },
+    observer:true, observeParents:true, observeSlideChildren:true, updateOnWindowResize:true,
+    on:{
+      transitionEnd(swiper){ swiper.slideTo(swiper.activeIndex,0,false); },
+      resize(swiper){ swiper.update(); swiper.slideTo(swiper.activeIndex,0,false); }
+    }
+  });
+</script>
 
 <!-- SLIDER: Tipos de construcciones -->
 <section id="slider-construcciones" style="padding:55px 0 60px;background:linear-gradient(180deg,#f1f9f4 0%,#eaf6f0 100%);">
