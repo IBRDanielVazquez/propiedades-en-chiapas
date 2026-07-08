@@ -637,6 +637,32 @@
         { id: 'sc-14', title: 'Lotes Zona Sur', image: 'montecristo-14.jpg', thumb: 'montecristo-14-thumb.jpg' }
       ];
 
+      // Calcular hfov inicial basado en el aspect ratio del contenedor
+      const containerEl = document.getElementById('panorama-viewer-container');
+      
+      function getDynamicFovSettings() {
+        const width = containerEl.clientWidth || window.innerWidth;
+        const height = containerEl.clientHeight || 600;
+        const aspect = width / height;
+        
+        // Si es portrait (ancho < alto), reducir hfov para evitar efecto estirado en el eje vertical
+        if (aspect < 1) {
+          return {
+            hfov: 72,
+            minHfov: 50,
+            maxHfov: 90
+          };
+        } else {
+          return {
+            hfov: 100,
+            minHfov: 60,
+            maxHfov: 120
+          };
+        }
+      }
+
+      const fovSettings = getDynamicFovSettings();
+
       const pannellumScenes = {};
       scenes.forEach(sc => {
         pannellumScenes[sc.id] = {
@@ -647,8 +673,12 @@
           "compass": false,
           "showControls": true,
           "yaw": 0,
-          "pitch": -10,
-          "hfov": 105
+          "pitch": -12, // Inclinar la cámara levemente hacia abajo
+          "minPitch": -45, // Bloquear mirada extrema al suelo
+          "maxPitch": 35,  // Bloquear mirada extrema al cielo vacío
+          "hfov": fovSettings.hfov,
+          "minHfov": fovSettings.minHfov,
+          "maxHfov": fovSettings.maxHfov
         };
       });
 
@@ -659,6 +689,18 @@
           "autoLoad": true
         },
         "scenes": pannellumScenes
+      });
+
+      // Escuchar cambios de tamaño en pantalla para recalcular FOV en tiempo real (ej. giro de dispositivo)
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (viewer && typeof viewer.setHfov === 'function') {
+            const settings = getDynamicFovSettings();
+            viewer.setHfov(settings.hfov);
+          }
+        }, 150);
       });
 
       // Generar carrusel de miniaturas
