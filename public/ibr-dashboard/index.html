@@ -2580,14 +2580,14 @@ function getWhatsAppMessageForCita(c, isAd) {
     const horaStr = c.hora || '';
     
     if (isAd) {
-        // Mensaje de presentación de Administrador para introducir al Asesor
+        // Mensaje de presentación de Administrador para introducir al Asesor (sin pregunta final)
         if (nameClean.includes('luis') && nameClean.includes('garc')) {
             return `Le atenderá Luis García, uno de nuestros asesores inmobiliarios autorizados 😊
 
 Aquí puede conocerlo y guardar su contacto directo 👉
 https://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/
 
-En breve se pondrá en contacto para confirmar los detalles de su cita. ¿Nos podría confirmar si la fecha y hora le resultan cómodas? Quedamos a sus órdenes. 😊`;
+En breve se pondrá en contacto para confirmar los detalles de su cita.`;
         }
         if (nameClean.includes('carmen') || (nameClean.includes('jim') && nameClean.includes('nez'))) {
             return `Le atenderá Carmen Jiménez, una de nuestras asesoras inmobiliarias autorizadas 😊
@@ -2595,7 +2595,7 @@ En breve se pondrá en contacto para confirmar los detalles de su cita. ¿Nos po
 Aquí puede conocerla y guardar su contacto directo 👉
 🔗 https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/
 
-En breve ella se pondrá a sus órdenes para darle el seguimiento y los detalles de la visita. ¿Nos podría confirmar si la fecha y hora le resultan cómodas? Quedamos a sus órdenes. 😊`;
+En breve ella se pondrá a sus órdenes para darle el seguimiento y los detalles de la visita.`;
         }
         if (nameClean.includes('lup') || nameClean.includes('mendoza')) {
             return `Le atenderá Lupyta Mendoza, una de nuestras asesoras inmobiliarias autorizadas 😊
@@ -2603,14 +2603,14 @@ En breve ella se pondrá a sus órdenes para darle el seguimiento y los detalles
 Aquí puede conocerla y guardar su contacto directo 👉
 https://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/
 
-En breve se pondrá en contacto con usted para confirmar los detalles de su visita. ¿Nos podría confirmar si la fecha y hora le resultan cómodas? Quedamos a sus órdenes. 😊`;
+En breve se pondrá en contacto con usted para confirmar los detalles de su visita.`;
         }
         // Admin general presentation if advisor doesn't match the three above
         return `Le atenderá ${asesor}, uno de nuestros asesores inmobiliarios autorizados 😊
 
-En breve se pondrá en contacto para confirmar los detalles de su cita. ¿Nos podría confirmar si la fecha y hora le resultan cómodas? Quedamos a sus órdenes. 😊`;
+En breve se pondrá en contacto para confirmar los detalles de su cita.`;
     } else {
-        // Mensaje de confirmación del Asesor propio (Personal y sin mencionar IBR)
+        // Mensaje de confirmación del Asesor propio (Personal y sin mencionar IBR - con pregunta final)
         const clienteNombre = c.nombre || c.prospecto || 'cliente';
         let saludo = `Hola ${clienteNombre}, excelente día. Te saluda ${asesor}, tu asesor inmobiliario.
 
