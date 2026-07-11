@@ -2645,11 +2645,11 @@ function generarCardCitaHTML(c, isAd, isHistory) {
     else if(est === 'Cita falsa') estatusColor = '#DC2626';
     else if(est === 'Por confirmar') estatusColor = '#14B8A6';
 
-    const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${estatusColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
-    const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-    const buildingSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>`;
-    const phoneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
-    const waSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.454 5.709 1.455h.008c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+    const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${estatusColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
+    const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    const buildingSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>`;
+    const phoneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+    const waSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.454 5.709 1.455h.008c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
     
     let waBtn = '';
     let copyBtn = '';
@@ -2658,11 +2658,11 @@ function generarCardCitaHTML(c, isAd, isHistory) {
         if (waNum) {
             const msg = getWhatsAppMessageForCita(c, isAd);
             const waLink = msg ? `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}` : `https://wa.me/${waNum}`;
-            waBtn = `<a href="${waLink}" target="_blank" style="background:linear-gradient(135deg, #22C55E 0%, #15803d 100%); color:#ffffff; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2); border:none; cursor:pointer;" onclick="event.stopPropagation();">${waSvg} WhatsApp</a>`;
+            waBtn = `<a href="${waLink}" target="_blank" style="background:linear-gradient(135deg, #22C55E 0%, #15803d 100%); color:#ffffff; padding:6px 12px; border-radius:6px; font-size:11px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:4px; box-shadow:0 2px 4px rgba(0,0,0,0.2); border:none; cursor:pointer;" onclick="event.stopPropagation();">${waSvg} WhatsApp</a>`;
         } else {
-            waBtn = `<button disabled style="background:#1C1D24; color:#666666; border:1px solid #22252C; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; cursor:not-allowed; display:inline-flex; align-items:center; gap:6px;" title="Número incompleto o incorrecto">💬 Incompleto</button>`;
+            waBtn = `<button disabled style="background:#1C1D24; color:#666666; border:1px solid #22252C; padding:6px 12px; border-radius:6px; font-size:11px; font-weight:bold; cursor:not-allowed; display:inline-flex; align-items:center; gap:4px;" title="Número incompleto o incorrecto">💬 Incompleto</button>`;
         }
-        copyBtn = `<button onclick="event.stopPropagation(); copiarNumero('${c.telefono}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:6px;" title="Copiar número" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">📋 Copiar</button>`;
+        copyBtn = `<button onclick="event.stopPropagation(); copiarNumero('${c.telefono}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px; display:inline-flex; align-items:center; gap:4px;" title="Copiar número" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">📋 Copiar</button>`;
     }
 
     let isToday = false;
@@ -2681,22 +2681,22 @@ function generarCardCitaHTML(c, isAd, isHistory) {
 
     let badge = '';
     if (isToday) {
-        badge = `<span style="background:#B8924A; color:#141414; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">HOY</span>`;
+        badge = `<span style="background:#B8924A; color:#141414; padding:2px 6px; border-radius:10px; font-size:9px; font-weight:bold; text-transform:uppercase;">HOY</span>`;
     } else if (isVencida) {
-        badge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">VENCIDA</span>`;
+        badge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 6px; border-radius:10px; font-size:9px; font-weight:bold; text-transform:uppercase;">VENCIDA</span>`;
     } else {
-        badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">${est}</span>`;
+        badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 6px; border-radius:10px; font-size:9px; font-weight:bold; text-transform:uppercase;">${est}</span>`;
     }
 
     let actionBtns = '';
     if(!isAd && est === 'Programada' && !isHistory) {
         actionBtns = `
-        <div style="margin-top:16px; border-top:1px solid #1E232B; padding-top:12px;" onclick="event.stopPropagation();">
-            <div style="font-size:12px; color:#9E9E9E; margin-bottom:8px;">Reportar resultado:</div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
-                <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" style="background:#EF444420; border:1px solid #EF4444; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✕ No asistió</button>
-                <button onclick="abrirModalVenta('${c.id}')" style="background:#3B82F620; border:1px solid #3B82F6; color:#3B82F6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">💰 Venta</button>
+        <div style="margin-top:10px; border-top:1px solid #1E232B; padding-top:8px;" onclick="event.stopPropagation();">
+            <div style="font-size:11px; color:#9E9E9E; margin-bottom:6px;">Reportar resultado:</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
+                <button onclick="actualizarEstatusCita('${c.id}', 'No asistió')" style="background:#EF444420; border:1px solid #EF4444; color:#EF4444; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; flex:1;">✕ No asistió</button>
+                <button onclick="abrirModalVenta('${c.id}')" style="background:#3B82F620; border:1px solid #3B82F6; color:#3B82F6; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer; flex:1;">💰 Venta</button>
             </div>
         </div>
         `;
@@ -2707,12 +2707,12 @@ function generarCardCitaHTML(c, isAd, isHistory) {
         const currentName = window.currentUser?.nombre || currentUser;
         if(isAd) {
             adminBtns = `
-            <button onclick="event.stopPropagation(); abrirModalEditarCita('${cDataStr}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Editar" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">✏️</button>
-            <button onclick="event.stopPropagation(); confirmarEliminarCita('${c.id}')" style="background:#1C1D24; border:1px solid #1E232B; color:#EF4444; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Borrar" onmouseover="this.style.borderColor='#EF444480'" onmouseout="this.style.borderColor='#1E232B'">🗑️</button>
+            <button onclick="event.stopPropagation(); abrirModalEditarCita('${cDataStr}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:0; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; font-size:12px;" title="Editar" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">✏️</button>
+            <button onclick="event.stopPropagation(); confirmarEliminarCita('${c.id}')" style="background:#1C1D24; border:1px solid #1E232B; color:#EF4444; padding:0; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; font-size:12px;" title="Borrar" onmouseover="this.style.borderColor='#EF444480'" onmouseout="this.style.borderColor='#1E232B'">🗑️</button>
             `;
         } else if ((c.asesor || '').trim().toLowerCase() === (currentName || '').trim().toLowerCase()) {
             adminBtns = `
-            <button onclick="event.stopPropagation(); abrirModalSeguimientoCita('${cDataStr}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:bold;" title="Dar seguimiento" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">📝 Dar seguimiento</button>
+            <button onclick="event.stopPropagation(); abrirModalSeguimientoCita('${cDataStr}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:6px 10px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:4px; font-size:11px; font-weight:bold;" title="Dar seguimiento" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">📝 Dar seguimiento</button>
             `;
         }
     }
@@ -2721,34 +2721,34 @@ function generarCardCitaHTML(c, isAd, isHistory) {
     let nombreTxt = c.nombre || c.prospecto || 'Sin nombre';
 
     return `
-    <div style="background:#13151A; border:1px solid #1E232B; padding:20px; padding-left:26px; border-radius:16px; color:#F7F1E8; box-shadow:0 10px 25px rgba(0,0,0,0.5); position:relative; overflow:hidden; transition:0.2s; cursor:pointer;" 
+    <div style="background:#13151A; border:1px solid #1E232B; padding:12px 16px; border-radius:12px; color:#F7F1E8; box-shadow:0 8px 20px rgba(0,0,0,0.4); position:relative; overflow:hidden; transition:0.2s; cursor:pointer;" 
          onmouseover="this.style.borderColor='${color}80'" 
          onmouseout="this.style.borderColor='#1E232B'"
          onclick="if(!event.target.closest('button') && !event.target.closest('a')) abrirModalSeguimientoCita('${cDataStr}')">
         
         <!-- Barra acentuada lateral con el color del asesor -->
-        <div style="background:${color}; position:absolute; left:0; top:0; bottom:0; width:6px;"></div>
+        <div style="background:${color}; position:absolute; left:0; top:0; bottom:0; width:4px;"></div>
         
         <!-- Fila de estatus y badges -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:${estatusColor}; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:${estatusColor}; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
                 ${calendarSvg}
                 <span>Cita ${est}</span>
             </div>
-            <div style="display:flex; gap:6px; align-items:center;">
+            <div style="display:flex; gap:4px; align-items:center;">
                 ${badge}
             </div>
         </div>
         
         <!-- Fila del Prospecto y la Fecha/Hora -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px;">
-            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
-                <div style="background:${color}; color:#ffffff; display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; font-size:16px; font-weight:700; flex-shrink:0; box-shadow:0 2px 8px ${color}30;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;">
+            <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
+                <div style="background:${color}; color:#ffffff; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; font-size:13px; font-weight:700; flex-shrink:0; box-shadow:0 2px 6px ${color}30;">
                     ${initials}
                 </div>
                 <div style="display:flex; flex-direction:column; min-width:0;">
-                    <h3 style="font-family:'Inter', sans-serif; font-size:18px; font-weight:700; color:#F7F1E8; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.2;">${nombreTxt}</h3>
-                    <div style="font-size:13px; color:#9E9E9E; display:flex; align-items:center; margin-top:4px; gap:4px;">
+                    <h3 style="font-family:'Inter', sans-serif; font-size:15px; font-weight:700; color:#F7F1E8; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.2;">${nombreTxt}</h3>
+                    <div style="font-size:11px; color:#9E9E9E; display:flex; align-items:center; margin-top:2px; gap:4px;">
                         ${userSvg}
                         <span>Asesor: <b style="color:${color};">${c.asesor || 'Sin asignar'}</b></span>
                     </div>
@@ -2756,16 +2756,16 @@ function generarCardCitaHTML(c, isAd, isHistory) {
             </div>
             
             <!-- Línea de separación vertical -->
-            <div style="border-left:1px solid #1E232B; height:44px; margin:0 4px; flex-shrink:0;"></div>
+            <div style="border-left:1px solid #1E232B; height:32px; margin:0 4px; flex-shrink:0;"></div>
             
             <!-- Fecha y Hora -->
-            <div style="display:flex; flex-direction:column; align-items:flex-start; min-width:95px; flex-shrink:0;">
-                <div style="color:#F7F1E8; font-weight:700; font-size:13px; display:flex; align-items:center; gap:4px; font-family:'Inter', sans-serif;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8924A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+            <div style="display:flex; flex-direction:column; align-items:flex-start; min-width:85px; flex-shrink:0;">
+                <div style="color:#F7F1E8; font-weight:700; font-size:11px; display:flex; align-items:center; gap:4px; font-family:'Inter', sans-serif;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B8924A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
                     <span>${fechaBonita}</span>
                 </div>
-                <div style="color:#9E9E9E; font-size:12px; font-weight:600; display:flex; align-items:center; gap:4px; margin-top:4px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div style="color:#9E9E9E; font-size:11px; font-weight:600; display:flex; align-items:center; gap:4px; margin-top:2px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     <span>${horaBonita}</span>
                 </div>
             </div>
@@ -2773,21 +2773,19 @@ function generarCardCitaHTML(c, isAd, isHistory) {
         
         <!-- Fila de Desarrollo / Proyecto -->
         ${desarrolloTxt ? `
-        <div style="display:flex; align-items:center; color:#9E9E9E; font-size:13px; font-weight:500; margin-bottom:12px; gap:4px;">
+        <div style="display:flex; align-items:center; color:#9E9E9E; font-size:11px; font-weight:500; margin-bottom:8px; gap:4px;">
             ${buildingSvg}
             <span>Proyecto: <b style="color:#F7F1E8;">${desarrolloTxt}</b></span>
         </div>
         ` : ''}
         
-
-        
         <!-- Fila de Teléfono y Botones de Acción -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
-            <div style="display:flex; align-items:center; color:#9E9E9E; font-size:13px; font-weight:600; gap:4px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+            <div style="display:flex; align-items:center; color:#9E9E9E; font-size:11px; font-weight:600; gap:4px;">
                 ${phoneSvg}
                 <span>${c.telefono || 'Sin teléfono'}</span>
             </div>
-            <div style="display:flex; gap:8px; align-items:center;">
+            <div style="display:flex; gap:6px; align-items:center;">
                 ${waBtn}
                 ${copyBtn}
                 ${adminBtns}
