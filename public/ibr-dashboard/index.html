@@ -2610,11 +2610,11 @@ En breve se pondrá en contacto con usted para confirmar los detalles de su visi
 
 En breve se pondrá en contacto para confirmar los detalles de su cita.`;
     } else {
-        // Mensaje de confirmación del Asesor propio (Personal y sin mencionar IBR - con pregunta final)
+        // Mensaje de confirmación del Asesor propio (Personal, sin mencionar IBR y tratando de usted)
         const clienteNombre = c.nombre || c.prospecto || 'cliente';
-        let saludo = `Hola ${clienteNombre}, excelente día. Te saluda ${asesor}, tu asesor inmobiliario.
+        let saludo = `Hola ${clienteNombre}, excelente día. Le saluda ${asesor}, su asesor inmobiliario.
 
-Te confirmo nuestra cita programada`;
+Le confirmo nuestra cita programada`;
         if (fechaStr) {
             saludo += ` para el ${fechaStr}`;
             if (horaStr) saludo += ` a las ${horaStr}`;
@@ -2623,7 +2623,7 @@ Te confirmo nuestra cita programada`;
         }
         saludo += `. 🏡🌿
 
-¿Me confirmas por favor si todo está en orden para recibirte? Quedo a tus órdenes. 😊`;
+¿Me confirma por favor si todo está en orden para recibirle? Quedo a sus órdenes. 😊`;
         return saludo;
     }
 }
