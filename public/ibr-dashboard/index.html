@@ -309,15 +309,7 @@
         
         <div style="margin-bottom:12px;">
             <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Proyecto / Desarrollo</label>
-            <div id="nc-select-container">
-                <select id="nc-desarrollo" onchange="handleDesarrolloChange('nc')" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                    <!-- Populated dynamically -->
-                </select>
-            </div>
-            
-            <div id="nc-manual-container" style="display:none; margin-top:8px;">
-                <input type="text" id="nc-desarrollo-manual" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-            </div>
+            <input type="text" id="nc-desarrollo" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
         </div>
         
         <div style="margin-bottom:12px;">
@@ -394,15 +386,7 @@
         
         <div style="margin-bottom:12px;">
             <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Proyecto / Desarrollo</label>
-            <div id="ec-select-container">
-                <select id="ec-desarrollo" onchange="handleDesarrolloChange('ec')" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                    <!-- Populated dynamically -->
-                </select>
-            </div>
-            
-            <div id="ec-manual-container" style="display:none; margin-top:8px;">
-                <input type="text" id="ec-desarrollo-manual" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-            </div>
+            <input type="text" id="ec-desarrollo" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
         </div>
         
         <div style="margin-bottom:12px;">
@@ -2889,11 +2873,7 @@ function abrirModalNuevaCita() {
     document.getElementById('nc-medio').value = '';
     document.getElementById('nc-interes').value = '';
     document.getElementById('nc-seguimiento').value = '';
-    document.getElementById('nc-desarrollo-manual').value = '';
-    
-    handleDesarrolloChange('nc');
-    
-    cargarDesarrollosDropdown('nc-desarrollo');
+    document.getElementById('nc-desarrollo').value = '';
 }
 
 function cerrarModalNuevaCita() {
@@ -2906,8 +2886,7 @@ function guardarNuevaCita() {
     const btn = document.getElementById('btn-submit-cita');
     const fecha = document.getElementById('nc-fecha').value;
     const asesor = document.getElementById('nc-asesor').value;
-    const desarrolloSelect = document.getElementById('nc-desarrollo').value;
-    const desarrollo = desarrolloSelect === 'Otro' ? document.getElementById('nc-desarrollo-manual').value.trim() : desarrolloSelect;
+    const desarrollo = document.getElementById('nc-desarrollo').value.trim();
     const nombre = document.getElementById('nc-nombre').value;
     const telefono = document.getElementById('nc-telefono').value;
     const obs = document.getElementById('nc-obs').value;
@@ -2996,18 +2975,7 @@ function abrirModalEditarCita(cDataStr) {
     document.getElementById('ec-medio').value = c.medio_contacto || '';
     document.getElementById('ec-interes').value = c.interes || '';
     document.getElementById('ec-seguimiento').value = c.seguimiento || '';
-    document.getElementById('ec-desarrollo-manual').value = '';
-    
-    cargarDesarrollosDropdown('ec-desarrollo', c.desarrollo || c.proyecto || '', function(loadedNames) {
-        const devVal = c.desarrollo || c.proyecto || '';
-        if (loadedNames.includes(devVal) || devVal === 'Otro' || devVal === 'Cita personal' || !devVal) {
-            document.getElementById('ec-desarrollo').value = devVal || 'Otro';
-        } else {
-            document.getElementById('ec-desarrollo').value = 'Otro';
-            document.getElementById('ec-desarrollo-manual').value = devVal;
-        }
-        handleDesarrolloChange('ec');
-    });
+    document.getElementById('ec-desarrollo').value = c.desarrollo || c.proyecto || '';
 }
 
 function cerrarModalEditarCita() {
@@ -3020,8 +2988,7 @@ function guardarEdicionCita() {
     const id = document.getElementById('ec-id').value;
     const fecha = document.getElementById('ec-fecha').value;
     const asesor = document.getElementById('ec-asesor').value;
-    const desarrolloSelect = document.getElementById('ec-desarrollo').value;
-    const desarrollo = desarrolloSelect === 'Otro' ? document.getElementById('ec-desarrollo-manual').value.trim() : desarrolloSelect;
+    const desarrollo = document.getElementById('ec-desarrollo').value.trim();
     const nombre = document.getElementById('ec-nombre').value;
     const telefono = document.getElementById('ec-telefono').value;
     const obs = document.getElementById('ec-obs').value;
