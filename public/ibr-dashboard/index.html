@@ -2522,9 +2522,9 @@ function cbCitas(data) {
         return;
     }
     
-    citasData = Array.isArray(data) ? data : (data.citas || data.datos || []);
+    const rawCitas = Array.isArray(data) ? data : (data.citas || data.datos || []);
     
-    citasData = citasData.map(c => {
+    citasData = rawCitas.map(c => {
         let f = c.fecha || c.date || '';
         let h = c.hora || c.time || '';
         
@@ -2562,6 +2562,46 @@ function cbCitas(data) {
     renderCitasUI();
 }
 
+function getWhatsAppMessageForCita(c, isAd) {
+    const asesor = c.asesor || '';
+    const nameClean = asesor.trim().toLowerCase();
+    
+    // Formatear fecha y hora para el mensaje de confirmación
+    let fechaStr = '';
+    if (c.fecha) {
+        const parts = c.fecha.split('-');
+        if (parts.length === 3) {
+            fechaStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        } else {
+            fechaStr = c.fecha;
+        }
+    }
+    const horaStr = c.hora || '';
+    
+    if (isAd) {
+        if (nameClean.includes('luis') && nameClean.includes('garc')) {
+            return `Le atenderá Luis García, uno de nuestros asesores inmobiliarios autorizados 😊\n\nAquí puede conocerlo y guardar su contacto directo 👉\nhttps://propiedadesenchiapas.com/luis-garcia-asesor-inmobiliario-de-ibr/\n\nEn breve se pondrá en contacto para confirmar los detalles de su cita.`;
+        }
+        if (nameClean.includes('carmen') || (nameClean.includes('jim') && nameClean.includes('nez'))) {
+            return `Le atenderá Carmen Jiménez, una de nuestras asesoras inmobiliarias autorizadas 😊\n\nAquí puede conocerla y guardar su contacto directo 👉\n🔗 https://propiedadesenchiapas.com/carmen-jimenez-asesor-inmobiliario-de-ibr/\n\nEn breve ella se pondrá a sus órdenes para darle el seguimiento y los detalles de la visita. Buenos días le confirmamos su cita para mañana. 🏡🌿`;
+        }
+        if (nameClean.includes('lup') || nameClean.includes('mendoza')) {
+            return `Le atenderá Lupyta Mendoza, una de nuestras asesoras inmobiliarias autorizadas, quien le brindará toda la información sobre el desarrollo y le mostrará las ubicaciones disponibles.\n\nPuede conocerla y guardar su contacto directo aquí:\nhttps://propiedadesenchiapas.com/lupyta-mendoza-asesor-inmobiliario-ibr/\n\nEn breve se pondrá en contacto con usted para confirmar los últimos detalles de su visita.\n\nGracias por su confianza. Será un gusto recibirle. 🙌😊`;
+        }
+        return `Le atenderá ${asesor}, uno de nuestros asesores inmobiliarios autorizados 😊\n\nEn breve se pondrá en contacto para confirmar los detalles de su cita.`;
+    } else {
+        let saludo = `Buenos días, le saludamos de IBR Inmobiliaria. Le confirmamos su cita programada`;
+        if (fechaStr) {
+            saludo += ` para el ${fechaStr}`;
+            if (horaStr) saludo += ` a las ${horaStr}`;
+        } else {
+            saludo += ` según lo agendado`;
+        }
+        saludo += `. 🏡🌿\n\nLe atenderá ${asesor}, asesor inmobiliario autorizado.\n\nEn breve me pondré a sus órdenes para darle el seguimiento y los detalles de la visita. ¡Será un gusto recibirle! 😊`;
+        return saludo;
+    }
+}
+
 function generarCardCitaHTML(c, isAd, isHistory) {
     const cDataStr = encodeURIComponent(JSON.stringify(c));
     let numStr = (c.telefono||'').replace(/\D/g, '');
@@ -2584,13 +2624,15 @@ function generarCardCitaHTML(c, isAd, isHistory) {
     const buildingSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>`;
     const phoneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
     const waSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.454 5.709 1.455h.008c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
-
+    
     let waBtn = '';
     let copyBtn = '';
     if (numStr.length > 0) {
         let waNum = formatWhatsAppNumber(numStr);
         if (waNum) {
-            waBtn = `<a href="https://wa.me/${waNum}" target="_blank" style="background:linear-gradient(135deg, #22C55E 0%, #15803d 100%); color:#ffffff; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2); border:none; cursor:pointer;" onclick="event.stopPropagation();">${waSvg} WhatsApp</a>`;
+            const msg = getWhatsAppMessageForCita(c, isAd);
+            const waLink = msg ? `https://wa.me/${waNum}?text=${encodeURIComponent(msg)}` : `https://wa.me/${waNum}`;
+            waBtn = `<a href="${waLink}" target="_blank" style="background:linear-gradient(135deg, #22C55E 0%, #15803d 100%); color:#ffffff; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2); border:none; cursor:pointer;" onclick="event.stopPropagation();">${waSvg} WhatsApp</a>`;
         } else {
             waBtn = `<button disabled style="background:#1C1D24; color:#666666; border:1px solid #22252C; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; cursor:not-allowed; display:inline-flex; align-items:center; gap:6px;" title="Número incompleto o incorrecto">💬 Incompleto</button>`;
         }
@@ -2651,8 +2693,6 @@ function generarCardCitaHTML(c, isAd, isHistory) {
 
     let desarrolloTxt = c.desarrollo || c.proyecto || '';
     let nombreTxt = c.nombre || c.prospecto || 'Sin nombre';
-    let obsTxt = c.observaciones || c.comentarios || '';
-    let obsTxtCleaned = limpiarObservaciones(obsTxt, nombreTxt, c.telefono);
 
     return `
     <div style="background:#13151A; border:1px solid #1E232B; padding:20px; padding-left:26px; border-radius:16px; color:#F7F1E8; box-shadow:0 10px 25px rgba(0,0,0,0.5); position:relative; overflow:hidden; transition:0.2s; cursor:pointer;" 
