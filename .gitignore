@@ -6,3 +6,5 @@ wpresidence_original/
 wpresidence_child_original/
 landings_originales/
 .vercel
+# Archivos sensibles retirados de public/ — nunca subir a Git
+security-quarantine/

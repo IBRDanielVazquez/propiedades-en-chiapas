@@ -71,6 +71,15 @@
           "value": "noindex, nofollow"
         }
       ]
+    },
+    {
+      "source": "/ibr-dashboard/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
     }
   ],
   "rewrites": [

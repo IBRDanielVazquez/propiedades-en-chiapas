@@ -5,7 +5,21 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // Ignorar artefactos generados, backups y código de terceros:
+  // el lint solo debe revisar la fuente mantenida (src/)
+  globalIgnores([
+    'dist',
+    '.vercel',
+    'wpresidence_original',
+    'wpresidence_child_original',
+    'landings_originales',
+    'security-quarantine',
+    'scratch',
+    'public',
+    '**/*.bak*',
+    '**/*backup*',
+    '**/*.min.js',
+  ]),
   {
     files: ['**/*.{js,jsx}'],
     extends: [
@@ -17,5 +31,11 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+  },
+  // Scripts de utilidad/deploy en la raíz corren en Node, no en navegador
+  // (va después del bloque general para que sus globals tengan prioridad)
+  {
+    files: ['*.js', 'scripts/**/*.js'],
+    languageOptions: { globals: globals.node },
   },
 ])

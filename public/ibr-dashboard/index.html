@@ -74,7 +74,12 @@
 
     </style>
 </head>
-<body class="text-gray-800 w-full overflow-x-hidden">
+<body class="text-gray-800 w-full overflow-x-hidden" data-ibr-build="IBR-CITAS-PROXY-20260710-A">
+<script>
+    // Identificador de versión para confirmar qué build está sirviendo producción
+    window.IBR_BUILD_ID = 'IBR-CITAS-PROXY-20260710-A';
+    console.info('[IBR]', window.IBR_BUILD_ID);
+</script>
 
 <!-- ═══════════════════════════════════════════
      PANTALLA DE LOGIN CON PIN
@@ -275,6 +280,7 @@
         <option value="Lupyta Mendoza">Lupyta Mendoza</option>
         <option value="Carmen Jiménez">Carmen Jiménez</option>
         <option value="Luis García">Luis García</option>
+        <option value="Por confirmar">Por confirmar</option>
     </select>
 </div>
 <div id="citas-status" style="color:#9E9E9E; text-align:center; padding:40px; font-size:14px; font-weight:500;">Cargando citas...</div>
@@ -297,27 +303,19 @@
                 <option value="Lupyta Mendoza">Lupyta Mendoza</option>
                 <option value="Carmen Jiménez">Carmen Jiménez</option>
                 <option value="Luis García">Luis García</option>
+                <option value="Por confirmar">Por confirmar</option>
             </select>
         </div>
         
         <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:6px;">¿Es cita para un desarrollo?</label>
-            <div style="display:flex; gap:12px; margin-bottom:8px;">
-                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
-                    <input type="radio" name="nc-es-desarrollo" value="si" checked onchange="toggleDesarrolloInput('nc')" style="accent-color:#B8924A;"> Sí
-                </label>
-                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
-                    <input type="radio" name="nc-es-desarrollo" value="no" onchange="toggleDesarrolloInput('nc')" style="accent-color:#B8924A;"> No
-                </label>
-            </div>
-            
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Proyecto / Desarrollo</label>
             <div id="nc-select-container">
-                <select id="nc-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                <select id="nc-desarrollo" onchange="handleDesarrolloChange('nc')" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
                     <!-- Populated dynamically -->
                 </select>
             </div>
             
-            <div id="nc-manual-container" style="display:none;">
+            <div id="nc-manual-container" style="display:none; margin-top:8px;">
                 <input type="text" id="nc-desarrollo-manual" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
             </div>
         </div>
@@ -390,27 +388,19 @@
                 <option value="Lupyta Mendoza">Lupyta Mendoza</option>
                 <option value="Carmen Jiménez">Carmen Jiménez</option>
                 <option value="Luis García">Luis García</option>
+                <option value="Por confirmar">Por confirmar</option>
             </select>
         </div>
         
         <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:6px;">¿Es cita para un desarrollo?</label>
-            <div style="display:flex; gap:12px; margin-bottom:8px;">
-                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
-                    <input type="radio" name="ec-es-desarrollo" value="si" checked onchange="toggleDesarrolloInput('ec')" style="accent-color:#B8924A;"> Sí
-                </label>
-                <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#F7F1E8;">
-                    <input type="radio" name="ec-es-desarrollo" value="no" onchange="toggleDesarrolloInput('ec')" style="accent-color:#B8924A;"> No
-                </label>
-            </div>
-            
+            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Proyecto / Desarrollo</label>
             <div id="ec-select-container">
-                <select id="ec-desarrollo" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
+                <select id="ec-desarrollo" onchange="handleDesarrolloChange('ec')" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
                     <!-- Populated dynamically -->
                 </select>
             </div>
             
-            <div id="ec-manual-container" style="display:none;">
+            <div id="ec-manual-container" style="display:none; margin-top:8px;">
                 <input type="text" id="ec-desarrollo-manual" placeholder="Escribe el nombre del desarrollo/evento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
             </div>
         </div>
@@ -466,76 +456,170 @@
     </div>
 </div>
 
-<!-- Modal Seguimiento Cita (Asesor) -->
-<div id="modal-seguimiento-cita" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99999; justify-content:center; align-items:center; padding:16px;">
-    <div style="background:#1E1E1E; border:1px solid #333333; border-radius:16px; width:100%; max-width:400px; padding:24px; color:#F7F1E8; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto;">
-        <h3 style="color:#B8924A; font-family:'Cormorant Garamond', serif; font-size:24px; font-weight:bold; margin-bottom:16px;">Dar Seguimiento a Cita</h3>
+<!-- Modal Seguimiento Cita (Asesor - Rediseño Premium) -->
+<div id="modal-seguimiento-cita" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center; padding:16px;">
+    <div style="background:#111317; border:1px solid #22252C; border-radius:20px; width:100%; max-width:650px; color:#E5E7EB; position:relative; box-shadow:0 15px 35px rgba(0,0,0,0.6); max-height:95vh; overflow-y:auto; display:flex; flex-direction:column; font-family:'Inter', sans-serif;">
+        
+        <!-- Header Banner (Dynamic status background) -->
+        <div id="sc-header-banner" style="background:linear-gradient(90deg, #4A1212 0%, #161B22 100%); border-left:6px solid #DC2626; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; border-top-left-radius:18px; border-top-right-radius:18px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <div style="background:#EF444420; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid #EF444450;">
+                    <!-- Handshake / Calendar SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                    <div id="sc-txt-banner-status" style="font-size:18px; font-weight:900; color:#FFFFFF; tracking-widest:1px;">CITA PROGRAMADA</div>
+                    <div style="font-size:10px; color:#9CA3AF; text-transform:uppercase; font-weight:700; margin-top:2px;">Detalle CRM</div>
+                </div>
+            </div>
+            <button onclick="cerrarModalSeguimientoCita()" style="background:none; border:none; color:#9CA3AF; cursor:pointer; font-size:24px; font-weight:bold; line-height:1;">&times;</button>
+        </div>
+
+        <!-- Profiles Section -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 24px; border-bottom:1px solid #1E232B; background:#0E1013; flex-wrap:wrap; gap:16px;">
+            <div style="display:flex; gap:20px; flex-wrap:wrap; flex:1;">
+                <!-- Advisor Profile -->
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div id="sc-avatar-asesor" style="background:#A855F7; color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; position:relative;">
+                        AS
+                    </div>
+                    <div>
+                        <div style="font-size:10px; color:#9CA3AF; font-weight:700;">ASESOR</div>
+                        <div id="sc-lbl-asesor" style="font-size:14px; font-weight:700; color:#F9FAFB;">-</div>
+                    </div>
+                </div>
+                
+                <!-- Client Profile -->
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div id="sc-avatar-cliente" style="background:#3B82F6; color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px;">
+                        CL
+                    </div>
+                    <div>
+                        <div style="font-size:10px; color:#9CA3AF; font-weight:700;">CLIENTE</div>
+                        <div id="sc-lbl-cliente" style="font-size:14px; font-weight:700; color:#F9FAFB;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Estatus Badge -->
+            <div style="text-align:right; flex-shrink:0;">
+                <div style="font-size:10px; color:#9CA3AF; font-weight:700; margin-bottom:4px;">ESTADO ACTUAL</div>
+                <div id="sc-badge-estatus" style="background:#22C55E20; color:#22C55E; border:1px solid #22C55E50; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:800; text-transform:uppercase; display:inline-flex; align-items:center; gap:4px;">
+                    <span>●</span> <span id="sc-txt-estatus">-</span>
+                </div>
+            </div>
+        </div>
+
         <input type="hidden" id="sc-id">
-        
-        <!-- Contexto de solo lectura -->
-        <div style="background:#2A2A2A40; border:1px solid #333333; padding:12px; border-radius:8px; margin-bottom:16px; font-size:13px; display:flex; flex-direction:column; gap:4px;">
-            <div>Prospecto: <b id="sc-txt-nombre" style="color:#F7F1E8;">-</b></div>
-            <div>Teléfono: <b id="sc-txt-telefono" style="color:#F7F1E8;">-</b></div>
-            <div>Desarrollo: <b id="sc-txt-desarrollo" style="color:#B8924A;">-</b></div>
-            <div>Asesor: <b id="sc-txt-asesor" style="color:#F7F1E8;">-</b></div>
-        </div>
 
-        <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha y Hora (Reagendar)</label>
-            <input type="datetime-local" id="sc-fecha" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
-        </div>
-        
-        <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Estatus</label>
-            <select id="sc-estatus" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                <option value="Programada">Programada</option>
-                <option value="Realizada">Realizada</option>
-                <option value="Venta">Venta</option>
-                <option value="Cancelada">Cancelada</option>
-                <option value="No asistió">No asistió</option>
-            </select>
-        </div>
-
-        <div style="margin-bottom:12px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Comentarios / Notas de seguimiento</label>
-            <textarea id="sc-obs" rows="3" placeholder="Añade notas del seguimiento..." style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; resize:none;"></textarea>
-        </div>
-
-        <div style="margin-bottom:12px; display:flex; gap:12px;">
-            <div style="flex:1;">
-                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Medio de Contacto</label>
-                <select id="sc-medio" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                    <option value="">Seleccionar...</option>
-                    <option value="Facebook">Facebook</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="WhatsApp">WhatsApp</option>
-                    <option value="TikTok">TikTok</option>
-                    <option value="Llamada">Llamada</option>
-                    <option value="Recomendado">Recomendado</option>
-                    <option value="Otro">Otro</option>
-                </select>
+        <!-- Grid of Editable Fields -->
+        <div style="padding:20px 24px; display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; background:#111317;">
+            <div>
+                <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Fecha y Hora</label>
+                <div style="position:relative;">
+                    <input type="datetime-local" id="sc-fecha" style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; color-scheme:dark; font-size:13px; font-weight:600; box-shadow:inset 0 1px 2px rgba(0,0,0,0.2);">
+                </div>
             </div>
-            <div style="flex:1;">
-                <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Nivel de Interés</label>
-                <select id="sc-interes" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none;">
-                    <option value="">Seleccionar...</option>
-                    <option value="Frío">Frío ❄️</option>
-                    <option value="Tibio">Tibio 🔥</option>
-                    <option value="Caliente">Caliente 🌶️</option>
-                </select>
+            
+            <div>
+                <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Proyecto / Desarrollo</label>
+                <div id="sc-select-container">
+                    <select id="sc-desarrollo" style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; font-size:13px; font-weight:600; color-scheme:dark;"></select>
+                </div>
+            </div>
+            
+            <div>
+                <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Teléfono Prospecto</label>
+                <input type="tel" id="sc-telefono" style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; font-size:13px; font-weight:600; box-shadow:inset 0 1px 2px rgba(0,0,0,0.2);">
+            </div>
+            
+            <div style="display:flex; gap:12px;">
+                <div style="flex:1;">
+                    <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Medio de Contacto</label>
+                    <select id="sc-medio" style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; font-size:13px; font-weight:600; color-scheme:dark;">
+                        <option value="">Seleccionar...</option>
+                        <option value="Facebook">Facebook</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="TikTok">TikTok</option>
+                        <option value="Llamada">Llamada</option>
+                        <option value="Recomendado">Recomendado</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div style="flex:1;">
+                    <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Nivel Interés</label>
+                    <select id="sc-interes" style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; font-size:13px; font-weight:600; color-scheme:dark;">
+                        <option value="">Seleccionar...</option>
+                        <option value="Frío">Frío ❄️</option>
+                        <option value="Tibio">Tibio 🔥</option>
+                        <option value="Caliente">Caliente 🌶️</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Fecha de Seguimiento</label>
+                <input type="date" id="sc-seguimiento" style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; color-scheme:dark; font-size:13px; font-weight:600; box-shadow:inset 0 1px 2px rgba(0,0,0,0.2);">
+            </div>
+            
+            <div style="grid-column:1 / -1;">
+                <label style="display:block; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Observaciones y Notas</label>
+                <textarea id="sc-obs" rows="3" placeholder="Añade notas del seguimiento..." style="width:100%; background:#1C1E24; border:1px solid #2A2E35; color:#F9FAFB; padding:10px 12px; border-radius:8px; outline:none; font-size:13px; font-weight:600; resize:none; box-shadow:inset 0 1px 2px rgba(0,0,0,0.2);"></textarea>
             </div>
         </div>
-        
-        <div style="margin-bottom:20px;">
-            <label style="display:block; font-size:12px; color:#9E9E9E; margin-bottom:4px;">Fecha de Seguimiento</label>
-            <input type="date" id="sc-seguimiento" style="width:100%; background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:10px; border-radius:8px; outline:none; color-scheme:dark;">
+
+        <!-- Resultado de la Cita (Interactive button panel) -->
+        <div style="padding:0 24px 20px 24px; background:#111317; border-bottom:1px solid #1E232B;">
+            <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:#9CA3AF; font-weight:700; text-transform:uppercase; margin-bottom:10px; letter-spacing:0.5px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <span>Resultado de la Cita</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                <button onclick="guardarEstatusCitaDirecto('Realizada')" style="background:#132519; border:1px solid #22C55E50; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#163820'" onmouseout="this.style.background='#132519'">✓ Realizada</button>
+                <button onclick="guardarEstatusCitaDirecto('No asistió')" style="background:#2C1313; border:1px solid #EF444450; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#3F1A1A'" onmouseout="this.style.background='#2C1313'">✕ No asistió</button>
+                <button onclick="guardarEstatusCitaDirecto('Cita falsa')" style="background:#1F1116; border:1px solid #EC489950; color:#EC4899; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#2D1621'" onmouseout="this.style.background='#1F1116'">⚠️ Cita Falsa</button>
+                <button onclick="abrirModalVenta(document.getElementById('sc-id').value); cerrarModalSeguimientoCita();" style="background:#131B2E; border:1px solid #3B82F650; color:#3B82F6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#1D2A4A'" onmouseout="this.style.background='#131B2E'">💰 Registrar Venta</button>
+                <button onclick="guardarEstatusCitaDirecto('Por confirmar')" style="background:#0F2324; border:1px solid #14B8A650; color:#14B8A6; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#16383A'" onmouseout="this.style.background='#0F2324'">⏳ Por Confirmar</button>
+                <button onclick="guardarEstatusCitaDirecto('Cancelada')" style="background:#1F2128; border:1px solid #9CA3AF50; color:#9CA3AF; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#2D303A'" onmouseout="this.style.background='#1F2128'">🚫 Cancelar Cita</button>
+                <button onclick="document.getElementById('sc-fecha').focus();" style="background:#1E1B29; border:1px solid #8B5CF650; color:#A78BFA; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#2D2741'" onmouseout="this.style.background='#1E1B29'">📅 Reagendar</button>
+            </div>
         </div>
-        
-        <div style="display:flex; gap:12px;">
-            <button onclick="cerrarModalSeguimientoCita()" style="flex:1; background:#2A2A2A; color:#F7F1E8; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Cancelar</button>
-            <button id="btn-submit-seguimiento-cita" onclick="guardarSeguimientoCita()" style="flex:1; background:#B8924A; color:#141414; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;">Guardar</button>
+
+        <!-- Funnel Stepper Line -->
+        <div style="padding:20px 24px; background:#0E1013; border-bottom:1px solid #1E232B;">
+            <div id="sc-stepper-container" style="display:flex; justify-content:space-between; align-items:center; position:relative; width:100%; overflow-x:auto; padding-bottom:8px;">
+                <!-- Stepper generated dynamically -->
+            </div>
         </div>
+
+        <!-- Footer Action row -->
+        <div style="padding:16px 24px; display:flex; justify-content:space-between; align-items:center; background:#111317; border-bottom-left-radius:18px; border-bottom-right-radius:18px; flex-wrap:wrap; gap:12px;">
+            <!-- Left Actions: Phone options -->
+            <div style="display:flex; gap:8px;">
+                <a id="sc-btn-whatsapp" href="#" target="_blank" style="background:#163A20; border:1px solid #22C55E80; color:#22C55E; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='#1D4F2B'" onmouseout="this.style.background='#163A20'">
+                    💬 WhatsApp
+                </a>
+                <a id="sc-btn-llamar" href="#" style="background:#1C1E24; border:1px solid #2A2E35; color:#E5E7EB; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.borderColor='#9CA3AF'" onmouseout="this.style.borderColor='#2A2E35'">
+                    📞 Llamar
+                </a>
+                <button id="sc-btn-copiar" style="background:#1C1E24; border:1px solid #2A2E35; color:#E5E7EB; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.borderColor='#9CA3AF'" onmouseout="this.style.borderColor='#2A2E35'">
+                    📋 Copiar
+                </button>
+                <button id="sc-btn-eliminar" style="background:#2C1313; border:1px solid #EF444450; color:#EF4444; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='#3F1A1A'" onmouseout="this.style.background='#2C1313'">
+                    🗑️ Eliminar
+                </button>
+            </div>
+            
+            <!-- Right Actions: Save / Cancel -->
+            <div style="display:flex; gap:8px;">
+                <button onclick="cerrarModalSeguimientoCita()" style="background:#2A2A2A; color:#E5E7EB; padding:10px 20px; border-radius:8px; border:none; font-weight:bold; cursor:pointer; font-size:13px; transition:0.2s;" onmouseover="this.style.background='#3A3A3A'" onmouseout="this.style.background='#2A2A2A'">Cerrar</button>
+                <button id="btn-submit-seguimiento-cita" onclick="guardarSeguimientoCita()" style="background:#B8924A; color:#111317; padding:10px 20px; border-radius:8px; border:none; font-weight:bold; cursor:pointer; font-size:13px; transition:0.2s;" onmouseover="this.style.background='#D0A85C'" onmouseout="this.style.background='#B8924A'">Guardar Cambios</button>
+            </div>
+        </div>
+
     </div>
+</div>
 </div>
 
 <!-- Modal Venta -->
@@ -2176,8 +2260,8 @@ function populateSelects() {
         if(tab) {
             tab.style.display='block';
         if (targetId === 'leads') {
-            loadCitasJSONP();
-            if(!citasInterval) citasInterval = setInterval(loadCitasJSONP, 300000);
+            loadCitas();
+            if(!citasInterval) citasInterval = setInterval(loadCitas, 300000);
         } else {
             if(citasInterval) { clearInterval(citasInterval); citasInterval = null; }
         }
@@ -2269,20 +2353,181 @@ function setCitasFilter(f) {
     renderCitasUI();
 }
 
-function loadCitasJSONP() {
-    console.log('Cargando citas desde:', SCRIPT_URL + '?action=citas_sheet&callback=cbCitas');
+let citasCargando = false;        // candado: un solo intento activo a la vez
+let citasReintentos = 0;          // reintentos ya consumidos
+const CITAS_MAX_REINTENTOS = 2;   // 1 intento inicial + 2 reintentos = 3 intentos totales
+const CITAS_TIMEOUT_MS = 35000;   // tiempo máximo por intento
+let citasIntentoActual = 0;       // secuencia: un intento viejo nunca sobrescribe uno nuevo
+
+function mostrarErrorCitas(codigo) {
+    const status = document.getElementById('citas-status');
+    // No pisar las citas si ya están en pantalla; solo mostrar error si no hay datos
+    if(!status || citasData.length > 0) return;
+    status.innerHTML = '<div style="display:flex; flex-direction:column; align-items:center; gap:12px;">' +
+        '<span style="color:#EF4444; font-weight:bold;">No fue posible cargar las citas (' + codigo + ')</span>' +
+        '<button onclick="reintentarCitas()" style="background:#B8924A; color:#141414; border:none; padding:10px 24px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:13px;">🔄 Reintentar</button>' +
+        '</div>';
+}
+
+function reintentarCitas() {
+    citasReintentos = 0;
+    loadCitas();
+}
+
+function programarReintentoCitas(codigo) {
+    if(citasReintentos < CITAS_MAX_REINTENTOS) {
+        citasReintentos++;
+        setTimeout(loadCitas, 2000 * citasReintentos); // espera progresiva: 2s, luego 4s
+        return;
+    }
+    citasReintentos = 0;
+    mostrarErrorCitas(codigo);
+}
+
+// Carga de citas vía API interna del MISMO dominio (/api/ibr/citas).
+// El navegador ya NO se conecta a script.google.com: la función serverless
+// de Vercel consulta Google Apps Script del lado servidor y responde JSON normal.
+async function loadCitas() {
+    if(citasCargando) return; // un solo intento activo
+    citasCargando = true;
+    const idIntento = ++citasIntentoActual;
     const status = document.getElementById('citas-status');
     const container = document.getElementById('citas-container');
     if(status && container.innerHTML === '') {
         status.innerHTML = '<div style="display:flex; justify-content:center; align-items:center; gap:12px;"><div style="width:24px; height:24px; border:3px solid #333333; border-top-color:#B8924A; border-radius:50%; animation:spin 1s linear infinite;"></div><span>Sincronizando con Google Sheet...</span></div>';
     }
+
+    console.log('[CITAS-TRACK] Iniciando fetch en URL /api/ibr/citas/ (intento ' + (citasReintentos + 1) + ')');
+
+    const control = new AbortController();
+    let vencioTimeout = false;
+    const timer = setTimeout(function() { vencioTimeout = true; control.abort(); }, CITAS_TIMEOUT_MS);
+    let codigo = 'CITAS-P01'; 
+
+    try {
+        const resp = await fetch('/api/ibr/citas/', {
+            method: 'GET',
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+            signal: control.signal
+        });
+        console.log('[CITAS-TRACK] Respuesta de red recibida. Status:', resp.status);
+        codigo = 'CITAS-P03'; 
+        const data = await resp.json();
+        if(!resp.ok || data.ok !== true || !Array.isArray(data.datos)) {
+            if(data && data.ok === false) codigo = 'CITAS-P05'; 
+            throw new Error('respuesta inválida');
+        }
+        clearTimeout(timer);
+        if(idIntento !== citasIntentoActual) return;
+        citasReintentos = 0;
+        console.log('[CITAS-TRACK] Datos JSON parseados correctamente. Total:', data.total);
+        try {
+            cbCitas(data); 
+            console.log('[CITAS-TRACK] Renderizado completado con éxito.');
+        } catch(errRender) {
+            console.error('[CITAS-TRACK] Error al renderizar (CITAS-P04):', errRender && errRender.message);
+            mostrarErrorCitas('CITAS-P04');
+        }
+    } catch(err) {
+        clearTimeout(timer);
+        if(idIntento !== citasIntentoActual) return;
+        if(vencioTimeout) codigo = 'CITAS-P02'; 
+        console.error('[CITAS-TRACK] Fallo capturado (' + codigo + ') intento ' + (citasReintentos + 1) + ':', err);
+        programarReintentoCitas(codigo);
+    } finally {
+        if(idIntento === citasIntentoActual) citasCargando = false;
+    }
+}
+
+function parseFechaHora(str) {
+    if (!str) return null;
+    if (str.includes('T') || str.match(/^\d{4}-\d{2}-\d{2}/)) {
+        const d = new Date(str);
+        if (!isNaN(d.getTime())) {
+            return {
+                fecha: d.toISOString().split('T')[0],
+                hora: d.toTimeString().split(' ')[0].substring(0, 5)
+            };
+        }
+    }
+    const parts = str.split(/\s+/);
+    if (parts.length >= 5) {
+        const monthNames = {
+            'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06', 
+            'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12',
+            'ene': '01', 'abr': '04', 'ago': '08', 'dic': '12'
+        };
+        const monthStr = parts[1].toLowerCase().substring(0, 3);
+        const mm = monthNames[monthStr] || '01';
+        const dd = parts[2].padStart(2, '0');
+        const yyyy = parts[3];
+        const timeParts = parts[4].split(':');
+        const hh = (timeParts[0] || '00').padStart(2, '0');
+        const min = (timeParts[1] || '00').padStart(2, '0');
+        return {
+            fecha: `${yyyy}-${mm}-${dd}`,
+            hora: `${hh}:${min}`
+        };
+    }
+    return null;
+}
+
+function getAsesorColor(asesor) {
+    if (!asesor) return '#6B7280'; // gray
+    const name = asesor.trim().toLowerCase();
+    if (name.includes('daniel')) return '#A855F7'; // purple
+    if (name.includes('lupyta') || name.includes('lupita')) return '#EC4899'; // pink
+    if (name.includes('carmen')) return '#3B82F6'; // blue
+    if (name.includes('luis')) return '#F97316'; // orange
+    if (name.includes('confirmar')) return '#14B8A6'; // teal
+    return '#6B7280'; // default gray
+}
+
+function obtenerIniciales(nombre) {
+    if(!nombre) return 'C';
+    const parts = nombre.trim().split(/\s+/);
+    if(parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+    }
+    return nombre.substring(0, 2).toUpperCase();
+}
+
+function formatearFechaBonito(fechaStr) {
+    if (!fechaStr) return '';
+    const parts = fechaStr.split('-');
+    if (parts.length < 3) return fechaStr;
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const year = parts[0];
+    const monthIdx = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const monthName = months[monthIdx] || '';
+    return `${day.toString().padStart(2, '0')} ${monthName} ${year}`;
+}
+
+function limpiarObservaciones(obs, nombre, telefono) {
+    if (!obs) return '';
+    let cleaned = obs.trim();
     
-    const script = document.createElement('script');
-    script.src = SCRIPT_URL + '?action=citas_sheet&callback=cbCitas&t=' + Date.now();
-    script.onerror = function() {
-        if(status) status.innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al conectar con el servidor</span>';
-    };
-    document.body.appendChild(script);
+    // Quitar el nombre si está al inicio o es igual
+    if (nombre) {
+        const nomEscaped = nombre.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        cleaned = cleaned.replace(new RegExp('^' + nomEscaped, 'i'), '');
+    }
+    
+    // Quitar el teléfono y el prefijo de país (+52)
+    if (telefono) {
+        const cleanTel = telefono.replace(/\D/g, '');
+        if (cleanTel) {
+            cleaned = cleaned.replace(new RegExp('\\+?52?\\s*' + cleanTel.split('').join('\\s*'), 'g'), '');
+            cleaned = cleaned.replace(new RegExp(cleanTel.split('').join('\\s*'), 'g'), '');
+        }
+    }
+    
+    // Quitar caracteres sueltos sobrantes al inicio y al final
+    cleaned = cleaned.replace(/^[\s,;+\-\/|]+|[\s,;+\-\/|]+$/g, '').trim();
+    
+    return cleaned;
 }
 
 function cbCitas(data) {
@@ -2296,21 +2541,15 @@ function cbCitas(data) {
     citasData = Array.isArray(data) ? data : (data.citas || data.datos || []);
     
     citasData = citasData.map(c => {
-        // Parsear fecha_hora si viene en un solo campo
         let f = c.fecha || c.date || '';
         let h = c.hora || c.time || '';
         
         if(c.fecha_hora) {
-            try {
-                let d = new Date(c.fecha_hora);
-                if(!isNaN(d.getTime())) {
-                    f = d.toISOString().split('T')[0];
-                    h = d.toTimeString().split(' ')[0].substring(0,5);
-                } else {
-                    f = c.fecha_hora.split(' ')[0];
-                    h = c.fecha_hora.split(' ')[1] || '';
-                }
-            } catch(e) {
+            const parsed = parseFechaHora(c.fecha_hora);
+            if (parsed) {
+                f = parsed.fecha;
+                h = parsed.hora;
+            } else {
                 f = c.fecha_hora;
             }
         }
@@ -2340,55 +2579,67 @@ function cbCitas(data) {
 }
 
 function generarCardCitaHTML(c, isAd, isHistory) {
+    const cDataStr = encodeURIComponent(JSON.stringify(c));
     let numStr = (c.telefono||'').replace(/\D/g, '');
+    const color = getAsesorColor(c.asesor);
+    const initials = obtenerIniciales(c.nombre);
+    const fechaBonita = formatearFechaBonito(c.fecha) || 'Sin fecha';
+    const horaBonita = c.hora || '--:--';
+    
+    let est = c.estatus || c.estado || 'Programada';
+    let estatusColor = '#B8924A'; // default gold
+    if(est === 'Realizada') estatusColor = '#22C55E';
+    else if(est === 'No asistió') estatusColor = '#EF4444';
+    else if(est === 'Venta' || est === 'Venta Sí') estatusColor = '#3B82F6';
+    else if(est === 'Cancelada') estatusColor = '#9E9E9E';
+    else if(est === 'Cita falsa') estatusColor = '#DC2626';
+    else if(est === 'Por confirmar') estatusColor = '#14B8A6';
+
+    const calendarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${estatusColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>`;
+    const userSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+    const buildingSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>`;
+    const phoneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`;
+    const waSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block; vertical-align:middle; margin-right:4px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.454 5.709 1.455h.008c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+
     let waBtn = '';
     let copyBtn = '';
     if (numStr.length > 0) {
         let waNum = formatWhatsAppNumber(numStr);
         if (waNum) {
-            waBtn = `<a href="https://wa.me/${waNum}" target="_blank" style="background:#22C55E; color:#141414; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2);">💬 WhatsApp</a>`;
+            waBtn = `<a href="https://wa.me/${waNum}" target="_blank" style="background:linear-gradient(135deg, #22C55E 0%, #15803d 100%); color:#ffffff; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(0,0,0,0.2); border:none; cursor:pointer;" onclick="event.stopPropagation();">${waSvg} WhatsApp</a>`;
         } else {
-            waBtn = `<button disabled style="background:#2A2A2A; color:#666666; border:1px solid #333333; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; cursor:not-allowed; display:inline-flex; align-items:center; gap:6px;" title="Número incompleto o incorrecto">💬 Incompleto</button>`;
+            waBtn = `<button disabled style="background:#1C1D24; color:#666666; border:1px solid #22252C; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:bold; cursor:not-allowed; display:inline-flex; align-items:center; gap:6px;" title="Número incompleto o incorrecto">💬 Incompleto</button>`;
         }
-        copyBtn = `<button onclick="copiarNumero('${c.telefono}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:6px;" title="Copiar número">📋 Copiar</button>`;
+        copyBtn = `<button onclick="event.stopPropagation(); copiarNumero('${c.telefono}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; display:inline-flex; align-items:center; gap:6px;" title="Copiar número" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">📋 Copiar</button>`;
     }
 
-    let asesorTag = isAd ? `<div style="font-size:10px; color:#B8924A; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; border-bottom:1px solid #333333; padding-bottom:6px; font-weight:bold;">👤 Asesor: ${c.asesor}</div>` : '';
-    
-    let estatusColor = '#B8924A'; // Programada
-    let est = c.estatus || c.estado || 'Programada';
-    if(est === 'Realizada') estatusColor = '#22C55E';
-    if(est === 'No asistió') estatusColor = '#EF4444';
-    if(est === 'Venta' || est === 'Venta Sí') estatusColor = '#3B82F6';
-    if(est === 'Cancelada') estatusColor = '#9E9E9E';
-
-    let badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">${est}</span>`;
-
-    let hoyBadge = '';
-    let vencidaBadge = '';
-    if (c.fecha_hora) {
-        let fDate = new Date(c.fecha_hora);
+    let isToday = false;
+    let isVencida = false;
+    if (c.fecha) {
         let now = new Date();
-        let isToday = (fDate.getDate() === now.getDate() && fDate.getMonth() === now.getMonth() && fDate.getFullYear() === now.getFullYear());
-        if (isToday) {
-            hoyBadge = `<span style="background:#B8924A; color:#141414; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">HOY</span>`;
-        } else if (fDate < now && est === 'Programada') {
-            vencidaBadge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">VENCIDA</span>`;
+        let todayStr = now.toISOString().split('T')[0];
+        let fDate = new Date(c.fecha + 'T' + (c.hora || '00:00'));
+        isToday = (c.fecha === todayStr);
+        if (!isNaN(fDate.getTime())) {
+            isVencida = (fDate < now && est === 'Programada');
+        } else {
+            isVencida = (c.fecha < todayStr && est === 'Programada');
         }
-    } else if (c.fecha) {
-        let now = new Date();
-        let todayStr = now.toISOString().split('T')[0]; // simple compare
-        if (c.fecha === todayStr) {
-            hoyBadge = `<span style="background:#B8924A; color:#141414; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">HOY</span>`;
-        } else if (c.fecha < todayStr && est === 'Programada') {
-            vencidaBadge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase; margin-left:8px;">VENCIDA</span>`;
-        }
+    }
+
+    let badge = '';
+    if (isToday) {
+        badge = `<span style="background:#B8924A; color:#141414; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">HOY</span>`;
+    } else if (isVencida) {
+        badge = `<span style="background:#EF4444; color:#FFFFFF; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">VENCIDA</span>`;
+    } else {
+        badge = `<span style="background:${estatusColor}20; color:${estatusColor}; border:1px solid ${estatusColor}; padding:2px 8px; border-radius:12px; font-size:10px; font-weight:bold; text-transform:uppercase;">${est}</span>`;
     }
 
     let actionBtns = '';
     if(!isAd && est === 'Programada' && !isHistory) {
         actionBtns = `
-        <div style="margin-top:16px; border-top:1px solid #333333; padding-top:12px;">
+        <div style="margin-top:16px; border-top:1px solid #1E232B; padding-top:12px;" onclick="event.stopPropagation();">
             <div style="font-size:12px; color:#9E9E9E; margin-bottom:8px;">Reportar resultado:</div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button onclick="actualizarEstatusCita('${c.id}', 'Realizada')" style="background:#22C55E20; border:1px solid #22C55E; color:#22C55E; padding:8px 12px; border-radius:8px; font-size:12px; font-weight:bold; cursor:pointer; flex:1;">✓ Realizada</button>
@@ -2401,16 +2652,15 @@ function generarCardCitaHTML(c, isAd, isHistory) {
 
     let adminBtns = '';
     if(!isHistory) {
-        const cDataStr = encodeURIComponent(JSON.stringify(c));
         const currentName = window.currentUser?.nombre || currentUser;
         if(isAd) {
             adminBtns = `
-            <button onclick="abrirModalEditarCita('${cDataStr}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Editar">✏️</button>
-            <button onclick="confirmarEliminarCita('${c.id}')" style="background:#2A2A2A; border:1px solid #333333; color:#EF4444; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Borrar">🗑️</button>
+            <button onclick="event.stopPropagation(); abrirModalEditarCita('${cDataStr}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Editar" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">✏️</button>
+            <button onclick="event.stopPropagation(); confirmarEliminarCita('${c.id}')" style="background:#1C1D24; border:1px solid #1E232B; color:#EF4444; padding:8px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px;" title="Borrar" onmouseover="this.style.borderColor='#EF444480'" onmouseout="this.style.borderColor='#1E232B'">🗑️</button>
             `;
         } else if ((c.asesor || '').trim().toLowerCase() === (currentName || '').trim().toLowerCase()) {
             adminBtns = `
-            <button onclick="abrirModalSeguimientoCita('${cDataStr}')" style="background:#2A2A2A; border:1px solid #333333; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:bold;" title="Dar seguimiento">📝 Dar seguimiento</button>
+            <button onclick="event.stopPropagation(); abrirModalSeguimientoCita('${cDataStr}')" style="background:#1C1D24; border:1px solid #1E232B; color:#F7F1E8; padding:8px 12px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; font-size:12px; font-weight:bold;" title="Dar seguimiento" onmouseover="this.style.borderColor='${color}80'" onmouseout="this.style.borderColor='#1E232B'">📝 Dar seguimiento</button>
             `;
         }
     }
@@ -2418,35 +2668,85 @@ function generarCardCitaHTML(c, isAd, isHistory) {
     let desarrolloTxt = c.desarrollo || c.proyecto || '';
     let nombreTxt = c.nombre || c.prospecto || 'Sin nombre';
     let obsTxt = c.observaciones || c.comentarios || '';
+    let obsTxtCleaned = limpiarObservaciones(obsTxt, nombreTxt, c.telefono);
 
     return `
-    <div style="background:#1E1E1E; border:1px solid #333333; padding:20px; border-radius:16px; color:#F7F1E8; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-        ${asesorTag}
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-            <div style="flex:1; padding-right:12px;">
-                <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
-                    <h3 style="font-family:'Cormorant Garamond', serif; font-size:22px; font-weight:bold; color:#F7F1E8; line-height:1.2; margin:0;">${nombreTxt}</h3>
-                    ${badge}${hoyBadge}${vencidaBadge}
-                </div>
-                ${desarrolloTxt ? `<div style="color:#B8924A; font-size:13px; font-weight:bold; margin-bottom:4px;">🏗️ ${desarrolloTxt}</div>` : ''}
-                <div style="color:#9E9E9E; font-size:13px; font-weight:500;">📞 ${c.telefono || 'Sin teléfono'}</div>
+    <div style="background:#13151A; border:1px solid #1E232B; padding:20px; padding-left:26px; border-radius:16px; color:#F7F1E8; box-shadow:0 10px 25px rgba(0,0,0,0.5); position:relative; overflow:hidden; transition:0.2s; cursor:pointer;" 
+         onmouseover="this.style.borderColor='${color}80'" 
+         onmouseout="this.style.borderColor='#1E232B'"
+         onclick="if(!event.target.closest('button') && !event.target.closest('a')) abrirModalSeguimientoCita('${cDataStr}')">
+        
+        <!-- Barra acentuada lateral con el color del asesor -->
+        <div style="background:${color}; position:absolute; left:0; top:0; bottom:0; width:6px;"></div>
+        
+        <!-- Fila de estatus y badges -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:${estatusColor}; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">
+                ${calendarSvg}
+                <span>Cita ${est}</span>
             </div>
-            <div style="text-align:right; min-width:90px;">
-                <div style="color:#B8924A; font-weight:bold; font-size:14px; margin-bottom:4px; font-family:'Inter', sans-serif;">📅 ${c.fecha}</div>
-                ${c.hora ? `<div style="color:#9E9E9E; font-size:12px; font-weight:600;">⏰ ${c.hora}</div>` : ''}
+            <div style="display:flex; gap:6px; align-items:center;">
+                ${badge}
             </div>
         </div>
-        ${obsTxt ? `<div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px; background:#2A2A2A; border-radius:8px;">${obsTxt}</div>` : ''}
-        ${(c.medio_contacto || c.interes || c.seguimiento) ? `
-        <div style="margin-top:-6px; margin-bottom:12px; display:flex; gap:12px; flex-wrap:wrap; font-size:11px; color:#9E9E9E; background:#2A2A2A40; border:1px solid #333333; padding:6px 10px; border-radius:8px;">
-            ${c.medio_contacto ? `<span>📢 Medio: <b>${c.medio_contacto}</b></span>` : ''}
-            ${c.interes ? `<span>🔥 Interés: <b>${c.interes}</b></span>` : ''}
-            ${c.seguimiento ? `<span>📅 Seguimiento: <b>${c.seguimiento}</b></span>` : ''}
+        
+        <!-- Fila del Prospecto y la Fecha/Hora -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:0;">
+                <div style="background:${color}; color:#ffffff; display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; font-size:16px; font-weight:700; flex-shrink:0; box-shadow:0 2px 8px ${color}30;">
+                    ${initials}
+                </div>
+                <div style="display:flex; flex-direction:column; min-width:0;">
+                    <h3 style="font-family:'Inter', sans-serif; font-size:18px; font-weight:700; color:#F7F1E8; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.2;">${nombreTxt}</h3>
+                    <div style="font-size:13px; color:#9E9E9E; display:flex; align-items:center; margin-top:4px; gap:4px;">
+                        ${userSvg}
+                        <span>Asesor: <b style="color:${color};">${c.asesor || 'Sin asignar'}</b></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Línea de separación vertical -->
+            <div style="border-left:1px solid #1E232B; height:44px; margin:0 4px; flex-shrink:0;"></div>
+            
+            <!-- Fecha y Hora -->
+            <div style="display:flex; flex-direction:column; align-items:flex-start; min-width:95px; flex-shrink:0;">
+                <div style="color:#F7F1E8; font-weight:700; font-size:13px; display:flex; align-items:center; gap:4px; font-family:'Inter', sans-serif;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#B8924A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                    <span>${fechaBonita}</span>
+                </div>
+                <div style="color:#9E9E9E; font-size:12px; font-weight:600; display:flex; align-items:center; gap:4px; margin-top:4px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9E9E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>${horaBonita}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fila de Desarrollo / Proyecto -->
+        ${desarrolloTxt ? `
+        <div style="display:flex; align-items:center; color:#9E9E9E; font-size:13px; font-weight:500; margin-bottom:12px; gap:4px;">
+            ${buildingSvg}
+            <span>Proyecto: <b style="color:#F7F1E8;">${desarrolloTxt}</b></span>
         </div>
         ` : ''}
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; gap:8px;">${waBtn}${copyBtn}</div>
-            <div style="display:flex; gap:8px;">${adminBtns}</div>
+        
+        <!-- Observaciones -->
+        ${obsTxtCleaned ? `
+        <div style="color:#9E9E9E; font-size:12px; font-style:italic; margin-bottom:12px; padding:8px 12px; background:#1C1E24; border:1px solid #1E232B; border-radius:8px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+            ${obsTxtCleaned}
+        </div>
+        ` : ''}
+        
+        <!-- Fila de Teléfono y Botones de Acción -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+            <div style="display:flex; align-items:center; color:#9E9E9E; font-size:13px; font-weight:600; gap:4px;">
+                ${phoneSvg}
+                <span>${c.telefono || 'Sin teléfono'}</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+                ${waBtn}
+                ${copyBtn}
+                ${adminBtns}
+            </div>
         </div>
         ${actionBtns}
     </div>
@@ -2485,13 +2785,14 @@ function renderCitasUI() {
             let est = c.estatus || c.estado || 'Programada';
             let isHoy = false;
             let isVencida = false;
-            if (c.fecha_hora) {
-                let fDate = new Date(c.fecha_hora);
-                isHoy = (fDate.getDate() === now.getDate() && fDate.getMonth() === now.getMonth() && fDate.getFullYear() === now.getFullYear());
-                isVencida = (fDate < now && est === 'Programada');
-            } else if (c.fecha) {
+            if (c.fecha) {
+                let fDate = new Date(c.fecha + 'T' + (c.hora || '00:00'));
                 isHoy = (c.fecha === todayStr);
-                isVencida = (c.fecha < todayStr && est === 'Programada');
+                if (!isNaN(fDate.getTime())) {
+                    isVencida = (fDate < now && est === 'Programada');
+                } else {
+                    isVencida = (c.fecha < todayStr && est === 'Programada');
+                }
             }
 
             if (isHoy) stats['Hoy']++;
@@ -2527,7 +2828,8 @@ function renderCitasUI() {
     let filtered = citasData;
     
     if(!isAd) {
-        filtered = citasData.filter(c => c.asesor.trim().toLowerCase() === currentName.trim().toLowerCase());
+        const cNameClean = (currentName || '').trim().toLowerCase();
+        filtered = citasData.filter(c => (c.asesor || '').trim().toLowerCase() === cNameClean);
     } else {
         let now = new Date();
         let todayStr = now.toISOString().split('T')[0];
@@ -2537,13 +2839,14 @@ function renderCitasUI() {
                 let est = c.estatus || c.estado || 'Programada';
                 let isHoy = false;
                 let isVencida = false;
-                if (c.fecha_hora) {
-                    let fDate = new Date(c.fecha_hora);
-                    isHoy = (fDate.getDate() === now.getDate() && fDate.getMonth() === now.getMonth() && fDate.getFullYear() === now.getFullYear());
-                    isVencida = (fDate < now && est === 'Programada');
-                } else if (c.fecha) {
+                if (c.fecha) {
+                    let fDate = new Date(c.fecha + 'T' + (c.hora || '00:00'));
                     isHoy = (c.fecha === todayStr);
-                    isVencida = (c.fecha < todayStr && est === 'Programada');
+                    if (!isNaN(fDate.getTime())) {
+                        isVencida = (fDate < now && est === 'Programada');
+                    } else {
+                        isVencida = (c.fecha < todayStr && est === 'Programada');
+                    }
                 }
 
                 if (currentCitasFilter === 'Hoy') return isHoy;
@@ -2588,9 +2891,7 @@ function abrirModalNuevaCita() {
     document.getElementById('nc-seguimiento').value = '';
     document.getElementById('nc-desarrollo-manual').value = '';
     
-    // Reset radio button to Yes
-    document.querySelector('input[name="nc-es-desarrollo"][value="si"]').checked = true;
-    toggleDesarrolloInput('nc');
+    handleDesarrolloChange('nc');
     
     cargarDesarrollosDropdown('nc-desarrollo');
 }
@@ -2605,8 +2906,8 @@ function guardarNuevaCita() {
     const btn = document.getElementById('btn-submit-cita');
     const fecha = document.getElementById('nc-fecha').value;
     const asesor = document.getElementById('nc-asesor').value;
-    const esDesarrollo = document.querySelector('input[name="nc-es-desarrollo"]:checked').value === 'si';
-    const desarrollo = esDesarrollo ? document.getElementById('nc-desarrollo').value : document.getElementById('nc-desarrollo-manual').value.trim();
+    const desarrolloSelect = document.getElementById('nc-desarrollo').value;
+    const desarrollo = desarrolloSelect === 'Otro' ? document.getElementById('nc-desarrollo-manual').value.trim() : desarrolloSelect;
     const nombre = document.getElementById('nc-nombre').value;
     const telefono = document.getElementById('nc-telefono').value;
     const obs = document.getElementById('nc-obs').value;
@@ -2645,7 +2946,7 @@ function guardarNuevaCita() {
     .then(res => {
         if(res.ok) {
             cerrarModalNuevaCita();
-            loadCitasJSONP();
+            loadCitas();
         } else {
             alert('Error: ' + res.mensaje);
         }
@@ -2700,13 +3001,12 @@ function abrirModalEditarCita(cDataStr) {
     cargarDesarrollosDropdown('ec-desarrollo', c.desarrollo || c.proyecto || '', function(loadedNames) {
         const devVal = c.desarrollo || c.proyecto || '';
         if (loadedNames.includes(devVal) || devVal === 'Otro' || devVal === 'Cita personal' || !devVal) {
-            document.querySelector('input[name="ec-es-desarrollo"][value="si"]').checked = true;
             document.getElementById('ec-desarrollo').value = devVal || 'Otro';
         } else {
-            document.querySelector('input[name="ec-es-desarrollo"][value="no"]').checked = true;
+            document.getElementById('ec-desarrollo').value = 'Otro';
             document.getElementById('ec-desarrollo-manual').value = devVal;
         }
-        toggleDesarrolloInput('ec');
+        handleDesarrolloChange('ec');
     });
 }
 
@@ -2720,8 +3020,8 @@ function guardarEdicionCita() {
     const id = document.getElementById('ec-id').value;
     const fecha = document.getElementById('ec-fecha').value;
     const asesor = document.getElementById('ec-asesor').value;
-    const esDesarrollo = document.querySelector('input[name="ec-es-desarrollo"]:checked').value === 'si';
-    const desarrollo = esDesarrollo ? document.getElementById('ec-desarrollo').value : document.getElementById('ec-desarrollo-manual').value.trim();
+    const desarrolloSelect = document.getElementById('ec-desarrollo').value;
+    const desarrollo = desarrolloSelect === 'Otro' ? document.getElementById('ec-desarrollo-manual').value.trim() : desarrolloSelect;
     const nombre = document.getElementById('ec-nombre').value;
     const telefono = document.getElementById('ec-telefono').value;
     const obs = document.getElementById('ec-obs').value;
@@ -2743,8 +3043,11 @@ function guardarEdicionCita() {
         fecha_hora: fecha,
         asesor: asesor,
         desarrollo: desarrollo || 'Otro',
+        nombre: nombre,
         prospecto_nombre: nombre,
+        telefono: telefono,
         prospecto_telefono: telefono,
+        comentarios: obs,
         observaciones: obs,
         usuario_actual: window.currentUser?.nombre || currentUser || '',
         medio_contacto: medio,
@@ -2761,7 +3064,7 @@ function guardarEdicionCita() {
     .then(res => {
         if(res.ok) {
             cerrarModalEditarCita();
-            loadCitasJSONP();
+            loadCitas();
         } else {
             alert('Error: ' + res.mensaje);
         }
@@ -2793,7 +3096,7 @@ function confirmarEliminarCita(id) {
     .then(res => res.json())
     .then(res => {
         if(res.ok) {
-            loadCitasJSONP();
+            loadCitas();
         } else {
             alert('Error: ' + res.mensaje);
         }
@@ -2868,7 +3171,7 @@ function enviarActualizacionCita(payload, onSuccess, onError) {
     .then(res => {
         if(res.ok) {
             if(onSuccess) onSuccess();
-            loadCitasJSONP();
+            loadCitas();
         } else {
             alert('Error: ' + res.mensaje);
             if(onError) onError();
@@ -2880,17 +3183,15 @@ function enviarActualizacionCita(payload, onSuccess, onError) {
         if(onError) onError();
     });
 }
-function toggleDesarrolloInput(prefix) {
-    const radioVal = document.querySelector('input[name="' + prefix + '-es-desarrollo"]:checked').value;
-    const selectContainer = document.getElementById(prefix + '-select-container');
+function handleDesarrolloChange(prefix) {
+    const select = document.getElementById(prefix + '-desarrollo');
     const manualContainer = document.getElementById(prefix + '-manual-container');
-    
-    if (radioVal === 'si') {
-        selectContainer.style.display = 'block';
-        manualContainer.style.display = 'none';
+    if (select && select.value === 'Otro') {
+        if (manualContainer) manualContainer.style.display = 'block';
     } else {
-        selectContainer.style.display = 'none';
-        manualContainer.style.display = 'block';
+        if (manualContainer) manualContainer.style.display = 'none';
+        const manualInput = document.getElementById(prefix + '-desarrollo-manual');
+        if (manualInput) manualInput.value = '';
     }
 }
 
@@ -2956,17 +3257,93 @@ function cargarDesarrollosDropdown(selectId, valueToSelect, callback) {
     document.body.appendChild(script);
 }
 
+function renderFunnelStepper(estatus, seguimiento) {
+    const stages = ['Lead', 'Contactado', 'Cita', 'Seguimiento', 'Apartado', 'Escritura'];
+    let activeIdx = 2; // Default is 'Cita' for any Programada/Por confirmar
+    
+    const est = (estatus || '').toLowerCase().trim();
+    
+    if (est === 'venta' || est === 'venta sí' || est === 'realizada') {
+        activeIdx = 4; // Apartado
+    }
+    if (est === 'venta sí') {
+        activeIdx = 5; // Escritura
+    }
+    if (seguimiento || est === 'en revisión') {
+        activeIdx = 3; // Seguimiento
+    }
+    if (est === 'cancelada' || est === 'cita falsa' || est === 'no asistió') {
+        activeIdx = -1; // None active or show gray
+    }
+    
+    let html = '';
+    stages.forEach((stage, idx) => {
+        const isCompleted = idx <= activeIdx;
+        const isActive = idx === activeIdx;
+        
+        const circleBg = isActive ? '#B8924A' : (isCompleted ? '#22C55E' : '#2A2E35');
+        const circleColor = isActive ? '#111317' : '#F9FAFB';
+        const borderStyle = isCompleted ? 'solid' : 'dashed';
+        const borderColor = isCompleted ? '#22C55E' : '#2A2E35';
+        
+        // Connecting Line
+        if (idx > 0) {
+            const lineCol = (idx <= activeIdx) ? '#22C55E' : '#2A2E35';
+            html += `
+            <div style="flex:1; border-top:2px ${borderStyle} ${lineCol}; height:0; margin:0 8px; min-width:15px; z-index:1;"></div>
+            `;
+        }
+
+        // Circular Node
+        html += `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative; z-index:2; min-width:55px;">
+            <div style="background:${circleBg}; color:${circleColor}; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; border:2px solid ${circleBg}; box-shadow:0 0 10px ${circleBg}30;">
+                ${idx + 1}
+            </div>
+            <span style="font-size:9px; font-weight:700; color:${isActive ? '#B8924A' : (isCompleted ? '#E5E7EB' : '#9CA3AF')}; text-transform:uppercase; white-space:nowrap;">${stage}</span>
+        </div>
+        `;
+    });
+    
+    return html;
+}
+
 function abrirModalSeguimientoCita(cDataStr) {
     const c = JSON.parse(decodeURIComponent(cDataStr));
     const m = document.getElementById('modal-seguimiento-cita');
     m.style.display = 'flex';
     
     document.getElementById('sc-id').value = c.id_cita || c.id || '';
-    document.getElementById('sc-txt-nombre').textContent = c.nombre || c.prospecto || 'Sin nombre';
-    document.getElementById('sc-txt-telefono').textContent = c.telefono || 'Sin teléfono';
-    document.getElementById('sc-txt-desarrollo').textContent = c.desarrollo || c.proyecto || 'Otro';
-    document.getElementById('sc-txt-asesor').textContent = c.asesor || '';
+    document.getElementById('sc-lbl-cliente').textContent = c.nombre || c.prospecto || 'Sin nombre';
+    document.getElementById('sc-lbl-asesor').textContent = c.asesor || 'Sin asignar';
     
+    const color = getAsesorColor(c.asesor);
+    document.getElementById('sc-avatar-asesor').style.background = color;
+    document.getElementById('sc-avatar-asesor').textContent = obtenerIniciales(c.asesor || 'Por confirmar');
+    
+    document.getElementById('sc-avatar-cliente').style.background = color;
+    document.getElementById('sc-avatar-cliente').textContent = obtenerIniciales(c.nombre);
+    
+    // Header banner status text and styles
+    let est = c.estatus || c.estado || 'Programada';
+    document.getElementById('sc-txt-banner-status').textContent = `CITA ${est.toUpperCase()}`;
+    
+    let estColor = '#B8924A';
+    if(est === 'Realizada') estColor = '#22C55E';
+    else if(est === 'No asistió') estColor = '#EF4444';
+    else if(est === 'Venta' || est === 'Venta Sí') estColor = '#3B82F6';
+    else if(est === 'Cancelada') estColor = '#9E9E9E';
+    else if(est === 'Cita falsa') estColor = '#DC2626';
+    else if(est === 'Por confirmar') estColor = '#14B8A6';
+    
+    document.getElementById('sc-header-banner').style.borderLeftColor = estColor;
+    document.getElementById('sc-header-banner').style.background = `linear-gradient(90deg, ${estColor}33 0%, #161B22 100%)`;
+    document.getElementById('sc-txt-estatus').textContent = est;
+    document.getElementById('sc-badge-estatus').style.color = estColor;
+    document.getElementById('sc-badge-estatus').style.borderColor = estColor + '50';
+    document.getElementById('sc-badge-estatus').style.background = estColor + '15';
+    
+    // Bind editable inputs
     let dt = '';
     if (c.fecha_hora) {
         dt = c.fecha_hora.replace(' ', 'T');
@@ -2976,11 +3353,35 @@ function abrirModalSeguimientoCita(cDataStr) {
     }
     document.getElementById('sc-fecha').value = dt;
     
-    document.getElementById('sc-estatus').value = c.estatus || c.estado || 'Programada';
-    document.getElementById('sc-obs').value = c.observaciones || c.comentarios || '';
+    document.getElementById('sc-telefono').value = c.telefono || '';
     document.getElementById('sc-medio').value = c.medio_contacto || '';
     document.getElementById('sc-interes').value = c.interes || '';
     document.getElementById('sc-seguimiento').value = c.seguimiento || '';
+    document.getElementById('sc-obs').value = c.observaciones || c.comentarios || '';
+    
+    // Load developments dropdown for sc-desarrollo
+    cargarDesarrollosDropdown('sc-desarrollo', c.desarrollo || c.proyecto || '');
+    
+    // Render Stepper
+    document.getElementById('sc-stepper-container').innerHTML = renderFunnelStepper(est, c.seguimiento);
+    
+    // Bind action buttons
+    const phone = c.telefono || '';
+    const formatted = formatWhatsAppNumber(phone);
+    const waBtn = document.getElementById('sc-btn-whatsapp');
+    if (formatted) {
+        waBtn.href = 'https://wa.me/' + formatted;
+        waBtn.style.pointerEvents = 'auto';
+        waBtn.style.opacity = '1';
+    } else {
+        waBtn.href = '#';
+        waBtn.style.pointerEvents = 'none';
+        waBtn.style.opacity = '0.5';
+    }
+    
+    document.getElementById('sc-btn-llamar').href = phone ? 'tel:' + phone : '#';
+    document.getElementById('sc-btn-copiar').onclick = function() { copiarNumero(phone); };
+    document.getElementById('sc-btn-eliminar').onclick = function() { confirmarEliminarCita(c.id || c.id_cita); cerrarModalSeguimientoCita(); };
 }
 
 function cerrarModalSeguimientoCita() {
@@ -2988,15 +3389,38 @@ function cerrarModalSeguimientoCita() {
     m.style.display = 'none';
 }
 
+function guardarEstatusCitaDirecto(nuevoEstatus) {
+    const id = document.getElementById('sc-id').value;
+    if(!id) return;
+    
+    if(!confirm('¿Seguro que deseas cambiar el estatus de esta cita a "' + nuevoEstatus + '"?')) return;
+    
+    const btnSubmit = document.getElementById('btn-submit-seguimiento-cita');
+    btnSubmit.disabled = true;
+    
+    enviarActualizacionCita({
+        action: 'actualizar_cita',
+        id_cita: id,
+        estatus: nuevoEstatus
+    }, function() {
+        cerrarModalSeguimientoCita();
+        btnSubmit.disabled = false;
+    }, function() {
+        btnSubmit.disabled = false;
+    });
+}
+
 function guardarSeguimientoCita() {
     const btn = document.getElementById('btn-submit-seguimiento-cita');
     const id = document.getElementById('sc-id').value;
     const fecha = document.getElementById('sc-fecha').value;
-    const estatus = document.getElementById('sc-estatus').value;
+    const desarrollo = document.getElementById('sc-desarrollo').value;
+    const telefono = document.getElementById('sc-telefono').value;
     const obs = document.getElementById('sc-obs').value;
     const medio = document.getElementById('sc-medio').value;
     const interes = document.getElementById('sc-interes').value;
     const seguimiento = document.getElementById('sc-seguimiento').value;
+    const estatus = document.getElementById('sc-txt-estatus').textContent;
     
     if(!fecha) {
         alert('La fecha y hora son obligatorias');
@@ -3010,39 +3434,27 @@ function guardarSeguimientoCita() {
         action: 'actualizar_cita',
         id_cita: id,
         fecha_hora: fecha,
+        desarrollo: desarrollo || 'Otro',
+        telefono: telefono,
+        prospecto_telefono: telefono,
         estatus: estatus,
         comentarios: obs,
+        observaciones: obs,
         medio_contacto: medio,
         interes: interes,
-        seguimiento: seguimiento,
-        usuario_actual: window.currentUser?.nombre || currentUser || ''
+        seguimiento: seguimiento
     };
     
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
-    })
-    .then(res => res.json())
-    .then(res => {
-        if(res.ok) {
-            cerrarModalSeguimientoCita();
-            loadCitasJSONP();
-        } else {
-            alert('Error: ' + res.mensaje);
-        }
-    })
-    .catch(err => {
-        alert('Error de conexión');
-        console.error(err);
-    })
-    .finally(() => {
-        btn.innerHTML = 'Guardar';
+    enviarActualizacionCita(payload, function() {
+        cerrarModalSeguimientoCita();
+        btn.innerHTML = 'Guardar Cambios';
+        btn.disabled = false;
+    }, function() {
+        btn.innerHTML = 'Guardar Cambios';
         btn.disabled = false;
     });
 }
 
-window.cbCitas = cbCitas;
     </script>
 
 <div id="tab-citas-historial" style="display:none; padding: 20px; position:absolute; top:80px; width:100%; background:#141414; z-index:900; min-height: 100vh;">
@@ -3076,15 +3488,10 @@ window.cbCitas = cbCitas;
 let historicoData = [];
 
 async function loadHistorico() {
-    document.getElementById('historico-status').innerHTML = '<div style="display:flex; justify-content:center; align-items:center; gap:12px;"><div style="width:24px; height:24px; border:3px solid #333333; border-top-color:#B8924A; border-radius:50%; animation:spin 1s linear infinite;"></div><span>Sincronizando historial...</span></div>';
+    // Historial desactivado: su fuente de datos pública fue retirada por seguridad.
+    // Esta pestaña no hace ninguna solicitud ni muestra errores de conexión.
     document.getElementById('historico-container').innerHTML = '';
-    try {
-        const data = await fetch('/data/citas-historico-2022-2025.json').then(r => r.json());
-        historicoData = data;
-        renderHistoricoUI();
-    } catch(err) {
-        document.getElementById('historico-status').innerHTML = '<span style="color:#EF4444; font-weight:bold;">Error al cargar historial</span>';
-    }
+    document.getElementById('historico-status').innerHTML = '<span style="color:#9E9E9E; font-weight:bold;">Historial no disponible</span>';
 }
 
 function renderHistoricoUI() {
@@ -3100,7 +3507,8 @@ function renderHistoricoUI() {
     let filtered = historicoData;
     
     if(!isAd) {
-        filtered = historicoData.filter(c => (c.asesor||'').trim().toLowerCase() === currentName.trim().toLowerCase());
+        const cNameClean = (currentName || '').trim().toLowerCase();
+        filtered = historicoData.filter(c => (c.asesor||'').trim().toLowerCase() === cNameClean);
     } else {
         const selAsesor = document.getElementById('historico-asesor-select')?.value || 'Todos';
         if(selAsesor !== 'Todos') {
