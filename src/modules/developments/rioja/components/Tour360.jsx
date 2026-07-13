@@ -11,13 +11,15 @@ export default function Tour360({ onClose }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const isInitialMount = useRef(true);
+
   useEffect(() => {
     if (!containerRef.current) return;
 
     viewerRef.current = new Viewer({
       container: containerRef.current,
-      panorama: rioja360Tour[currentIndex].file,
-      caption: rioja360Tour[currentIndex].title,
+      panorama: rioja360Tour[0].file,
+      caption: rioja360Tour[0].title,
       navbar: ['zoom', 'fullscreen'],
       defaultZoomLvl: 0,
       touchmoveTwoFingers: false,
@@ -36,12 +38,22 @@ export default function Tour360({ onClose }) {
   }, []);
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     if (viewerRef.current) {
       setLoading(true);
       viewerRef.current.setPanorama(rioja360Tour[currentIndex].file, {
         caption: rioja360Tour[currentIndex].title,
         showLoader: false
-      }).then(() => setLoading(false));
+      })
+      .then(() => setLoading(false))
+      .catch((err) => {
+        console.error("Error loading panorama:", err);
+        setLoading(false);
+      });
     }
   }, [currentIndex]);
 
