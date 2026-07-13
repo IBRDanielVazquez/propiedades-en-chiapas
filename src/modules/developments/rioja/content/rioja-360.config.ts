@@ -55,14 +55,14 @@ export const rioja360Scenes: Scene[] = [
         approved: false
       },
       {
-        id: "nav-to-general-from-aerea",
+        id: "nav-to-regional-from-aerea",
         type: "navigation",
-        title: "Ver vista aérea general",
-        description: "Explora la perspectiva aérea general del valle.",
+        title: "Ver vista aérea regional",
+        description: "Explora la perspectiva aérea regional del valle.",
         yaw: -0.5,
         pitch: -0.15,
         icon: "arrow",
-        targetSceneId: "vista-aerea-general",
+        targetSceneId: "vista-aerea-regional",
         url: null,
         enabled: true,
         approved: false
@@ -96,14 +96,14 @@ export const rioja360Scenes: Scene[] = [
         approved: false
       },
       {
-        id: "nav-to-general-from-acceso",
+        id: "nav-to-regional-from-acceso",
         type: "navigation",
-        title: "Ir a vista aérea general",
+        title: "Ir a vista aérea regional",
         description: "Muévete hacia la zona del camino principal.",
         yaw: 0.15,
         pitch: -0.05,
         icon: "arrow",
-        targetSceneId: "vista-aerea-general",
+        targetSceneId: "vista-aerea-regional",
         url: null,
         enabled: true,
         approved: false
@@ -111,9 +111,9 @@ export const rioja360Scenes: Scene[] = [
     ]
   },
   {
-    id: "vista-aerea-general",
+    id: "vista-aerea-regional",
     order: 3,
-    title: "Vista Aérea General",
+    title: "Vista Aérea Regional",
     source: "/rioja/360/optimizadas/rioja-360-pano_02.webp",
     thumb: "/rioja/360/miniaturas/rioja-360-pano_02.webp",
     coords: { x: 70, y: 65 },
@@ -124,7 +124,7 @@ export const rioja360Scenes: Scene[] = [
     },
     hotspots: [
       {
-        id: "nav-to-principal-from-general",
+        id: "nav-to-principal-from-regional",
         type: "navigation",
         title: "Volver a vista aérea principal",
         description: "Regresa a la visualización de inicio.",
@@ -137,7 +137,7 @@ export const rioja360Scenes: Scene[] = [
         approved: false
       },
       {
-        id: "nav-to-acceso-from-general",
+        id: "nav-to-acceso-from-regional",
         type: "navigation",
         title: "Ir al acceso",
         description: "Muévete de regreso a la portería de entrada.",

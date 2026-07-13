@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 import { Routes, Route } from 'react-router-dom';
 import { supabase } from './supabaseClient';
@@ -14,6 +14,8 @@ import AvisoPrivacidad from './components/AvisoPrivacidad';
 import PropertyDetail from './components/PropertyDetail';
 import LeadsDashboard from './components/LeadsDashboard';
 import NotFound from './components/NotFound';
+
+const Tour360Editor = lazy(() => import('./modules/developments/rioja/components/Tour360Editor'));
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -52,6 +54,7 @@ export default function App() {
         <Route path="/bella-vista" element={<BellaVistaLanding />} />
         <Route path="/bella-vista-ocozocoautla" element={<BellaVistaLanding />} />
         <Route path="/rioja" element={<RiojaLanding />} />
+        <Route path="/rioja/360/editor" element={<Rioja360EditorRoute />} />
         <Route path="/privacidad" element={<AvisoPrivacidad />} />
         <Route path="/propiedad/:id" element={<PropertyDetail />} />
         <Route path="/preview/leads-crm" element={<LeadsPreviewRoute />} />
@@ -73,6 +76,27 @@ function LeadsPreviewRoute() {
         currentUser={{ id: 'preview-admin', name: 'Admin demo', plan: 'admin' }}
       />
     </div>
+  );
+}
+
+function Rioja360EditorRoute() {
+  const isAllowed = import.meta.env.DEV || 
+                    window.location.hostname.includes('localhost') || 
+                    window.location.hostname.includes('vercel.app') || 
+                    window.location.search.includes('edit360=true');
+                    
+  if (!isAllowed) {
+    return <NotFound />;
+  }
+  
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#080a08', color: '#c3a479', fontFamily: 'Outfit, sans-serif' }}>
+        Cargando mesa de edición 360°...
+      </div>
+    }>
+      <Tour360Editor />
+    </Suspense>
   );
 }
 
