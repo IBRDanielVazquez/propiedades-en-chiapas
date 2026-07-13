@@ -1,6 +1,6 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Phone, ChevronDown, Mail, User, ShieldCheck, Eye, DollarSign, Calendar, Layers, Home, Sparkles, Compass, Users, Info } from 'lucide-react';
+import { MapPin, Phone, ChevronDown, ShieldCheck, Eye, DollarSign, Calendar, Layers, Home, Sparkles, Compass, Users, User, Info } from 'lucide-react';
 import { riojaConfig } from './content/rioja.config';
 import { riojaPhotos } from './content/rioja-fotos.config';
 import RiojaGallery from './components/RiojaGallery';
@@ -120,6 +120,8 @@ export default function RiojaLanding() {
         </section>
       </div>
 
+      <div className="rioja-visual-divider" />
+
       {/* 2. SECCIÓN FINANCIAMIENTO (Identificador: financiamiento) */}
       <section id="financiamiento" className="rioja-section" style={{ paddingTop: '80px' }}>
         <div className="rioja-container rioja-text-center">
@@ -198,6 +200,8 @@ export default function RiojaLanding() {
         </div>
       </section>
 
+      <div className="rioja-visual-divider" />
+
       {/* 3. SECCIÓN RECORRIDO 360° (Identificador: 360) */}
       <section id="360" className="rioja-section rioja-section-360" style={{ paddingTop: '80px' }}>
         <div className="rioja-container">
@@ -240,6 +244,8 @@ export default function RiojaLanding() {
         </Suspense>
       )}
 
+      <div className="rioja-visual-divider" />
+
       {/* 4. SECCIÓN GALERÍA (Identificador: galeria) */}
       <section id="galeria" className="rioja-section rioja-section-gallery" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
         <div className="rioja-container">
@@ -254,6 +260,8 @@ export default function RiojaLanding() {
         
         <RiojaGallery />
       </section>
+
+      <div className="rioja-visual-divider" />
 
       {/* 5. SECCIÓN INFORMACIÓN (Identificador: informacion) */}
       <div id="informacion" style={{ paddingTop: '40px' }}>
@@ -317,6 +325,8 @@ export default function RiojaLanding() {
           </div>
         </section>
 
+        <div className="rioja-visual-divider" />
+
         {/* Beneficios */}
         <section className="rioja-section rioja-section-benefits" style={{ backgroundColor: '#fcfaf6' }}>
           <div className="rioja-container">
@@ -372,6 +382,8 @@ export default function RiojaLanding() {
           </div>
         </section>
 
+        <div className="rioja-visual-divider" />
+
         {/* Perfiles de Comprador */}
         <section className="rioja-section" style={{ backgroundColor: '#fdfaf6' }}>
           <div className="rioja-container">
@@ -414,6 +426,8 @@ export default function RiojaLanding() {
             </div>
           </div>
         </section>
+
+        <div className="rioja-visual-divider" />
 
         {/* FAQ */}
         <section className="rioja-section" style={{ backgroundColor: 'var(--rioja-white)' }}>
@@ -467,88 +481,29 @@ export default function RiojaLanding() {
           </div>
         </div>
 
-        {/* 11. Formulario Local y Contacto */}
-        <section id="contacto" className="rioja-section rioja-section-dark">
-          <div className="rioja-container">
-            <div className="rioja-grid-2">
-              <div>
-                <h2 className="rioja-title" style={{ fontSize: '3rem', color: 'var(--rioja-white)' }}>Da el primer paso</h2>
-                <p className="rioja-text-large" style={{ color: 'var(--rioja-crema)', margin: '0 0 40px 0', textAlign: 'left' }}>
-                  Agenda tu visita y conoce personalmente el desarrollo.
-                </p>
-                
-                <div style={{ marginBottom: '30px' }}>
-                  <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-whatsapp" style={{ width: '100%', padding: '20px', fontSize: '1.2rem' }}>
-                    <Phone size={24} /> Contactar por WhatsApp
-                  </button>
-                </div>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: 'var(--rioja-gold)' }}>
-                  <Phone size={24} />
-                  <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>Llamadas: {riojaConfig.contact.phone}</span>
-                </div>
-              </div>
-              
-              <div className="rioja-form-container">
-                <h3 className="rioja-title" style={{ fontSize: '2rem', textAlign: 'center', marginBottom: '30px' }}>Solicitar Información</h3>
-                <form onSubmit={(e) => { e.preventDefault(); alert("Mensaje enviado exitosamente. En breve un asesor te contactará."); }}>
-                  <div className="rioja-input-group">
-                    <label className="rioja-label">Nombre completo</label>
-                    <div style={{ position: 'relative' }}>
-                      <User size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
-                      <input type="text" className="rioja-input" placeholder="Ingresa tu nombre" style={{ paddingLeft: '45px' }} required />
-                    </div>
-                  </div>
-                  
-                  <div className="rioja-input-group">
-                    <label className="rioja-label">Teléfono / WhatsApp</label>
-                    <div style={{ position: 'relative' }}>
-                      <Phone size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
-                      <input type="tel" className="rioja-input" placeholder="Tu número de contacto" style={{ paddingLeft: '45px' }} required />
-                    </div>
-                  </div>
+        {/* Visual Divider */}
+        <div className="rioja-visual-divider" />
 
-                  <div className="rioja-input-group">
-                    <label className="rioja-label">Correo electrónico (Opcional)</label>
-                    <div style={{ position: 'relative' }}>
-                      <Mail size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
-                      <input type="email" className="rioja-input" placeholder="tucorreo@ejemplo.com" style={{ paddingLeft: '45px' }} />
-                    </div>
-                  </div>
-
-                  <div className="rioja-input-group">
-                    <label className="rioja-label">Ciudad de residencia</label>
-                    <div style={{ position: 'relative' }}>
-                      <MapPin size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
-                      <input type="text" className="rioja-input" placeholder="¿De dónde nos visitas?" style={{ paddingLeft: '45px' }} required />
-                    </div>
-                  </div>
-                  
-                  <div className="rioja-checkbox-group">
-                    <input type="checkbox" id="privacidad" required style={{ marginTop: '3px' }} />
-                    <label htmlFor="privacidad">
-                      Acepto el aviso de privacidad y consiento el tratamiento de mis datos personales para recibir información de RIOJA.
-                    </label>
-                  </div>
-                  
-                  <button type="submit" className="rioja-btn rioja-btn-primary" style={{ width: '100%' }}>
-                    Enviar mis datos
-                  </button>
-                </form>
-              </div>
+        {/* 11. Contacto Rápido Directo (Sin Formulario) */}
+        <section id="contacto" className="rioja-section rioja-section-dark" style={{ margin: '40px 0 0 0' }}>
+          <div className="rioja-container rioja-text-center">
+            <h2 className="rioja-title" style={{ fontSize: '2.6rem', color: 'var(--rioja-white)', marginBottom: '15px' }}>Da el primer paso</h2>
+            <p className="rioja-text-large" style={{ color: 'var(--rioja-crema)', margin: '0 auto 35px', maxWidth: '600px' }}>
+              Agenda tu visita guiada al desarrollo o habla directamente con uno de nuestros asesores oficiales.
+            </p>
+            
+            <div className="rioja-hero-buttons" style={{ justifyContent: 'center' }}>
+              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-whatsapp-new" style={{ width: 'auto', padding: '16px 36px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Phone size={18} /> Contactar por WhatsApp
+              </button>
+              <a 
+                href={`tel:${riojaConfig.contact.phone}`} 
+                className="rioja-btn rioja-btn-primary-new"
+                style={{ width: 'auto', padding: '16px 36px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
+              >
+                <Phone size={18} /> Llamar al Asesor
+              </a>
             </div>
-          </div>
-        </section>
-
-        {/* 12. CTA Final */}
-        <section className="rioja-section rioja-text-center">
-          <div className="rioja-container">
-            <h2 className="rioja-title" style={{ fontSize: '3.5rem', maxWidth: '800px', margin: '0 auto 40px' }}>
-              "{riojaConfig.finalCta}"
-            </h2>
-            <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-primary" style={{ fontSize: '1.2rem', padding: '20px 40px' }}>
-              WhatsApp de Ventas
-            </button>
           </div>
         </section>
       </div>
