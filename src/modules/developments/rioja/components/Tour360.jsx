@@ -20,8 +20,8 @@ export default function Tour360({ onClose }) {
       caption: rioja360Tour[currentIndex].title,
       navbar: ['zoom', 'fullscreen'],
       defaultZoomLvl: 0,
-      touchmoveTwoFingers: true,
-      mousewheelCtrlKey: true
+      touchmoveTwoFingers: false,
+      mousewheelCtrlKey: false
     });
 
     viewerRef.current.addEventListener('ready', () => {
