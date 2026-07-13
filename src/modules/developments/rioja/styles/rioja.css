@@ -970,7 +970,7 @@
   }
   
   .rioja-grid-benefits-new, .rioja-grid-profiles {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile for benefits and profiles */
     gap: 15px;
   }
   
@@ -992,40 +992,282 @@
     font-size: 2.3rem;
   }
   .rioja-grid-features {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr); /* Force 2 columns on small screens too */
+    gap: 10px;
   }
 }
 
-/* Floating WhatsApp Button */
-.rioja-whatsapp-floating {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #25D366;
-  color: white;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+/* ============================
+   Luminescent Hero Redesign
+   ============================ */
+.rioja-hero-new {
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
-  z-index: 9999;
-  transition: all 0.3s ease;
-  text-decoration: none;
+  padding: 100px 20px 140px;
+  color: white;
+  text-align: center;
 }
 
-.rioja-whatsapp-floating:hover {
-  transform: scale(1.1) translateY(-3px);
-  background: #20ba59;
-  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.5);
+.rioja-hero-new-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(30, 50, 36, 0.4) 0%, rgba(8, 10, 8, 0.8) 100%);
+  z-index: 1;
+}
+
+.rioja-hero-new-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rioja-hero-new-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--rioja-gold);
+  background: rgba(195, 164, 121, 0.15);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(195, 164, 121, 0.3);
+  margin-bottom: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.rioja-hero-new-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 0 0 15px 0;
+  line-height: 1.1;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.rioja-hero-new-subtitle {
+  font-size: 1.35rem;
+  color: #f3ede2;
+  margin: 0 0 25px 0;
+  max-width: 600px;
+  line-height: 1.5;
+  font-weight: 300;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+.rioja-hero-new-badge {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #25D366;
+  background: rgba(37, 211, 102, 0.1);
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  padding: 8px 24px;
+  border-radius: 30px;
+  margin-bottom: 40px;
+  backdrop-filter: blur(4px);
+}
+
+.rioja-hero-new-actions {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.rioja-btn-hero-primary {
+  background: var(--rioja-gold);
+  color: #1e3224;
+  border: none;
+  padding: 18px 36px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 10px 25px rgba(195, 164, 121, 0.3);
+}
+
+.rioja-btn-hero-primary:hover {
+  background: #e6c89e;
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(195, 164, 121, 0.45);
+}
+
+.rioja-btn-hero-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 18px 36px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.rioja-btn-hero-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
 @media (max-width: 768px) {
-  .rioja-whatsapp-floating {
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
+  .rioja-hero-new-title {
+    font-size: 3.5rem;
+  }
+  .rioja-hero-new-subtitle {
+    font-size: 1.1rem;
+  }
+  .rioja-hero-new-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .rioja-btn-hero-primary, .rioja-btn-hero-secondary {
+    width: 100%;
   }
 }
+
+/* ============================
+   CTA de Financiamiento
+   ============================ */
+.rioja-cta-financiamiento-card {
+  background: linear-gradient(135deg, #1e3224 0%, #111d15 100%);
+  border: 1px solid rgba(195, 164, 121, 0.35);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 15px 40px rgba(30, 50, 36, 0.25);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.rioja-cta-fin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--rioja-gold);
+  background: rgba(195, 164, 121, 0.15);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 15px;
+}
+
+.rioja-cta-financiamiento-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  margin: 0 0 10px 0;
+  color: var(--rioja-white);
+}
+
+.rioja-cta-financiamiento-card p {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin: 0 0 30px 0;
+}
+
+.rioja-cta-fin-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .rioja-cta-financiamiento-card {
+    padding: 30px 20px;
+  }
+  .rioja-cta-financiamiento-card h3 {
+    font-size: 1.7rem;
+  }
+  .rioja-cta-fin-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* ============================
+   iOS Dock Flotante Inferior
+   ============================ */
+.rioja-ios-dock {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px;
+  height: 66px;
+  background: rgba(30, 50, 36, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 12px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+  z-index: 9998;
+  box-sizing: border-box;
+}
+
+.rioja-dock-item {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 4px 8px;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.rioja-dock-item svg {
+  transition: transform 0.25s ease;
+}
+
+.rioja-dock-item span {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.rioja-dock-item.active {
+  color: var(--rioja-gold);
+}
+
+.rioja-dock-item.active svg {
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 0 6px rgba(195, 164, 121, 0.4));
+}
+
+.rioja-dock-item.active span {
+  font-weight: 600;
+}
+
+/* Adjust layout so content isn't covered by dock */
+body {
+  padding-bottom: 90px;
+}
+
