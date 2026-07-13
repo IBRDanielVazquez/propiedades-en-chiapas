@@ -209,7 +209,7 @@ export default function RiojaLanding() {
 
           <div 
             className="rioja-360-visual-portal" 
-            style={{ backgroundImage: `url('/rioja/360/optimizadas/rioja-360-pano_01.webp')` }}
+            style={{ backgroundImage: `url('/rioja/360/rioja-360-01.webp')` }}
             onClick={() => setShow360(true)}
           >
             <div className="rioja-360-visual-overlay"></div>
