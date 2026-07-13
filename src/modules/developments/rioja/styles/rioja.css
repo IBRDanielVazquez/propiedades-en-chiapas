@@ -891,26 +891,25 @@
   border-color: rgba(195, 164, 121, 0.3);
 }
 
-.rioja-benefit-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+.rioja-benefit-icon-wrapper {
+  margin-bottom: 16px;
+  display: inline-block;
 }
 
-.rioja-benefit-header svg {
+.rioja-benefit-icon-wrapper svg {
   color: var(--rioja-gold);
   background: rgba(195, 164, 121, 0.1);
-  padding: 8px;
+  padding: 10px;
   border-radius: 50%;
   box-sizing: content-box;
 }
 
-.rioja-benefit-header h4 {
+.rioja-benefit-title {
   font-size: 1.15rem;
   color: var(--rioja-green-deep);
-  margin: 0;
+  margin: 0 0 10px 0;
   font-family: 'Playfair Display', serif;
+  line-height: 1.3;
 }
 
 .rioja-benefit-card-new p {

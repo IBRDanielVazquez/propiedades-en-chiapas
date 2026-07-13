@@ -189,26 +189,8 @@ export default function RiojaLanding() {
             </div>
 
             <div className="rioja-hero-buttons">
-              <button onClick={handleWhatsAppFinancing} className="rioja-btn rioja-btn-whatsapp-new">
+              <button onClick={handleWhatsAppFinancing} className="rioja-btn rioja-btn-whatsapp-new" style={{ width: '100%' }}>
                 <Phone size={18} /> Solicitar Financiamiento
-              </button>
-              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-primary-new">
-                Contactar por WhatsApp
-              </button>
-            </div>
-          </div>
-
-          {/* CTA Fuerte de Financiamiento */}
-          <div className="rioja-cta-financiamiento-card" style={{ marginTop: '50px' }}>
-            <span className="rioja-cta-fin-badge"><Sparkles size={14} /> Oferta Especial</span>
-            <h3>Tu terreno puede comenzar con $3,000</h3>
-            <p>Financiamiento directo con pagos de $1,000 quincenales.</p>
-            <div className="rioja-cta-fin-buttons">
-              <button onClick={handleWhatsAppFinancing} className="rioja-btn rioja-btn-whatsapp-new">
-                QUIERO MI PLAN DE FINANCIAMIENTO
-              </button>
-              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-outline-new" style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                Hablar por WhatsApp
               </button>
             </div>
           </div>
@@ -352,46 +334,46 @@ export default function RiojaLanding() {
 
             <div className="rioja-grid-benefits-new">
               <div className="rioja-benefit-card-new">
-                <div className="rioja-benefit-header">
-                  <ShieldCheck size={20} />
-                  <h4>Seguridad jurídica</h4>
+                <div className="rioja-benefit-icon-wrapper">
+                  <Compass size={24} />
                 </div>
-                <p>Escritura Pública registrada ante notario.</p>
+                <h4 className="rioja-benefit-title">Alta plusvalía</h4>
+                <p>Zona de acelerado crecimiento y desarrollo de valor en Berriozábal.</p>
               </div>
               <div className="rioja-benefit-card-new">
-                <div className="rioja-benefit-header">
-                  <DollarSign size={20} />
-                  <h4>Pagos accesibles</h4>
+                <div className="rioja-benefit-icon-wrapper">
+                  <Sparkles size={24} />
                 </div>
-                <p>Enganche mínimo y cuotas de $1,000 quincenales.</p>
+                <h4 className="rioja-benefit-title">Entorno campestre</h4>
+                <p>Aire limpio, vegetación abundante y microclima fresco de la región.</p>
               </div>
               <div className="rioja-benefit-card-new">
-                <div className="rioja-benefit-header">
-                  <Sparkles size={20} />
-                  <h4>Construye a tu ritmo</h4>
+                <div className="rioja-benefit-icon-wrapper">
+                  <MapPin size={24} />
                 </div>
-                <p>Sin plazos forzosos de edificación.</p>
+                <h4 className="rioja-benefit-title">Fácil conectividad</h4>
+                <p>Acceso vial rápido a la carretera principal y minutos del centro urbano.</p>
               </div>
               <div className="rioja-benefit-card-new">
-                <div className="rioja-benefit-header">
-                  <Home size={20} />
-                  <h4>Patrimonio propio</h4>
+                <div className="rioja-benefit-icon-wrapper">
+                  <Home size={24} />
                 </div>
-                <p>Propiedad privada lista para heredar.</p>
+                <h4 className="rioja-benefit-title">Patrimonio heredable</h4>
+                <p>Propiedad privada libre de gravamen lista para asegurar tu futuro.</p>
               </div>
               <div className="rioja-benefit-card-new">
-                <div className="rioja-benefit-header">
-                  <MapPin size={20} />
-                  <h4>Zona habitada</h4>
+                <div className="rioja-benefit-icon-wrapper">
+                  <Users size={24} />
                 </div>
-                <p>Construcciones activas a los alrededores.</p>
+                <h4 className="rioja-benefit-title">Zona habitada</h4>
+                <p>Construcciones activas y familias viviendo permanentemente en los alrededores.</p>
               </div>
               <div className="rioja-benefit-card-new">
-                <div className="rioja-benefit-header">
-                  <Compass size={20} />
-                  <h4>Desarrollo habitacional</h4>
+                <div className="rioja-benefit-icon-wrapper">
+                  <ShieldCheck size={24} />
                 </div>
-                <p>Lotes campestres listos para conectar servicios.</p>
+                <h4 className="rioja-benefit-title">Desarrollo seguro</h4>
+                <p>Lotes delimitados listos para planificar y construir tu proyecto de vida.</p>
               </div>
             </div>
           </div>
@@ -479,23 +461,6 @@ export default function RiojaLanding() {
           </div>
         </section>
 
-        {/* CTA de Financiamiento Final */}
-        <div className="rioja-container" style={{ marginBottom: '60px' }}>
-          <div className="rioja-cta-financiamiento-card">
-            <span className="rioja-cta-fin-badge"><Sparkles size={14} /> Tu Oportunidad</span>
-            <h3>Tu terreno puede comenzar con $3,000</h3>
-            <p>Financiamiento directo con pagos de $1,000 quincenales.</p>
-            <div className="rioja-cta-fin-buttons">
-              <button onClick={handleWhatsAppFinancing} className="rioja-btn rioja-btn-whatsapp-new">
-                QUIERO MI PLAN DE FINANCIAMIENTO
-              </button>
-              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-outline-new" style={{ borderColor: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                Hablar por WhatsApp
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Visual Divider */}
         <div className="rioja-visual-divider" />
 
@@ -507,53 +472,14 @@ export default function RiojaLanding() {
               Agenda tu visita guiada al desarrollo o habla directamente con uno de nuestros asesores oficiales.
             </p>
             
-            <div className="rioja-hero-buttons" style={{ justifyContent: 'center' }}>
-              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-whatsapp-new" style={{ width: 'auto', padding: '16px 36px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="rioja-hero-actions" style={{ justifyContent: 'center' }}>
+              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-whatsapp-new" style={{ width: '100%', maxWidth: '380px', padding: '16px 36px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <Phone size={18} /> Contactar por WhatsApp
               </button>
-              <a 
-                href={`tel:${riojaConfig.contact.phone}`} 
-                className="rioja-btn rioja-btn-primary-new"
-                style={{ width: 'auto', padding: '16px 36px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}
-              >
-                <Phone size={18} /> Llamar al Asesor
-              </a>
             </div>
           </div>
         </section>
       </div>
-
-      {/* 13. Footer PEC */}
-      <footer className="rioja-footer" style={{ paddingBottom: '120px' }}>
-        <div className="rioja-container">
-          <div className="rioja-footer-grid">
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', color: 'var(--rioja-white)' }}>
-                <ShieldCheck size={28} color="var(--rioja-gold)" />
-                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>PEC</span>
-              </div>
-              <p>Propiedades en Chiapas.</p>
-              <p>Comercialización Oficial del Desarrollo Rioja.</p>
-            </div>
-            
-            <div>
-              <div className="rioja-footer-title">Contacto RIOJA</div>
-              <a href={`tel:${riojaConfig.contact.phone}`} className="rioja-footer-link">Llamadas: {riojaConfig.contact.phone}</a>
-              <a href={riojaConfig.contact.whatsappLink} target="_blank" rel="noreferrer" className="rioja-footer-link">WhatsApp de Ventas</a>
-            </div>
-            
-            <div>
-              <div className="rioja-footer-title">Legal</div>
-              <a href="/" className="rioja-footer-link">Sitio Principal PEC</a>
-              <a href="/privacidad" className="rioja-footer-link">Aviso de Privacidad</a>
-            </div>
-          </div>
-          
-          <div style={{ textAlign: 'center', borderTop: '1px solid #333', paddingTop: '30px', marginTop: '20px' }}>
-            &copy; {new Date().getFullYear()} Rioja. Todos los derechos reservados.
-          </div>
-        </div>
-      </footer>
 
       {/* iOS-Style Floating Dock Navigation */}
       <nav className="rioja-ios-dock">
