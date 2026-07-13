@@ -9,6 +9,7 @@ import Login from './components/Login';
 import LandingCaptacion from './components/LandingCaptacion';
 import LandingViewer from './components/LandingViewer';
 import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLanding';
+import RiojaLanding from './modules/developments/rioja/RiojaLanding';
 import AvisoPrivacidad from './components/AvisoPrivacidad';
 import PropertyDetail from './components/PropertyDetail';
 import LeadsDashboard from './components/LeadsDashboard';
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="/asesores" element={<LandingCaptacion />} />
         <Route path="/bella-vista" element={<BellaVistaLanding />} />
         <Route path="/bella-vista-ocozocoautla" element={<BellaVistaLanding />} />
+        <Route path="/rioja" element={<RiojaLanding />} />
         <Route path="/privacidad" element={<AvisoPrivacidad />} />
         <Route path="/propiedad/:id" element={<PropertyDetail />} />
         <Route path="/preview/leads-crm" element={<LeadsPreviewRoute />} />
