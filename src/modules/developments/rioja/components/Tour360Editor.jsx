@@ -40,12 +40,15 @@ export default function Tour360Editor() {
   const [zoomLevel, setZoomLevel] = useState(0);
   const [muted, setMuted] = useState(true);
 
-  // Estados del Editor
   const [isEditMode, setIsEditMode] = useState(true);
   const [isAddingPoint, setIsAddingPoint] = useState(false);
   const [activeEditHotspot, setActiveEditHotspot] = useState(null);
   const [draggingHotspotId, setDraggingHotspotId] = useState(null);
   const [selectedPreviewHotspot, setSelectedPreviewHotspot] = useState(null);
+
+  // Estado modal "Agregar imagen 360°"
+  const [addSceneModal, setAddSceneModal] = useState(null);
+  // { file, previewUrl, id, title, order, approved }
 
   const currentScene = scenesState[currentIndex];
 
@@ -401,6 +404,114 @@ export default function Tour360Editor() {
     }
   };
 
+  // ── GESTIÓN DE ESCENAS ────────────────────────────────────────────────────
+
+  // Reordenar escenas (dirección: -1 = subir, +1 = bajar)
+  const handleReorderScene = (idx, direction) => {
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= scenesState.length) return;
+    setScenesState(prev => {
+      const arr = [...prev];
+      [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+      // Recalcular order
+      return arr.map((s, i) => ({ ...s, order: i + 1 }));
+    });
+    setCurrentIndex(newIdx);
+  };
+
+  // Eliminar escena
+  const handleDeleteScene = (idx) => {
+    if (scenesState.length <= 1) {
+      alert('Debe quedar al menos una escena en el recorrido.');
+      return;
+    }
+    if (!window.confirm(`¿Eliminar la escena "${scenesState[idx].title}" del recorrido? No se borra el archivo original.`)) return;
+    setScenesState(prev => {
+      const arr = prev.filter((_, i) => i !== idx).map((s, i) => ({ ...s, order: i + 1 }));
+      return arr;
+    });
+    setCurrentIndex(c => (c >= idx && c > 0 ? c - 1 : c));
+  };
+
+  // Abrir selector de archivo local para agregar panorámica
+  const handleAddSceneFile = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp';
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Validación de tamaño (max 30MB)
+      if (file.size > 30 * 1024 * 1024) {
+        alert(`El archivo "${file.name}" pesa ${(file.size / (1024 * 1024)).toFixed(1)} MB. El máximo permitido es 30 MB.`);
+        return;
+      }
+
+      // Validación de extensión
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+        alert(`Formato no permitido: .${ext}. Usa JPG, JPEG, PNG o WEBP.`);
+        return;
+      }
+
+      // Validar dimensiones y ratio 2:1
+      const previewUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const ratio = img.naturalWidth / img.naturalHeight;
+        if (ratio < 1.9 || ratio > 2.1) {
+          URL.revokeObjectURL(previewUrl);
+          alert(
+            `La imagen no tiene proporción equirectangular 2:1 (panorámica 360°).\n` +
+            `Dimensiones detectadas: ${img.naturalWidth} × ${img.naturalHeight} (ratio: ${ratio.toFixed(2)}).\n` +
+            `Se requiere una relación ancho/alto entre 1.90 y 2.10.`
+          );
+          return;
+        }
+
+        const newId = `escena-${Date.now()}`;
+        setAddSceneModal({
+          file,
+          previewUrl,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          id: newId,
+          title: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' '),
+          order: scenesState.length + 1,
+          approved: false
+        });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(previewUrl);
+        alert('El archivo está corrupto o no es una imagen válida.');
+      };
+      img.src = previewUrl;
+    };
+    input.click();
+  };
+
+  // Confirmar incorporación de nueva escena al editor
+  const handleConfirmAddScene = () => {
+    if (!addSceneModal) return;
+    const newScene = {
+      id: addSceneModal.id,
+      order: scenesState.length + 1,
+      title: addSceneModal.title || `Escena ${scenesState.length + 1}`,
+      source: addSceneModal.previewUrl,  // URL local temporal
+      thumb: addSceneModal.previewUrl,
+      coords: { x: 50, y: 50 },
+      initialView: { yaw: 0, pitch: 0, hfov: 100 },
+      hotspots: [],
+      approved: addSceneModal.approved,
+      _localFile: true,  // marca que es temporal y necesita ser subida manualmente
+    };
+    setScenesState(prev => [...prev, newScene]);
+    setCurrentIndex(scenesState.length);  // ir a la nueva escena
+    setAddSceneModal(null);
+  };
+
+
   // Cardinales para la brújula
   const getCardinalDirection = (deg) => {
     let norm = (deg + 180) % 360;
@@ -542,6 +653,14 @@ export default function Tour360Editor() {
             >
               <Plus size={16} /> {isAddingPoint ? "Clica sobre el panorama..." : "Agregar punto"}
             </button>
+            <button
+              className="rioja-editor-btn"
+              onClick={handleAddSceneFile}
+              title="Agrega una nueva panorámica 360° al recorrido (solo sesión local)"
+              style={{ background: 'rgba(195,164,121,0.2)', border: '1px solid #c3a479', color: '#c3a479' }}
+            >
+              <Layers size={16} /> Agregar imagen 360°
+            </button>
             <button className="rioja-editor-btn" onClick={handleCopyConfig}>
               <Copy size={16} /> Copiar config TS
             </button>
@@ -551,6 +670,62 @@ export default function Tour360Editor() {
             <button className="rioja-editor-btn danger" onClick={handleResetConfig}>
               <Trash2 size={16} /> Restaurar config original
             </button>
+          </div>
+        )}
+
+        {/* Panel de Gestión de Escenas */}
+        {isEditMode && (
+          <div style={{
+            position: 'absolute', top: '60px', left: '10px',
+            background: 'rgba(8,12,8,0.88)', backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(195,164,121,0.3)', borderRadius: '10px',
+            padding: '10px', zIndex: 20, minWidth: '200px', maxWidth: '240px'
+          }}>
+            <div style={{ color: '#c3a479', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
+              Escenas del recorrido
+            </div>
+            {scenesState.map((scene, idx) => (
+              <div
+                key={scene.id}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  padding: '6px 8px', marginBottom: '4px', borderRadius: '6px',
+                  background: idx === currentIndex ? 'rgba(195,164,121,0.2)' : 'rgba(255,255,255,0.04)',
+                  border: idx === currentIndex ? '1px solid rgba(195,164,121,0.5)' : '1px solid transparent',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setCurrentIndex(idx)}
+              >
+                <span style={{ color: '#c3a479', fontSize: '11px', minWidth: '16px' }}>{scene.order}</span>
+                <span style={{ color: 'white', fontSize: '12px', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {scene.title}
+                  {scene._localFile && <span style={{ color: '#f59e0b', fontSize: '9px', marginLeft: '4px' }}>LOCAL</span>}
+                </span>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleReorderScene(idx, -1); }}
+                  disabled={idx === 0}
+                  title="Subir escena"
+                  style={{ background: 'none', border: 'none', color: idx === 0 ? '#555' : '#c3a479', cursor: idx === 0 ? 'default' : 'pointer', padding: '2px' }}
+                >
+                  ▲
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleReorderScene(idx, 1); }}
+                  disabled={idx === scenesState.length - 1}
+                  title="Bajar escena"
+                  style={{ background: 'none', border: 'none', color: idx === scenesState.length - 1 ? '#555' : '#c3a479', cursor: idx === scenesState.length - 1 ? 'default' : 'pointer', padding: '2px' }}
+                >
+                  ▼
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDeleteScene(idx); }}
+                  title="Excluir del recorrido"
+                  style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px' }}
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ))}
           </div>
         )}
 
@@ -832,6 +1007,80 @@ export default function Tour360Editor() {
           </button>
         ))}
       </div>
+
+      {/* Modal: Agregar imagen 360° */}
+      {addSceneModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.85)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: '20px'
+        }}>
+          <div style={{
+            background: '#0d1a0f', border: '1px solid rgba(195,164,121,0.4)',
+            borderRadius: '16px', padding: '28px', maxWidth: '520px', width: '100%',
+            fontFamily: 'Outfit, sans-serif'
+          }}>
+            <h3 style={{ color: '#c3a479', margin: '0 0 16px', fontSize: '18px', fontWeight: 700 }}>
+              Agregar imagen 360° al recorrido
+            </h3>
+
+            {/* Previsualización */}
+            <img
+              src={addSceneModal.previewUrl}
+              alt="Vista previa"
+              style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' }}
+            />
+            <p style={{ color: '#8da88d', fontSize: '12px', margin: '0 0 16px' }}>
+              ✅ Resolución: {addSceneModal.width} × {addSceneModal.height} px &nbsp;|&nbsp;
+              Ratio: {(addSceneModal.width / addSceneModal.height).toFixed(2)} &nbsp;|&nbsp;
+              Peso: {(addSceneModal.file.size / (1024 * 1024)).toFixed(1)} MB
+            </p>
+
+            <label style={{ display: 'block', color: '#a8c5a0', fontSize: '13px', marginBottom: '6px' }}>
+              Nombre interno de la escena
+            </label>
+            <input
+              type="text"
+              value={addSceneModal.title}
+              onChange={(e) => setAddSceneModal(m => ({ ...m, title: e.target.value }))}
+              style={{
+                width: '100%', padding: '8px 12px', borderRadius: '8px',
+                background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(195,164,121,0.3)',
+                color: 'white', fontSize: '14px', marginBottom: '14px', boxSizing: 'border-box'
+              }}
+            />
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#a8c5a0', fontSize: '13px', marginBottom: '20px', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={addSceneModal.approved}
+                onChange={(e) => setAddSceneModal(m => ({ ...m, approved: e.target.checked }))}
+              />
+              Marcar como aprobada (visible públicamente)
+            </label>
+
+            <p style={{ color: '#f59e0b', fontSize: '11px', margin: '0 0 20px', lineHeight: 1.5 }}>
+              ⚠️ Esta imagen se cargará solo durante esta sesión del editor. Para publicarla,
+              deberás optimizarla manualmente y copiar la configuración exportada al archivo de código.
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => { URL.revokeObjectURL(addSceneModal.previewUrl); setAddSceneModal(null); }}
+                style={{ padding: '10px 20px', borderRadius: '8px', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#ccc', cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmAddScene}
+                style={{ padding: '10px 24px', borderRadius: '8px', background: '#c3a479', border: 'none', color: '#0d1a0f', cursor: 'pointer', fontWeight: 700, fontFamily: 'Outfit, sans-serif' }}
+              >
+                Agregar al recorrido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

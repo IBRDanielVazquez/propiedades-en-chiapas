@@ -32,8 +32,8 @@ export const rioja360Scenes: Scene[] = [
     id: "vista-aerea-principal",
     order: 1,
     title: "Vista Aérea Principal",
-    source: "/rioja/360/optimizadas/rioja-360-pano_04.webp",
-    thumb: "/rioja/360/miniaturas/rioja-360-pano_04.webp",
+    source: "/rioja/360/rioja-360-01.webp",
+    thumb: "/rioja/360/miniaturas/rioja-360-01.webp",
     coords: { x: 50, y: 30 },
     initialView: {
       yaw: 0,
@@ -73,8 +73,8 @@ export const rioja360Scenes: Scene[] = [
     id: "acceso-carretera",
     order: 2,
     title: "Acceso Carretera",
-    source: "/rioja/360/optimizadas/rioja-360-pano_01.webp",
-    thumb: "/rioja/360/miniaturas/rioja-360-pano_01.webp",
+    source: "/rioja/360/rioja-360-02.webp",
+    thumb: "/rioja/360/miniaturas/rioja-360-02.webp",
     coords: { x: 30, y: 75 },
     initialView: {
       yaw: 0,
@@ -114,8 +114,8 @@ export const rioja360Scenes: Scene[] = [
     id: "vista-aerea-regional",
     order: 3,
     title: "Vista Aérea Regional",
-    source: "/rioja/360/optimizadas/rioja-360-pano_02.webp",
-    thumb: "/rioja/360/miniaturas/rioja-360-pano_02.webp",
+    source: "/rioja/360/rioja-360-03.webp",
+    thumb: "/rioja/360/miniaturas/rioja-360-03.webp",
     coords: { x: 70, y: 65 },
     initialView: {
       yaw: 0,
