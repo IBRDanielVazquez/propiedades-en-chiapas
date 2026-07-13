@@ -83,7 +83,7 @@ function Rioja360EditorRoute() {
   const isAllowed = import.meta.env.DEV || 
                     window.location.hostname.includes('localhost') || 
                     window.location.hostname.includes('vercel.app') || 
-                    window.location.search.includes('edit360=true');
+                    window.location.search.toLowerCase().includes('edit360');
                     
   if (!isAllowed) {
     return <NotFound />;
