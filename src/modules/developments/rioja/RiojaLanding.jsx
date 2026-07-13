@@ -1,244 +1,336 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Info, ArrowRight, CheckCircle, ChevronDown, Camera, Box, Phone, Mail, User, ShieldCheck } from 'lucide-react';
+import { MapPin, Phone, CheckCircle, ChevronDown, ImageIcon, Mail, User, ShieldCheck } from 'lucide-react';
 import { riojaConfig } from './content/rioja.config';
 import './styles/rioja.css';
 
 export default function RiojaLanding() {
   const [openFaq, setOpenFaq] = useState(null);
-  
-  const scrollToContact = () => {
-    document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
-  };
-  
-  const scrollToMap = () => {
-    document.getElementById('ubicacion').scrollIntoView({ behavior: 'smooth' });
-  };
 
   const handleWhatsApp = () => {
-    window.open(`https://wa.me/${riojaConfig.whatsappNumber}?text=Hola, me interesa información sobre RIOJA.`, '_blank');
+    window.open(riojaConfig.contact.whatsappLink, '_blank');
+  };
+
+  const scrollToContacto = () => {
+    document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="rioja-page">
+    <div className="rioja-wrapper">
       <Helmet>
-        <title>{`${riojaConfig.name} | ${riojaConfig.subtitle}`}</title>
-        <meta name="description" content={riojaConfig.description} />
-        <meta property="og:title" content={`${riojaConfig.name} - Propiedades en Chiapas`} />
-        <meta property="og:description" content={riojaConfig.description} />
+        <title>Rioja | Terrenos cerca de Tuxtla desde $1,000 quincenales</title>
+        <meta name="description" content="Conoce Rioja, desarrollo de terrenos de 200 m2 cerca de Tuxtla Gutiérrez con Escritura Pública, enganche desde $3,000 y pagos de $1,000 quincenales." />
+        <meta property="og:title" content="Rioja | Terrenos cerca de Tuxtla desde $1,000 quincenales" />
+        <meta property="og:description" content="Conoce Rioja, desarrollo de terrenos de 200 m2 cerca de Tuxtla Gutiérrez con Escritura Pública, enganche desde $3,000 y pagos de $1,000 quincenales." />
         <link rel="canonical" href="https://propiedadesenchiapas.com/rioja" />
       </Helmet>
 
-      {/* 1. Hero Section */}
-      <header className="rioja-hero text-center text-white px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-4 text-sm font-semibold tracking-widest uppercase opacity-80">
-            Un proyecto de PEC - Propiedades en Chiapas
-          </div>
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight">
-            {riojaConfig.name}
-          </h1>
-          <p className="text-xl md:text-3xl mb-10 font-light">
-            {riojaConfig.subtitle}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button onClick={scrollToContact} className="rioja-btn-primary">
-              <Info size={20} /> Solicitar información
-            </button>
-            <button onClick={scrollToMap} className="rioja-btn-secondary">
-              <MapPin size={20} /> Ver ubicación
-            </button>
-          </div>
-          <div className="mt-8">
-            <button onClick={handleWhatsApp} className="flex items-center justify-center gap-2 mx-auto text-green-400 hover:text-green-300 transition-colors">
-              <Phone size={18} /> Contactar por WhatsApp
-            </button>
+      {/* 1. Hero Premium */}
+      <header className="rioja-hero">
+        <div className="rioja-hero-content rioja-container">
+          <h1 className="rioja-title rioja-title-hero">{riojaConfig.name}</h1>
+          <p className="rioja-subtitle">{riojaConfig.mainMessage}</p>
+
+          <div className="rioja-hero-finance-card">
+            <div className="rioja-grid-4">
+              <div className="rioja-finance-item">
+                <div className="rioja-finance-label">Precio Total</div>
+                <div className="rioja-finance-price">{riojaConfig.financials.totalPrice}</div>
+              </div>
+              <div className="rioja-finance-item">
+                <div className="rioja-finance-label">Enganche</div>
+                <div className="rioja-finance-value">{riojaConfig.financials.downPayment}</div>
+              </div>
+              <div className="rioja-finance-item">
+                <div className="rioja-finance-label">Quincenal</div>
+                <div className="rioja-finance-value" style={{ color: '#25D366' }}>
+                  {riojaConfig.financials.biweeklyPayment}
+                </div>
+              </div>
+              <div className="rioja-finance-item">
+                <div className="rioja-finance-label">Apartado</div>
+                <div className="rioja-finance-value">{riojaConfig.financials.reservation}</div>
+              </div>
+            </div>
+
+            <div className="rioja-flex-center rioja-mt-40">
+              <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-whatsapp">
+                <Phone size={20} /> Hablar por WhatsApp
+              </button>
+              <button onClick={scrollToContacto} className="rioja-btn rioja-btn-primary">
+                Agendar Visita
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* 2. Presentación del Proyecto */}
-      <section className="rioja-section text-center">
-        <h2 className="text-3xl font-bold mb-6">El Proyecto</h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-12">
-          {riojaConfig.description}
-        </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {riojaConfig.features.map((feature, idx) => (
-            <div key={idx} className="rioja-card flex flex-col items-center">
-              <CheckCircle size={32} className="text-blue-600 mb-4" />
-              <h3 className="font-semibold text-gray-900">{feature.label}</h3>
-              <p className="text-gray-500">{feature.value}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 3. Galería Placeholder */}
-      <section className="rioja-section bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-10">Galería</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((img) => (
-            <div key={img} className="bg-gray-200 aspect-video rounded-lg flex flex-col items-center justify-center text-gray-400 hover:bg-gray-300 transition-colors cursor-pointer">
-              <Camera size={48} className="mb-2 opacity-50" />
-              <span>Imagen {img}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 4. Recorridos 360 */}
+      {/* 2. Problema / Aspiración */}
       <section className="rioja-section">
-        <h2 className="text-3xl font-bold text-center mb-10">Explora {riojaConfig.name} en 360°</h2>
-        <div className="w-full bg-gray-900 rounded-xl aspect-video flex flex-col items-center justify-center text-white">
-          <Box size={64} className="mb-4 opacity-50" />
-          <p className="text-xl">Visor 360° / Kuula Placeholder</p>
-          <p className="text-sm opacity-70 mt-2">Aquí se incrustará el recorrido virtual</p>
+        <div className="rioja-container rioja-text-center">
+          <span className="rioja-section-label">Tu Patrimonio</span>
+          <h2 className="rioja-title rioja-section-title">Deja de pagar renta</h2>
+          <p className="rioja-text-large">
+            {riojaConfig.concept}
+          </p>
         </div>
       </section>
 
-      {/* 6. Amenidades / Beneficios */}
-      <section className="rioja-section bg-blue-900 text-white">
-        <h2 className="text-3xl font-bold text-center mb-10">Amenidades y Beneficios</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {riojaConfig.amenities.map((amenity, idx) => (
-            <div key={idx} className="bg-blue-800 p-6 rounded-lg text-center">
-              <h3 className="text-xl font-bold mb-3">{amenity.title}</h3>
-              <p className="text-blue-200">{amenity.description}</p>
-            </div>
-          ))}
+      {/* 3 & 4. Características y Beneficios */}
+      <section className="rioja-section rioja-section-dark">
+        <div className="rioja-container">
+          <div className="rioja-text-center rioja-mb-40">
+            <span className="rioja-section-label" style={{ color: 'var(--rioja-gold)' }}>El Desarrollo</span>
+            <h2 className="rioja-title rioja-section-title" style={{ color: 'var(--rioja-white)' }}>Características Principales</h2>
+          </div>
+          
+          <div className="rioja-grid-3 rioja-mb-40">
+            {riojaConfig.features.map((feat, index) => (
+              <div key={index} className="rioja-feature-card">
+                <div className="rioja-feature-title">{feat.label}</div>
+                <div className="rioja-feature-value">{feat.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* 7. Disponibilidad Demo */}
+      {/* 5 & 6. Diferenciador y Ubicación */}
       <section className="rioja-section">
-        <h2 className="text-3xl font-bold text-center mb-6">Disponibilidad (Demo)</h2>
-        <p className="text-center text-gray-500 mb-10">Conoce el estatus de los lotes en tiempo real.</p>
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2"><div className="w-4 h-4 bg-green-500 rounded"></div> Disponible</div>
-          <div className="flex items-center gap-2"><div className="w-4 h-4 bg-yellow-500 rounded"></div> Apartado</div>
-          <div className="flex items-center gap-2"><div className="w-4 h-4 bg-red-500 rounded"></div> Vendido</div>
-          <div className="flex items-center gap-2"><div className="w-4 h-4 bg-gray-400 rounded"></div> Próxima etapa</div>
-        </div>
-        <div className="max-w-4xl mx-auto bg-gray-100 p-8 rounded-xl flex items-center justify-center min-h-[300px] border-2 border-dashed border-gray-300">
-          <p className="text-gray-500">Masterplan Interactivo Placeholder</p>
+        <div className="rioja-container">
+          <div className="rioja-grid-2">
+            <div>
+              <span className="rioja-section-label" style={{ textAlign: 'left' }}>Diferenciador</span>
+              <h2 className="rioja-title" style={{ fontSize: '2.5rem' }}>{riojaConfig.differentiator.title}</h2>
+              <p style={{ fontSize: '1.1rem', color: 'var(--rioja-text-light)', marginBottom: '30px' }}>
+                {riojaConfig.differentiator.text}
+              </p>
+              <h3 className="rioja-title" style={{ fontSize: '1.8rem', marginTop: '40px' }}>Ubicación</h3>
+              <p style={{ fontSize: '1.1rem', color: 'var(--rioja-text-light)', marginBottom: '30px' }}>
+                {riojaConfig.location.description}
+              </p>
+              <a href={riojaConfig.location.mapUrl} target="_blank" rel="noreferrer" className="rioja-btn rioja-btn-outline">
+                <MapPin size={20} /> Abrir en Google Maps
+              </a>
+            </div>
+            
+            <div className="rioja-map-container">
+              <iframe 
+                 src={riojaConfig.location.mapEmbed}
+                 width="100%" 
+                 height="100%" 
+                 style={{ border: 0 }} 
+                 allowFullScreen="" 
+                 loading="lazy" 
+                 referrerPolicy="no-referrer-when-downgrade"
+                 title="Ubicación RIOJA"
+              ></iframe>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 5. Ubicación */}
-      <section id="ubicacion" className="rioja-section bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-6">Ubicación Estratégica</h2>
-        <p className="text-center text-gray-600 mb-10">{riojaConfig.location.address}</p>
-        <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg bg-gray-200 flex items-center justify-center">
-           <iframe 
-             src={riojaConfig.location.mapUrl}
-             width="100%" 
-             height="100%" 
-             style={{ border: 0 }} 
-             allowFullScreen="" 
-             loading="lazy" 
-             referrerPolicy="no-referrer-when-downgrade"
-             title="Ubicación RIOJA"
-           ></iframe>
+      {/* 7 & 8. Para quién es y Beneficios */}
+      <section className="rioja-section" style={{ backgroundColor: '#f5f0e6' }}>
+        <div className="rioja-container">
+          <div className="rioja-grid-2">
+            <div>
+              <span className="rioja-section-label" style={{ textAlign: 'left' }}>Beneficios</span>
+              <h2 className="rioja-title" style={{ fontSize: '2.5rem', marginBottom: '30px' }}>¿Por qué invertir aquí?</h2>
+              <div>
+                {riojaConfig.benefits.map((benefit, index) => (
+                  <div key={index} className="rioja-benefit-item">
+                    <CheckCircle className="rioja-icon" size={24} />
+                    <span>{benefit}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <span className="rioja-section-label" style={{ textAlign: 'left' }}>Perfiles</span>
+              <h2 className="rioja-title" style={{ fontSize: '2.5rem', marginBottom: '30px' }}>¿Para quién es Rioja?</h2>
+              <div className="rioja-grid-2" style={{ gap: '20px' }}>
+                {riojaConfig.targetAudience.map((target, index) => (
+                  <div key={index} className="rioja-target-card">
+                    <div className="rioja-target-title">{target.title}</div>
+                    <div className="rioja-target-desc">{target.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. Galería Preparada */}
+      <section className="rioja-section">
+        <div className="rioja-container">
+          <div className="rioja-text-center rioja-mb-40">
+            <span className="rioja-section-label">Entorno</span>
+            <h2 className="rioja-title rioja-section-title">Proyección y Futuro</h2>
+          </div>
+          
+          <div className="rioja-grid-3">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="rioja-image-placeholder">
+                <ImageIcon size={40} style={{ opacity: 0.5, marginBottom: '10px' }} />
+                <span style={{ fontWeight: 500 }}>Terrenos Campestres</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* 10. FAQ */}
-      <section className="rioja-section max-w-3xl">
-        <h2 className="text-3xl font-bold text-center mb-10">Preguntas Frecuentes</h2>
-        <div className="space-y-4">
-          {riojaConfig.faq.map((item, idx) => (
-            <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden">
-              <button 
-                className="w-full text-left p-4 bg-white hover:bg-gray-50 flex justify-between items-center font-semibold text-gray-800"
-                onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-              >
-                {item.q}
-                <ChevronDown className={`transform transition-transform ${openFaq === idx ? 'rotate-180' : ''}`} />
-              </button>
-              {openFaq === idx && (
-                <div className="p-4 bg-gray-50 text-gray-600 border-t border-gray-200">
-                  {item.a}
+      <section className="rioja-section" style={{ backgroundColor: 'var(--rioja-white)' }}>
+        <div className="rioja-container">
+          <div className="rioja-text-center rioja-mb-40">
+            <span className="rioja-section-label">Dudas</span>
+            <h2 className="rioja-title rioja-section-title">Preguntas Frecuentes</h2>
+          </div>
+          
+          <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            {riojaConfig.faq.map((item, index) => (
+              <div key={index} className="rioja-faq-item">
+                <div 
+                  className="rioja-faq-q"
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                >
+                  {item.q}
+                  <ChevronDown 
+                    size={20} 
+                    style={{ 
+                      transform: openFaq === index ? 'rotate(180deg)' : 'rotate(0)', 
+                      transition: 'transform 0.3s ease' 
+                    }} 
+                  />
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 8. Formulario & 11. CTA Final */}
-      <section id="contacto" className="rioja-section bg-gray-900 text-white rounded-t-[3rem]">
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
-          <div>
-            <h2 className="text-4xl font-bold mb-6">Da el primer paso</h2>
-            <p className="text-gray-400 mb-8">Déjanos tus datos y un asesor especializado de PEC se pondrá en contacto contigo para brindarte toda la información que necesites sobre RIOJA.</p>
-            <div className="space-y-4 mb-8">
-              <button onClick={handleWhatsApp} className="w-full flex items-center justify-center gap-3 bg-green-600 hover:bg-green-500 text-white py-3 rounded-lg font-bold transition">
-                <Phone size={20} /> Hablar por WhatsApp
-              </button>
-              <button className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 py-3 rounded-lg font-bold transition">
-                <MapPin size={20} /> Agendar Visita al Desarrollo
-              </button>
-            </div>
-          </div>
-          <div className="bg-white p-8 rounded-xl text-gray-800 shadow-2xl">
-            <h3 className="text-2xl font-bold mb-6 text-center">Solicitar Información</h3>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="relative mb-4">
-                <User className="absolute left-3 top-3 text-gray-400" size={20} />
-                <input type="text" placeholder="Nombre completo" className="rioja-input pl-10" required />
+                {openFaq === index && (
+                  <div className="rioja-faq-a">
+                    {item.a}
+                  </div>
+                )}
               </div>
-              <div className="relative mb-4">
-                <Phone className="absolute left-3 top-3 text-gray-400" size={20} />
-                <input type="tel" placeholder="Teléfono / WhatsApp" className="rioja-input pl-10" required />
-              </div>
-              <div className="relative mb-4">
-                <Mail className="absolute left-3 top-3 text-gray-400" size={20} />
-                <input type="email" placeholder="Correo electrónico (Opcional)" className="rioja-input pl-10" />
-              </div>
-              <div className="relative mb-4">
-                <MapPin className="absolute left-3 top-3 text-gray-400" size={20} />
-                <input type="text" placeholder="Ciudad de residencia" className="rioja-input pl-10" required />
-              </div>
-              <div className="mb-4">
-                <textarea placeholder="¿Tienes alguna duda en específico?" className="rioja-input min-h-[100px]"></textarea>
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm text-gray-600 mb-2">Preferencia de contacto:</label>
-                <select className="rioja-input">
-                  <option>WhatsApp</option>
-                  <option>Llamada telefónica</option>
-                  <option>Correo electrónico</option>
-                </select>
-              </div>
-              <div className="mb-6 flex items-start gap-2">
-                <input type="checkbox" id="privacy" className="mt-1" required />
-                <label htmlFor="privacy" className="text-xs text-gray-500">
-                  Acepto el <a href="/privacidad" className="text-blue-600 underline">aviso de privacidad</a> y el tratamiento de mis datos personales.
-                </label>
-              </div>
-              <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors flex justify-center items-center gap-2">
-                Enviar mensaje <ArrowRight size={18} />
-              </button>
-            </form>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 12. Footer */}
-      <footer className="bg-gray-950 text-gray-400 py-8 text-center text-sm border-t border-gray-800">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={20} />
-            <span>Comercializado por PEC - Propiedades en Chiapas</span>
-          </div>
-          <div className="flex gap-4">
-            <a href="/" className="hover:text-white transition-colors">Sitio Principal</a>
-            <a href="/privacidad" className="hover:text-white transition-colors">Aviso de Privacidad</a>
+      {/* 11. Formulario Local y Contacto */}
+      <section id="contacto" className="rioja-section rioja-section-dark">
+        <div className="rioja-container">
+          <div className="rioja-grid-2">
+            <div>
+              <h2 className="rioja-title" style={{ fontSize: '3rem', color: 'var(--rioja-white)' }}>Da el primer paso</h2>
+              <p className="rioja-text-large" style={{ color: 'var(--rioja-crema)', margin: '0 0 40px 0', textAlign: 'left' }}>
+                Agenda tu visita y conoce personalmente el desarrollo.
+              </p>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <button onClick={handleWhatsApp} className="rioja-btn rioja-btn-whatsapp" style={{ width: '100%', padding: '20px', fontSize: '1.2rem' }}>
+                  <Phone size={24} /> Contactar por WhatsApp
+                </button>
+              </div>
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '15px', color: 'var(--rioja-gold)' }}>
+                <Phone size={24} />
+                <span style={{ fontSize: '1.2rem', fontWeight: 600 }}>Llamadas: {riojaConfig.contact.phone}</span>
+              </div>
+            </div>
+            
+            <div className="rioja-form-container">
+              <h3 className="rioja-title" style={{ fontSize: '2rem', textAlign: 'center', marginBottom: '30px' }}>Solicitar Información</h3>
+              <form onSubmit={(e) => { e.preventDefault(); alert("Mensaje enviado exitosamente. En breve un asesor te contactará."); }}>
+                <div className="rioja-input-group">
+                  <label className="rioja-label">Nombre completo</label>
+                  <div style={{ position: 'relative' }}>
+                    <User size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
+                    <input type="text" className="rioja-input" placeholder="Ingresa tu nombre" style={{ paddingLeft: '45px' }} required />
+                  </div>
+                </div>
+                
+                <div className="rioja-input-group">
+                  <label className="rioja-label">Teléfono / WhatsApp</label>
+                  <div style={{ position: 'relative' }}>
+                    <Phone size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
+                    <input type="tel" className="rioja-input" placeholder="Tu número de contacto" style={{ paddingLeft: '45px' }} required />
+                  </div>
+                </div>
+
+                <div className="rioja-input-group">
+                  <label className="rioja-label">Correo electrónico (Opcional)</label>
+                  <div style={{ position: 'relative' }}>
+                    <Mail size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
+                    <input type="email" className="rioja-input" placeholder="tucorreo@ejemplo.com" style={{ paddingLeft: '45px' }} />
+                  </div>
+                </div>
+
+                <div className="rioja-input-group">
+                  <label className="rioja-label">Ciudad de residencia</label>
+                  <div style={{ position: 'relative' }}>
+                    <MapPin size={20} style={{ position: 'absolute', left: '15px', top: '15px', color: '#999' }} />
+                    <input type="text" className="rioja-input" placeholder="¿De dónde nos visitas?" style={{ paddingLeft: '45px' }} required />
+                  </div>
+                </div>
+                
+                <div className="rioja-checkbox-group">
+                  <input type="checkbox" id="privacidad" required style={{ marginTop: '3px' }} />
+                  <label htmlFor="privacidad">
+                    Acepto el aviso de privacidad y consiento el tratamiento de mis datos personales para recibir información de RIOJA.
+                  </label>
+                </div>
+                
+                <button type="submit" className="rioja-btn rioja-btn-primary" style={{ width: '100%' }}>
+                  Enviar mis datos
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-        <div className="mt-6 text-gray-600">
-          © {new Date().getFullYear()} {riojaConfig.name}. Todos los derechos reservados.
+      </section>
+
+      {/* 12. CTA Final */}
+      <section className="rioja-section rioja-text-center">
+        <div className="rioja-container">
+          <h2 className="rioja-title" style={{ fontSize: '3.5rem', maxWidth: '800px', margin: '0 auto 40px' }}>
+            "{riojaConfig.finalCta}"
+          </h2>
+          <button onClick={scrollToContacto} className="rioja-btn rioja-btn-primary" style={{ fontSize: '1.2rem', padding: '20px 40px' }}>
+            Agenda tu visita hoy
+          </button>
+        </div>
+      </section>
+
+      {/* 13. Footer PEC */}
+      <footer className="rioja-footer">
+        <div className="rioja-container">
+          <div className="rioja-footer-grid">
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', color: 'var(--rioja-white)' }}>
+                <ShieldCheck size={28} color="var(--rioja-gold)" />
+                <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>PEC</span>
+              </div>
+              <p>Propiedades en Chiapas.</p>
+              <p>Comercialización Oficial del Desarrollo Rioja.</p>
+            </div>
+            
+            <div>
+              <div className="rioja-footer-title">Contacto RIOJA</div>
+              <a href={`tel:${riojaConfig.contact.phone}`} className="rioja-footer-link">Llamadas: {riojaConfig.contact.phone}</a>
+              <a href={riojaConfig.contact.whatsappLink} target="_blank" rel="noreferrer" className="rioja-footer-link">WhatsApp de Ventas</a>
+            </div>
+            
+            <div>
+              <div className="rioja-footer-title">Legal</div>
+              <a href="/" className="rioja-footer-link">Sitio Principal PEC</a>
+              <a href="/privacidad" className="rioja-footer-link">Aviso de Privacidad</a>
+            </div>
+          </div>
+          
+          <div style={{ textAlign: 'center', borderTop: '1px solid #333', paddingTop: '30px', marginTop: '20px' }}>
+            &copy; {new Date().getFullYear()} Rioja. Todos los derechos reservados.
+          </div>
         </div>
       </footer>
     </div>
