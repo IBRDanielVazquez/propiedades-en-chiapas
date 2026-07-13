@@ -1,6 +1,6 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Phone, ChevronDown, ShieldCheck, Eye, DollarSign, Calendar, Layers, Home, Sparkles, Compass, Users, User, Info } from 'lucide-react';
+import { MapPin, Phone, ChevronDown, ShieldCheck, Eye, DollarSign, Calendar, Layers, Home, Sparkles, Compass, Users, User } from 'lucide-react';
 import { riojaConfig } from './content/rioja.config';
 import { riojaPhotos } from './content/rioja-fotos.config';
 import RiojaGallery from './components/RiojaGallery';
@@ -518,10 +518,10 @@ export default function RiojaLanding() {
         <button 
           className={`rioja-dock-item ${activeSection === 'informacion' ? 'active' : ''}`}
           onClick={() => scrollToSection('informacion')}
-          aria-label="Información"
+          aria-label="Ubicación"
         >
-          <Info size={20} />
-          <span>Información</span>
+          <MapPin size={20} />
+          <span>Ubicación</span>
         </button>
       </nav>
     </div>
