@@ -5,7 +5,7 @@ export const riojaConfig = {
   location: {
     description: "Ubicado en Berriozábal, en una zona con crecimiento constante y rodeada por comunidades ya establecidas. Una de sus mayores ventajas es que no se encuentra aislado; alrededor ya existen viviendas construidas, habitantes permanentes y movimiento diario.",
     mapUrl: "https://maps.app.goo.gl/YCtU1DEA4aUh71DeA",
-    mapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15281.332025114515!2d-93.1895696!3d16.7455822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85ecd9002ddb6cb5%3A0x6735e2365a6fcc59!2sTuxtla%20Guti%C3%A9rrez%2C%20Chis.!5e0!3m2!1ses-419!2smx!4v1715000000000!5m2!1ses-419!2smx"
+    mapEmbed: "https://maps.google.com/maps?q=16.767086,-93.245738&z=14&output=embed"
   },
   features: [
     { label: "Lotes de", value: "10 x 20 metros" },
