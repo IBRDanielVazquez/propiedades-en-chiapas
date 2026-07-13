@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { MapPin, Phone, CheckCircle, ChevronDown, Mail, User, ShieldCheck, Eye } from 'lucide-react';
 import { riojaConfig } from './content/rioja.config';
 import { rioja360Tour } from './content/rioja-360.config';
+import { riojaPhotos } from './content/rioja-fotos.config';
 import './styles/rioja.css';
 
 const Tour360 = lazy(() => import('./components/Tour360'));
@@ -216,6 +217,30 @@ export default function RiojaLanding() {
           <Tour360 onClose={() => setShow360(false)} />
         </Suspense>
       )}
+
+      {/* 9.5 Galería de Fotos Profesional */}
+      <section className="rioja-section rioja-section-gallery">
+        <div className="rioja-container">
+          <div className="rioja-text-center rioja-mb-40">
+            <span className="rioja-section-label">Galería Exclusiva</span>
+            <h2 className="rioja-title rioja-section-title">El Desarrollo en Detalles</h2>
+            <p className="rioja-text-large" style={{ maxWidth: '700px', margin: '0 auto' }}>
+              Fotografías reales del entorno campestre, vegetación nativa y trazos de lotes de RIOJA.
+            </p>
+          </div>
+
+          <div className="rioja-gallery-grid">
+            {riojaPhotos.map((photo) => (
+              <div key={photo.id} className="rioja-gallery-card">
+                <img src={photo.url} alt={photo.title} loading="lazy" />
+                <div className="rioja-gallery-info">
+                  <span>{photo.title}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* 10. FAQ */}
       <section className="rioja-section" style={{ backgroundColor: 'var(--rioja-white)' }}>

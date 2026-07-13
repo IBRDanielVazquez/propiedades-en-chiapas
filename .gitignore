@@ -13,3 +13,6 @@ security-quarantine/
 public/rioja/360/originales/
 optimize_360.js
 360_inventory.json
+
+# Rioja fotos originales
+public/rioja/fotos/originales/
