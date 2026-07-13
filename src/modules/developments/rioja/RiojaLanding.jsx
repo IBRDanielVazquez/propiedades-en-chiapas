@@ -18,10 +18,10 @@ export default function RiojaLanding() {
   return (
     <div className="rioja-wrapper">
       <Helmet>
-        <title>Rioja | Terrenos cerca de Tuxtla desde $1,000 quincenales</title>
-        <meta name="description" content="Conoce Rioja, desarrollo de terrenos de 200 m2 cerca de Tuxtla Gutiérrez con Escritura Pública, enganche desde $3,000 y pagos de $1,000 quincenales." />
-        <meta property="og:title" content="Rioja | Terrenos cerca de Tuxtla desde $1,000 quincenales" />
-        <meta property="og:description" content="Conoce Rioja, desarrollo de terrenos de 200 m2 cerca de Tuxtla Gutiérrez con Escritura Pública, enganche desde $3,000 y pagos de $1,000 quincenales." />
+        <title>Terrenos en Berriozabal Rioja desde 1000 pesos mensuales</title>
+        <meta name="description" content="Terrenos en Berriozabal Rioja desde 1000 pesos mensuales. Desarrollo de lotes campestres con Escritura Pública y pagos accesibles." />
+        <meta property="og:title" content="Terrenos en Berriozabal Rioja desde 1000 pesos mensuales" />
+        <meta property="og:description" content="Terrenos en Berriozabal Rioja desde 1000 pesos mensuales. Desarrollo de lotes campestres con Escritura Pública y pagos accesibles." />
         <link rel="canonical" href="https://propiedadesenchiapas.com/rioja" />
       </Helmet>
 

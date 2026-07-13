@@ -20,9 +20,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setLoading(false);
+    }).catch((error) => {
+      console.error("Supabase session error:", error);
       setLoading(false);
     });
 
