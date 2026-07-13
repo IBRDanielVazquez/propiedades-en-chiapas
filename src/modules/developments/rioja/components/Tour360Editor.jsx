@@ -16,15 +16,31 @@ export default function Tour360Editor() {
   const audioRef = useRef(null);
   const isInitialMount = useRef(true);
 
-  // Obtener estado inicial (Local Storage de borrador en desarrollo, o del config)
+  // Obtener estado inicial — descarta el borrador si las rutas de imágenes cambiaron
   const getInitialScenes = () => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('rioja-360-scenes-draft');
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const draft = JSON.parse(saved);
+          // Verificar que las rutas source del borrador coincidan con el config actual.
+          // Si difieren (config fue actualizado), descartamos el borrador stale.
+          const configSources = rioja360Scenes.map(s => s.source).join('|');
+          const draftSources  = draft.map(s => s.source).join('|');
+          if (draftSources === configSources) {
+            return draft; // borrador válido — hotspots conservados
+          }
+          // Borrador stale: migrar los hotspots al nuevo config
+          console.info('[Editor 360] Rutas de imágenes actualizadas — migrando hotspots del borrador.');
+          localStorage.removeItem('rioja-360-scenes-draft');
+          const migrated = rioja360Scenes.map((scene, i) => ({
+            ...scene,
+            hotspots: draft[i]?.hotspots ?? scene.hotspots,
+          }));
+          return migrated;
         } catch (e) {
-          console.error("Error al cargar borrador de localStorage", e);
+          console.error('Error al cargar borrador de localStorage', e);
+          localStorage.removeItem('rioja-360-scenes-draft');
         }
       }
     }
