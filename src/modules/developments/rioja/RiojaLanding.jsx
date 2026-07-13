@@ -4,6 +4,7 @@ import { MapPin, Phone, ChevronDown, Mail, User, ShieldCheck, Eye, DollarSign, C
 import { riojaConfig } from './content/rioja.config';
 import { rioja360Tour } from './content/rioja-360.config';
 import { riojaPhotos } from './content/rioja-fotos.config';
+import RiojaGallery from './components/RiojaGallery';
 import './styles/rioja.css';
 
 const Tour360 = lazy(() => import('./components/Tour360'));
@@ -381,28 +382,19 @@ export default function RiojaLanding() {
         </Suspense>
       )}
 
-      {/* 9.5 Galería de Fotos Profesional */}
-      <section className="rioja-section rioja-section-gallery">
+      {/* 9.5 Galería de Fotos Profesional (Carrusel Snap Scroll Inmersivo) */}
+      <section className="rioja-section rioja-section-gallery" style={{ paddingBottom: '80px' }}>
         <div className="rioja-container">
           <div className="rioja-text-center rioja-mb-40">
             <span className="rioja-section-label">Galería Exclusiva</span>
             <h2 className="rioja-title rioja-section-title">El Desarrollo en Detalles</h2>
             <p className="rioja-text-large" style={{ maxWidth: '700px', margin: '0 auto' }}>
-              Fotografías reales del entorno campestre, vegetación nativa y trazos de lotes de RIOJA.
+              Desliza horizontalmente para explorar fotografías reales de RIOJA. Toca cualquier imagen para abrir el visor.
             </p>
           </div>
-
-          <div className="rioja-gallery-grid">
-            {riojaPhotos.map((photo) => (
-              <div key={photo.id} className="rioja-gallery-card">
-                <img src={photo.url} alt={photo.title} loading="lazy" />
-                <div className="rioja-gallery-info">
-                  <span>{photo.title}</span>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
+        
+        <RiojaGallery />
       </section>
 
       {/* 10. FAQ */}

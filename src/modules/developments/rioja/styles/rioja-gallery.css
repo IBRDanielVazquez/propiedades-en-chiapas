@@ -1,0 +1,206 @@
+/* ==========================================================================
+   Estilos de la Galería Horizontal Premium RIOJA (Estilo Apple / Tesla)
+   ========================================================================== */
+
+.rioja-gallery-section-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.rioja-gallery-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  gap: 24px;
+  padding: 30px 10%;
+  scrollbar-width: none; /* Firefox */
+}
+
+.rioja-gallery-scroll-container::-webkit-scrollbar {
+  display: none; /* Safari/Chrome */
+}
+
+.rioja-gallery-slide {
+  flex: 0 0 85%;
+  scroll-snap-align: center;
+  max-width: 720px;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.rioja-gallery-slide:hover {
+  transform: scale(1.02);
+}
+
+.rioja-gallery-image-wrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12), 0 5px 15px rgba(0, 0, 0, 0.05);
+  aspect-ratio: 16 / 10;
+  user-select: none;
+  -webkit-user-drag: none;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rioja-gallery-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.rioja-gallery-slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 50, 36, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(2px);
+}
+
+.rioja-gallery-slide:hover .rioja-gallery-slide-overlay {
+  opacity: 1;
+}
+
+/* ============================
+   Lightbox / Visor Fullscreen
+   ============================ */
+.rioja-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 10, 8, 0.95);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: psvFadeIn 0.3s ease-out;
+}
+
+.rioja-lightbox-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+
+.rioja-lightbox-close:hover {
+  background: var(--rioja-gold);
+  color: #1e3224;
+  border-color: var(--rioja-gold);
+  transform: rotate(90deg);
+}
+
+.rioja-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.rioja-lightbox-nav:hover {
+  background: var(--rioja-gold);
+  color: #1e3224;
+  border-color: var(--rioja-gold);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.rioja-lightbox-nav.left {
+  left: 40px;
+}
+
+.rioja-lightbox-nav.right {
+  right: 40px;
+}
+
+.rioja-lightbox-content {
+  max-width: 90%;
+  max-height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: psvZoomIn 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes psvZoomIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.rioja-lightbox-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.rioja-lightbox-counter {
+  position: absolute;
+  bottom: 40px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+/* Responsive updates */
+@media (max-width: 992px) {
+  .rioja-gallery-scroll-container {
+    padding: 20px 5%;
+    gap: 16px;
+  }
+  .rioja-gallery-slide {
+    flex: 0 0 90%;
+  }
+}
+
+@media (max-width: 768px) {
+  .rioja-gallery-scroll-container {
+    padding: 15px 4%;
+  }
+  .rioja-lightbox-nav {
+    display: none; /* Hide visual navs on mobile, swipe dominates */
+  }
+  .rioja-lightbox-close {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+  }
+}
