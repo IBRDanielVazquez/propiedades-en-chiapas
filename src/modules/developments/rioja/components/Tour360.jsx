@@ -53,6 +53,7 @@ export default function Tour360({ onClose }) {
   const updatePositions = () => {
     if (!viewerRef.current) return;
     const scene = rioja360Tour[currentIndex];
+    if (!scene || !scene.hotspots) return;
     
     scene.hotspots.forEach(hs => {
       const el = document.getElementById(`hs-${hs.id}`);
@@ -239,7 +240,7 @@ export default function Tour360({ onClose }) {
 
         {/* Capa de Hotspots Interactivos */}
         <div className="rioja-360-hotspots-container">
-          {currentScene.hotspots.map((hs) => (
+          {(currentScene?.hotspots || []).map((hs) => (
             <button
               key={hs.id}
               id={`hs-${hs.id}`}
