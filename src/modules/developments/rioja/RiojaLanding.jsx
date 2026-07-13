@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { MapPin, Phone, CheckCircle, ChevronDown, ImageIcon, Mail, User, ShieldCheck } from 'lucide-react';
+import { MapPin, Phone, CheckCircle, ChevronDown, Mail, User, ShieldCheck, Eye } from 'lucide-react';
 import { riojaConfig } from './content/rioja.config';
+import { rioja360Tour } from './content/rioja-360.config';
 import './styles/rioja.css';
+
+const Tour360 = lazy(() => import('./components/Tour360'));
 
 export default function RiojaLanding() {
   const [openFaq, setOpenFaq] = useState(null);
+  const [show360, setShow360] = useState(false);
 
   const handleWhatsApp = () => {
     window.open(riojaConfig.contact.whatsappLink, '_blank');
@@ -163,24 +167,55 @@ export default function RiojaLanding() {
         </div>
       </section>
 
-      {/* 9. Galería Preparada */}
-      <section className="rioja-section">
+      {/* 9. Recorrido 360° */}
+      <section className="rioja-section rioja-section-360">
         <div className="rioja-container">
           <div className="rioja-text-center rioja-mb-40">
-            <span className="rioja-section-label">Entorno</span>
-            <h2 className="rioja-title rioja-section-title">Proyección y Futuro</h2>
+            <span className="rioja-section-label">Experiencia Inmersiva</span>
+            <h2 className="rioja-title rioja-section-title">Explora RIOJA en 360°</h2>
+            <p className="rioja-text-large" style={{ maxWidth: '700px', margin: '0 auto' }}>
+              Recorre el desarrollo desde cualquier lugar. Arrastra para mirar en todas las direcciones.
+            </p>
           </div>
-          
-          <div className="rioja-grid-3">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="rioja-image-placeholder">
-                <ImageIcon size={40} style={{ opacity: 0.5, marginBottom: '10px' }} />
-                <span style={{ fontWeight: 500 }}>Terrenos Campestres</span>
-              </div>
+
+          <div className="rioja-360-preview-grid">
+            {rioja360Tour.slice(0, 6).map((scene) => (
+              <button
+                key={scene.id}
+                className="rioja-360-preview-card"
+                onClick={() => setShow360(true)}
+                aria-label={`Ver ${scene.title} en 360°`}
+              >
+                <img src={scene.thumb} alt={scene.title} loading="lazy" />
+                <div className="rioja-360-preview-overlay">
+                  <Eye size={28} />
+                  <span>{scene.title}</span>
+                </div>
+              </button>
             ))}
+          </div>
+
+          <div className="rioja-flex-center" style={{ marginTop: '40px' }}>
+            <button
+              onClick={() => setShow360(true)}
+              className="rioja-btn rioja-btn-primary"
+              style={{ fontSize: '1.1rem', padding: '18px 40px' }}
+            >
+              <Eye size={22} /> Iniciar Recorrido 360°
+            </button>
           </div>
         </div>
       </section>
+
+      {show360 && (
+        <Suspense fallback={
+          <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: 'Outfit, sans-serif' }}>
+            Cargando recorrido...
+          </div>
+        }>
+          <Tour360 onClose={() => setShow360(false)} />
+        </Suspense>
+      )}
 
       {/* 10. FAQ */}
       <section className="rioja-section" style={{ backgroundColor: 'var(--rioja-white)' }}>

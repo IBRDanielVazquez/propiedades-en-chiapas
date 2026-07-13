@@ -482,3 +482,84 @@
     font-size: 2.2rem;
   }
 }
+
+/* ============================
+   360° Preview Section
+   ============================ */
+.rioja-section-360 {
+  background: linear-gradient(135deg, #f5f0e6 0%, #fdfaf6 100%);
+}
+
+.rioja-360-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.rioja-360-preview-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  background: #222;
+  aspect-ratio: 16 / 9;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.rioja-360-preview-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.rioja-360-preview-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.rioja-360-preview-card:hover img {
+  transform: scale(1.08);
+}
+
+.rioja-360-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(30, 50, 36, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.rioja-360-preview-card:hover .rioja-360-preview-overlay {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .rioja-360-preview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rioja-360-preview-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .rioja-360-preview-overlay {
+    opacity: 1;
+    background: rgba(30, 50, 36, 0.4);
+    font-size: 0.75rem;
+  }
+}

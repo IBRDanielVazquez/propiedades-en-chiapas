@@ -8,3 +8,8 @@ landings_originales/
 .vercel
 # Archivos sensibles retirados de public/ — nunca subir a Git
 security-quarantine/
+
+# 360 originales (demasiado pesados para git)
+public/rioja/360/originales/
+optimize_360.js
+360_inventory.json
