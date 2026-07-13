@@ -49,11 +49,26 @@ export default function RiojaLanding() {
   return (
     <div className="rioja-wrapper">
       <Helmet>
-        <title>Terrenos en Berriozabal Rioja desde 1000 pesos mensuales</title>
-        <meta name="description" content="Terrenos en Berriozabal Rioja desde 1000 pesos mensuales. Desarrollo de lotes campestres con Escritura Pública y pagos accesibles." />
-        <meta property="og:title" content="Terrenos en Berriozabal Rioja desde 1000 pesos mensuales" />
-        <meta property="og:description" content="Terrenos en Berriozabal Rioja desde 1000 pesos mensuales. Desarrollo de lotes campestres con Escritura Pública y pagos accesibles." />
-        <link rel="canonical" href="https://propiedadesenchiapas.com/rioja" />
+        <title>RIOJA | Terrenos en Berriozábal con Escritura Pública</title>
+        <meta name="description" content="Invierte en tu patrimonio con terrenos de 10×20 m, financiamiento directo y pagos desde $1,000 quincenales." />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.propiedadesenchiapas.com/rioja" />
+        <meta property="og:title" content="RIOJA | Terrenos en Berriozábal con Escritura Pública" />
+        <meta property="og:description" content="Invierte en tu patrimonio con terrenos de 10×20 m, financiamiento directo y pagos desde $1,000 quincenales." />
+        <meta property="og:image" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.webp" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.propiedadesenchiapas.com/rioja" />
+        <meta name="twitter:title" content="RIOJA | Terrenos en Berriozábal" />
+        <meta name="twitter:description" content="Conoce RIOJA y agenda una visita." />
+        <meta name="twitter:image" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.webp" />
+
+        <link rel="canonical" href="https://www.propiedadesenchiapas.com/rioja" />
       </Helmet>
 
       {/* 1. SECCIÓN INICIO (Identificador: inicio) */}
