@@ -5,7 +5,21 @@ import {
   X, ChevronLeft, ChevronRight, Volume2, VolumeX, 
   Compass, MapPin, Info, Layers, ExternalLink, 
   Calendar, DollarSign, Eye, Phone, ArrowRight, 
-  Home, Sparkles, Plus, Copy, Settings, Download, Trash2
+  Home, Sparkles, Plus, Copy, Settings, Download, Trash2,
+  // Navegación & movimiento
+  Navigation, Navigation2, MoveRight, ChevronsRight, CornerDownRight, Route,
+  // Ubicación & terreno
+  Mountain, Trees, Flag, Landmark, Building2, Store, Warehouse,
+  // Financiero & negocio
+  BadgeDollarSign, Wallet, CreditCard, Receipt, TrendingUp, BarChart2,
+  // Naturaleza & amenidades
+  Sun, Droplets, Wind, Flower2, Leaf, Bird,
+  // Construcción & lote
+  Ruler, PenTool, Wrench, HardHat, Hammer, Fence,
+  // Contacto & social
+  MessageCircle, Mail, Share2, UserCheck, Users, Star,
+  // Multimedia & extras
+  Camera, Image, PlayCircle, Zap, Globe, Search
 } from 'lucide-react';
 import { rioja360Scenes } from '../content/rioja-360.config';
 import '../styles/rioja-360.css';
@@ -545,21 +559,76 @@ export default function Tour360Editor() {
   };
 
   // Iconos dinámicos
+  // Mapa completo de iconos disponibles (key → { label, component })
+  const ICON_CATALOG = [
+    // Navegación
+    { key: 'arrow',           label: 'Flecha',          icon: <ArrowRight size={18}/> },
+    { key: 'navigation',      label: 'Navegación',      icon: <Navigation size={18}/> },
+    { key: 'navigation2',     label: 'Dirección',       icon: <Navigation2 size={18}/> },
+    { key: 'move-right',      label: 'Avanzar',         icon: <MoveRight size={18}/> },
+    { key: 'chevrons-right',  label: 'Siguiente',       icon: <ChevronsRight size={18}/> },
+    { key: 'route',           label: 'Ruta',            icon: <Route size={18}/> },
+    { key: 'corner-right',    label: 'Doblar',          icon: <CornerDownRight size={18}/> },
+    // Información
+    { key: 'info',            label: 'Info',            icon: <Info size={18}/> },
+    { key: 'eye',             label: 'Vista',           icon: <Eye size={18}/> },
+    { key: 'search',          label: 'Buscar',          icon: <Search size={18}/> },
+    { key: 'star',            label: 'Destacado',       icon: <Star size={18}/> },
+    { key: 'sparkles',        label: 'Especial',        icon: <Sparkles size={18}/> },
+    { key: 'zap',             label: 'Destacar',        icon: <Zap size={18}/> },
+    // Ubicación & Terreno
+    { key: 'map',             label: 'Marcador',        icon: <MapPin size={18}/> },
+    { key: 'compass',         label: 'Brújula',         icon: <Compass size={18}/> },
+    { key: 'flag',            label: 'Bandera/Lote',    icon: <Flag size={18}/> },
+    { key: 'mountain',        label: 'Montaña',         icon: <Mountain size={18}/> },
+    { key: 'trees',           label: 'Vegetación',      icon: <Trees size={18}/> },
+    { key: 'leaf',            label: 'Naturaleza',      icon: <Leaf size={18}/> },
+    { key: 'fence',           label: 'Colindancia',     icon: <Fence size={18}/> },
+    { key: 'globe',           label: 'Contexto',        icon: <Globe size={18}/> },
+    { key: 'layers',          label: 'Lotes/Capas',     icon: <Layers size={18}/> },
+    // Inmueble & Construcción
+    { key: 'home',            label: 'Vivienda',        icon: <Home size={18}/> },
+    { key: 'building',        label: 'Edificio',        icon: <Building2 size={18}/> },
+    { key: 'landmark',        label: 'Hito',            icon: <Landmark size={18}/> },
+    { key: 'warehouse',       label: 'Bodega/Área',     icon: <Warehouse size={18}/> },
+    { key: 'ruler',           label: 'Medidas',         icon: <Ruler size={18}/> },
+    { key: 'hard-hat',        label: 'Construcción',    icon: <HardHat size={18}/> },
+    { key: 'hammer',          label: 'Obra',            icon: <Hammer size={18}/> },
+    { key: 'pen-tool',        label: 'Diseño',          icon: <PenTool size={18}/> },
+    { key: 'wrench',          label: 'Infraestructura', icon: <Wrench size={18}/> },
+    // Financiero
+    { key: 'dollar-sign',     label: 'Precio',          icon: <DollarSign size={18}/> },
+    { key: 'badge-dollar',    label: 'Oferta',          icon: <BadgeDollarSign size={18}/> },
+    { key: 'wallet',          label: 'Financiamiento',  icon: <Wallet size={18}/> },
+    { key: 'credit-card',     label: 'Pago',            icon: <CreditCard size={18}/> },
+    { key: 'trending-up',     label: 'Plusvalía',       icon: <TrendingUp size={18}/> },
+    { key: 'bar-chart',       label: 'Estadísticas',    icon: <BarChart2 size={18}/> },
+    { key: 'receipt',         label: 'Contrato',        icon: <Receipt size={18}/> },
+    // Contacto
+    { key: 'phone',           label: 'Teléfono',        icon: <Phone size={18}/> },
+    { key: 'message',         label: 'WhatsApp/Chat',   icon: <MessageCircle size={18}/> },
+    { key: 'mail',            label: 'Correo',          icon: <Mail size={18}/> },
+    { key: 'user-check',      label: 'Asesor',          icon: <UserCheck size={18}/> },
+    { key: 'users',           label: 'Equipo',          icon: <Users size={18}/> },
+    { key: 'share',           label: 'Compartir',       icon: <Share2 size={18}/> },
+    // Amenidades & extras
+    { key: 'calendar',        label: 'Fecha/Evento',    icon: <Calendar size={18}/> },
+    { key: 'external-link',   label: 'Enlace externo',  icon: <ExternalLink size={18}/> },
+    { key: 'camera',          label: 'Fotografía',      icon: <Camera size={18}/> },
+    { key: 'image',           label: 'Galería',         icon: <Image size={18}/> },
+    { key: 'play',            label: 'Video/Tour',      icon: <PlayCircle size={18}/> },
+    { key: 'sun',             label: 'Clima/Soleado',   icon: <Sun size={18}/> },
+    { key: 'droplets',        label: 'Agua/Riego',      icon: <Droplets size={18}/> },
+    { key: 'wind',            label: 'Aire/Brisa',      icon: <Wind size={18}/> },
+    { key: 'bird',            label: 'Fauna',           icon: <Bird size={18}/> },
+    { key: 'flower',          label: 'Jardinería',      icon: <Flower2 size={18}/> },
+    { key: 'store',           label: 'Comercio',        icon: <Store size={18}/> },
+  ];
+
   const getHotspotIcon = (type, iconName) => {
-    switch (iconName) {
-      case 'map': return <MapPin size={20} />;
-      case 'compass': return <Compass size={20} />;
-      case 'home': return <Home size={20} />;
-      case 'external-link': return <ExternalLink size={20} />;
-      case 'calendar': return <Calendar size={20} />;
-      case 'layers': return <Layers size={20} />;
-      case 'sparkles': return <Sparkles size={20} />;
-      case 'dollar-sign': return <DollarSign size={20} />;
-      case 'eye': return <Eye size={20} />;
-      case 'phone': return <Phone size={20} />;
-      default:
-        return type === 'navigation' ? <ArrowRight size={20} /> : <Info size={20} />;
-    }
+    const found = ICON_CATALOG.find(ic => ic.key === iconName);
+    if (found) return found.icon;
+    return type === 'navigation' ? <ArrowRight size={20}/> : <Info size={20}/>;
   };
 
   return (
@@ -852,25 +921,55 @@ export default function Tour360Editor() {
               </div>
 
               <div className="rioja-editor-group">
-                <label className="rioja-editor-label">Icono</label>
-                <select 
-                  className="rioja-editor-select"
-                  value={activeEditHotspot.icon}
-                  onChange={(e) => setActiveEditHotspot({ ...activeEditHotspot, icon: e.target.value })}
-                >
-                  <option value="arrow">Flecha de avance</option>
-                  <option value="info">Información (i)</option>
-                  <option value="map">Marcador de Mapa</option>
-                  <option value="compass">Brújula</option>
-                  <option value="home">Casa</option>
-                  <option value="calendar">Calendario</option>
-                  <option value="layers">Capas/Lotes</option>
-                  <option value="sparkles">Estrellas</option>
-                  <option value="dollar-sign">Dinero</option>
-                  <option value="eye">Ojo</option>
-                  <option value="phone">Teléfono</option>
-                  <option value="external-link">Enlace externo</option>
-                </select>
+                <label className="rioja-editor-label">Icono del Pin</label>
+                {/* Selector visual de iconos en cuadrícula */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(6, 1fr)',
+                  gap: '5px',
+                  maxHeight: '210px',
+                  overflowY: 'auto',
+                  padding: '6px',
+                  background: 'rgba(0,0,0,0.3)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(195,164,121,0.2)'
+                }}>
+                  {ICON_CATALOG.map(({ key, label, icon }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      title={label}
+                      onClick={() => setActiveEditHotspot({ ...activeEditHotspot, icon: key })}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '3px',
+                        padding: '6px 2px',
+                        borderRadius: '6px',
+                        border: activeEditHotspot.icon === key
+                          ? '1.5px solid #c3a479'
+                          : '1px solid transparent',
+                        background: activeEditHotspot.icon === key
+                          ? 'rgba(195,164,121,0.25)'
+                          : 'rgba(255,255,255,0.04)',
+                        color: activeEditHotspot.icon === key ? '#c3a479' : '#8da88d',
+                        cursor: 'pointer',
+                        fontSize: '8px',
+                        lineHeight: 1.2,
+                        transition: 'all 0.15s',
+                        minWidth: 0,
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {icon}
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%' }}>
+                        {label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {activeEditHotspot.type === 'navigation' && (
