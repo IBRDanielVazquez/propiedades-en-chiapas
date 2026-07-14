@@ -145,13 +145,13 @@ export const rioja360Scenes: Scene[] = [
         "type": "info",
         "title": "A Tuxtla Gutiérrez",
         "description": "",
-        "yaw": 1.5561848907166944,
-        "pitch": 0.12222991781534964,
-        "icon": "info",
+        "yaw": 1.558629083488897,
+        "pitch": 0.1433456467815324,
+        "icon": "map",
         "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
-        "approved": false
+        "approved": true
       }
     ]
   },
