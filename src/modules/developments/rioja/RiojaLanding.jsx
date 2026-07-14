@@ -1,17 +1,32 @@
-import { useState, lazy, Suspense, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MapPin, Phone, ChevronDown, ShieldCheck, Eye, DollarSign, Calendar, Layers, Home, Sparkles, Compass, Users, User } from 'lucide-react';
 import { riojaConfig } from './content/rioja.config';
 import { riojaPhotos } from './content/rioja-fotos.config';
 import RiojaGallery from './components/RiojaGallery';
 import './styles/rioja.css';
 
-const Tour360 = lazy(() => import('./components/Tour360'));
-
 export default function RiojaLanding() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [openFaq, setOpenFaq] = useState(null);
-  const [show360, setShow360] = useState(false);
   const [activeSection, setActiveSection] = useState('inicio');
+
+  // Hook para auto-scrollear de forma suave a las secciones con hash (ej: /rioja#financiamiento)
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const id = hash.replace('#', '');
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setActiveSection(id);
+        }
+      }, 100);
+    }
+  }, [location]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,7 +101,7 @@ export default function RiojaLanding() {
               <button onClick={() => scrollToSection('financiamiento')} className="rioja-btn-hero-primary">
                 Ver Financiamiento
               </button>
-              <button onClick={() => scrollToSection('360')} className="rioja-btn-hero-secondary">
+              <button onClick={() => navigate('/rioja/360')} className="rioja-btn-hero-secondary">
                 Explorar en 360°
               </button>
             </div>
@@ -210,7 +225,7 @@ export default function RiojaLanding() {
           <div 
             className="rioja-360-visual-portal" 
             style={{ backgroundImage: `url('/rioja/360/rioja-360-01.webp')` }}
-            onClick={() => setShow360(true)}
+            onClick={() => navigate('/rioja/360')}
           >
             <div className="rioja-360-visual-overlay"></div>
             <div className="rioja-360-visual-content">
@@ -220,7 +235,7 @@ export default function RiojaLanding() {
               <h3>Recorre RIOJA como si estuvieras aquí</h3>
               <p>Presiona el botón de abajo para iniciar la visita interactiva por todo el desarrollo.</p>
               <button 
-                onClick={(e) => { e.stopPropagation(); setShow360(true); }}
+                onClick={(e) => { e.stopPropagation(); navigate('/rioja/360'); }}
                 className="rioja-btn rioja-btn-primary"
                 style={{ width: 'auto', padding: '16px 36px', fontSize: '1rem', fontWeight: 600 }}
               >
@@ -230,16 +245,6 @@ export default function RiojaLanding() {
           </div>
         </div>
       </section>
-
-      {show360 && (
-        <Suspense fallback={
-          <div style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: 'Outfit, sans-serif' }}>
-            Cargando recorrido...
-          </div>
-        }>
-          <Tour360 onClose={() => setShow360(false)} />
-        </Suspense>
-      )}
 
       <div className="rioja-visual-divider" />
 
@@ -501,7 +506,7 @@ export default function RiojaLanding() {
         </button>
         <button 
           className={`rioja-dock-item ${activeSection === '360' ? 'active' : ''}`}
-          onClick={() => scrollToSection('360')}
+          onClick={() => navigate('/rioja/360')}
           aria-label="360°"
         >
           <Eye size={20} />

@@ -1323,3 +1323,319 @@ body {
   border: none;
 }
 
+/* ============================
+   Sección Portada Emocional /rioja/360
+   ============================ */
+.rioja-360-page-wrapper {
+  background-color: #141414;
+  min-height: 100vh;
+  width: 100%;
+  color: #F7F1E8;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.rioja-360-page-portal {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px 140px;
+  box-sizing: border-box;
+}
+
+.rioja-360-page-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(20, 20, 20, 0.25) 0%, rgba(20, 20, 20, 0.65) 100%);
+  z-index: 1;
+}
+
+.rioja-360-back-btn {
+  position: absolute;
+  top: 30px;
+  left: 5%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid rgba(247, 241, 232, 0.2);
+  color: #F7F1E8;
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.rioja-360-back-btn:hover {
+  background: #B8924A;
+  color: #141414;
+  border-color: #B8924A;
+  transform: translateX(-3px);
+}
+
+.rioja-360-page-content {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.rioja-360-page-badge {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #B8924A;
+  text-transform: uppercase;
+  background: rgba(184, 146, 74, 0.12);
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(184, 146, 74, 0.25);
+  animation: pulse-gold 2.5s infinite ease-in-out;
+}
+
+.rioja-360-page-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.4rem;
+  font-weight: 500;
+  line-height: 1.1;
+  color: #F7F1E8;
+  margin: 10px 0 0 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.rioja-360-page-lead {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem;
+  font-style: italic;
+  line-height: 1.3;
+  color: #F7F1E8;
+  margin: 0;
+  opacity: 0.95;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.rioja-360-page-subtext {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #F7F1E8;
+  margin: 0;
+  opacity: 0.8;
+  max-width: 460px;
+}
+
+.rioja-360-animated-sphere-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.rioja-360-animated-sphere {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px solid rgba(184, 146, 74, 0.5);
+  background: rgba(20, 20, 20, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #B8924A;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 0 15px rgba(184, 146, 74, 0.2);
+  transition: all 0.3s ease;
+}
+
+.rioja-360-animated-sphere:hover {
+  transform: scale(1.08);
+  border-color: #B8924A;
+  box-shadow: 0 0 25px rgba(184, 146, 74, 0.45);
+}
+
+.rioja-sphere-icon-spin {
+  animation: float-rotate 6s infinite linear;
+}
+
+.rioja-360-swipe-hint {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: #F7F1E8;
+  opacity: 0.6;
+}
+
+.rioja-360-actions-grid {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 15px;
+}
+
+.rioja-btn-enter-360 {
+  width: 100%;
+  background: #B8924A;
+  border: none;
+  color: #141414;
+  padding: 18px 24px;
+  border-radius: 30px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(184, 146, 74, 0.3);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.rioja-btn-enter-360:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(184, 146, 74, 0.5);
+  background: #c9a55c;
+}
+
+.rioja-360-secondary-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.rioja-btn-share-360, .rioja-btn-whatsapp-share {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(20, 20, 20, 0.7);
+  border: 1px solid rgba(247, 241, 232, 0.15);
+  color: #F7F1E8;
+  padding: 12px 14px;
+  border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+}
+
+.rioja-btn-share-360:hover {
+  border-color: #B8924A;
+  color: #B8924A;
+  background: rgba(184, 146, 74, 0.05);
+}
+
+.rioja-btn-whatsapp-share:hover {
+  border-color: #22C55E;
+  color: #22C55E;
+  background: rgba(34, 197, 94, 0.05);
+}
+
+/* Toast de Enlace Copiado */
+.rioja-360-share-toast {
+  position: fixed;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: #1E1E1E;
+  border: 1px solid #B8924A;
+  border-radius: 20px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #F7F1E8;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+  animation: slide-up-fade 0.3s ease-out;
+}
+
+/* Animaciones */
+@keyframes pulse-gold {
+  0% {
+    box-shadow: 0 0 0 0 rgba(184, 146, 74, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(184, 146, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(184, 146, 74, 0);
+  }
+}
+
+@keyframes float-rotate {
+  0% {
+    transform: rotate(0deg) translateY(0px);
+  }
+  50% {
+    transform: rotate(180deg) translateY(-2px);
+  }
+  100% {
+    transform: rotate(360deg) translateY(0px);
+  }
+}
+
+@keyframes slide-up-fade {
+  from {
+    transform: translate(-50%, 15px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Portada */
+@media (max-width: 768px) {
+  .rioja-360-page-headline {
+    font-size: 2.5rem;
+  }
+  .rioja-360-page-lead {
+    font-size: 1.4rem;
+  }
+  .rioja-360-back-btn {
+    top: 20px;
+    left: 4%;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  .rioja-360-secondary-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rioja-btn-share-360, .rioja-btn-whatsapp-share {
+    width: 100%;
+    padding: 14px;
+  }
+}
+
+

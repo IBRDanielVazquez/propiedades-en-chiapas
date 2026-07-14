@@ -10,6 +10,7 @@ import LandingCaptacion from './components/LandingCaptacion';
 import LandingViewer from './components/LandingViewer';
 import BellaVistaLanding from './modules/developments/bella-vista/BellaVistaLanding';
 import RiojaLanding from './modules/developments/rioja/RiojaLanding';
+import Rioja360TourPage from './modules/developments/rioja/Rioja360TourPage';
 import AvisoPrivacidad from './components/AvisoPrivacidad';
 import PropertyDetail from './components/PropertyDetail';
 import LeadsDashboard from './components/LeadsDashboard';
@@ -54,6 +55,7 @@ export default function App() {
         <Route path="/bella-vista" element={<BellaVistaLanding />} />
         <Route path="/bella-vista-ocozocoautla" element={<BellaVistaLanding />} />
         <Route path="/rioja" element={<RiojaLanding />} />
+        <Route path="/rioja/360" element={<Rioja360TourPage />} />
         <Route path="/rioja/360/editor" element={<Rioja360EditorRoute />} />
         <Route path="/privacidad" element={<AvisoPrivacidad />} />
         <Route path="/propiedad/:id" element={<PropertyDetail />} />

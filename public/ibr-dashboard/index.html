@@ -2424,14 +2424,28 @@ async function loadCitas() {
     }
 }
 
+function obtenerFechaHoyLocal() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function parseFechaHora(str) {
     if (!str) return null;
     if (str.includes('T') || str.match(/^\d{4}-\d{2}-\d{2}/)) {
-        const d = new Date(str);
+        const cleanStr = str.replace('T', ' ');
+        const d = new Date(cleanStr);
         if (!isNaN(d.getTime())) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
             return {
-                fecha: d.toISOString().split('T')[0],
-                hora: d.toTimeString().split(' ')[0].substring(0, 5)
+                fecha: `${year}-${month}-${day}`,
+                hora: `${hours}:${minutes}`
             };
         }
     }

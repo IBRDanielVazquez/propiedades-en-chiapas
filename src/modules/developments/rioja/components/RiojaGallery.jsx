@@ -109,6 +109,23 @@ export default function RiojaGallery() {
             </div>
           </div>
         ))}
+        
+        {/* Special card at the end of the carousel */}
+        <div className="rioja-gallery-slide special-card-slide">
+          <div className="rioja-gallery-special-content">
+            <h4>¿Quieres recorrerlo completo?</h4>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                document.getElementById('360')?.scrollIntoView({ behavior: 'smooth' });
+              }} 
+              className="rioja-btn rioja-btn-primary-new"
+              style={{ width: 'auto', padding: '12px 25px', fontSize: '0.9rem' }}
+            >
+              Ver experiencia 360°
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Lightbox Modal */}

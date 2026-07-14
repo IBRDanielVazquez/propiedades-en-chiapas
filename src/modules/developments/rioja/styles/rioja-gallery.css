@@ -204,3 +204,31 @@
     height: 40px;
   }
 }
+
+/* Gallery Special Slide at the End */
+.special-card-slide {
+  flex: 0 0 70%;
+  max-width: 400px;
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 50, 36, 0.4);
+  border: 2px dashed rgba(195, 164, 121, 0.4);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.rioja-gallery-special-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.rioja-gallery-special-content h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--rioja-green-deep);
+  margin: 0 0 15px 0;
+}
+
