@@ -172,30 +172,56 @@ export const rioja360Scenes: Scene[] = [
     },
     "hotspots": [
       {
-        "id": "nav-to-principal-from-acceso",
-        "type": "navigation",
-        "title": "Volver a vista aérea principal",
-        "description": "Sube a la perspectiva aérea principal del proyecto.",
-        "yaw": 3.14,
-        "pitch": -0.1,
-        "icon": "arrow",
-        "targetSceneId": "vista-aerea-principal",
+        "id": "hs-1784050224679",
+        "type": "info",
+        "title": "Autódromo",
+        "description": "Súper Óvalo Chiapas",
+        "yaw": 0.36125871521967257,
+        "pitch": -0.28482289025138674,
+        "icon": "map",
+        "targetSceneId": "vista-aerea-regional",
+        "url": null,
+        "enabled": true,
+        "approved": true
+      },
+      {
+        "id": "hs-1784050320827",
+        "type": "info",
+        "title": "Tuxtla Gutiérrez",
+        "description": "",
+        "yaw": 2.3954220263383847,
+        "pitch": -0.06629108344353618,
+        "icon": "map",
+        "targetSceneId": "vista-aerea-regional",
+        "url": null,
+        "enabled": true,
+        "approved": true
+      },
+      {
+        "id": "hs-1784050407634",
+        "type": "info",
+        "title": "Rioja",
+        "description": "Terrenos en Venta ",
+        "yaw": 2.8775098529688212,
+        "pitch": -1.3534810263061923,
+        "icon": "info",
+        "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
         "approved": false
       },
       {
-        "id": "nav-to-regional-from-acceso",
-        "type": "navigation",
-        "title": "Ir a vista aérea regional",
-        "description": "Muévete hacia la zona del camino principal.",
-        "yaw": 0.15,
-        "pitch": -0.05,
-        "icon": "arrow",
+        "id": "hs-1784050447603",
+        "type": "info",
+        "title": "Berriozábal",
+        "description": "",
+        "yaw": -0.021446193972917804,
+        "pitch": -0.006592307165503408,
+        "icon": "info",
         "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
-        "approved": false
+        "approved": true
       }
     ]
   }
