@@ -5,20 +5,28 @@ import {
   X, ChevronLeft, ChevronRight, Volume2, VolumeX, 
   Compass, MapPin, Info, Layers, ExternalLink, 
   Calendar, DollarSign, Eye, Phone, ArrowRight, 
-  Home, Sparkles
+  Home, Sparkles,
+  Navigation, Navigation2, MoveRight, ChevronsRight, CornerDownRight, Route,
+  Mountain, Trees, Flag, Landmark, Building2, Store, Warehouse,
+  BadgeDollarSign, Wallet, CreditCard, Receipt, TrendingUp, BarChart2,
+  Sun, Droplets, Wind, Flower2, Leaf, Bird,
+  Ruler, PenTool, Wrench, HardHat, Hammer, Fence,
+  MessageCircle, Mail, Share2, UserCheck, Users, Star,
+  Camera, Image, PlayCircle, Zap, Globe, Search
 } from 'lucide-react';
 import { rioja360Scenes } from '../content/rioja-360.config';
 import '../styles/rioja-360.css';
 
-// Lee el borrador del editor si existe, si no usa el config compilado
+// Lee el borrador del editor si existe; ordena siempre por .order
 function getActiveScenes() {
   try {
     const draft = localStorage.getItem('rioja-360-scenes-draft');
     if (draft) {
       const parsed = JSON.parse(draft);
-      // Solo usar el borrador si tiene escenas válidas con source
       if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.source) {
-        return { scenes: parsed, isDraft: true };
+        // Respetar el orden que el editor guardó
+        const sorted = [...parsed].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        return { scenes: sorted, isDraft: true };
       }
     }
   } catch (e) {
@@ -33,13 +41,19 @@ export default function Tour360({ onClose }) {
   const audioRef = useRef(null);
   const isInitialMount = useRef(true);
 
-  const { scenes: activeScenes, isDraft } = getActiveScenes();
+  const { scenes: activeScenes } = getActiveScenes();
+
+  // Ref para que updatePositions siempre lea el índice actual (evita stale closure)
+  const currentIndexRef = useRef(0);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [yawDegrees, setYawDegrees] = useState(0);
   const [muted, setMuted] = useState(true);
   const [selectedHotspot, setSelectedHotspot] = useState(null);
+
+  // Mantener ref sincronizado con el estado
+  useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
 
   const currentScene = activeScenes[currentIndex];
 
@@ -68,24 +82,23 @@ export default function Tour360({ onClose }) {
     }
   }, [muted]);
 
-  // Actualizador manual de coordenadas en 2D
+  // Actualizar posiciones 2D de hotspots — usa ref para no capturar índice stale
   const updatePositions = () => {
     if (!viewerRef.current || !viewerRef.current.dataHelper) return;
-    const scene = activeScenes[currentIndex];
+    const scene = activeScenes[currentIndexRef.current];
     if (!scene || !scene.hotspots) return;
-    
-    // Filtrar únicamente hotspots aprobados y habilitados para el público
+
     const publicHotspots = scene.hotspots.filter(hs => hs.approved && hs.enabled);
 
     publicHotspots.forEach(hs => {
       const el = document.getElementById(`hs-${hs.id}`);
       if (!el) return;
-      
+
       const coords = viewerRef.current.dataHelper.sphericalCoordsToViewerCoords({
         yaw: hs.yaw,
         pitch: hs.pitch
       });
-      
+
       if (coords) {
         el.style.left = `${coords.x}px`;
         el.style.top = `${coords.y}px`;
@@ -205,22 +218,35 @@ export default function Tour360({ onClose }) {
     return 'N';
   };
 
-  // Renderizador dinámico de iconos
+  // Iconos completos — mismo catálogo que el editor
   const getHotspotIcon = (type, iconName) => {
-    switch (iconName) {
-      case 'map': return <MapPin size={20} />;
-      case 'compass': return <Compass size={20} />;
-      case 'home': return <Home size={20} />;
-      case 'external-link': return <ExternalLink size={20} />;
-      case 'calendar': return <Calendar size={20} />;
-      case 'layers': return <Layers size={20} />;
-      case 'sparkles': return <Sparkles size={20} />;
-      case 'dollar-sign': return <DollarSign size={20} />;
-      case 'eye': return <Eye size={20} />;
-      case 'phone': return <Phone size={20} />;
-      default:
-        return type === 'navigation' ? <ArrowRight size={20} /> : <Info size={20} />;
-    }
+    const s = 20;
+    const map = {
+      'arrow': <ArrowRight size={s}/>, 'navigation': <Navigation size={s}/>,
+      'navigation2': <Navigation2 size={s}/>, 'move-right': <MoveRight size={s}/>,
+      'chevrons-right': <ChevronsRight size={s}/>, 'route': <Route size={s}/>,
+      'corner-right': <CornerDownRight size={s}/>,
+      'info': <Info size={s}/>, 'eye': <Eye size={s}/>, 'search': <Search size={s}/>,
+      'star': <Star size={s}/>, 'sparkles': <Sparkles size={s}/>, 'zap': <Zap size={s}/>,
+      'map': <MapPin size={s}/>, 'compass': <Compass size={s}/>, 'flag': <Flag size={s}/>,
+      'mountain': <Mountain size={s}/>, 'trees': <Trees size={s}/>, 'leaf': <Leaf size={s}/>,
+      'fence': <Fence size={s}/>, 'globe': <Globe size={s}/>, 'layers': <Layers size={s}/>,
+      'home': <Home size={s}/>, 'building': <Building2 size={s}/>, 'landmark': <Landmark size={s}/>,
+      'warehouse': <Warehouse size={s}/>, 'ruler': <Ruler size={s}/>, 'hard-hat': <HardHat size={s}/>,
+      'hammer': <Hammer size={s}/>, 'pen-tool': <PenTool size={s}/>, 'wrench': <Wrench size={s}/>,
+      'dollar-sign': <DollarSign size={s}/>, 'badge-dollar': <BadgeDollarSign size={s}/>,
+      'wallet': <Wallet size={s}/>, 'credit-card': <CreditCard size={s}/>,
+      'trending-up': <TrendingUp size={s}/>, 'bar-chart': <BarChart2 size={s}/>,
+      'receipt': <Receipt size={s}/>,
+      'phone': <Phone size={s}/>, 'message': <MessageCircle size={s}/>,
+      'mail': <Mail size={s}/>, 'user-check': <UserCheck size={s}/>,
+      'users': <Users size={s}/>, 'share': <Share2 size={s}/>,
+      'calendar': <Calendar size={s}/>, 'external-link': <ExternalLink size={s}/>,
+      'camera': <Camera size={s}/>, 'image': <Image size={s}/>, 'play': <PlayCircle size={s}/>,
+      'sun': <Sun size={s}/>, 'droplets': <Droplets size={s}/>, 'wind': <Wind size={s}/>,
+      'bird': <Bird size={s}/>, 'flower': <Flower2 size={s}/>, 'store': <Store size={s}/>,
+    };
+    return map[iconName] ?? (type === 'navigation' ? <ArrowRight size={s}/> : <Info size={s}/>);
   };
 
   return (
