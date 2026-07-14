@@ -82,6 +82,19 @@ export const rioja360Scenes: Scene[] = [
         "url": null,
         "enabled": true,
         "approved": true
+      },
+      {
+        "id": "hs-1784049654569",
+        "type": "info",
+        "title": "ACCESO",
+        "description": "Acceso desde la Carretera Internacional a Tuxtla",
+        "yaw": -1.3875516002379653,
+        "pitch": -0.7046614597479297,
+        "icon": "corner-right",
+        "targetSceneId": "vista-aerea-regional",
+        "url": null,
+        "enabled": true,
+        "approved": true
       }
     ]
   },
