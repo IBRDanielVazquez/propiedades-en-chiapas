@@ -50,6 +50,7 @@ export default function Tour360({ onClose }) {
 
   // Ref para que updatePositions siempre lea el índice actual (evita stale closure)
   const currentIndexRef = useRef(0);
+  const updatePositionsRef = useRef(null);
 
   // Marcar como montado en el cliente para evitar problemas de hidratación en SSR
   useEffect(() => {
@@ -59,6 +60,9 @@ export default function Tour360({ onClose }) {
 
   // Mantener ref sincronizado con el estado
   useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
+
+  // Mantener la referencia mutable actualizada en cada renderizado
+  updatePositionsRef.current = updatePositions;
 
   const currentScene = scenesState[currentIndex];
 
@@ -134,22 +138,29 @@ export default function Tour360({ onClose }) {
     viewerRef.current.addEventListener('position-updated', ({ position }) => {
       const deg = (position.yaw * 180) / Math.PI;
       setYawDegrees(deg);
-      updatePositions();
+      if (updatePositionsRef.current) updatePositionsRef.current();
     });
 
     // Escuchar cambio de zoom
-    viewerRef.current.addEventListener('zoom-updated', updatePositions);
+    viewerRef.current.addEventListener('zoom-updated', () => {
+      if (updatePositionsRef.current) updatePositionsRef.current();
+    });
 
     // Escuchar renderizado de fotogramas
     viewerRef.current.addEventListener('ready', () => {
       setLoading(false);
-      setTimeout(updatePositions, 150);
+      setTimeout(() => {
+        if (updatePositionsRef.current) updatePositionsRef.current();
+      }, 150);
     });
 
-    window.addEventListener('resize', updatePositions);
+    const handleResize = () => {
+      if (updatePositionsRef.current) updatePositionsRef.current();
+    };
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', updatePositions);
+      window.removeEventListener('resize', handleResize);
       if (viewerRef.current) {
         viewerRef.current.destroy();
       }

@@ -91,6 +91,12 @@ export default function Tour360Editor() {
   const [saveToast, setSaveToast] = useState(false);
   const [saveStatus, setSaveStatus] = useState('local'); // 'local' | 'server' | 'error'
 
+  // Ref mutable para evitar stale closure en los listeners del visualizador
+  const updatePositionsRef = useRef(null);
+
+  // Registro de posición inicial del puntero para diferenciar arrastre de click intencional
+  const clickStartPos = useRef({ x: 0, y: 0 });
+
   const currentScene = scenesState[currentIndex];
 
   // Persistir cambios locales en localStorage para desarrollo
@@ -122,6 +128,9 @@ export default function Tour360Editor() {
       });
     }
   }, [muted]);
+
+  // Mantener la referencia mutable siempre actualizada con la versión más fresca del renderizado
+  updatePositionsRef.current = updatePositions;
 
   // Actualizador manual de coordenadas en 2D (Hotspots Overlays)
   const updatePositions = () => {
@@ -171,23 +180,28 @@ export default function Tour360Editor() {
       const deg = (position.yaw * 180) / Math.PI;
       setYawDegrees(deg);
       setPitchDegrees(position.pitch * (180 / Math.PI));
-      updatePositions();
+      if (updatePositionsRef.current) updatePositionsRef.current();
     });
 
     viewerRef.current.addEventListener('zoom-updated', ({ zoomLevel }) => {
       setZoomLevel(Math.round(zoomLevel));
-      updatePositions();
+      if (updatePositionsRef.current) updatePositionsRef.current();
     });
 
     viewerRef.current.addEventListener('ready', () => {
       setLoading(false);
-      setTimeout(updatePositions, 150);
+      setTimeout(() => {
+        if (updatePositionsRef.current) updatePositionsRef.current();
+      }, 150);
     });
 
-    window.addEventListener('resize', updatePositions);
+    const handleResize = () => {
+      if (updatePositionsRef.current) updatePositionsRef.current();
+    };
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', updatePositions);
+      window.removeEventListener('resize', handleResize);
       if (viewerRef.current) {
         viewerRef.current.destroy();
       }
@@ -302,9 +316,23 @@ export default function Tour360Editor() {
     }
   };
 
+  // Registrar posición inicial del click para filtrar gestos de arrastre
+  const handleContainerMouseDown = (e) => {
+    clickStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
   // Crear nuevo Hotspot al hacer clic en el visor
   const handleContainerClick = (e) => {
     if (!isEditMode || !isAddingPoint) return;
+
+    // Calcular distancia del arrastre para evitar crear puntos durante un drag de cámara
+    const dx = e.clientX - clickStartPos.current.x;
+    const dy = e.clientY - clickStartPos.current.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Umbral de 6 píxeles: si se movió más, se interpreta como rotación de cámara
+    if (distance > 6) return;
+
     setIsAddingPoint(false);
 
     const rect = containerRef.current.getBoundingClientRect();
@@ -808,6 +836,7 @@ export default function Tour360Editor() {
         <div 
           ref={containerRef} 
           className={`rioja-360-container ${isAddingPoint ? 'adding-point' : ''}`}
+          onMouseDown={handleContainerMouseDown}
           onClick={handleContainerClick}
         />
 
