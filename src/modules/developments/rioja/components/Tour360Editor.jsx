@@ -80,9 +80,85 @@ export default function Tour360Editor() {
   const [dragSceneIdx, setDragSceneIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
 
-  // Panel arrastrable de escenas
-  const [panelPos, setPanelPos] = useState({ x: 10, y: 60 });
-  const panelDrag = useRef({ active: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+  // Referencia al contenedor workspace del visor para delimitar paneles flotantes
+  const viewerWrapperRef = useRef(null);
+
+  // Layout de los paneles flotantes (Escenas, Propiedades, Diagnóstico)
+  const [panelLayout, setPanelLayout] = useState(() => {
+    const defaultLayout = {
+      scenes: { x: 10, y: 70, collapsed: false, zIndex: 100 },
+      properties: { x: 980, y: 70, collapsed: false, zIndex: 100 },
+      diagnostics: { x: 980, y: 560, collapsed: true, zIndex: 90 } // Diagnostics minimizado por defecto
+    };
+
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('rioja-360-editor-panel-layout-v1');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.scenes && parsed.properties && parsed.diagnostics) {
+            return parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Error al cargar panel layout de localStorage', e);
+      }
+    }
+    return defaultLayout;
+  });
+
+  // Elevar el panel activo sobre los demás (bring-to-front)
+  const handlePanelInteract = (panelId) => {
+    setPanelLayout(prev => {
+      const maxZ = Math.max(prev.scenes.zIndex, prev.properties.zIndex, prev.diagnostics.zIndex);
+      // Si ya está al frente, no hacemos nada
+      if (prev[panelId].zIndex === maxZ && maxZ > 90) return prev;
+
+      const newLayout = {
+        ...prev,
+        [panelId]: {
+          ...prev[panelId],
+          zIndex: maxZ + 1
+        }
+      };
+
+      // Evitar que el zIndex crezca de forma indefinida
+      if (maxZ > 1000) {
+        newLayout.scenes.zIndex = panelId === 'scenes' ? 100 : 90;
+        newLayout.properties.zIndex = panelId === 'properties' ? 100 : 90;
+        newLayout.diagnostics.zIndex = panelId === 'diagnostics' ? 100 : 90;
+      }
+
+      localStorage.setItem('rioja-360-editor-panel-layout-v1', JSON.stringify(newLayout));
+      return newLayout;
+    });
+  };
+
+  // Minimizar / Expandir panel
+  const handlePanelToggleCollapse = (panelId) => {
+    setPanelLayout(prev => {
+      const newLayout = {
+        ...prev,
+        [panelId]: {
+          ...prev[panelId],
+          collapsed: !prev[panelId].collapsed
+        }
+      };
+      localStorage.setItem('rioja-360-editor-panel-layout-v1', JSON.stringify(newLayout));
+      return newLayout;
+    });
+  };
+
+  // Restablecer posiciones originales y seguras de los paneles
+  const handleResetPanels = () => {
+    const defaultLayout = {
+      scenes: { x: 10, y: 70, collapsed: false, zIndex: 100 },
+      properties: { x: window.innerWidth - 360, y: 90, collapsed: false, zIndex: 100 },
+      diagnostics: { x: window.innerWidth - 310, y: window.innerHeight - 220, collapsed: true, zIndex: 90 }
+    };
+    setPanelLayout(defaultLayout);
+    localStorage.setItem('rioja-360-editor-panel-layout-v1', JSON.stringify(defaultLayout));
+  };
 
   // Toast de guardado
   const [saveToast, setSaveToast] = useState(false);
@@ -612,31 +688,7 @@ export default function Tour360Editor() {
     setTimeout(() => setSaveToast(false), 3500);
   };
 
-  // Arrastar panel de escenas
-  const handlePanelMouseDown = (e) => {
-    panelDrag.current = {
-      active: true,
-      startX: e.clientX,
-      startY: e.clientY,
-      origX: panelPos.x,
-      origY: panelPos.y
-    };
-    const onMove = (ev) => {
-      if (!panelDrag.current.active) return;
-      setPanelPos({
-        x: panelDrag.current.origX + (ev.clientX - panelDrag.current.startX),
-        y: panelDrag.current.origY + (ev.clientY - panelDrag.current.startY)
-      });
-    };
-    const onUp = () => {
-      panelDrag.current.active = false;
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    e.preventDefault();
-  };
+
 
   // Confirmar incorporación de nueva escena al editor
   const handleConfirmAddScene = () => {
@@ -842,6 +894,15 @@ export default function Tour360Editor() {
             📋 {showDiagnostics ? "Ocultar diagnóstico" : "Ver diagnóstico"}
           </button>
 
+          {/* Botón de Restablecer Paneles */}
+          <button
+            className="rioja-editor-btn"
+            style={{ marginRight: '15px', background: 'rgba(239,68,68,0.15)', color: '#FF453A', border: '1px solid rgba(255, 69, 58, 0.2)' }}
+            onClick={handleResetPanels}
+          >
+            🔄 Restablecer paneles
+          </button>
+
           <button className="rioja-360-close" onClick={() => window.location.href = '/rioja'} aria-label="Cerrar Editor">
             <X size={28} />
           </button>
@@ -850,6 +911,7 @@ export default function Tour360Editor() {
 
       {/* Workspace del Visor */}
       <div 
+        ref={viewerWrapperRef}
         className="rioja-360-viewer-wrapper"
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -918,19 +980,21 @@ export default function Tour360Editor() {
           />
         )}
 
-        {/* Panel de diagnóstico de depuración visible en desarrollo */}
+        {/* Panel de diagnóstico de depuración visible en desarrollo — AHORA FLOTANTE */}
         {showDiagnostics && (
-          <div style={{
-            position: 'absolute', top: '20px', right: '20px', zIndex: 1000,
-            background: 'rgba(13, 26, 15, 0.95)', border: '1px solid rgba(195,164,121,0.4)',
-            borderRadius: '12px', padding: '16px', width: '280px', color: '#e6c89e',
-            fontFamily: 'Outfit, sans-serif', fontSize: '13px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-            pointerEvents: 'auto'
-          }}>
-            <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid rgba(195,164,121,0.2)', paddingBottom: '6px', fontWeight: 700, color: 'white' }}>
-              📋 PANEL DE DIAGNÓSTICO
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          <FloatingPanel
+            id="diagnostics"
+            title={`Diagnóstico: ${viewerError ? 'ERROR' : loading ? 'CARGANDO' : 'LISTO'}`}
+            initialX={panelLayout.diagnostics.x}
+            initialY={panelLayout.diagnostics.y}
+            width="280px"
+            zIndex={panelLayout.diagnostics.zIndex}
+            onInteract={handlePanelInteract}
+            collapsed={panelLayout.diagnostics.collapsed}
+            onToggleCollapse={handlePanelToggleCollapse}
+            containerRef={viewerWrapperRef}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', color: '#e6c89e', fontFamily: 'Outfit, sans-serif' }}>
               <div><strong>Estado:</strong> <span style={{ color: viewerError ? '#ef4444' : loading ? '#f59e0b' : '#22c55e' }}>{viewerError ? 'ERROR' : loading ? 'CARGANDO' : 'LISTO'}</span></div>
               <div><strong>Escena:</strong> {currentScene?.id || 'Ninguna'}</div>
               <div><strong>Archivo:</strong> <span style={{ fontSize: '11px', color: '#a3a3a3', wordBreak: 'break-all' }}>{currentScene?.source}</span></div>
@@ -939,7 +1003,7 @@ export default function Tour360Editor() {
               <div><strong>Zoom:</strong> {zoomLevel}</div>
               <div><strong>WebGL:</strong> <span style={{ color: '#22c55e' }}>Soportado (100% OK)</span></div>
             </div>
-          </div>
+          </FloatingPanel>
         )}
 
         {/* Hotspots interactivos del editor */}
@@ -1029,33 +1093,21 @@ export default function Tour360Editor() {
           </div>
         )}
 
-        {/* Panel de Gestión de Escenas — ARRASTRABLE */}
+        {/* Panel de Gestión de Escenas — AHORA FLOTANTE */}
         {isEditMode && (
-          <div style={{
-            position: 'absolute',
-            left: `${panelPos.x}px`,
-            top: `${panelPos.y}px`,
-            background: 'rgba(8,12,8,0.92)', backdropFilter: 'blur(14px)',
-            border: '1px solid rgba(195,164,121,0.35)', borderRadius: '10px',
-            zIndex: 20, minWidth: '210px', maxWidth: '250px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-            userSelect: 'none'
-          }}>
-            {/* Cabecera arrastrable */}
-            <div
-              onMouseDown={handlePanelMouseDown}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '8px 10px',
-                borderBottom: '1px solid rgba(195,164,121,0.2)',
-                cursor: 'grab', color: '#c3a479',
-                fontSize: '11px', fontWeight: 700,
-                textTransform: 'uppercase', letterSpacing: '1px'
-              }}
-            >
-              <span>☰ Escenas del recorrido</span>
-            </div>
-            <div style={{ padding: '8px' }}>
+          <FloatingPanel
+            id="scenes"
+            title="☰ Escenas del recorrido"
+            initialX={panelLayout.scenes.x}
+            initialY={panelLayout.scenes.y}
+            width="250px"
+            zIndex={panelLayout.scenes.zIndex}
+            onInteract={handlePanelInteract}
+            collapsed={panelLayout.scenes.collapsed}
+            onToggleCollapse={handlePanelToggleCollapse}
+            containerRef={viewerWrapperRef}
+          >
+            <div style={{ padding: '2px 0' }}>
               {scenesState.map((scene, idx) => (
                 <div
                   key={scene.id}
@@ -1082,7 +1134,7 @@ export default function Tour360Editor() {
                 </div>
               ))}
             </div>
-          </div>
+          </FloatingPanel>
         )}
 
         {/* HUD inferior con coordenadas */}
@@ -1132,17 +1184,24 @@ export default function Tour360Editor() {
           ))}
         </div>
 
-        {/* Formulario lateral de edición de puntos */}
+        {/* Formulario lateral de edición de puntos — AHORA FLOTANTE */}
         {isEditMode && activeEditHotspot && (
-          <div className="rioja-360-editor-sidebar">
-            <div className="rioja-sidebar-header">
-              <h3>Propiedades del Punto</h3>
-              <button className="rioja-popup-card-close" onClick={() => setActiveEditHotspot(null)}>
-                <X size={16} />
-              </button>
-            </div>
-            
-            <form onSubmit={handleSaveHotspotForm} className="rioja-sidebar-scroll">
+          <FloatingPanel
+            id="properties"
+            title="PROPIEDADES DEL HOTSPOT"
+            initialX={panelLayout.properties.x}
+            initialY={panelLayout.properties.y}
+            width="325px"
+            maxHeight="calc(100% - 130px)"
+            zIndex={panelLayout.properties.zIndex}
+            onInteract={handlePanelInteract}
+            collapsed={panelLayout.properties.collapsed}
+            onToggleCollapse={handlePanelToggleCollapse}
+            containerRef={viewerWrapperRef}
+            isPropertyPanel={true}
+          >
+            {/* Cabecera interna del sidebar se remueve porque ya está en FloatingPanel */}
+            <form onSubmit={handleSaveHotspotForm} className="rioja-sidebar-scroll" style={{ width: '100%', boxSizing: 'border-box' }}>
               <div className="rioja-editor-group">
                 <label className="rioja-editor-label">ID del Hotspot (Único)</label>
                 <input 
@@ -1196,9 +1255,9 @@ export default function Tour360Editor() {
                 {/* Selector visual de iconos en cuadrícula */}
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(6, 1fr)',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
                   gap: '5px',
-                  maxHeight: '210px',
+                  maxHeight: '160px',
                   overflowY: 'auto',
                   padding: '6px',
                   background: 'rgba(0,0,0,0.3)',
@@ -1303,10 +1362,11 @@ export default function Tour360Editor() {
                 <div>Pitch: {activeEditHotspot.pitch.toFixed(4)} rad</div>
               </div>
 
-              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px', marginBottom: '10px' }}>
                 <button 
                   type="button" 
                   className="rioja-btn-delete"
+                  style={{ flex: 1 }}
                   onClick={() => handleDuplicateHotspot(activeEditHotspot)}
                 >
                   Duplicar
@@ -1314,7 +1374,7 @@ export default function Tour360Editor() {
                 <button 
                   type="button" 
                   className="rioja-btn-delete"
-                  style={{ color: '#FF453A', borderColor: 'rgba(255, 69, 58, 0.2)' }}
+                  style={{ flex: 1, color: '#FF453A', borderColor: 'rgba(255, 69, 58, 0.2)' }}
                   onClick={() => handleDeleteHotspot(activeEditHotspot.id)}
                 >
                   Eliminar
@@ -1322,15 +1382,15 @@ export default function Tour360Editor() {
               </div>
             </form>
 
-            <div className="rioja-sidebar-footer">
-              <button type="button" className="rioja-btn-cancel" onClick={() => setActiveEditHotspot(null)}>
+            <div className="rioja-sidebar-footer" style={{ display: 'flex', gap: '10px', width: '100%', boxSizing: 'border-box', borderTop: '1px solid rgba(195,164,121,0.25)', paddingTop: '10px', marginTop: 'auto' }} data-no-drag>
+              <button type="button" className="rioja-btn-cancel" style={{ flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer' }} onClick={() => setActiveEditHotspot(null)}>
                 Cancelar
               </button>
-              <button type="button" className="rioja-btn-save" onClick={handleSaveHotspotForm}>
+              <button type="button" className="rioja-btn-save" style={{ flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer' }} onClick={handleSaveHotspotForm}>
                 Guardar
               </button>
             </div>
-          </div>
+          </FloatingPanel>
         )}
 
         {/* Tarjeta de Información Emergente en Vista del Visitante */}
@@ -1564,6 +1624,211 @@ export default function Tour360Editor() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Componente Reutilizable para Paneles Flotantes Arrastrables
+function FloatingPanel({
+  id,
+  title,
+  initialX,
+  initialY,
+  width,
+  maxHeight,
+  children,
+  zIndex,
+  onInteract,
+  collapsed,
+  onToggleCollapse,
+  containerRef,
+  isPropertyPanel = false
+}) {
+  const [position, setPosition] = useState({ x: initialX, y: initialY });
+  const [isDragging, setIsDragging] = useState(false);
+  const panelRef = useRef(null);
+  const dragStart = useRef(null);
+
+  // Sincronizar posición externa (por ejemplo, si se restablecen paneles)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setPosition({ x: initialX, y: initialY });
+    }, 0);
+    return () => clearTimeout(t);
+  }, [initialX, initialY]);
+
+  const handlePointerDown = (e) => {
+    // No arrastrar si se hace click en controles interactivos internos
+    if (
+      e.target.tagName === 'BUTTON' ||
+      e.target.tagName === 'INPUT' ||
+      e.target.tagName === 'SELECT' ||
+      e.target.tagName === 'TEXTAREA' ||
+      e.target.closest('button') ||
+      e.target.closest('input') ||
+      e.target.closest('select') ||
+      e.target.closest('textarea') ||
+      e.target.closest('[data-no-drag]')
+    ) {
+      return;
+    }
+
+    onInteract(id);
+    setIsDragging(true);
+
+    const rect = panelRef.current.getBoundingClientRect();
+    dragStart.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: position.x,
+      origY: position.y,
+      panelWidth: rect.width,
+      panelHeight: rect.height
+    };
+
+    e.target.setPointerCapture(e.pointerId);
+    e.stopPropagation();
+  };
+
+  const handlePointerMove = (e) => {
+    if (!dragStart.current) return;
+
+    const dx = e.clientX - dragStart.current.startX;
+    const dy = e.clientY - dragStart.current.startY;
+
+    let newX = dragStart.current.origX + dx;
+    let newY = dragStart.current.origY + dy;
+
+    // Calcular límites basados en el contenedor padre
+    if (containerRef && containerRef.current) {
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const panelWidth = dragStart.current.panelWidth;
+      const panelHeight = dragStart.current.panelHeight;
+
+      // Márgenes de seguridad: no salirse por arriba (dejar 65px por la barra superior) ni por los lados
+      const margins = { top: 65, bottom: 20, left: 10, right: 10 };
+
+      newX = Math.min(
+        Math.max(newX, margins.left),
+        containerRect.width - panelWidth - margins.right
+      );
+      newY = Math.min(
+        Math.max(newY, margins.top),
+        containerRect.height - panelHeight - margins.bottom
+      );
+    }
+
+    setPosition({ x: newX, y: newY });
+    e.stopPropagation();
+  };
+
+  const handlePointerUp = (e) => {
+    if (!dragStart.current) return;
+    setIsDragging(false);
+
+    // Guardar en localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('rioja-360-editor-panel-layout-v1');
+        const layout = saved ? JSON.parse(saved) : {};
+        layout[id] = {
+          ...layout[id],
+          x: position.x,
+          y: position.y
+        };
+        localStorage.setItem('rioja-360-editor-panel-layout-v1', JSON.stringify(layout));
+      } catch (err) {
+        console.error('Error guardando posición en localStorage:', err);
+      }
+    }
+
+    dragStart.current = null;
+    e.target.releasePointerCapture(e.pointerId);
+    e.stopPropagation();
+  };
+
+  return (
+    <div
+      ref={panelRef}
+      onPointerDown={() => onInteract(id)}
+      style={{
+        position: 'absolute',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: width || 'auto',
+        maxHeight: maxHeight || 'calc(100% - 100px)',
+        zIndex: zIndex,
+        display: 'flex',
+        flexDirection: 'column',
+        background: 'rgba(8,12,8,0.92)',
+        backdropFilter: 'blur(14px)',
+        border: '1px solid rgba(195,164,121,0.35)',
+        borderRadius: '12px',
+        boxShadow: '0 12px 40px rgba(0,0,0,0.65)',
+        color: 'white',
+        overflow: 'hidden',
+        userSelect: 'none',
+        pointerEvents: 'auto'
+      }}
+    >
+      {/* Cabecera del Panel */}
+      <div
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 14px',
+          borderBottom: '1px solid rgba(195,164,121,0.2)',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          color: '#c3a479',
+          fontSize: '11px',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          background: 'rgba(255,255,255,0.02)',
+          touchAction: 'none' // Previene comportamientos táctiles por defecto
+        }}
+      >
+        <span>{title}</span>
+        <div style={{ display: 'flex', gap: '8px' }} data-no-drag>
+          {onToggleCollapse && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleCollapse(id); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#c3a479',
+                cursor: 'pointer',
+                fontSize: '14px',
+                padding: '2px',
+                lineHeight: 1
+              }}
+              title={collapsed ? "Expandir" : "Minimizar"}
+            >
+              {collapsed ? '＋' : '－'}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Contenido del Panel */}
+      {!collapsed && (
+        <div
+          style={{
+            flex: 1,
+            overflowY: isPropertyPanel ? 'auto' : 'visible',
+            padding: '14px',
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: 0
+          }}
+        >
+          {children}
         </div>
       )}
     </div>
