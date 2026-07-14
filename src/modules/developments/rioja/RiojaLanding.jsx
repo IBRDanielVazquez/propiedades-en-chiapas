@@ -15,7 +15,7 @@ export default function RiojaLanding() {
   const [openFaq, setOpenFaq] = useState(null);
   const [activeSection, setActiveSection] = useState('inicio');
 
-  // Hook para auto-scrollear de forma suave a las secciones con hash (ej: /rioja#financiamiento)
+  // Auto-scroll suave a secciones con hash
   useEffect(() => {
     const hash = location.hash;
     if (hash) {
@@ -126,16 +126,14 @@ export default function RiojaLanding() {
         </script>
       </Helmet>
 
-      {/* 1. SECCIÓN INICIO (Identificador: inicio) */}
+      {/* 1. SECCIÓN HERO CINEMATOGRÁFICO (Identificador: inicio) */}
       <div id="inicio">
-        {/* Hero Premium (Rediseñado - Luminoso, Campestre y Editorial) */}
         <header className="rioja-hero-new" style={{ backgroundImage: `url(${riojaPhotos[0].url})` }}>
           <div className="rioja-hero-new-overlay"></div>
           <div className="rioja-hero-new-content rioja-container">
             <span className="rioja-hero-new-tag">Terrenos en Berriozábal</span>
             <h1 className="rioja-hero-new-title">{riojaConfig.name}</h1>
-            <p className="rioja-hero-new-subtitle">Comienza hoy el patrimonio que será tuyo para siempre.</p>
-            <div className="rioja-hero-new-badge">Desde $1,000 quincenales</div>
+            <p className="rioja-hero-new-subtitle">Comienza hoy el *patrimonio* que será tuyo para siempre.</p>
             
             <div className="rioja-hero-new-actions">
               <button onClick={() => scrollToSection('financiamiento')} className="rioja-btn-hero-primary">
@@ -156,42 +154,25 @@ export default function RiojaLanding() {
           </div>
         </header>
 
-        {/* Resumen de 4 Características Principales */}
-        <section className="rioja-section rioja-section-dark">
+        {/* 2. BANDA INFORMATIVA MINIMALISTA (Aire & Datos) */}
+        <section className="rioja-info-band">
           <div className="rioja-container">
-            <div className="rioja-text-center rioja-mb-40">
-              <span className="rioja-section-label" style={{ color: 'var(--rioja-gold)' }}>El Desarrollo</span>
-              <h2 className="rioja-title rioja-section-title" style={{ color: 'var(--rioja-white)' }}>Características Principales</h2>
-            </div>
-            
-            <div className="rioja-grid-features">
-              <div className="rioja-feature-card-new">
-                <Layers className="rioja-feature-icon" />
-                <div>
-                  <span className="rioja-feat-lbl">Lotes de</span>
-                  <span className="rioja-feat-val">10 x 20 metros</span>
-                </div>
+            <div className="rioja-info-band-grid">
+              <div className="rioja-info-band-item">
+                <div className="rioja-info-band-val">200<span>m²</span></div>
+                <span className="rioja-info-band-lbl">Superficie Total</span>
               </div>
-              <div className="rioja-feature-card-new">
-                <Home className="rioja-feature-icon" />
-                <div>
-                  <span className="rioja-feat-lbl">Superficie de</span>
-                  <span className="rioja-feat-val">200 m²</span>
-                </div>
+              <div className="rioja-info-band-item">
+                <div className="rioja-info-band-val">10x20<span>m</span></div>
+                <span className="rioja-info-band-lbl">Medidas de Lote</span>
               </div>
-              <div className="rioja-feature-card-new">
-                <ShieldCheck className="rioja-feature-icon" />
-                <div>
-                  <span className="rioja-feat-lbl">Seguridad Jurídica</span>
-                  <span className="rioja-feat-val">Escritura Pública</span>
-                </div>
+              <div className="rioja-info-band-item">
+                <div className="rioja-info-band-val">Legal</div>
+                <span className="rioja-info-band-lbl">Escritura Pública</span>
               </div>
-              <div className="rioja-feature-card-new">
-                <Sparkles className="rioja-feature-icon" />
-                <div>
-                  <span className="rioja-feat-lbl">Construcción</span>
-                  <span className="rioja-feat-val">Construye a tu ritmo</span>
-                </div>
+              <div className="rioja-info-band-item">
+                <div className="rioja-info-band-val">Libre</div>
+                <span className="rioja-info-band-lbl">Construye a tu ritmo</span>
               </div>
             </div>
           </div>
@@ -200,37 +181,57 @@ export default function RiojaLanding() {
 
       <div className="rioja-visual-divider" />
 
-      {/* Storytelling Section (Paso a paso) */}
-      <section className="rioja-section rioja-storytelling-section">
+      {/* 3. STORYTELLING (Timeline Editorial de Revista) */}
+      <section className="rioja-section rioja-section-sand">
         <div className="rioja-container">
           <div className="rioja-text-center rioja-mb-40">
-            <span className="rioja-section-label">El Camino</span>
-            <h2 className="rioja-title rioja-section-title">Tu patrimonio paso a paso</h2>
+            <span className="rioja-section-label">La Filosofía</span>
+            <h2 className="rioja-title rioja-section-title">El camino hacia tu *patrimonio*</h2>
           </div>
-          
-          <div className="rioja-storytelling-grid">
-            <div className="rioja-story-card">
-              <div className="rioja-story-circle"><Wallet size={28} /></div>
-              <h4>Dejar de rentar</h4>
-              <p>Convierte el gasto mensual en una inversión de por vida.</p>
-              <div className="rioja-story-connector" />
+
+          <div className="rioja-story-magazine">
+            <div className="rioja-story-row">
+              <div className="rioja-story-img-container">
+                <img src={riojaPhotos[1].url} alt="Dejar de Rentar" loading="lazy" />
+              </div>
+              <div className="rioja-story-desc">
+                <span className="rioja-story-step-num">01</span>
+                <h3>Dejar de rentar</h3>
+                <p>El primer paso no es construir; es decidir que la tierra que pisas sea tuya. Transforma el pago de una renta que no deja legado en la base de tu futuro familiar.</p>
+              </div>
             </div>
-            <div className="rioja-story-card">
-              <div className="rioja-story-circle"><DollarSign size={28} /></div>
-              <h4>Comprar</h4>
-              <p>Adquiere con financiamiento accesible y enganche mínimo.</p>
-              <div className="rioja-story-connector" />
+
+            <div className="rioja-story-row">
+              <div className="rioja-story-desc">
+                <span className="rioja-story-step-num">02</span>
+                <h3>Comprar con facilidades</h3>
+                <p>Adquiere tu lote mediante planes diseñados para tu tranquilidad financiera. Un enganche de contado mínimo y mensualidades cómodas te permiten asegurar tierra firme sin descapitalizarte.</p>
+              </div>
+              <div className="rioja-story-img-container">
+                <img src={riojaPhotos[2].url} alt="Comprar Terreno" loading="lazy" />
+              </div>
             </div>
-            <div className="rioja-story-card">
-              <div className="rioja-story-circle"><Hammer size={28} /></div>
-              <h4>Construir</h4>
-              <p>Planifica y edifica a tu propio ritmo, sin presiones.</p>
-              <div className="rioja-story-connector" />
+
+            <div className="rioja-story-row">
+              <div className="rioja-story-img-container">
+                <img src={riojaPhotos[3].url} alt="Construir" loading="lazy" />
+              </div>
+              <div className="rioja-story-desc">
+                <span className="rioja-story-step-num">03</span>
+                <h3>Construir a tu propio ritmo</h3>
+                <p>Toma el control total del diseño de tu hogar. Sin fechas límite forzadas ni modelos preestablecidos; planifica, edifica y expande a la velocidad que mejor se adapte a tu vida.</p>
+              </div>
             </div>
-            <div className="rioja-story-card">
-              <div className="rioja-story-circle"><ShieldCheck size={28} /></div>
-              <h4>Patrimonio</h4>
-              <p>Asegura un legado familiar protegido con escritura pública.</p>
+
+            <div className="rioja-story-row">
+              <div className="rioja-story-desc">
+                <span className="rioja-story-step-num">04</span>
+                <h3>Asegurar tu legado</h3>
+                <p>Tierra delimitada y lista con seguridad jurídica total mediante Escritura Pública. RIOJA es el espacio seguro donde tus hijos y seres queridos crecerán rodeados de paz y plusvalía campestre.</p>
+              </div>
+              <div className="rioja-story-img-container">
+                <img src={riojaPhotos[4].url} alt="Legado Seguro" loading="lazy" />
+              </div>
             </div>
           </div>
         </div>
@@ -238,70 +239,56 @@ export default function RiojaLanding() {
 
       <div className="rioja-visual-divider" />
 
-      {/* 2. SECCIÓN FINANCIAMIENTO (Identificador: financiamiento) */}
+      {/* 4. SECCIÓN FINANCIAMIENTO (Identificador: financiamiento - Protagonista $1,000) */}
       <section id="financiamiento" className="rioja-section">
         <div className="rioja-container">
           <div className="rioja-text-center rioja-mb-40">
-            <span className="rioja-section-label">Patrimonio Inmediato</span>
-            <h2 className="rioja-title rioja-section-title">Deja de pagar renta</h2>
+            <span className="rioja-section-label">Planes de Inversión</span>
+            <h2 className="rioja-title rioja-section-title">Facilidades hechas a tu *medida*</h2>
             <p className="rioja-text-large">
               {riojaConfig.concept}
             </p>
           </div>
 
-          <div className="rioja-finance-bento">
-            {/* Bloque principal del precio (Bento Izquierda) */}
-            <div className="rioja-finance-hero-block">
-              <div className="rioja-finance-title-group">
-                <h3>Precio de Contado</h3>
-                <p>Excelente oportunidad de inversión en Berriozábal</p>
+          <div className="rioja-finance-editorial-layout">
+            {/* Panel Principal del Pago Quincenal */}
+            <div className="rioja-finance-price-panel">
+              <span className="rioja-finance-headline-lbl">Inversión Quincenal</span>
+              <div className="rioja-finance-main-number">
+                {riojaConfig.financials.biweeklyPayment} <em>quincenales</em>
               </div>
-              
-              <h3 className="rioja-price-main-huge">
-                {riojaConfig.financials.totalPrice} <span>MXN</span>
-              </h3>
-              
-              <button onClick={handleWhatsAppFinancing} className="rioja-btn-hero-primary" style={{ width: '100%' }}>
-                Solicitar Financiamiento
-              </button>
+              <p className="rioja-finance-brief">
+                Un plan diseñado para que dejes de rentar hoy mismo. Adquiere tu terreno con la máxima seguridad y comodidad de pagos.
+              </p>
             </div>
 
-            {/* Bloque de detalles (Bento Derecha) */}
-            <div className="rioja-finance-detail-block">
-              <div className="rioja-finance-grid-bento">
-                <div className="rioja-bento-fin-item">
-                  <Calendar size={22} />
-                  <div>
-                    <span className="rioja-finance-lbl">Enganche</span>
-                    <span className="rioja-finance-val">{riojaConfig.financials.downPayment}</span>
-                  </div>
-                </div>
-                <div className="rioja-bento-fin-item highlight">
-                  <DollarSign size={22} />
-                  <div>
-                    <span className="rioja-finance-lbl">Quincenal</span>
-                    <span className="rioja-finance-val">{riojaConfig.financials.biweeklyPayment}</span>
-                  </div>
-                </div>
-                <div className="rioja-bento-fin-item">
-                  <ShieldCheck size={22} />
-                  <div>
-                    <span className="rioja-finance-lbl">Apartado</span>
-                    <span className="rioja-finance-val">{riojaConfig.financials.reservation}</span>
-                  </div>
-                </div>
-                <div className="rioja-bento-fin-item">
-                  <Layers size={22} />
-                  <div>
-                    <span className="rioja-finance-lbl">Medidas</span>
-                    <span className="rioja-finance-val">10x20 m (200 m²)</span>
-                  </div>
-                </div>
+            {/* Panel de Datos y Acciones (Asimétrico) */}
+            <div className="rioja-finance-grid-panel">
+              <div className="rioja-finance-card-clean">
+                <span className="rioja-fin-lbl">Precio de Contado</span>
+                <div className="rioja-fin-val">{riojaConfig.financials.totalPrice} <span>MXN</span></div>
+              </div>
+              <div className="rioja-finance-card-clean">
+                <span className="rioja-fin-lbl">Enganche Requerido</span>
+                <div className="rioja-fin-val">{riojaConfig.financials.downPayment} <span>MXN</span></div>
+              </div>
+              <div className="rioja-finance-card-clean">
+                <span className="rioja-fin-lbl">Apartado de Lote</span>
+                <div className="rioja-fin-val">{riojaConfig.financials.reservation} <span>MXN</span></div>
+              </div>
+              <div className="rioja-finance-card-clean">
+                <span className="rioja-fin-lbl">Superficie Terreno</span>
+                <div className="rioja-fin-val">200 <span>m²</span></div>
               </div>
 
-              <button onClick={handleWhatsAppFinancing} className="rioja-btn-hero-secondary" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <Phone size={16} /> Contactar Asesor
-              </button>
+              <div className="rioja-finance-actions-group">
+                <button onClick={handleWhatsAppFinancing} className="rioja-btn-finance-primary">
+                  <Phone size={18} /> Solicitar Financiamiento
+                </button>
+                <button onClick={handleWhatsApp} className="rioja-btn-finance-secondary">
+                  Contactar Asesor
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -309,8 +296,8 @@ export default function RiojaLanding() {
 
       <div className="rioja-visual-divider" />
 
-      {/* 3. SECCIÓN RECORRIDO 360° (Identificador: 360) */}
-      <section id="360" className="rioja-section">
+      {/* 5. SECCIÓN RECORRIDO 360° (Identificador: 360 - Videojuego AAA Portal) */}
+      <section id="360" className="rioja-section rioja-section-sand">
         <div className="rioja-container">
           <div className="rioja-text-center rioja-mb-40">
             <span className="rioja-section-label">Experiencia Inmersiva</span>
@@ -327,14 +314,14 @@ export default function RiojaLanding() {
               <div className="rioja-360-visual-icon">
                 <Eye size={36} />
               </div>
-              <h3>Recorre RIOJA como si estuvieras aquí</h3>
-              <p>Presiona el botón de abajo para iniciar la visita interactiva por todo el desarrollo.</p>
+              <h3>Entra al Portal Inmersivo</h3>
+              <p>Camina virtualmente por el desarrollo y descubre la belleza campestre de RIOJA en tiempo real.</p>
               <button 
                 onClick={(e) => { e.stopPropagation(); navigate('/rioja/360'); }}
                 className="rioja-btn-hero-primary"
-                style={{ width: 'auto', padding: '16px 40px' }}
+                style={{ width: 'auto', padding: '18px 45px' }}
               >
-                INICIAR RECORRIDO 360°
+                INICIAR VISITA INTERACTIVA
               </button>
             </div>
           </div>
@@ -343,7 +330,7 @@ export default function RiojaLanding() {
 
       <div className="rioja-visual-divider" />
 
-      {/* 4. SECCIÓN GALERÍA (Identificador: galeria) */}
+      {/* 6. SECCIÓN GALERÍA EDITORIAL (Identificador: galeria) */}
       <section id="galeria" className="rioja-section rioja-section-gallery">
         <div className="rioja-container">
           <div className="rioja-text-center rioja-mb-40">
@@ -360,7 +347,7 @@ export default function RiojaLanding() {
 
       <div className="rioja-visual-divider" />
 
-      {/* 5. SECCIÓN INFORMACIÓN (Identificador: informacion) */}
+      {/* 7. SECCIÓN UBICACIÓN (Identificador: informacion) */}
       <div id="informacion" style={{ paddingTop: '40px' }}>
         {/* Ubicación y Mapa */}
         <section className="rioja-section">
@@ -368,13 +355,13 @@ export default function RiojaLanding() {
             <div className="rioja-grid-2 rioja-align-stretch">
               <div className="rioja-flex-column">
                 <span className="rioja-section-label" style={{ textAlign: 'left' }}>Diferenciador</span>
-                <h2 className="rioja-title" style={{ fontSize: '2.5rem', marginBottom: '20px', lineHeight: 1.1 }}>{riojaConfig.differentiator.title}</h2>
+                <h2 className="rioja-title" style={{ fontSize: '2.8rem', marginBottom: '20px', lineHeight: 1.1 }}>{riojaConfig.differentiator.title}</h2>
                 <p style={{ fontSize: '1.05rem', color: 'var(--rioja-text-light)', marginBottom: '35px', lineHeight: '1.7' }}>
                   {riojaConfig.differentiator.text}
                 </p>
                 
                 <h3 className="rioja-title" style={{ fontSize: '1.8rem', marginTop: '20px', marginBottom: '15px' }}>Ubicación Estratégica</h3>
-                <p style={{ fontSize: '1.05rem', color: 'var(--rioja-text-light)', marginBottom: '30px', lineHeight: '1.7' }}>
+                <p style={{ fontSize: '1.05rem', color: 'var(--rioja-text-light)', marginBottom: '35px', lineHeight: '1.7' }}>
                   {riojaConfig.location.description}
                 </p>
 
@@ -398,7 +385,7 @@ export default function RiojaLanding() {
                 </div>
 
                 <div style={{ marginTop: '35px' }}>
-                  <a href={riojaConfig.location.mapUrl} target="_blank" rel="noreferrer" className="rioja-btn-hero-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <a href={riojaConfig.location.mapUrl} target="_blank" rel="noreferrer" className="rioja-btn-finance-secondary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                     <MapPin size={18} /> Abrir en Google Maps
                   </a>
                 </div>
@@ -424,7 +411,7 @@ export default function RiojaLanding() {
 
         <div className="rioja-visual-divider" />
 
-        {/* Beneficios */}
+        {/* 8. VENTAJAS INMOBILIARIAS (Asimétricas) */}
         <section className="rioja-section rioja-section-benefits">
           <div className="rioja-container">
             <div className="rioja-text-center rioja-mb-40">
@@ -481,7 +468,7 @@ export default function RiojaLanding() {
 
         <div className="rioja-visual-divider" />
 
-        {/* Perfiles de Comprador (Bento Grid) */}
+        {/* 9. PERFILES DE COMPRADOR (Bento Grid) */}
         <section className="rioja-section">
           <div className="rioja-container">
             <div className="rioja-text-center rioja-mb-40">
@@ -526,8 +513,8 @@ export default function RiojaLanding() {
 
         <div className="rioja-visual-divider" />
 
-        {/* FAQ */}
-        <section className="rioja-section">
+        {/* 10. FAQ (Accordion Premium) */}
+        <section className="rioja-section rioja-section-sand">
           <div className="rioja-container">
             <div className="rioja-text-center rioja-mb-40">
               <span className="rioja-section-label">Dudas</span>
@@ -564,8 +551,8 @@ export default function RiojaLanding() {
         {/* Visual Divider */}
         <div className="rioja-visual-divider" />
 
-        {/* CTA Final Cinematográfico (Identificador: contacto) */}
-        <section id="contacto" className="rioja-section rioja-section-dark" style={{ backgroundImage: `url(${riojaPhotos[1].url})` }}>
+        {/* 11. CTA FINAL CINEMATOGRÁFICO (Identificador: contacto) */}
+        <section id="contacto" className="rioja-section rioja-section-dark" style={{ backgroundImage: `url(${riojaPhotos[0].url})` }}>
           <div className="rioja-container rioja-text-center">
             <h2>Da el primer paso</h2>
             <p>
