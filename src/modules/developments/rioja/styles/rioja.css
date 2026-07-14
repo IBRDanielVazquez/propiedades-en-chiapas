@@ -29,6 +29,7 @@ body {
   width: 100%;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  padding-bottom: calc(110px + env(safe-area-inset-bottom)); /* Spacer for floating menu in mobile */
 }
 
 .rioja-container {
@@ -171,7 +172,9 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 30px;
-  animation: filter-reveal 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 1;
+  visibility: visible;
+  animation: simple-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .rioja-hero-new-tag {
@@ -314,9 +317,9 @@ body {
   100% { top: 7px; opacity: 1; }
 }
 
-@keyframes filter-reveal {
-  from { filter: blur(15px); opacity: 0; transform: translateY(15px); }
-  to { filter: blur(0px); opacity: 1; transform: translateY(0); }
+@keyframes simple-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
@@ -1063,19 +1066,20 @@ body {
 
 .rioja-ios-dock {
   position: fixed;
-  bottom: 25px;
+  bottom: calc(15px + env(safe-area-inset-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: rgba(250, 249, 246, 0.72); /* Light sand/linen crystal base */
+  background: rgba(250, 249, 246, 0.78); /* Light sand/linen crystal base */
   border: 1px solid rgba(30, 32, 31, 0.08);
   box-shadow: 0 15px 40px rgba(30, 32, 31, 0.12),
               inset 0 1px 1px rgba(255, 255, 255, 0.8);
   border-radius: 35px;
   padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
   width: 90%;
   max-width: 450px;
   backdrop-filter: blur(30px);
@@ -1131,6 +1135,23 @@ body {
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.8px;
+}
+
+.rioja-dock-item.contact-whatsapp-dock {
+  color: #25D366; /* WhatsApp Green */
+}
+
+.rioja-dock-item.contact-whatsapp-dock svg {
+  color: #25D366;
+}
+
+.rioja-dock-item.contact-whatsapp-dock:hover {
+  color: #20ba59;
+}
+
+.rioja-dock-item.contact-whatsapp-dock:hover svg {
+  transform: translateY(-4px) scale(1.12);
+  color: #20ba59;
 }
 
 /* Dark layout correction for active/inactive dark contexts in the dock */

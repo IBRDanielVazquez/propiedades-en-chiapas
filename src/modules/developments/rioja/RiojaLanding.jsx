@@ -579,20 +579,20 @@ export default function RiojaLanding() {
           <span>Inicio</span>
         </button>
         <button 
-          className={`rioja-dock-item ${activeSection === 'financiamiento' ? 'active' : ''}`}
-          onClick={() => scrollToSection('financiamiento')}
-          aria-label="Financiamiento"
+          className={`rioja-dock-item ${activeSection === 'informacion' ? 'active' : ''}`}
+          onClick={() => scrollToSection('informacion')}
+          aria-label="Ubicación"
         >
-          <DollarSign size={20} />
-          <span>Precio</span>
+          <MapPin size={20} />
+          <span>Ubicación</span>
         </button>
         <button 
-          className={`rioja-dock-item ${activeSection === '360' ? 'active' : ''}`}
-          onClick={() => navigate('/rioja/360')}
-          aria-label="360°"
+          className={`rioja-dock-item ${activeSection === 'financiamiento' ? 'active' : ''}`}
+          onClick={() => scrollToSection('financiamiento')}
+          aria-label="Planes"
         >
-          <Eye size={20} />
-          <span>360°</span>
+          <DollarSign size={20} />
+          <span>Planes</span>
         </button>
         <button 
           className={`rioja-dock-item ${activeSection === 'galeria' ? 'active' : ''}`}
@@ -603,12 +603,12 @@ export default function RiojaLanding() {
           <span>Galería</span>
         </button>
         <button 
-          className={`rioja-dock-item ${activeSection === 'informacion' ? 'active' : ''}`}
-          onClick={() => scrollToSection('informacion')}
-          aria-label="Ubicación"
+          className="rioja-dock-item contact-whatsapp-dock"
+          onClick={handleWhatsApp}
+          aria-label="WhatsApp"
         >
-          <MapPin size={20} />
-          <span>Ubicación</span>
+          <Phone size={20} />
+          <span>WhatsApp</span>
         </button>
       </nav>
     </div>
