@@ -30,39 +30,8 @@ export default function Tour360Editor() {
   const audioRef = useRef(null);
   const isInitialMount = useRef(true);
 
-  // Obtener estado inicial — descarta el borrador si las rutas de imágenes cambiaron
-  const getInitialScenes = () => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('rioja-360-scenes-draft');
-      if (saved) {
-        try {
-          const draft = JSON.parse(saved);
-          // Verificar que las rutas source del borrador coincidan con el config actual.
-          // Si difieren (config fue actualizado), descartamos el borrador stale.
-          const configSources = rioja360Scenes.map(s => s.source).join('|');
-          const draftSources  = draft.map(s => s.source).join('|');
-          if (draftSources === configSources) {
-            return draft; // borrador válido — hotspots conservados
-          }
-          // Borrador stale: migrar los hotspots al nuevo config
-          console.info('[Editor 360] Rutas de imágenes actualizadas — migrando hotspots del borrador.');
-          localStorage.removeItem('rioja-360-scenes-draft');
-          const migrated = rioja360Scenes.map((scene, i) => ({
-            ...scene,
-            hotspots: draft[i]?.hotspots ?? scene.hotspots,
-          }));
-          return migrated;
-        } catch (e) {
-          console.error('Error al cargar borrador de localStorage', e);
-          localStorage.removeItem('rioja-360-scenes-draft');
-        }
-      }
-    }
-    return rioja360Scenes;
-  };
-
-  // Estados
-  const [scenesState, setScenesState] = useState(getInitialScenes);
+  const [isMounted, setIsMounted] = useState(false);
+  const [scenesState, setScenesState] = useState(rioja360Scenes);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [yawDegrees, setYawDegrees] = useState(0);
@@ -99,10 +68,43 @@ export default function Tour360Editor() {
 
   const currentScene = scenesState[currentIndex];
 
-  // Persistir cambios locales en localStorage para desarrollo
+  // Cargar borrador local e inicializar montaje de forma segura
   useEffect(() => {
-    localStorage.setItem('rioja-360-scenes-draft', JSON.stringify(scenesState));
-  }, [scenesState]);
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('rioja-360-scenes-draft');
+        if (saved) {
+          const draft = JSON.parse(saved);
+          const configSources = rioja360Scenes.map(s => s.source).join('|');
+          const draftSources  = draft.map(s => s.source).join('|');
+          if (draftSources === configSources) {
+            setScenesState(draft);
+          } else {
+            console.info('[Editor 360] Rutas de imágenes actualizadas — migrando hotspots.');
+            localStorage.removeItem('rioja-360-scenes-draft');
+            const migrated = rioja360Scenes.map((scene, i) => ({
+              ...scene,
+              hotspots: draft[i]?.hotspots ?? scene.hotspots,
+            }));
+            setScenesState(migrated);
+          }
+        }
+      } catch (e) {
+        console.error('Error al cargar borrador de localStorage', e);
+        localStorage.removeItem('rioja-360-scenes-draft');
+      }
+    }
+
+    const t = setTimeout(() => setIsMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Persistir cambios locales en localStorage para desarrollo (solo si está montado)
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem('rioja-360-scenes-draft', JSON.stringify(scenesState));
+    }
+  }, [scenesState, isMounted]);
 
   // Audio de ambiente sutil
   useEffect(() => {
@@ -160,9 +162,9 @@ export default function Tour360Editor() {
     });
   };
 
-  // Inicialización única de Photo Sphere Viewer
+  // Inicialización única de Photo Sphere Viewer (espera al montaje)
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!isMounted || !containerRef.current) return;
 
     viewerRef.current = new Viewer({
       container: containerRef.current,
@@ -207,7 +209,7 @@ export default function Tour360Editor() {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isMounted]);
 
   // Navegación de escenas (Actualiza Panorama)
   useEffect(() => {
