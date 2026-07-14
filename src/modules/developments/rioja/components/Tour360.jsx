@@ -96,16 +96,29 @@ export default function Tour360({ onClose }) {
 
     const publicHotspots = scene.hotspots.filter(hs => hs.approved && hs.enabled);
 
+    // Obtener la rotación y elevación actual de la cámara para la validación esférica 3D
+    const cameraPos = viewerRef.current.getPosition();
+
     publicHotspots.forEach(hs => {
       const el = document.getElementById(`hs-${hs.id}`);
       if (!el) return;
+
+      // Calcular producto punto esférico 3D para determinar si el hotspot está en el hemisferio visible
+      const cosPitchCam = Math.cos(cameraPos.pitch);
+      const cosPitchHs = Math.cos(hs.pitch);
+      const sinPitchCam = Math.sin(cameraPos.pitch);
+      const sinPitchHs = Math.sin(hs.pitch);
+      const cosDiffYaw = Math.cos(cameraPos.yaw - hs.yaw);
+
+      const dotProduct = cosPitchCam * cosPitchHs * cosDiffYaw + sinPitchCam * sinPitchHs;
+      const isVisible = dotProduct > 0;
 
       const coords = viewerRef.current.dataHelper.sphericalCoordsToViewerCoords({
         yaw: hs.yaw,
         pitch: hs.pitch
       });
 
-      if (coords) {
+      if (coords && isVisible) {
         el.style.left = `${coords.x}px`;
         el.style.top = `${coords.y}px`;
         el.style.display = 'flex';
@@ -148,9 +161,21 @@ export default function Tour360({ onClose }) {
       if (updatePositionsRef.current) updatePositionsRef.current();
     });
 
-    // Escuchar renderizado de fotogramas
+    // Escuchar el renderizado continuo en cada frame de Three.js (WebGL) para anclaje frame-perfect
+    viewerRef.current.addEventListener('render', () => {
+      if (updatePositionsRef.current) updatePositionsRef.current();
+    });
+
+    // Escuchar cuando el visor está listo para inyectar el contenedor DOM de hotspots dentro del visualizador real
     viewerRef.current.addEventListener('ready', () => {
       setLoading(false);
+
+      // Inyectar el contenedor de hotspots directamente dentro del DOM de PSV para compartir coordenadas espaciales
+      const hotspotsContainer = document.querySelector('.rioja-360-hotspots-container');
+      if (hotspotsContainer && viewerRef.current.container) {
+        viewerRef.current.container.appendChild(hotspotsContainer);
+      }
+
       setTimeout(() => {
         if (updatePositionsRef.current) updatePositionsRef.current();
       }, 150);

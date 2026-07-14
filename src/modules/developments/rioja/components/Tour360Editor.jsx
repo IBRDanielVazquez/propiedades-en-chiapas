@@ -213,6 +213,20 @@ export default function Tour360Editor() {
     }
   }, [muted]);
 
+  // Normalizar Yaw al rango de [-PI, PI] para evitar saltos o desbordamientos
+  const normalizeYaw = (yaw) => {
+    let val = yaw % (Math.PI * 2);
+    if (val < -Math.PI) val += Math.PI * 2;
+    if (val > Math.PI) val -= Math.PI * 2;
+    return val;
+  };
+
+  // Limitar Pitch al hemisferio superior/inferior [-PI/2, PI/2] con pequeño margen de seguridad
+  const clampPitch = (pitch) => {
+    const limit = Math.PI / 2 - 0.001;
+    return Math.min(Math.max(pitch, -limit), limit);
+  };
+
   // Actualizador manual de coordenadas en 2D (Hotspots Overlays)
   const updatePositions = () => {
     if (!viewerRef.current || !viewerRef.current.dataHelper) return;
@@ -222,16 +236,29 @@ export default function Tour360Editor() {
     // En modo visitante, solo renderizamos los aprobados. En modo edición, todos.
     const visibleHotspots = scene.hotspots.filter(hs => isEditMode || (hs.approved && hs.enabled));
 
+    // Obtener la rotación y elevación actual de la cámara para la validación esférica 3D
+    const cameraPos = viewerRef.current.getPosition();
+
     visibleHotspots.forEach(hs => {
       const el = document.getElementById(`hs-ed-${hs.id}`);
       if (!el) return;
       
+      // Calcular producto punto esférico 3D para determinar si el hotspot está en el hemisferio visible
+      const cosPitchCam = Math.cos(cameraPos.pitch);
+      const cosPitchHs = Math.cos(hs.pitch);
+      const sinPitchCam = Math.sin(cameraPos.pitch);
+      const sinPitchHs = Math.sin(hs.pitch);
+      const cosDiffYaw = Math.cos(cameraPos.yaw - hs.yaw);
+
+      const dotProduct = cosPitchCam * cosPitchHs * cosDiffYaw + sinPitchCam * sinPitchHs;
+      const isVisible = dotProduct > 0;
+
       const coords = viewerRef.current.dataHelper.sphericalCoordsToViewerCoords({
         yaw: hs.yaw,
         pitch: hs.pitch
       });
       
-      if (coords) {
+      if (coords && isVisible) {
         el.style.left = `${coords.x}px`;
         el.style.top = `${coords.y}px`;
         el.style.display = 'flex';
@@ -275,9 +302,21 @@ export default function Tour360Editor() {
         if (updatePositionsRef.current) updatePositionsRef.current();
       });
 
+      // Escuchar el renderizado continuo en cada frame de Three.js (WebGL) para evitar cualquier retardo o vibración
+      viewerRef.current.addEventListener('render', () => {
+        if (updatePositionsRef.current) updatePositionsRef.current();
+      });
+
       viewerRef.current.addEventListener('ready', () => {
         setLoading(false);
         setViewerError(null);
+
+        // Inyectar el contenedor de hotspots directamente dentro del DOM de PSV para compartir coordenadas espaciales
+        const hotspotsContainer = document.querySelector('.rioja-360-hotspots-container');
+        if (hotspotsContainer && viewerRef.current.container) {
+          viewerRef.current.container.appendChild(hotspotsContainer);
+        }
+
         setTimeout(() => {
           if (updatePositionsRef.current) updatePositionsRef.current();
         }, 150);
@@ -383,13 +422,16 @@ export default function Tour360Editor() {
     if (viewerRef.current && viewerRef.current.dataHelper) {
       const coords = viewerRef.current.dataHelper.viewerCoordsToSphericalCoords({ x, y });
       if (coords) {
+        const normYaw = normalizeYaw(coords.yaw);
+        const normPitch = clampPitch(coords.pitch);
+
         setScenesState(prev => prev.map(scene => {
           if (scene.id === currentScene.id) {
             return {
               ...scene,
               hotspots: scene.hotspots.map(hs => {
                 if (hs.id === draggingHotspotId) {
-                  return { ...hs, yaw: coords.yaw, pitch: coords.pitch };
+                  return { ...hs, yaw: normYaw, pitch: normPitch };
                 }
                 return hs;
               })
@@ -399,7 +441,7 @@ export default function Tour360Editor() {
         }));
 
         if (activeEditHotspot && activeEditHotspot.id === draggingHotspotId) {
-          setActiveEditHotspot(prev => ({ ...prev, yaw: coords.yaw, pitch: coords.pitch }));
+          setActiveEditHotspot(prev => ({ ...prev, yaw: normYaw, pitch: normPitch }));
         }
 
         setTimeout(updatePositions, 10);
@@ -439,13 +481,16 @@ export default function Tour360Editor() {
     if (viewerRef.current && viewerRef.current.dataHelper) {
       const coords = viewerRef.current.dataHelper.viewerCoordsToSphericalCoords({ x, y });
       if (coords) {
+        const normYaw = normalizeYaw(coords.yaw);
+        const normPitch = clampPitch(coords.pitch);
+
         const newHs = {
           id: `hs-${Date.now()}`,
           type: 'info',
           title: 'Nuevo Hotspot',
           description: 'Escribe una descripción corta aquí.',
-          yaw: coords.yaw,
-          pitch: coords.pitch,
+          yaw: normYaw,
+          pitch: normPitch,
           icon: 'info',
           targetSceneId: scenesState[0].id,
           url: null,
