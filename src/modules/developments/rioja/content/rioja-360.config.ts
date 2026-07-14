@@ -132,13 +132,26 @@ export const rioja360Scenes: Scene[] = [
         "type": "info",
         "title": "Camino a Rioja",
         "description": "Ruta hacia los Terrenos en Venta",
-        "yaw": 4.699416492387985,
-        "pitch": -0.0342420235351697,
-        "icon": "chevrons-right",
+        "yaw": -1.5902512650043246,
+        "pitch": -0.08619491643474042,
+        "icon": "corner-right",
         "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
         "approved": true
+      },
+      {
+        "id": "hs-1784049861723",
+        "type": "info",
+        "title": "A Tuxtla Gutiérrez",
+        "description": "",
+        "yaw": 1.5561848907166944,
+        "pitch": 0.12222991781534964,
+        "icon": "info",
+        "targetSceneId": "vista-aerea-regional",
+        "url": null,
+        "enabled": true,
+        "approved": false
       }
     ]
   },
