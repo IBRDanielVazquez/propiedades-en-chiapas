@@ -10,11 +10,30 @@ import {
 import { rioja360Scenes } from '../content/rioja-360.config';
 import '../styles/rioja-360.css';
 
+// Lee el borrador del editor si existe, si no usa el config compilado
+function getActiveScenes() {
+  try {
+    const draft = localStorage.getItem('rioja-360-scenes-draft');
+    if (draft) {
+      const parsed = JSON.parse(draft);
+      // Solo usar el borrador si tiene escenas válidas con source
+      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.source) {
+        return { scenes: parsed, isDraft: true };
+      }
+    }
+  } catch (e) {
+    console.warn('[Tour360] No se pudo leer borrador local:', e);
+  }
+  return { scenes: rioja360Scenes, isDraft: false };
+}
+
 export default function Tour360({ onClose }) {
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
   const audioRef = useRef(null);
   const isInitialMount = useRef(true);
+
+  const { scenes: activeScenes, isDraft } = getActiveScenes();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -22,7 +41,7 @@ export default function Tour360({ onClose }) {
   const [muted, setMuted] = useState(true);
   const [selectedHotspot, setSelectedHotspot] = useState(null);
 
-  const currentScene = rioja360Scenes[currentIndex];
+  const currentScene = activeScenes[currentIndex];
 
   // Helper de Audio Campestre
   useEffect(() => {
@@ -52,7 +71,7 @@ export default function Tour360({ onClose }) {
   // Actualizador manual de coordenadas en 2D
   const updatePositions = () => {
     if (!viewerRef.current || !viewerRef.current.dataHelper) return;
-    const scene = rioja360Scenes[currentIndex];
+    const scene = activeScenes[currentIndex];
     if (!scene || !scene.hotspots) return;
     
     // Filtrar únicamente hotspots aprobados y habilitados para el público
@@ -152,16 +171,16 @@ export default function Tour360({ onClose }) {
   }, [currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % rioja360Scenes.length);
+    setCurrentIndex((prev) => (prev + 1) % activeScenes.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? rioja360Scenes.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? activeScenes.length - 1 : prev - 1));
   };
 
   const handleHotspotClick = (hs) => {
     if (hs.type === 'navigation') {
-      const idx = rioja360Scenes.findIndex(s => s.id === hs.targetSceneId);
+      const idx = activeScenes.findIndex(s => s.id === hs.targetSceneId);
       if (idx !== -1) {
         setCurrentIndex(idx);
       }
@@ -209,7 +228,18 @@ export default function Tour360({ onClose }) {
       {/* Cabecera */}
       <div className="rioja-360-header">
         <div className="rioja-360-title">
-          {currentScene.title} <span className="rioja-360-counter">({currentIndex + 1} / {rioja360Scenes.length})</span>
+          {currentScene.title} <span className="rioja-360-counter">({currentIndex + 1} / {activeScenes.length})</span>
+          {isDraft && (
+            <span style={{
+              marginLeft: '10px', fontSize: '9px', fontWeight: 700,
+              background: 'rgba(245,158,11,0.2)', color: '#f59e0b',
+              border: '1px solid rgba(245,158,11,0.4)',
+              padding: '2px 8px', borderRadius: '20px',
+              textTransform: 'uppercase', letterSpacing: '1px', verticalAlign: 'middle'
+            }}>
+              Borrador local
+            </span>
+          )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {/* Botón de Audio Ambiental */}
@@ -278,7 +308,7 @@ export default function Tour360({ onClose }) {
             <line x1="50" y1="30" x2="30" y2="75" stroke="rgba(195, 164, 121, 0.4)" strokeWidth="1.5" strokeDasharray="3" />
             <line x1="30" y1="75" x2="70" y2="65" stroke="rgba(195, 164, 121, 0.4)" strokeWidth="1.5" strokeDasharray="3" />
           </svg>
-          {rioja360Scenes.map((scene, idx) => (
+          {activeScenes.map((scene, idx) => (
             <button
               key={scene.id}
               className={`rioja-minimap-node ${idx === currentIndex ? 'active' : ''}`}
@@ -337,7 +367,7 @@ export default function Tour360({ onClose }) {
 
       {/* Galería de Selección de Miniaturas */}
       <div className="rioja-360-gallery">
-        {rioja360Scenes.map((scene, idx) => (
+        {activeScenes.map((scene, idx) => (
           <button 
             key={scene.id} 
             className={`rioja-360-thumb ${idx === currentIndex ? 'active' : ''}`}
