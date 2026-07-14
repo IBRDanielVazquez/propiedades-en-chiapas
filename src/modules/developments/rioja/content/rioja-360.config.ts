@@ -208,7 +208,7 @@ export const rioja360Scenes: Scene[] = [
         "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
-        "approved": false
+        "approved": true
       },
       {
         "id": "hs-1784050447603",
