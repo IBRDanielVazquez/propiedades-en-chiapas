@@ -65,25 +65,63 @@ export default function RiojaLanding() {
     <div className="rioja-wrapper">
       <Helmet>
         <title>RIOJA | Terrenos en Berriozábal con Escritura Pública</title>
-        <meta name="description" content="Invierte en tu patrimonio con terrenos de 10×20 m, financiamiento directo y pagos desde $1,000 quincenales." />
+        <meta name="description" content="Conoce RIOJA, un desarrollo ubicado en Berriozábal con terrenos de 200 m², escritura pública, financiamiento accesible y recorrido virtual 360°." />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.propiedadesenchiapas.com/rioja" />
+        <meta property="og:locale" content="es_MX" />
+        <meta property="og:url" content="https://www.propiedadesenchiapas.com/rioja/" />
         <meta property="og:title" content="RIOJA | Terrenos en Berriozábal con Escritura Pública" />
-        <meta property="og:description" content="Invierte en tu patrimonio con terrenos de 10×20 m, financiamiento directo y pagos desde $1,000 quincenales." />
-        <meta property="og:image" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.webp" />
+        <meta property="og:description" content="Descubre RIOJA, un desarrollo con lotes de 200 m², financiamiento accesible y recorrido virtual 360° para conocer el proyecto como si estuvieras ahí." />
+        <meta property="og:image" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.jpg" />
+        <meta property="og:image:secure_url" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="RIOJA Terrenos en Berriozábal" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://www.propiedadesenchiapas.com/rioja" />
-        <meta name="twitter:title" content="RIOJA | Terrenos en Berriozábal" />
-        <meta name="twitter:description" content="Conoce RIOJA y agenda una visita." />
-        <meta name="twitter:image" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.webp" />
+        <meta name="twitter:url" content="https://www.propiedadesenchiapas.com/rioja/" />
+        <meta name="twitter:title" content="RIOJA | Terrenos en Berriozábal con Escritura Pública" />
+        <meta name="twitter:description" content="Descubre RIOJA, un desarrollo con lotes de 200 m², financiamiento accesible y recorrido virtual 360°." />
+        <meta name="twitter:image" content="https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.jpg" />
 
-        <link rel="canonical" href="https://www.propiedadesenchiapas.com/rioja" />
+        <link rel="canonical" href="https://www.propiedadesenchiapas.com/rioja/" />
+
+        {/* Schema structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "RealEstateAgency",
+            "name": "RIOJA Desarrollo Inmobiliario",
+            "image": "https://www.propiedadesenchiapas.com/rioja/og-image-1200x630.jpg",
+            "@id": "https://www.propiedadesenchiapas.com/rioja/#development",
+            "url": "https://www.propiedadesenchiapas.com/rioja/",
+            "telephone": "9611000055",
+            "priceRange": "$$",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Berriozábal",
+              "addressRegion": "Chiapas",
+              "addressCountry": "MX"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 16.767086,
+              "longitude": -93.245738
+            },
+            "description": "Desarrollo inmobiliario premium de lotes campestres de 200 m2 con financiamiento directo y facilidades de pago en Berriozábal, Chiapas.",
+            "offers": {
+              "@type": "AggregateOffer",
+              "priceCurrency": "MXN",
+              "lowPrice": "228000",
+              "highPrice": "228000",
+              "offerCount": "10",
+              "price": "228000"
+            }
+          })}
+        </script>
       </Helmet>
 
       {/* 1. SECCIÓN INICIO (Identificador: inicio) */}
