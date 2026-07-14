@@ -19,7 +19,7 @@ import {
   // Contacto & social
   MessageCircle, Mail, Share2, UserCheck, Users, Star,
   // Multimedia & extras
-  Camera, Image, PlayCircle, Zap, Globe, Search
+  Camera, Image as LucideImage, PlayCircle, Zap, Globe, Search
 } from 'lucide-react';
 import { rioja360Scenes } from '../content/rioja-360.config';
 import '../styles/rioja-360.css';
@@ -528,7 +528,7 @@ export default function Tour360Editor() {
 
       // Validar dimensiones y ratio 2:1
       const previewUrl = URL.createObjectURL(file);
-      const img = new Image();
+      const img = new window.Image();
       img.onload = () => {
         const ratio = img.naturalWidth / img.naturalHeight;
         if (ratio < 1.9 || ratio > 2.1) {
@@ -751,7 +751,7 @@ export default function Tour360Editor() {
     { key: 'calendar',        label: 'Fecha/Evento',    icon: <Calendar size={18}/> },
     { key: 'external-link',   label: 'Enlace externo',  icon: <ExternalLink size={18}/> },
     { key: 'camera',          label: 'Fotografía',      icon: <Camera size={18}/> },
-    { key: 'image',           label: 'Galería',         icon: <Image size={18}/> },
+    { key: 'image',           label: 'Galería',         icon: <LucideImage size={18}/> },
     { key: 'play',            label: 'Video/Tour',      icon: <PlayCircle size={18}/> },
     { key: 'sun',             label: 'Clima/Soleado',   icon: <Sun size={18}/> },
     { key: 'droplets',        label: 'Agua/Riego',      icon: <Droplets size={18}/> },
