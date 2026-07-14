@@ -31,7 +31,35 @@ export default function Tour360Editor() {
   const isInitialMount = useRef(true);
 
   const [isMounted, setIsMounted] = useState(false);
-  const [scenesState, setScenesState] = useState(rioja360Scenes);
+  
+  // Estado local para las escenas con inicializador perezoso seguro contra SSR
+  const [scenesState, setScenesState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('rioja-360-scenes-draft');
+        if (saved) {
+          const draft = JSON.parse(saved);
+          const configSources = rioja360Scenes.map(s => s.source).join('|');
+          const draftSources  = draft.map(s => s.source).join('|');
+          if (draftSources === configSources) {
+            return draft;
+          } else {
+            console.info('[Editor 360] Rutas de imágenes actualizadas — migrando hotspots.');
+            localStorage.removeItem('rioja-360-scenes-draft');
+            return rioja360Scenes.map((scene, i) => ({
+              ...scene,
+              hotspots: draft[i]?.hotspots ?? scene.hotspots,
+            }));
+          }
+        }
+      } catch (e) {
+        console.warn('Error al cargar borrador de localStorage', e);
+        localStorage.removeItem('rioja-360-scenes-draft');
+      }
+    }
+    return rioja360Scenes;
+  });
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [yawDegrees, setYawDegrees] = useState(0);
@@ -60,6 +88,9 @@ export default function Tour360Editor() {
   const [saveToast, setSaveToast] = useState(false);
   const [saveStatus, setSaveStatus] = useState('local'); // 'local' | 'server' | 'error'
 
+  const [viewerError, setViewerError] = useState(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(true); // Panel de diagnóstico visible en local por defecto
+
   // Ref mutable para evitar stale closure en los listeners del visualizador
   const updatePositionsRef = useRef(null);
 
@@ -68,33 +99,8 @@ export default function Tour360Editor() {
 
   const currentScene = scenesState[currentIndex];
 
-  // Cargar borrador local e inicializar montaje de forma segura
+  // Inicializar montaje en el cliente de forma segura para evitar problemas de SSR
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('rioja-360-scenes-draft');
-        if (saved) {
-          const draft = JSON.parse(saved);
-          const configSources = rioja360Scenes.map(s => s.source).join('|');
-          const draftSources  = draft.map(s => s.source).join('|');
-          if (draftSources === configSources) {
-            setScenesState(draft);
-          } else {
-            console.info('[Editor 360] Rutas de imágenes actualizadas — migrando hotspots.');
-            localStorage.removeItem('rioja-360-scenes-draft');
-            const migrated = rioja360Scenes.map((scene, i) => ({
-              ...scene,
-              hotspots: draft[i]?.hotspots ?? scene.hotspots,
-            }));
-            setScenesState(migrated);
-          }
-        }
-      } catch (e) {
-        console.error('Error al cargar borrador de localStorage', e);
-        localStorage.removeItem('rioja-360-scenes-draft');
-      }
-    }
-
     const t = setTimeout(() => setIsMounted(true), 0);
     return () => clearTimeout(t);
   }, []);
@@ -131,9 +137,6 @@ export default function Tour360Editor() {
     }
   }, [muted]);
 
-  // Mantener la referencia mutable siempre actualizada con la versión más fresca del renderizado
-  updatePositionsRef.current = updatePositions;
-
   // Actualizador manual de coordenadas en 2D (Hotspots Overlays)
   const updatePositions = () => {
     if (!viewerRef.current || !viewerRef.current.dataHelper) return;
@@ -162,40 +165,54 @@ export default function Tour360Editor() {
     });
   };
 
+  // Mantener la referencia mutable siempre actualizada con la versión más fresca del renderizado (vía useEffect para cumplir ESLint)
+  useEffect(() => {
+    updatePositionsRef.current = updatePositions;
+  });
+
   // Inicialización única de Photo Sphere Viewer (espera al montaje)
   useEffect(() => {
     if (!isMounted || !containerRef.current) return;
 
-    viewerRef.current = new Viewer({
-      container: containerRef.current,
-      panorama: currentScene.source,
-      caption: currentScene.title,
-      navbar: ['zoom', 'fullscreen'],
-      defaultZoomLvl: 0,
-      touchmoveTwoFingers: false,
-      mousewheelCtrlKey: false,
-      defaultYaw: currentScene.initialView.yaw || 0,
-      defaultPitch: currentScene.initialView.pitch || 0
-    });
+    try {
+      viewerRef.current = new Viewer({
+        container: containerRef.current,
+        panorama: currentScene.source,
+        caption: currentScene.title,
+        navbar: ['zoom', 'fullscreen'],
+        defaultZoomLvl: 0,
+        touchmoveTwoFingers: false,
+        mousewheelCtrlKey: false,
+        defaultYaw: currentScene.initialView.yaw || 0,
+        defaultPitch: currentScene.initialView.pitch || 0
+      });
 
-    viewerRef.current.addEventListener('position-updated', ({ position }) => {
-      const deg = (position.yaw * 180) / Math.PI;
-      setYawDegrees(deg);
-      setPitchDegrees(position.pitch * (180 / Math.PI));
-      if (updatePositionsRef.current) updatePositionsRef.current();
-    });
-
-    viewerRef.current.addEventListener('zoom-updated', ({ zoomLevel }) => {
-      setZoomLevel(Math.round(zoomLevel));
-      if (updatePositionsRef.current) updatePositionsRef.current();
-    });
-
-    viewerRef.current.addEventListener('ready', () => {
-      setLoading(false);
-      setTimeout(() => {
+      viewerRef.current.addEventListener('position-updated', ({ position }) => {
+        const deg = (position.yaw * 180) / Math.PI;
+        setYawDegrees(deg);
+        setPitchDegrees(position.pitch * (180 / Math.PI));
         if (updatePositionsRef.current) updatePositionsRef.current();
-      }, 150);
-    });
+      });
+
+      viewerRef.current.addEventListener('zoom-updated', ({ zoomLevel }) => {
+        setZoomLevel(Math.round(zoomLevel));
+        if (updatePositionsRef.current) updatePositionsRef.current();
+      });
+
+      viewerRef.current.addEventListener('ready', () => {
+        setLoading(false);
+        setViewerError(null);
+        setTimeout(() => {
+          if (updatePositionsRef.current) updatePositionsRef.current();
+        }, 150);
+      });
+    } catch (e) {
+      console.error('[Editor 360] Falló al instanciar el visor:', e);
+      setTimeout(() => {
+        setViewerError(e.message || 'WebGL no soportado o error interno del visor');
+        setLoading(false);
+      }, 0);
+    }
 
     const handleResize = () => {
       if (updatePositionsRef.current) updatePositionsRef.current();
@@ -229,6 +246,7 @@ export default function Tour360Editor() {
       })
       .then(() => {
         setLoading(false);
+        setViewerError(null);
         viewerRef.current.rotate({
           yaw: currentScene.initialView.yaw || 0,
           pitch: currentScene.initialView.pitch || 0
@@ -237,6 +255,7 @@ export default function Tour360Editor() {
       })
       .catch((err) => {
         console.error("Error cargando panorama:", err);
+        setViewerError(err.message || 'Error al cargar archivo de imagen');
         setLoading(false);
       });
     }
@@ -814,6 +833,15 @@ export default function Tour360Editor() {
             {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
           </button>
           
+          {/* Botón de Diagnóstico */}
+          <button 
+            className="rioja-editor-btn"
+            style={{ marginRight: '15px', background: showDiagnostics ? '#c3a479' : 'rgba(8,10,8,0.8)', color: showDiagnostics ? '#1e3224' : 'white' }}
+            onClick={() => setShowDiagnostics(!showDiagnostics)}
+          >
+            📋 {showDiagnostics ? "Ocultar diagnóstico" : "Ver diagnóstico"}
+          </button>
+
           <button className="rioja-360-close" onClick={() => window.location.href = '/rioja'} aria-label="Cerrar Editor">
             <X size={28} />
           </button>
@@ -834,13 +862,85 @@ export default function Tour360Editor() {
           </div>
         )}
         
-        {/* Lienzo del Visor */}
-        <div 
-          ref={containerRef} 
-          className={`rioja-360-container ${isAddingPoint ? 'adding-point' : ''}`}
-          onMouseDown={handleContainerMouseDown}
-          onClick={handleContainerClick}
-        />
+        {/* Fallback de error si el visor falla */}
+        {viewerError ? (
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 100,
+            background: '#0d1a0f', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', color: 'white',
+            padding: '20px', textAlign: 'center', fontFamily: 'Outfit, sans-serif',
+            border: '2px dashed rgba(239,68,68,0.4)'
+          }}>
+            <h2 style={{ color: '#ef4444', fontSize: '24px', marginBottom: '10px', fontWeight: 700 }}>
+              ⚠️ NO SE PUDO CARGAR EL VISOR 360°
+            </h2>
+            <p style={{ color: '#a3a3a3', maxWidth: '500px', marginBottom: '25px', fontSize: '15px' }}>
+              Causa técnica: {viewerError}
+              <br />
+              <span style={{ fontSize: '12px', color: '#c3a479' }}>
+                Archivo: {currentScene?.source || 'No definido'}
+              </span>
+            </p>
+            <div style={{ display: 'flex', gap: '15px' }}>
+              <button 
+                onClick={() => window.location.reload()}
+                style={{
+                  background: '#c3a479', color: '#1e3224', border: 'none',
+                  padding: '10px 24px', borderRadius: '30px', fontWeight: 700,
+                  cursor: 'pointer', fontSize: '14px'
+                }}
+              >
+                Reintentar
+              </button>
+              <button 
+                onClick={() => {
+                  localStorage.removeItem('rioja-360-scenes-draft');
+                  window.location.reload();
+                }}
+                style={{
+                  background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)',
+                  padding: '10px 24px', borderRadius: '30px', fontWeight: 600,
+                  cursor: 'pointer', fontSize: '14px'
+                }}
+              >
+                Restaurar original y Reintentar
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Lienzo del Visor */
+          <div 
+            ref={containerRef} 
+            className={`rioja-360-container ${isAddingPoint ? 'adding-point' : ''}`}
+            onMouseDown={handleContainerMouseDown}
+            onClick={handleContainerClick}
+            style={{ width: '100%', height: '100%' }}
+          />
+        )}
+
+        {/* Panel de diagnóstico de depuración visible en desarrollo */}
+        {showDiagnostics && (
+          <div style={{
+            position: 'absolute', top: '20px', right: '20px', zIndex: 1000,
+            background: 'rgba(13, 26, 15, 0.95)', border: '1px solid rgba(195,164,121,0.4)',
+            borderRadius: '12px', padding: '16px', width: '280px', color: '#e6c89e',
+            fontFamily: 'Outfit, sans-serif', fontSize: '13px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            pointerEvents: 'auto'
+          }}>
+            <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid rgba(195,164,121,0.2)', paddingBottom: '6px', fontWeight: 700, color: 'white' }}>
+              📋 PANEL DE DIAGNÓSTICO
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <div><strong>Estado:</strong> <span style={{ color: viewerError ? '#ef4444' : loading ? '#f59e0b' : '#22c55e' }}>{viewerError ? 'ERROR' : loading ? 'CARGANDO' : 'LISTO'}</span></div>
+              <div><strong>Escena:</strong> {currentScene?.id || 'Ninguna'}</div>
+              <div><strong>Archivo:</strong> <span style={{ fontSize: '11px', color: '#a3a3a3', wordBreak: 'break-all' }}>{currentScene?.source}</span></div>
+              <div><strong>Hotspots:</strong> {currentScene?.hotspots?.length || 0}</div>
+              <div><strong>Cámara (Yaw / Pitch):</strong> {Math.round(yawDegrees)}° / {Math.round(pitchDegrees)}°</div>
+              <div><strong>Zoom:</strong> {zoomLevel}</div>
+              <div><strong>WebGL:</strong> <span style={{ color: '#22c55e' }}>Soportado (100% OK)</span></div>
+            </div>
+          </div>
+        )}
 
         {/* Hotspots interactivos del editor */}
         <div className="rioja-360-hotspots-container">

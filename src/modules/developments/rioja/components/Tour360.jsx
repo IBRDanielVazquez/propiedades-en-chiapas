@@ -61,9 +61,6 @@ export default function Tour360({ onClose }) {
   // Mantener ref sincronizado con el estado
   useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
 
-  // Mantener la referencia mutable actualizada en cada renderizado
-  updatePositionsRef.current = updatePositions;
-
   const currentScene = scenesState[currentIndex];
 
   // Helper de Audio Campestre
@@ -117,6 +114,11 @@ export default function Tour360({ onClose }) {
       }
     });
   };
+
+  // Mantener la referencia mutable actualizada en cada renderizado (vía useEffect para cumplir ESLint)
+  useEffect(() => {
+    updatePositionsRef.current = updatePositions;
+  });
 
   // Inicialización de Photo Sphere Viewer (espera a que el componente esté montado)
   useEffect(() => {
