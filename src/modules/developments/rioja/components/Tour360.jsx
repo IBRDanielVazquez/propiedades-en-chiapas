@@ -229,17 +229,6 @@ export default function Tour360({ onClose }) {
       <div className="rioja-360-header">
         <div className="rioja-360-title">
           {currentScene.title} <span className="rioja-360-counter">({currentIndex + 1} / {activeScenes.length})</span>
-          {isDraft && (
-            <span style={{
-              marginLeft: '10px', fontSize: '9px', fontWeight: 700,
-              background: 'rgba(245,158,11,0.2)', color: '#f59e0b',
-              border: '1px solid rgba(245,158,11,0.4)',
-              padding: '2px 8px', borderRadius: '20px',
-              textTransform: 'uppercase', letterSpacing: '1px', verticalAlign: 'middle'
-            }}>
-              Borrador local
-            </span>
-          )}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {/* Botón de Audio Ambiental */}
