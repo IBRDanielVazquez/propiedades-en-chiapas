@@ -92,14 +92,17 @@ body {
 
 @media (max-width: 768px) {
   .rioja-section {
-    padding: 64px 0 !important;
+    padding: 48px 0 !important; /* Compactar scroll general en móviles */
   }
   .rioja-section-title {
     font-size: 2.2rem;
   }
   .rioja-text-large {
     font-size: 1.1rem;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
+  }
+  .rioja-mb-40 {
+    margin-bottom: 28px; /* Reducir separación de títulos en móviles */
   }
 }
 
@@ -157,6 +160,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
+  padding-top: 50px; /* Margen de seguridad para barra superior en iPhone */
 }
 
 .rioja-hero-new-overlay {
@@ -279,11 +283,30 @@ body {
   transform: translateY(-2px);
 }
 
+.rioja-btn-hero-outline {
+  background: transparent;
+  border: 2px solid var(--rioja-white);
+  color: var(--rioja-white);
+  padding: 18px 40px;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 52px;
+}
+
+.rioja-btn-hero-outline:hover {
+  background: var(--rioja-white);
+  color: var(--rioja-green-dark);
+  transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
   .rioja-hero-new-title { font-size: 2.8rem; }
   .rioja-hero-new-subtitle { font-size: 1.15rem; }
-  .rioja-hero-new-actions { flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
-  .rioja-btn-hero-primary, .rioja-btn-hero-secondary { width: 100%; padding: 15px; }
+  .rioja-hero-new-actions { flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+  .rioja-btn-hero-primary, .rioja-btn-hero-secondary, .rioja-btn-hero-outline { width: 100%; padding: 15px; }
   .rioja-hero-float-card { font-size: 1.5rem; }
 }
 
@@ -627,7 +650,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .rioja-360-visual-portal { aspect-ratio: 4 / 3; min-height: 380px; }
+  .rioja-360-visual-portal { aspect-ratio: auto; min-height: 460px; }
   .rioja-360-visual-content h3 { font-size: 1.8rem; }
   .rioja-360-visual-content p { font-size: 0.95rem; }
   .rioja-360-buttons { flex-direction: column; width: 100%; max-width: 280px; }

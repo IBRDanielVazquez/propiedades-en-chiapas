@@ -151,7 +151,10 @@ export default function RiojaLanding() {
               <button onClick={() => scrollToSection('financiamiento')} className="rioja-btn-hero-primary">
                 QUIERO CONOCER RIOJA
               </button>
-              <button onClick={() => scrollToSection('informacion')} className="rioja-btn-hero-secondary">
+              <button onClick={() => navigate('/rioja/360')} className="rioja-btn-hero-secondary">
+                EXPLORAR EN 360°
+              </button>
+              <button onClick={() => scrollToSection('informacion')} className="rioja-btn-hero-outline">
                 VER UBICACIÓN
               </button>
             </div>
