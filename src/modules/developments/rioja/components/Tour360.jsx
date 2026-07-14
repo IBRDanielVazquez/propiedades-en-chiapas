@@ -23,23 +23,8 @@ export default function Tour360({ onClose }) {
   const audioRef = useRef(null);
   const isInitialMount = useRef(true);
 
-  // Estado local para las escenas con inicializador perezoso seguro contra SSR
-  const [scenesState] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const draft = localStorage.getItem('rioja-360-scenes-draft');
-        if (draft) {
-          const parsed = JSON.parse(draft);
-          if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.source) {
-            return [...parsed].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-          }
-        }
-      } catch (e) {
-        console.warn('[Tour360] No se pudo inicializar borrador local:', e);
-      }
-    }
-    return rioja360Scenes;
-  });
+  // Estado local para las escenas del visitante (siempre lee la configuración oficial)
+  const [scenesState] = useState(rioja360Scenes);
 
   const [isMounted, setIsMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
