@@ -104,28 +104,28 @@ export const rioja360Scenes: Scene[] = [
       {
         "id": "nav-to-acceso-from-aerea",
         "type": "navigation",
-        "title": "Ir al acceso desde carretera",
-        "description": "Desciende a la entrada principal a nivel de carretera.",
-        "yaw": 0.2,
-        "pitch": -0.3,
+        "title": "Acceso desde carretera",
+        "description": "Entrada sobre la Carretera Internacional",
+        "yaw": 0.39292433055361675,
+        "pitch": -0.2419454972811228,
         "icon": "arrow",
         "targetSceneId": "acceso-carretera",
         "url": null,
         "enabled": true,
-        "approved": false
+        "approved": true
       },
       {
-        "id": "nav-to-regional-from-aerea",
-        "type": "navigation",
-        "title": "Ver vista aérea regional",
-        "description": "Explora la perspectiva aérea regional del valle.",
-        "yaw": -0.5,
-        "pitch": -0.15,
-        "icon": "arrow",
+        "id": "hs-1784048184746",
+        "type": "info",
+        "title": "Camino a Rioja",
+        "description": "Ruta hacia los Terrenos en Venta",
+        "yaw": 4.699416492387985,
+        "pitch": -0.0342420235351697,
+        "icon": "chevrons-right",
         "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
-        "approved": false
+        "approved": true
       }
     ]
   },
