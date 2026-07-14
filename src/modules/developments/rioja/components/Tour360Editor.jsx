@@ -89,6 +89,7 @@ export default function Tour360Editor() {
 
   // Toast de guardado
   const [saveToast, setSaveToast] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('local'); // 'local' | 'server' | 'error'
 
   const currentScene = scenesState[currentIndex];
 
@@ -531,11 +532,35 @@ export default function Tour360Editor() {
     input.click();
   };
 
-  // Guardar configuración con toast de confirmación
-  const handleSaveConfig = () => {
+  // Guardar configuración en localStorage e intentar sincronizar con el Servidor local Sidecar
+  const handleSaveConfig = async () => {
+    // 1. Guardado en borrador local del navegador
     localStorage.setItem('rioja-360-scenes-draft', JSON.stringify(scenesState));
+    setSaveStatus('local');
     setSaveToast(true);
-    setTimeout(() => setSaveToast(false), 2800);
+
+    // 2. Intentar guardar directamente en el disco (sidecar local en puerto 3600)
+    try {
+      const response = await fetch('http://localhost:3600/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(scenesState),
+      });
+
+      if (response.ok) {
+        setSaveStatus('server');
+      } else {
+        console.warn('[Editor 360] El servidor local respondió con error:', response.status);
+      }
+    } catch {
+      // Falla silenciosa si no está el sidecar corriendo (comportamiento normal en producción externa)
+      console.info('[Editor 360] Sincronización local offline (esperado fuera de desarrollo local).');
+    }
+
+    // Ocultar el toast tras 3.5 segundos
+    setTimeout(() => setSaveToast(false), 3500);
   };
 
   // Arrastar panel de escenas
@@ -1314,18 +1339,26 @@ export default function Tour360Editor() {
         </div>
       </div>
 
-      {/* Toast de guardado */}
+      {/* Toast de guardado dinámico */}
       {saveToast && (
         <div style={{
           position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
-          background: 'rgba(34,197,94,0.95)', color: 'white',
+          background: saveStatus === 'server'
+            ? 'rgba(34,197,94,0.96)' // Verde brillante
+            : saveStatus === 'error'
+              ? 'rgba(239,68,68,0.96)'  // Rojo
+              : 'rgba(245,158,11,0.96)', // Ámbar/Naranja
+          color: 'white',
           padding: '12px 28px', borderRadius: '30px',
           fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '15px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
           zIndex: 99999, animation: 'fadeInUp 0.3s ease',
-          display: 'flex', alignItems: 'center', gap: '10px'
+          display: 'flex', alignItems: 'center', gap: '10px',
+          border: saveStatus === 'server' ? '1px solid #4ade80' : '1px solid transparent'
         }}>
-          ✓ Configuración guardada en borrador
+          {saveStatus === 'server' && <span>⚡ ¡Configuración sincronizada directamente en el código!</span>}
+          {saveStatus === 'local' && <span>✓ Configuración guardada en borrador (local)</span>}
+          {saveStatus === 'error' && <span>⚠️ Error al sincronizar con el Servidor local</span>}
         </div>
       )}
 
