@@ -5,6 +5,7 @@ import {
   Compass, Share2, Phone, ArrowLeft, Eye, Sparkles, 
   MapPin, DollarSign, Layers, Home, Check
 } from 'lucide-react';
+import { riojaConfig } from './content/rioja.config';
 import '../../developments/rioja/styles/rioja.css';
 
 const Tour360 = lazy(() => import('./components/Tour360'));
@@ -168,24 +169,24 @@ export default function Rioja360TourPage() {
           {/* Menú inferior dock iOS-Style para navigation */}
           <nav className="rioja-ios-dock">
             <button className="rioja-dock-item" onClick={() => handleDockClick('inicio')} aria-label="Inicio">
-              <Home size={20} />
+              <Home size={22} />
               <span>Inicio</span>
             </button>
-            <button className="rioja-dock-item" onClick={() => handleDockClick('financiamiento')} aria-label="Financiamiento">
-              <DollarSign size={20} />
-              <span>Precio</span>
+            <button className="rioja-dock-item" onClick={() => handleDockClick('informacion')} aria-label="Ubicación">
+              <MapPin size={22} />
+              <span>Ubicación</span>
             </button>
-            <button className="rioja-dock-item active" aria-label="360°">
-              <Eye size={20} />
-              <span>360°</span>
+            <button className="rioja-dock-item" onClick={() => handleDockClick('financiamiento')} aria-label="Planes">
+              <DollarSign size={22} />
+              <span>Planes</span>
             </button>
             <button className="rioja-dock-item" onClick={() => handleDockClick('galeria')} aria-label="Galería">
-              <Layers size={20} />
+              <Layers size={22} />
               <span>Galería</span>
             </button>
-            <button className="rioja-dock-item" onClick={() => handleDockClick('informacion')} aria-label="Ubicación">
-              <MapPin size={20} />
-              <span>Ubicación</span>
+            <button className="rioja-dock-item contact-whatsapp-dock" onClick={() => window.open(riojaConfig.contact.whatsappLink, '_blank')} aria-label="WhatsApp">
+              <Phone size={22} />
+              <span>WhatsApp</span>
             </button>
           </nav>
 

@@ -1103,3 +1103,294 @@ body {
   flex-direction: column;
   justify-content: center;
 }
+
+/* ==========================================================================
+   Estilos de la Portada del Recorrido Virtual 360° (Intro Portal)
+   ========================================================================== */
+
+.rioja-360-page-wrapper {
+  background-color: var(--rioja-green-dark);
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+  color: var(--rioja-white);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.rioja-360-page-portal {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px calc(140px + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.rioja-360-page-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(12, 45, 36, 0.45) 0%, rgba(23, 26, 24, 0.95) 100%);
+  z-index: 1;
+}
+
+.rioja-360-back-btn {
+  position: absolute;
+  top: 30px;
+  left: 5%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(23, 26, 24, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: var(--rioja-white);
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.rioja-360-back-btn:hover {
+  background: var(--rioja-gold);
+  color: var(--rioja-carbon);
+  border-color: var(--rioja-gold);
+  transform: translateX(-3px);
+}
+
+.rioja-360-page-content {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.rioja-360-page-badge {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--rioja-gold);
+  text-transform: uppercase;
+  background: rgba(245, 197, 67, 0.15);
+  border: 1.5px solid var(--rioja-gold);
+  padding: 6px 16px;
+  border-radius: 4px;
+}
+
+.rioja-360-page-headline {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--rioja-white);
+  margin: 5px 0 0 0;
+  letter-spacing: -1.5px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.rioja-360-page-lead {
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rioja-white);
+  margin: 0;
+  max-width: 620px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.rioja-360-page-subtext {
+  font-size: 1rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  max-width: 500px;
+}
+
+.rioja-360-animated-sphere-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  margin: 15px 0;
+}
+
+.rioja-360-animated-sphere {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--rioja-gold);
+  background: rgba(12, 45, 36, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--rioja-gold);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 0 20px rgba(245, 197, 67, 0.35);
+  transition: all 0.2s ease;
+}
+
+.rioja-360-animated-sphere-wrapper:hover .rioja-360-animated-sphere {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(245, 197, 67, 0.6);
+  border-color: var(--rioja-white);
+  color: var(--rioja-white);
+}
+
+.rioja-sphere-icon-spin {
+  animation: float-rotate 8s infinite linear;
+}
+
+@keyframes float-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rioja-360-swipe-hint {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--rioja-white);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Acciones principales de la Portada */
+.rioja-360-actions-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 440px;
+  margin-top: 10px;
+}
+
+.rioja-btn-enter-360 {
+  width: 100%;
+  background: var(--rioja-gold);
+  border: none;
+  color: var(--rioja-carbon);
+  padding: 18px 24px;
+  border-radius: 6px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(245, 197, 67, 0.45);
+  transition: all 0.2s ease;
+  min-height: 54px;
+  text-transform: uppercase;
+}
+
+.rioja-btn-enter-360:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 197, 67, 0.55);
+  background: #f7ce5f;
+}
+
+.rioja-360-secondary-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.rioja-btn-share-360, 
+.rioja-btn-whatsapp-share {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(23, 26, 24, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  color: var(--rioja-white);
+  padding: 14px 12px;
+  border-radius: 6px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+  min-height: 48px;
+  text-transform: uppercase;
+}
+
+.rioja-btn-share-360:hover {
+  border-color: var(--rioja-gold);
+  color: var(--rioja-gold);
+  background: rgba(245, 197, 67, 0.08);
+}
+
+.rioja-btn-whatsapp-share:hover {
+  border-color: #22C55E;
+  color: #22C55E;
+  background: rgba(34, 197, 94, 0.08);
+}
+
+/* Toast de compartir */
+.rioja-360-share-toast {
+  position: fixed;
+  bottom: calc(100px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--rioja-gold);
+  color: var(--rioja-carbon);
+  padding: 12px 24px;
+  border-radius: 6px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--rioja-white);
+}
+
+@media (max-width: 768px) {
+  .rioja-360-page-portal {
+    padding: 40px 16px calc(130px + env(safe-area-inset-bottom));
+  }
+  .rioja-360-page-headline {
+    font-size: 2.3rem;
+  }
+  .rioja-360-page-lead {
+    font-size: 1.15rem;
+  }
+  .rioja-360-back-btn {
+    top: 20px;
+    left: 4%;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  .rioja-360-secondary-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rioja-btn-share-360, 
+  .rioja-btn-whatsapp-share {
+    width: 100%;
+  }
+}
+
