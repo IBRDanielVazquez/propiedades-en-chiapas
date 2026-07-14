@@ -5,7 +5,6 @@ import {
   Compass, Share2, Phone, ArrowLeft, Eye, Sparkles, 
   MapPin, DollarSign, Layers, Home, Check
 } from 'lucide-react';
-import { riojaConfig } from './content/rioja.config';
 import '../../developments/rioja/styles/rioja.css';
 
 const Tour360 = lazy(() => import('./components/Tour360'));
