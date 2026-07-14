@@ -17,45 +17,50 @@ import {
 import { rioja360Scenes } from '../content/rioja-360.config';
 import '../styles/rioja-360.css';
 
-// Lee el borrador del editor si existe; ordena siempre por .order
-function getActiveScenes() {
-  try {
-    const draft = localStorage.getItem('rioja-360-scenes-draft');
-    if (draft) {
-      const parsed = JSON.parse(draft);
-      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.source) {
-        // Respetar el orden que el editor guardó
-        const sorted = [...parsed].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        return { scenes: sorted, isDraft: true };
-      }
-    }
-  } catch (e) {
-    console.warn('[Tour360] No se pudo leer borrador local:', e);
-  }
-  return { scenes: rioja360Scenes, isDraft: false };
-}
-
 export default function Tour360({ onClose }) {
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
   const audioRef = useRef(null);
   const isInitialMount = useRef(true);
 
-  const { scenes: activeScenes } = getActiveScenes();
+  // Estado local para las escenas con inicializador perezoso seguro contra SSR
+  const [scenesState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const draft = localStorage.getItem('rioja-360-scenes-draft');
+        if (draft) {
+          const parsed = JSON.parse(draft);
+          if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.source) {
+            return [...parsed].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+          }
+        }
+      } catch (e) {
+        console.warn('[Tour360] No se pudo inicializar borrador local:', e);
+      }
+    }
+    return rioja360Scenes;
+  });
 
-  // Ref para que updatePositions siempre lea el índice actual (evita stale closure)
-  const currentIndexRef = useRef(0);
-
+  const [isMounted, setIsMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [yawDegrees, setYawDegrees] = useState(0);
   const [muted, setMuted] = useState(true);
   const [selectedHotspot, setSelectedHotspot] = useState(null);
 
+  // Ref para que updatePositions siempre lea el índice actual (evita stale closure)
+  const currentIndexRef = useRef(0);
+
+  // Marcar como montado en el cliente para evitar problemas de hidratación en SSR
+  useEffect(() => {
+    const t = setTimeout(() => setIsMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
+
   // Mantener ref sincronizado con el estado
   useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
 
-  const currentScene = activeScenes[currentIndex];
+  const currentScene = scenesState[currentIndex];
 
   // Helper de Audio Campestre
   useEffect(() => {
@@ -85,7 +90,7 @@ export default function Tour360({ onClose }) {
   // Actualizar posiciones 2D de hotspots — usa ref para no capturar índice stale
   const updatePositions = () => {
     if (!viewerRef.current || !viewerRef.current.dataHelper) return;
-    const scene = activeScenes[currentIndexRef.current];
+    const scene = scenesState[currentIndexRef.current];
     if (!scene || !scene.hotspots) return;
 
     const publicHotspots = scene.hotspots.filter(hs => hs.approved && hs.enabled);
@@ -109,9 +114,9 @@ export default function Tour360({ onClose }) {
     });
   };
 
-  // Inicialización de Photo Sphere Viewer
+  // Inicialización de Photo Sphere Viewer (espera a que el componente esté montado)
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!isMounted || !containerRef.current) return;
 
     viewerRef.current = new Viewer({
       container: containerRef.current,
@@ -150,7 +155,7 @@ export default function Tour360({ onClose }) {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isMounted]);
 
   // Navegación de escenas (Actualiza Panorama)
   useEffect(() => {
@@ -184,16 +189,16 @@ export default function Tour360({ onClose }) {
   }, [currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % activeScenes.length);
+    setCurrentIndex((prev) => (prev + 1) % scenesState.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? activeScenes.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? scenesState.length - 1 : prev - 1));
   };
 
   const handleHotspotClick = (hs) => {
     if (hs.type === 'navigation') {
-      const idx = activeScenes.findIndex(s => s.id === hs.targetSceneId);
+      const idx = scenesState.findIndex(s => s.id === hs.targetSceneId);
       if (idx !== -1) {
         setCurrentIndex(idx);
       }
@@ -254,7 +259,7 @@ export default function Tour360({ onClose }) {
       {/* Cabecera */}
       <div className="rioja-360-header">
         <div className="rioja-360-title">
-          {currentScene.title} <span className="rioja-360-counter">({currentIndex + 1} / {activeScenes.length})</span>
+          {currentScene.title} <span className="rioja-360-counter">({currentIndex + 1} / {scenesState.length})</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {/* Botón de Audio Ambiental */}
@@ -323,7 +328,7 @@ export default function Tour360({ onClose }) {
             <line x1="50" y1="30" x2="30" y2="75" stroke="rgba(195, 164, 121, 0.4)" strokeWidth="1.5" strokeDasharray="3" />
             <line x1="30" y1="75" x2="70" y2="65" stroke="rgba(195, 164, 121, 0.4)" strokeWidth="1.5" strokeDasharray="3" />
           </svg>
-          {activeScenes.map((scene, idx) => (
+          {scenesState.map((scene, idx) => (
             <button
               key={scene.id}
               className={`rioja-minimap-node ${idx === currentIndex ? 'active' : ''}`}
@@ -382,7 +387,7 @@ export default function Tour360({ onClose }) {
 
       {/* Galería de Selección de Miniaturas */}
       <div className="rioja-360-gallery">
-        {activeScenes.map((scene, idx) => (
+        {scenesState.map((scene, idx) => (
           <button 
             key={scene.id} 
             className={`rioja-360-thumb ${idx === currentIndex ? 'active' : ''}`}
