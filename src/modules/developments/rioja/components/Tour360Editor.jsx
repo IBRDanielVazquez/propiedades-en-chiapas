@@ -78,7 +78,10 @@ export default function Tour360Editor() {
 
   // Estado modal "Agregar imagen 360°"
   const [addSceneModal, setAddSceneModal] = useState(null);
-  // { file, previewUrl, id, title, order, approved }
+
+  // Drag-and-drop para reordenamiento de escenas en la barra inferior
+  const [dragSceneIdx, setDragSceneIdx] = useState(null);   // índice que se arrastra
+  const [dragOverIdx, setDragOverIdx] = useState(null);     // índice donde se hovería
 
   const currentScene = scenesState[currentIndex];
 
@@ -528,17 +531,57 @@ export default function Tour360Editor() {
       id: addSceneModal.id,
       order: scenesState.length + 1,
       title: addSceneModal.title || `Escena ${scenesState.length + 1}`,
-      source: addSceneModal.previewUrl,  // URL local temporal
+      source: addSceneModal.previewUrl,
       thumb: addSceneModal.previewUrl,
       coords: { x: 50, y: 50 },
       initialView: { yaw: 0, pitch: 0, hfov: 100 },
       hotspots: [],
       approved: addSceneModal.approved,
-      _localFile: true,  // marca que es temporal y necesita ser subida manualmente
+      _localFile: true,
     };
     setScenesState(prev => [...prev, newScene]);
-    setCurrentIndex(scenesState.length);  // ir a la nueva escena
+    setCurrentIndex(scenesState.length);
     setAddSceneModal(null);
+  };
+
+  // ── DRAG & DROP REORDER (barra inferior) ─────────────────────────────────────
+
+  const handleDragSceneStart = (e, idx) => {
+    setDragSceneIdx(idx);
+    e.dataTransfer.effectAllowed = 'move';
+    // Imagen fantasma semitransparente
+    const el = e.currentTarget;
+    e.dataTransfer.setDragImage(el, el.offsetWidth / 2, el.offsetHeight / 2);
+  };
+
+  const handleDragSceneOver = (e, idx) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (idx !== dragSceneIdx) setDragOverIdx(idx);
+  };
+
+  const handleDropScene = (e, dropIdx) => {
+    e.preventDefault();
+    if (dragSceneIdx === null || dragSceneIdx === dropIdx) {
+      setDragSceneIdx(null);
+      setDragOverIdx(null);
+      return;
+    }
+    setScenesState(prev => {
+      const arr = [...prev];
+      const [moved] = arr.splice(dragSceneIdx, 1);
+      arr.splice(dropIdx, 0, moved);
+      return arr.map((s, i) => ({ ...s, order: i + 1 }));
+    });
+    // El currentIndex sigue a la escena que se movió
+    setCurrentIndex(dropIdx);
+    setDragSceneIdx(null);
+    setDragOverIdx(null);
+  };
+
+  const handleDragSceneEnd = () => {
+    setDragSceneIdx(null);
+    setDragOverIdx(null);
   };
 
 
@@ -1109,18 +1152,94 @@ export default function Tour360Editor() {
         )}
       </div>
 
-      {/* Barra de Selección de Miniaturas (Vista del visitante) */}
-      <div className="rioja-360-gallery" style={{ opacity: isEditMode ? 0.4 : 1, pointerEvents: isEditMode ? 'none' : 'auto' }}>
-        {scenesState.map((scene, idx) => (
-          <button 
-            key={scene.id} 
-            className={`rioja-360-thumb ${idx === currentIndex ? 'active' : ''}`}
-            onClick={() => setCurrentIndex(idx)}
-          >
-            <img src={scene.thumb} alt={scene.title} loading="lazy" />
-            <div className="rioja-360-thumb-label">{scene.title}</div>
-          </button>
-        ))}
+      {/* Barra de escenas — Drag-to-Reorder en edición / Click-to-navigate en visitante */}
+      <div
+        className="rioja-360-gallery"
+        style={{ opacity: 1, pointerEvents: 'auto' }}
+      >
+        {isEditMode && (
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '4px',
+            padding: '4px 10px 0',
+            color: '#c3a479', fontSize: '10px', fontWeight: 600,
+            textTransform: 'uppercase', letterSpacing: '1px', opacity: 0.8
+          }}>
+            <span>&#9776;</span> Arrastra para reordenar
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: '8px', padding: '6px 10px', overflowX: 'auto' }}>
+          {scenesState.map((scene, idx) => (
+            <div
+              key={scene.id}
+              draggable={isEditMode}
+              onDragStart={isEditMode ? (e) => handleDragSceneStart(e, idx) : undefined}
+              onDragOver={isEditMode ? (e) => handleDragSceneOver(e, idx) : undefined}
+              onDrop={isEditMode ? (e) => handleDropScene(e, idx) : undefined}
+              onDragEnd={isEditMode ? handleDragSceneEnd : undefined}
+              onClick={() => setCurrentIndex(idx)}
+              style={{
+                position: 'relative',
+                flexShrink: 0,
+                width: '110px',
+                cursor: isEditMode ? 'grab' : 'pointer',
+                borderRadius: '8px',
+                border: dragOverIdx === idx && dragSceneIdx !== idx
+                  ? '2px dashed #c3a479'
+                  : idx === currentIndex
+                    ? '2px solid #c3a479'
+                    : '2px solid transparent',
+                opacity: dragSceneIdx === idx ? 0.4 : 1,
+                transition: 'border 0.15s, opacity 0.15s',
+                background: 'rgba(0,0,0,0.4)',
+                overflow: 'hidden',
+                userSelect: 'none'
+              }}
+            >
+              <img
+                src={scene.thumb}
+                alt={scene.title}
+                loading="lazy"
+                style={{ width: '100%', height: '62px', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
+              />
+              {/* Etiqueta con número de orden */}
+              <div style={{
+                padding: '4px 6px',
+                fontSize: '10px',
+                color: idx === currentIndex ? '#c3a479' : '#ccc',
+                fontWeight: idx === currentIndex ? 700 : 400,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                background: 'rgba(0,0,0,0.5)'
+              }}>
+                <span style={{
+                  background: idx === currentIndex ? '#c3a479' : 'rgba(255,255,255,0.15)',
+                  color: idx === currentIndex ? '#0d1a0f' : 'white',
+                  borderRadius: '50%',
+                  width: '16px', height: '16px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '9px', fontWeight: 700, flexShrink: 0
+                }}>
+                  {scene.order}
+                </span>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {scene.title}
+                </span>
+              </div>
+              {/* Indicador de zona de destino */}
+              {isEditMode && dragOverIdx === idx && dragSceneIdx !== idx && (
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'rgba(195,164,121,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  pointerEvents: 'none'
+                }}>
+                  <span style={{ color: '#c3a479', fontSize: '20px' }}>&#8595;</span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Modal: Agregar imagen 360° */}
