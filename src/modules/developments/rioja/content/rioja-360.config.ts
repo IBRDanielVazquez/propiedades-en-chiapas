@@ -199,7 +199,7 @@ export const rioja360Scenes: Scene[] = [
       },
       {
         "id": "hs-1784050407634",
-        "type": "info",
+        "type": "location",
         "title": "Rioja",
         "description": "Terrenos en Venta ",
         "yaw": 2.8775098529688212,
@@ -218,6 +218,19 @@ export const rioja360Scenes: Scene[] = [
         "yaw": -0.021446193972917804,
         "pitch": -0.006592307165503408,
         "icon": "info",
+        "targetSceneId": "vista-aerea-regional",
+        "url": null,
+        "enabled": true,
+        "approved": true
+      },
+      {
+        "id": "hs-1784051179343",
+        "type": "reference",
+        "title": "Camino a Rioja",
+        "description": "Camino de terracería a Rioja",
+        "yaw": -0.03475033757882784,
+        "pitch": -0.8841086090358572,
+        "icon": "route",
         "targetSceneId": "vista-aerea-regional",
         "url": null,
         "enabled": true,
