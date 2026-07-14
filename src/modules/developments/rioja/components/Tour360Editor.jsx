@@ -79,9 +79,16 @@ export default function Tour360Editor() {
   // Estado modal "Agregar imagen 360°"
   const [addSceneModal, setAddSceneModal] = useState(null);
 
-  // Drag-and-drop para reordenamiento de escenas en la barra inferior
-  const [dragSceneIdx, setDragSceneIdx] = useState(null);   // índice que se arrastra
-  const [dragOverIdx, setDragOverIdx] = useState(null);     // índice donde se hovería
+  // Drag-and-drop reordenamiento de escenas (barra inferior)
+  const [dragSceneIdx, setDragSceneIdx] = useState(null);
+  const [dragOverIdx, setDragOverIdx] = useState(null);
+
+  // Panel arrastrable de escenas
+  const [panelPos, setPanelPos] = useState({ x: 10, y: 60 });
+  const panelDrag = useRef({ active: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+
+  // Toast de guardado
+  const [saveToast, setSaveToast] = useState(false);
 
   const currentScene = scenesState[currentIndex];
 
@@ -524,6 +531,39 @@ export default function Tour360Editor() {
     input.click();
   };
 
+  // Guardar configuración con toast de confirmación
+  const handleSaveConfig = () => {
+    localStorage.setItem('rioja-360-scenes-draft', JSON.stringify(scenesState));
+    setSaveToast(true);
+    setTimeout(() => setSaveToast(false), 2800);
+  };
+
+  // Arrastar panel de escenas
+  const handlePanelMouseDown = (e) => {
+    panelDrag.current = {
+      active: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: panelPos.x,
+      origY: panelPos.y
+    };
+    const onMove = (ev) => {
+      if (!panelDrag.current.active) return;
+      setPanelPos({
+        x: panelDrag.current.origX + (ev.clientX - panelDrag.current.startX),
+        y: panelDrag.current.origY + (ev.clientY - panelDrag.current.startY)
+      });
+    };
+    const onUp = () => {
+      panelDrag.current.active = false;
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    e.preventDefault();
+  };
+
   // Confirmar incorporación de nueva escena al editor
   const handleConfirmAddScene = () => {
     if (!addSceneModal) return;
@@ -543,8 +583,6 @@ export default function Tour360Editor() {
     setCurrentIndex(scenesState.length);
     setAddSceneModal(null);
   };
-
-  // ── DRAG & DROP REORDER (barra inferior) ─────────────────────────────────────
 
   const handleDragSceneStart = (e, idx) => {
     setDragSceneIdx(idx);
@@ -753,22 +791,49 @@ export default function Tour360Editor() {
           {(currentScene?.hotspots || [])
             .filter(hs => isEditMode || (hs.approved && hs.enabled))
             .map((hs) => (
-              <button
+              <div
                 key={hs.id}
                 id={`hs-ed-${hs.id}`}
-                className={`rioja-360-hotspot rioja-hs-${hs.type} ${hs.approved ? 'approved' : 'pending'} ${activeEditHotspot?.id === hs.id ? 'editing' : ''}`}
-                onClick={() => handleHotspotClick(hs)}
-                onMouseDown={(e) => handleMouseDown(e, hs.id)}
-                style={{ display: 'none', transform: 'translate(-50%, -50%)' }}
+                style={{ display: 'none', position: 'absolute', transform: 'translate(-50%, -50%)', zIndex: 10 }}
               >
-                <div className="rioja-hs-icon-ring">
-                  {getHotspotIcon(hs.type, hs.icon)}
-                </div>
-                <span className="rioja-hs-label">
-                  {hs.title}
-                  {isEditMode && !hs.approved && <span className="rioja-hs-badge">Borrador</span>}
-                </span>
-              </button>
+                <button
+                  className={`rioja-360-hotspot rioja-hs-${hs.type} ${hs.approved ? 'approved' : 'pending'} ${activeEditHotspot?.id === hs.id ? 'editing' : ''}`}
+                  onClick={() => handleHotspotClick(hs)}
+                  onMouseDown={(e) => handleMouseDown(e, hs.id)}
+                  style={{ display: 'flex' }}
+                >
+                  <div className="rioja-hs-icon-ring">
+                    {getHotspotIcon(hs.type, hs.icon)}
+                  </div>
+                  <span className="rioja-hs-label">
+                    {hs.title}
+                    {isEditMode && !hs.approved && <span className="rioja-hs-badge">Borrador</span>}
+                  </span>
+                </button>
+                {/* Botón eliminar directo en el pin */}
+                {isEditMode && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDeleteHotspot(hs.id); }}
+                    title="Eliminar pin"
+                    style={{
+                      position: 'absolute', top: '-8px', right: '-8px',
+                      width: '20px', height: '20px',
+                      borderRadius: '50%',
+                      background: '#ef4444',
+                      border: '2px solid #0d1a0f',
+                      color: 'white',
+                      cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: '10px', fontWeight: 900,
+                      lineHeight: 1, padding: 0,
+                      zIndex: 5,
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.5)'
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             ))}
         </div>
 
@@ -795,65 +860,72 @@ export default function Tour360Editor() {
             <button className="rioja-editor-btn" onClick={handleDownloadConfig}>
               <Download size={16} /> Descargar JSON
             </button>
+            <button
+              className="rioja-editor-btn"
+              onClick={handleSaveConfig}
+              style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid #22c55e', color: '#22c55e', fontWeight: 700 }}
+            >
+              ✓ Guardar
+            </button>
             <button className="rioja-editor-btn danger" onClick={handleResetConfig}>
-              <Trash2 size={16} /> Restaurar config original
+              <Trash2 size={16} /> Restaurar original
             </button>
           </div>
         )}
 
-        {/* Panel de Gestión de Escenas */}
+        {/* Panel de Gestión de Escenas — ARRASTRABLE */}
         {isEditMode && (
           <div style={{
-            position: 'absolute', top: '60px', left: '10px',
-            background: 'rgba(8,12,8,0.88)', backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(195,164,121,0.3)', borderRadius: '10px',
-            padding: '10px', zIndex: 20, minWidth: '200px', maxWidth: '240px'
+            position: 'absolute',
+            left: `${panelPos.x}px`,
+            top: `${panelPos.y}px`,
+            background: 'rgba(8,12,8,0.92)', backdropFilter: 'blur(14px)',
+            border: '1px solid rgba(195,164,121,0.35)', borderRadius: '10px',
+            zIndex: 20, minWidth: '210px', maxWidth: '250px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+            userSelect: 'none'
           }}>
-            <div style={{ color: '#c3a479', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>
-              Escenas del recorrido
+            {/* Cabecera arrastrable */}
+            <div
+              onMouseDown={handlePanelMouseDown}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '8px 10px',
+                borderBottom: '1px solid rgba(195,164,121,0.2)',
+                cursor: 'grab', color: '#c3a479',
+                fontSize: '11px', fontWeight: 700,
+                textTransform: 'uppercase', letterSpacing: '1px'
+              }}
+            >
+              <span>☰ Escenas del recorrido</span>
             </div>
-            {scenesState.map((scene, idx) => (
-              <div
-                key={scene.id}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                  padding: '6px 8px', marginBottom: '4px', borderRadius: '6px',
-                  background: idx === currentIndex ? 'rgba(195,164,121,0.2)' : 'rgba(255,255,255,0.04)',
-                  border: idx === currentIndex ? '1px solid rgba(195,164,121,0.5)' : '1px solid transparent',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setCurrentIndex(idx)}
-              >
-                <span style={{ color: '#c3a479', fontSize: '11px', minWidth: '16px' }}>{scene.order}</span>
-                <span style={{ color: 'white', fontSize: '12px', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {scene.title}
-                  {scene._localFile && <span style={{ color: '#f59e0b', fontSize: '9px', marginLeft: '4px' }}>LOCAL</span>}
-                </span>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleReorderScene(idx, -1); }}
-                  disabled={idx === 0}
-                  title="Subir escena"
-                  style={{ background: 'none', border: 'none', color: idx === 0 ? '#555' : '#c3a479', cursor: idx === 0 ? 'default' : 'pointer', padding: '2px' }}
+            <div style={{ padding: '8px' }}>
+              {scenesState.map((scene, idx) => (
+                <div
+                  key={scene.id}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    padding: '6px 8px', marginBottom: '4px', borderRadius: '6px',
+                    background: idx === currentIndex ? 'rgba(195,164,121,0.2)' : 'rgba(255,255,255,0.04)',
+                    border: idx === currentIndex ? '1px solid rgba(195,164,121,0.5)' : '1px solid transparent',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setCurrentIndex(idx)}
                 >
-                  ▲
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleReorderScene(idx, 1); }}
-                  disabled={idx === scenesState.length - 1}
-                  title="Bajar escena"
-                  style={{ background: 'none', border: 'none', color: idx === scenesState.length - 1 ? '#555' : '#c3a479', cursor: idx === scenesState.length - 1 ? 'default' : 'pointer', padding: '2px' }}
-                >
-                  ▼
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleDeleteScene(idx); }}
-                  title="Excluir del recorrido"
-                  style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px' }}
-                >
-                  <X size={12} />
-                </button>
-              </div>
-            ))}
+                  <span style={{ color: '#c3a479', fontSize: '11px', minWidth: '16px' }}>{scene.order}</span>
+                  <span style={{ color: 'white', fontSize: '12px', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {scene.title}
+                    {scene._localFile && <span style={{ color: '#f59e0b', fontSize: '9px', marginLeft: '4px' }}>LOCAL</span>}
+                  </span>
+                  <button onClick={(e) => { e.stopPropagation(); handleReorderScene(idx, -1); }} disabled={idx === 0} title="Subir"
+                    style={{ background: 'none', border: 'none', color: idx === 0 ? '#555' : '#c3a479', cursor: idx === 0 ? 'default' : 'pointer', padding: '2px', fontSize: '12px' }}>▲</button>
+                  <button onClick={(e) => { e.stopPropagation(); handleReorderScene(idx, 1); }} disabled={idx === scenesState.length - 1} title="Bajar"
+                    style={{ background: 'none', border: 'none', color: idx === scenesState.length - 1 ? '#555' : '#c3a479', cursor: idx === scenesState.length - 1 ? 'default' : 'pointer', padding: '2px', fontSize: '12px' }}>▼</button>
+                  <button onClick={(e) => { e.stopPropagation(); handleDeleteScene(idx); }} title="Excluir del recorrido"
+                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '2px' }}><X size={12} /></button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -1241,6 +1313,21 @@ export default function Tour360Editor() {
           ))}
         </div>
       </div>
+
+      {/* Toast de guardado */}
+      {saveToast && (
+        <div style={{
+          position: 'fixed', bottom: '100px', left: '50%', transform: 'translateX(-50%)',
+          background: 'rgba(34,197,94,0.95)', color: 'white',
+          padding: '12px 28px', borderRadius: '30px',
+          fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: '15px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+          zIndex: 99999, animation: 'fadeInUp 0.3s ease',
+          display: 'flex', alignItems: 'center', gap: '10px'
+        }}>
+          ✓ Configuración guardada en borrador
+        </div>
+      )}
 
       {/* Modal: Agregar imagen 360° */}
       {addSceneModal && (
