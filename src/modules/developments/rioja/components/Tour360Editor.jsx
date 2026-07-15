@@ -39,6 +39,16 @@ export default function Tour360Editor() {
         const saved = localStorage.getItem('rioja-360-scenes-draft');
         if (saved) {
           const draft = JSON.parse(saved);
+          
+          // Validación de seguridad: si el borrador local tiene 0 hotspots pero la config oficial tiene más, descartar borrador
+          const totalDraftHotspots = draft.reduce((acc, s) => acc + (s.hotspots || []).length, 0);
+          const totalConfigHotspots = rioja360Scenes.reduce((acc, s) => acc + (s.hotspots || []).length, 0);
+          if (totalDraftHotspots === 0 && totalConfigHotspots > 0) {
+            console.info('[Editor 360] Borrador local vacío detectado — restaurando hotspots oficiales.');
+            localStorage.removeItem('rioja-360-scenes-draft');
+            return rioja360Scenes;
+          }
+
           const configSources = rioja360Scenes.map(s => s.source).join('|');
           const draftSources  = draft.map(s => s.source).join('|');
           if (draftSources === configSources) {
