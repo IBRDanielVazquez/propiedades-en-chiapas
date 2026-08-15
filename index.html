@@ -6,7 +6,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Propiedades en Chiapas — Casas, Terrenos y Desarrollos</title>
     <meta property="og:title" content="Propiedades en Chiapas — Casas, Terrenos y Desarrollos" />
     <meta property="og:description" content="Encuentra casas, terrenos, desarrollos y locales comerciales en Chiapas. Portal inmobiliario #1." />
@@ -15,14 +15,18 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <script>
-      // Clear legacy service worker cache if any exists
+      // Desregistrar service workers heredados
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          for(let registration of registrations) {
+          for(var registration of registrations) {
             registration.unregister();
           }
-        });
+        }).catch(function(){});
       }
+      // Captura global de errores para prevenir pantallas blancas en navegadores móviles
+      window.addEventListener('error', function(e) {
+        console.error('Global JS Error:', e);
+      });
     </script>
   </head>
   <body>
