@@ -1,4 +1,4 @@
-// ─── Fichas Inmobiliarias Curadas Únicas con Fotos de Alta Calidad y Copys Pro ───
+// ─── Fichas Inmobiliarias de Desarrollos (Excluye Tarjetas Digitales de Asesores) ───
 export const DESARROLLOS = [
   {
     "id": "bella-vista-terrenos-en-ocozocoautla-en-pagos",
@@ -155,7 +155,7 @@ export const DESARROLLOS = [
       "/la-sima-park-terrenos-en-ocozocoautla/images/Sima-Park-01.png",
       "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-2.png",
       "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-3.png",
-      "/la-sima-park-terrenos-en-ocozocoautla-images/Fraccionamiento-Sima-Park-4.png",
+      "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-4.png",
       "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-5.png",
       "/la-sima-park-terrenos-en-ocozocoautla/images/2991108.png",
       "/la-sima-park-terrenos-en-ocozocoautla/images/1828843.png"
@@ -367,86 +367,5 @@ export const DESARROLLOS = [
     "esDesarrollo": true,
     "status": "Disponible",
     "etiqueta": "✦ Zona Dorada"
-  },
-  {
-    "id": "carmen-jimenez-asesor-inmobiliario-de-ibr",
-    "titulo": "Carmen Jiménez",
-    "descripcion": "Asesora Inmobiliaria Certificada en IBR. Especialista en compra, venta e inversión estratégica de terrenos y desarrollos residenciales en Chiapas con atención personalizada y acompañamiento legal.",
-    "ciudad": "Tuxtla Gutiérrez",
-    "municipio": "Tuxtla Gutiérrez",
-    "tipo": "asesor",
-    "slug": "carmen-jimenez-asesor-inmobiliario-de-ibr",
-    "imagen": "/carmen-jimenez-asesor-inmobiliario-de-ibr/images/IBR-Carmen-Jimenez.png",
-    "galeria": [
-      "/carmen-jimenez-asesor-inmobiliario-de-ibr/images/IBR-Carmen-Jimenez.png"
-    ],
-    "precio": 0,
-    "precioTexto": "Asesora IBR Premium",
-    "pagoSemanal": "Atención Personalizada",
-    "superficie": "Asesoría Integral",
-    "amenidades": [
-      "Estrategia Inmobiliaria",
-      "Respaldo IBR",
-      "Confianza & Certeza"
-    ],
-    "ubicacionNota": "Asesora IBR Chiapas",
-    "whatsapp": "https://wa.me/529612466204",
-    "esDesarrollo": false,
-    "status": "Disponible",
-    "etiqueta": "👤 Asesora IBR"
-  },
-  {
-    "id": "luis-garcia-asesor-inmobiliario-de-ibr",
-    "titulo": "Luis García",
-    "descripcion": "Asesor Inmobiliario Senior en IBR. Experto en análisis de plusvalía y asesoría integral para inversión de terrenos y propiedades residenciales en Tuxtla Gutiérrez y Berriozábal.",
-    "ciudad": "Tuxtla Gutiérrez",
-    "municipio": "Tuxtla Gutiérrez",
-    "tipo": "asesor",
-    "slug": "luis-garcia-asesor-inmobiliario-de-ibr",
-    "imagen": "/luis-garcia-asesor-inmobiliario-de-ibr/images/IBR-Luis-Garcia-1.png",
-    "galeria": [
-      "/luis-garcia-asesor-inmobiliario-de-ibr/images/IBR-Luis-Garcia-1.png"
-    ],
-    "precio": 0,
-    "precioTexto": "Asesor IBR Premium",
-    "pagoSemanal": "Atención Personalizada",
-    "superficie": "Asesoría Integral",
-    "amenidades": [
-      "Inversión Estratégica",
-      "Respaldo IBR",
-      "Atención Directa"
-    ],
-    "ubicacionNota": "Asesor IBR Chiapas",
-    "whatsapp": "https://wa.me/529612466204",
-    "esDesarrollo": false,
-    "status": "Disponible",
-    "etiqueta": "👤 Asesor IBR"
-  },
-  {
-    "id": "lupyta-mendoza-asesor-inmobiliario-ibr",
-    "titulo": "Lupyta Mendoza",
-    "descripcion": "Asesora Inmobiliaria IBR con experiencia en inversión de terrenos campestres y patrimoniales en Ocozocoautla, Berriozábal y Tuxtla Gutiérrez.",
-    "ciudad": "Tuxtla Gutiérrez",
-    "municipio": "Tuxtla Gutiérrez",
-    "tipo": "asesor",
-    "slug": "lupyta-mendoza-asesor-inmobiliario-ibr",
-    "imagen": "/lupyta-mendoza-asesor-inmobiliario-ibr/images/IBR-Lupyta-Mendoza.png",
-    "galeria": [
-      "/lupyta-mendoza-asesor-inmobiliario-ibr/images/IBR-Lupyta-Mendoza.png"
-    ],
-    "precio": 0,
-    "precioTexto": "Asesora IBR Premium",
-    "pagoSemanal": "Atención Personalizada",
-    "superficie": "Asesoría Integral",
-    "amenidades": [
-      "Acompañamiento Legal",
-      "Respaldo IBR",
-      "Asesoría Personalizada"
-    ],
-    "ubicacionNota": "Asesora IBR Chiapas",
-    "whatsapp": "https://wa.me/529612466204",
-    "esDesarrollo": false,
-    "status": "Disponible",
-    "etiqueta": "👤 Asesora IBR"
   }
 ];

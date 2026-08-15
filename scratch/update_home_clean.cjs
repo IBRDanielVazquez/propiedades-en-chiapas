@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+const fs = require('fs');
+const path = require('path');
+
+const homeCode = `import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -27,7 +30,7 @@ const CATEGORY_DEFINITIONS = [
   { id: 'oficina',      label: 'Oficinas',       Icon: Briefcase  },
 ];
 
-const STYLES = `
+const STYLES = \`
   @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
   @keyframes spin { to { transform:rotate(360deg); } }
   @keyframes pulse-wa {
@@ -200,7 +203,7 @@ const STYLES = `
   @media(min-width:560px) and (max-width:920px) {
     .pec-grid { grid-template-columns:1fr 1fr; }
   }
-`;
+\`;
 
 export default function Home({ session }) {
   const navigate = useNavigate();
@@ -235,10 +238,10 @@ export default function Home({ session }) {
       .range(from, to);
 
     if (q.trim()) {
-      query = query.or(`title.ilike.%${q}%,city.ilike.%${q}%,address.ilike.%${q}%`);
+      query = query.or(\`title.ilike.%\${q}%,city.ilike.%\${q}%,address.ilike.%\${q}%\`);
     }
     if (active !== 'todas') {
-      query = query.ilike('type', `%${active}%`);
+      query = query.ilike('type', \`%\${active}%\`);
     }
     return query;
   }, [q, active]);
@@ -307,7 +310,7 @@ export default function Home({ session }) {
     const list = Array.isArray(DESARROLLOS) ? DESARROLLOS : [];
     return list.filter(dev => {
       // Si la landing fue desactivada en el CRM Dashboard, NO mostrarla
-      const isSystemDisabled = staticStatusMap[`sys-${dev.slug}`] === false;
+      const isSystemDisabled = staticStatusMap[\`sys-\${dev.slug}\`] === false;
       const isStaticDisabled = staticStatusMap[dev.id] === false || staticStatusMap[dev.slug] === false;
       if (isSystemDisabled || isStaticDisabled) return false;
 
@@ -584,3 +587,8 @@ export default function Home({ session }) {
     </>
   );
 }
+`;
+
+const homePath = path.join(__dirname, '../src/components/Home.jsx');
+fs.writeFileSync(homePath, homeCode, 'utf8');
+console.log('Successfully updated Home.jsx without asesores tab and with CRM landing activation filter');
