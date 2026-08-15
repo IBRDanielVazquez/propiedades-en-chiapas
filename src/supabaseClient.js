@@ -17,3 +17,13 @@ const supabaseUrl = isValidUrl(rawUrl) ? rawUrl : 'https://dummy.supabase.co';
 const supabaseAnonKey = rawKey && rawKey.length > 5 ? rawKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Guard contra métodos auth que puedan fallar en cliente dummy o sin conexión
+if (!isValidUrl(rawUrl)) {
+  supabase.auth = {
+    getSession: async () => ({ data: { session: null }, error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signOut: async () => ({ error: null }),
+    signInWithPassword: async () => ({ data: null, error: new Error('Modo Offline') }),
+  };
+}
