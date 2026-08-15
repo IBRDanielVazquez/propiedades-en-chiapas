@@ -1,4 +1,4 @@
-// ─── Fichas Inmobiliarias de Desarrollos (Excluye Tarjetas Digitales de Asesores) ───
+// ─── Fichas Inmobiliarias con Verificación Local de Imágenes 100% Nítidas ───
 export const DESARROLLOS = [
   {
     "id": "bella-vista-terrenos-en-ocozocoautla-en-pagos",
@@ -17,7 +17,7 @@ export const DESARROLLOS = [
       "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-5.png",
       "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-6.png",
       "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/Ubicacion.png",
-      "/landings/hero_fraccionamiento_maestro_chiapas_1772843166514.png"
+      "/landings/images/hero_fraccionamiento_maestro_chiapas_1772843166514.png"
     ],
     "precio": 290000,
     "precioTexto": "Desde $450/semana",
@@ -253,12 +253,12 @@ export const DESARROLLOS = [
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "casa",
     "slug": "valle-campestre",
-    "imagen": "/landings/fachada_premium_chiapas_final_1772843125817.png",
+    "imagen": "/landings/images/fachada_premium_chiapas_final_1772843125817.png",
     "galeria": [
-      "/landings/fachada_premium_chiapas_final_1772843125817.png",
-      "/landings/sala_luxury_chiapas_final_1772843140295.png",
-      "/landings/bano_luxury_chiapas_final_1772843153510.png",
-      "/landings/cocina_isla_premium_chiapas_1772842869623.png"
+      "/landings/images/fachada_premium_chiapas_final_1772843125817.png",
+      "/landings/images/sala_luxury_chiapas_final_1772843140295.png",
+      "/landings/images/bano_luxury_chiapas_final_1772843153510.png",
+      "/landings/images/cocina_isla_premium_chiapas_1772842869623.png"
     ],
     "precio": 0,
     "precioTexto": "Consultar Precio",
@@ -319,7 +319,7 @@ export const DESARROLLOS = [
     "galeria": [
       "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-01.png",
       "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-02-scaled.png",
-      "/landings/hero_terrenos_chiapas_slate_1772843210730.png"
+      "/landings/images/hero_terrenos_chiapas_slate_1772843210730.png"
     ],
     "precio": 3500,
     "precioTexto": "Desde $3,500 MXN/mes",
