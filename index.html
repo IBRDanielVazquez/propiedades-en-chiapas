@@ -2,20 +2,31 @@
 <html lang="es-MX">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Propiedades en Chiapas | Asesoría Inmobiliaria Premium</title>
-    <!-- OG global, deuda: migrar a prerender para multi-landing -->
-    <meta property="og:title" content="Bella Vista Ocozocoautla | Terrenos Campestres Premium" />
-    <meta property="og:description" content="Preventa exclusiva de lotes campestres con certeza jurídica y financiamiento directo desde $450 semanales en Ocozocoautla, Chiapas." />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1200" />
-    <meta property="og:url" content="https://propiedadesenchiapas.com/bella-vista" />
+    <title>Propiedades en Chiapas — Casas, Terrenos y Desarrollos</title>
+    <meta property="og:title" content="Propiedades en Chiapas — Casas, Terrenos y Desarrollos" />
+    <meta property="og:description" content="Encuentra casas, terrenos, desarrollos y locales comerciales en Chiapas. Portal inmobiliario #1." />
+    <meta property="og:image" content="https://propiedadesenchiapas.com/og-portal.jpg" />
+    <meta property="og:url" content="https://propiedadesenchiapas.com" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      // Clear legacy service worker cache if any exists
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <!-- v3.9.0-PRIVACIDAD -->
   </body>
 </html>
