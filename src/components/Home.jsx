@@ -243,16 +243,23 @@ export default function Home({ session }) {
           setTimeout(() => reject(new Error('Timeout')), 1500)
         );
 
-        const { data, error, count } = await Promise.race([query, timeoutPromise]);
+        const { data, error, count } = await Promise.race([query, timeoutPromise]).catch((err) => {
+          console.error('[Supabase Query Error]:', err);
+          return { data: [], error: null, count: 0 };
+        });
         
-        if (error) throw error;
+        if (error) {
+          console.error('[Supabase REST Error]:', error);
+          throw error;
+        }
         if (isMounted && Array.isArray(data)) {
           setPropiedades(data);
           setDbTotal(count || 0);
           setPage(0);
           setHasMore(data.length >= PAGE_SIZE);
         }
-      } catch {
+      } catch (err) {
+        console.error('[Home Load Fallback]: Utilizando catálogo local estático.', err);
         if (isMounted) {
           setPropiedades([]);
         }

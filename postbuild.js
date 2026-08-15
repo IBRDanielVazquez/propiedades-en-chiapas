@@ -5,11 +5,7 @@ import path from 'path';
 const indexPath = path.resolve('dist/index.html');
 let content = fs.readFileSync(indexPath, 'utf-8');
 
-const version = Date.now();
-content = content.replace(/\/assets\/app\.js(\?v=[0-9]+)?/g, `/assets/app.js?v=${version}`);
-content = content.replace(/\/assets\/index\.css(\?v=[0-9]+)?/g, `/assets/index.css?v=${version}`);
-
-// Inyectar Cache Buster
+// Inyectar Cache Buster en comentario HTML (preservando integridad de ES modules)
 if (!content.includes('<!-- v3.')) {
     content = content.replace('</body>', `<!-- v3.9.5-CACHEBUSTED --></body>`);
 } else {
@@ -18,7 +14,7 @@ if (!content.includes('<!-- v3.')) {
 
 // Guardar el dist/index.html principal optimizado
 fs.writeFileSync(indexPath, content);
-console.log(`Cache buster injected into dist/index.html (v=${version})`);
+console.log('Cache buster injected into dist/index.html');
 
 // ==========================================================================
 // 2. PRERENDER MULTI-LANDING: Generar index.html específicos para RIOJA
