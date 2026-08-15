@@ -1,40 +1,115 @@
-// ─── Fichas Inmobiliarias Curadas y Completas de Landings ─────────────────────
-// Contiene todos los datos extraídos de cada landing page con sus imágenes reales
-
+// ─── Fichas Inmobiliarias Curadas Únicas con Fotos de Alta Calidad y Copys Pro ───
 export const DESARROLLOS = [
   {
-    "id": "bella-vista-ocozocoautla-app",
+    "id": "bella-vista-terrenos-en-ocozocoautla-en-pagos",
     "titulo": "Bella Vista Ocozocoautla",
-    "descripcion": "Terrenos campestres de ensueño con Club Campestre exclusivo, piscina, senderos ecológicos y áreas wellness en Chiapas.",
+    "descripcion": "Desarrollo campestre residencial en Ocozocoautla a solo 25 minutos de Tuxtla Gutiérrez. Terrenos de 200 m² con facilidades de pago únicas desde $450 pesos a la semana SIN ENGANCHE, sin revisión de buró ni comprobantes de ingresos. Cuenta con Club Campestre con alberca, senderos ecológicos, acceso controlado y áreas verdes de convivencia.",
     "ciudad": "Ocozocoautla",
     "municipio": "Ocozocoautla de Espinosa",
     "tipo": "terreno",
-    "slug": "bella-vista",
-    "imagen": "https://images.unsplash.com/photo-1549693578-d683be217e58?q=80&w=800",
+    "slug": "bella-vista-terrenos-en-ocozocoautla-en-pagos",
+    "imagen": "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-1.png",
     "galeria": [
-      "https://images.unsplash.com/photo-1549693578-d683be217e58?q=80&w=800",
-      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=800",
-      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=800"
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-1.png",
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-2.png",
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-3.png",
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-4.png",
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-5.png",
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-6.png",
+      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/Ubicacion.png",
+      "/landings/hero_fraccionamiento_maestro_chiapas_1772843166514.png"
     ],
     "precio": 290000,
-    "precioTexto": "Desde $290,000 MXN",
-    "pagoSemanal": "Desde $450/semana",
-    "superficie": "200 m² (mínimo)",
+    "precioTexto": "Desde $450/semana",
+    "pagoSemanal": "Sin Enganche · Crédito Inmediato",
+    "superficie": "200 m² (10×20 m)",
     "amenidades": [
       "Club Campestre con Piscina",
       "Senderos Ecológicos",
-      "Acceso Controlado 24/7"
+      "Acceso Controlado 24/7",
+      "Escritura Pública"
     ],
-    "ubicacionNota": "25 min de Tuxtla Gutiérrez · Ocozocoautla",
+    "ubicacionNota": "Ocozocoautla (a 25 min de Tuxtla Gutiérrez)",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Lanzamiento Exclusivo"
+    "etiqueta": "✦ $450/Semana"
+  },
+  {
+    "id": "la-canada-desarrollo-eco-campestre",
+    "titulo": "La Cañada Eco-Campestre",
+    "descripcion": "Exclusivo desarrollo eco-campestre a tan solo 12 minutos de Tuxtla Gutiérrez. Diseñado para quienes buscan plusvalía y contacto directo con la naturaleza. Ofrece terrenos campestres de 200 m² con mega promoción de enganche desde $15,250 MXN y mensualidades diferidas. Cuenta con portón de acceso, seguridad 24/7 y amenidades ecológicas.",
+    "ciudad": "Tuxtla Gutiérrez",
+    "municipio": "Tuxtla Gutiérrez",
+    "tipo": "terreno",
+    "slug": "la-canada-desarrollo-eco-campestre",
+    "imagen": "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-01.png",
+    "galeria": [
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-01.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-02.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-03.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-04.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-05.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-06.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-07.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-08.png",
+      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-09.png"
+    ],
+    "precio": 15250,
+    "precioTexto": "Enganche $15,250 MXN",
+    "pagoSemanal": "A 12 min de Tuxtla · Eco-Campestre",
+    "superficie": "200 m²",
+    "amenidades": [
+      "A 12 min de Tuxtla",
+      "Seguridad 24/7",
+      "Entorno Eco-Campestre",
+      "Portón de Acceso"
+    ],
+    "ubicacionNota": "A 12 min de Tuxtla Gutiérrez",
+    "whatsapp": "https://wa.me/529612466204",
+    "esDesarrollo": true,
+    "status": "Disponible",
+    "etiqueta": "✦ Eco-Campestre"
+  },
+  {
+    "id": "monte-de-los-olivos",
+    "titulo": "Monte de los Olivos",
+    "descripcion": "Inversión inmobiliaria con certeza jurídica en Berriozábal. Lotes de 200 m² con escritura pública y clave catastral individual inmediata. Plan de financiamiento desde $2,500 MXN al mes SIN ENGANCHE. Ubicación estratégica en zona de alto crecimiento habitacional y excelente clima.",
+    "ciudad": "Berriozábal",
+    "municipio": "Berriozábal",
+    "tipo": "terreno",
+    "slug": "monte-de-los-olivos",
+    "imagen": "/monte-de-los-olivos/images/Monte-Los-Olivos-1.png",
+    "galeria": [
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-1.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-13.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-2.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-3.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-4.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-5.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-6.png",
+      "/monte-de-los-olivos/images/Monte-Los-Olivos-7.png"
+    ],
+    "precio": 2500,
+    "precioTexto": "$2,500 MXN/mes",
+    "pagoQuincenal": "SIN ENGANCHE · Escritura Pública",
+    "superficie": "200 m²",
+    "amenidades": [
+      "Escritura Pública",
+      "Clave Catastral Individual",
+      "Excelente Clima",
+      "Sin Enganche"
+    ],
+    "ubicacionNota": "Berriozábal, Chiapas",
+    "whatsapp": "https://wa.me/529612466204",
+    "esDesarrollo": true,
+    "status": "Disponible",
+    "etiqueta": "✦ Sin Enganche"
   },
   {
     "id": "rioja-berriozabal-app",
     "titulo": "Rioja Berriozábal",
-    "descripcion": "Lotes de 200 m² (10×20 m) con escritura pública en Berriozábal. Zona habitada, construcción inmediata y pagos quincenales accesibles.",
+    "descripcion": "Lotes habitacionales de 200 m² (10×20 m) con escritura pública individual en Berriozábal. Ubicados en zona completamente habitada y listos para construcción inmediata. Enganche accesible de $3,000 MXN y pagos quincenales de $1,000 MXN.",
     "ciudad": "Berriozábal",
     "municipio": "Berriozábal",
     "tipo": "terreno",
@@ -57,211 +132,133 @@ export const DESARROLLOS = [
     "amenidades": [
       "Escritura Pública",
       "Zona Habitada",
-      "Construcción Inmediata"
+      "Construcción Inmediata",
+      "Recorrido Virtual 360°"
     ],
     "ubicacionNota": "Berriozábal · Zona Habitacional",
     "whatsapp": "https://wa.link/02846w",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Lotes con Escritura"
-  },
-  {
-    "id": "bella-vista-terrenos-en-ocozocoautla-en-pagos",
-    "titulo": "Bella Vista Terrenos en Pagos",
-    "descripcion": "Terrenos campestres de 200m² en Ocozocoautla desde $450 semanales SIN ENGANCHE, sin comprobantes de ingresos y con entrega inmediata.",
-    "ciudad": "Ocozocoautla",
-    "municipio": "Ocozocoautla de Espinosa",
-    "tipo": "terreno",
-    "slug": "bella-vista-terrenos-en-ocozocoautla-en-pagos",
-    "imagen": "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/Ubicacion.png",
-    "galeria": [
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/Ubicacion.png",
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-1.png",
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-2.png",
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-3.png",
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-4.png",
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-5.png",
-      "/bella-vista-terrenos-en-ocozocoautla-en-pagos/images/amenidad-6.png"
-    ],
-    "precio": 290000,
-    "precioTexto": "Desde $450/semana",
-    "pagoSemanal": "Sin Enganche · Entrega Inmediata",
-    "superficie": "200 m²",
-    "amenidades": [
-      "Sin Enganche",
-      "Crédito Inmediato",
-      "6 Amenidades Included"
-    ],
-    "ubicacionNota": "40 min de Tuxtla · Ocozocoautla",
-    "whatsapp": "https://wa.me/529612466204",
-    "esDesarrollo": true,
-    "status": "Disponible",
-    "etiqueta": "Pagos Semanales"
-  },
-  {
-    "id": "la-canada-desarrollo-eco-campestre",
-    "titulo": "La Cañada Eco-Campestre",
-    "descripcion": "Desarrollo Eco-Campestre exclusivo a solo 12 min de Tuxtla. Lotes de 200m² con mega promoción de enganche.",
-    "ciudad": "Tuxtla Gutiérrez",
-    "municipio": "Tuxtla Gutiérrez",
-    "tipo": "terreno",
-    "slug": "la-canada-desarrollo-eco-campestre",
-    "imagen": "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-02.png",
-    "galeria": [
-      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-02.png",
-      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-03.png",
-      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-04.png",
-      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-05.png",
-      "/la-canada-desarrollo-eco-campestre/images/La-Canada-Desarrollo-Eco-Campestre-06.png"
-    ],
-    "precio": 15250,
-    "precioTexto": "Enganche $15,250 MXN",
-    "pagoSemanal": "Mensualidades hasta Noviembre",
-    "superficie": "200 m²",
-    "amenidades": [
-      "A 12 min de Tuxtla",
-      "Desarrollo Eco-Campestre",
-      "Seguridad 24/7"
-    ],
-    "ubicacionNota": "A 12 min de Tuxtla Gutiérrez",
-    "whatsapp": "https://wa.me/529612466204",
-    "esDesarrollo": true,
-    "status": "Disponible",
-    "etiqueta": "Eco-Campestre"
-  },
-  {
-    "id": "monte-de-los-olivos",
-    "titulo": "Monte de los Olivos",
-    "descripcion": "Inversión segura en Berriozábal. Lotes de 200m² con escritura pública y clave catastral individual sin enganche.",
-    "ciudad": "Berriozábal",
-    "municipio": "Berriozábal",
-    "tipo": "terreno",
-    "slug": "monte-de-los-olivos",
-    "imagen": "/monte-de-los-olivos/images/Monte-Los-Olivos-13.png",
-    "galeria": [
-      "/monte-de-los-olivos/images/Monte-Los-Olivos-13.png",
-      "/monte-de-los-olivos/images/Monte-Los-Olivos-1.png",
-      "/monte-de-los-olivos/images/Monte-Los-Olivos-2.png",
-      "/monte-de-los-olivos/images/Monte-Los-Olivos-4.png",
-      "/monte-de-los-olivos/images/Monte-Los-Olivos-5.png"
-    ],
-    "precio": 2500,
-    "precioTexto": "$2,500 MXN/mes",
-    "pagoQuincenal": "SIN ENGANCHE · Escritura Pública",
-    "superficie": "200 m²",
-    "amenidades": [
-      "Escritura Pública",
-      "Clave Catastral Individual",
-      "Alta Plusvalía"
-    ],
-    "ubicacionNota": "Berriozábal, Chiapas",
-    "whatsapp": "https://wa.me/529612466204",
-    "esDesarrollo": true,
-    "status": "Disponible",
-    "etiqueta": "Sin Enganche"
+    "etiqueta": "✦ Lotes con Escritura"
   },
   {
     "id": "la-sima-park-terrenos-en-ocozocoautla",
     "titulo": "La Sima Park Ocozocoautla",
-    "descripcion": "Terrenos campestres rodeados de naturaleza, río, áreas verdes, senderos y cabañas en Ocozocoautla.",
+    "descripcion": "Fraccionamiento campestre en Ocozocoautla rodeado de vegetación, acceso a río natural, senderos ecológicos y zona para cabañas. Terrenos campestres con facilidades desde $2,100 MXN al mes, sin revisión de buró y con escritura pública. El lugar ideal para construir tu cabaña de descanso.",
     "ciudad": "Ocozocoautla",
     "municipio": "Ocozocoautla de Espinosa",
     "tipo": "terreno",
     "slug": "la-sima-park-terrenos-en-ocozocoautla",
-    "imagen": "/la-sima-park-terrenos-en-ocozocoautla/images/2991108.png",
+    "imagen": "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-1.png",
     "galeria": [
+      "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-1.png",
+      "/la-sima-park-terrenos-en-ocozocoautla/images/Sima-Park-01.png",
+      "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-2.png",
+      "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-3.png",
+      "/la-sima-park-terrenos-en-ocozocoautla-images/Fraccionamiento-Sima-Park-4.png",
+      "/la-sima-park-terrenos-en-ocozocoautla/images/Fraccionamiento-Sima-Park-5.png",
       "/la-sima-park-terrenos-en-ocozocoautla/images/2991108.png",
-      "/la-sima-park-terrenos-en-ocozocoautla/images/1828843.png",
-      "/la-sima-park-terrenos-en-ocozocoautla/images/535239.png",
-      "/la-sima-park-terrenos-en-ocozocoautla/images/3176294.png"
+      "/la-sima-park-terrenos-en-ocozocoautla/images/1828843.png"
     ],
     "precio": 2100,
     "precioTexto": "Desde $2,100 MXN/mes",
-    "pagoQuincenal": "Escritura Pública · Sin Buró",
-    "superficie": "200 m² (río y áreas verdes)",
+    "pagoQuincenal": "Acceso a Río · Zona Cabañas",
+    "superficie": "200 m² (río y senderos)",
     "amenidades": [
-      "Acceso a Río",
-      "Senderos y Cabañas",
+      "Acceso a Río Natural",
+      "Zona de Cabañas",
+      "Senderos Ecológicos",
       "Escritura Pública"
     ],
     "ubicacionNota": "Ocozocoautla, Chiapas",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Naturaleza & Río"
+    "etiqueta": "✦ Río & Cabañas"
   },
   {
     "id": "fraccionamiento-montecristo",
     "titulo": "Fraccionamiento Montecristo",
-    "descripcion": "Lotes campestres de contado desde $61,000 MXN con escritura pública a pocos minutos de Tuxtla Gutiérrez.",
+    "descripcion": "Oportunidad imperdible de inversión campestre a minutos de Tuxtla Gutiérrez. Lotes campestres de contado desde $61,000 MXN con escritura pública individual. Ideal para patrimonio familiar o proyecto de descanso en un entorno natural con alta plusvalía garantizada.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "terreno",
     "slug": "fraccionamiento-montecristo",
-    "imagen": "/fraccionamiento-montecristo/images/Fraccionamiento-Montecristo.png",
+    "imagen": "/fraccionamiento-montecristo/images/terrenos-en-venta-montecristo-chiapas.jpg",
     "galeria": [
+      "/fraccionamiento-montecristo/images/terrenos-en-venta-montecristo-chiapas.jpg",
       "/fraccionamiento-montecristo/images/Fraccionamiento-Montecristo.png",
-      "/fraccionamiento-montecristo/images/Ubicacion-Montecristo.png",
-      "/fraccionamiento-montecristo/images/Fraccionamiento-MonteCristo-001-1.png"
+      "/fraccionamiento-montecristo/images/montecristo-01.jpg",
+      "/fraccionamiento-montecristo/images/montecristo-02.jpg",
+      "/fraccionamiento-montecristo/images/montecristo-03.jpg",
+      "/fraccionamiento-montecristo/images/montecristo-04.jpg",
+      "/fraccionamiento-montecristo/images/montecristo-05.jpg",
+      "/fraccionamiento-montecristo/images/Ubicacion-Montecristo.png"
     ],
     "precio": 61000,
     "precioTexto": "Contado desde $61,000 MXN",
-    "pagoSemanal": "Apartado Inmediato",
-    "superficie": "Lotes Residenciales",
+    "pagoSemanal": "Precio Especial de Oportunidad",
+    "superficie": "Lotes Campestres",
     "amenidades": [
       "Escritura Pública",
+      "A minutos de Tuxtla",
       "Precio de Contado Oportunidad",
-      "A minutos de Tuxtla"
+      "Certeza Legal"
     ],
-    "ubicacionNota": "Tuxtla Gutiérrez, Chiapas",
+    "ubicacionNota": "A minutos de Tuxtla Gutiérrez",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Oferta Especial"
+    "etiqueta": "✦ $61,000 Contado"
   },
   {
     "id": "quinta-en-berriozabal",
     "titulo": "Quinta Privada en Berriozábal",
-    "descripcion": "Propiedad única de más de 2,200 m² con casa habitable y amplio terreno con potencial de desarrollo e inversión.",
+    "descripcion": "Espectacular activo inmobiliario en Berriozábal con más de 2,200 m² de terreno privado. Incluye casa habitable con amplias áreas verdes, árboles frutales y un enorme potencial de desarrollo residencial o quinta de eventos de alta rentabilidad.",
     "ciudad": "Berriozábal",
     "municipio": "Berriozábal",
     "tipo": "quinta",
     "slug": "quinta-en-berriozabal",
-    "imagen": "/quinta-en-berriozabal/images/Quinta-Berriozabal-4.png",
+    "imagen": "/quinta-en-berriozabal/images/Quinta-Berriozabal-1.png",
     "galeria": [
+      "/quinta-en-berriozabal/images/Quinta-Berriozabal-1.png",
       "/quinta-en-berriozabal/images/Quinta-Berriozabal-4.png",
       "/quinta-en-berriozabal/images/Quinta-Berriozabal-5.png",
       "/quinta-en-berriozabal/images/Quinta-Berriozabal-8.png",
-      "/quinta-en-berriozabal/images/Quinta-Berriozabal-1.png"
+      "/quinta-en-berriozabal/images/Quinta-Berriozabal-10.png",
+      "/quinta-en-berriozabal/images/Quinta-Berriozabal-12.png",
+      "/quinta-en-berriozabal/images/Quinta-Berriozabal-15.png"
     ],
     "precio": 0,
     "precioTexto": "Consultar Precio",
-    "pagoSemanal": "Propiedad Privada +2,200 m²",
-    "superficie": "+2,200 m² terreno + Casa",
+    "pagoSemanal": "Terreno +2,200 m² + Casa Habitable",
+    "superficie": "+2,200 m² terreno",
     "amenidades": [
       "Casa Habitable",
-      "+2,200 m² Terreno",
-      "Alta Plusvalía"
+      "+2,200 m² Terreno Privado",
+      "Árboles Frutales",
+      "Potencial de Eventos"
     ],
     "ubicacionNota": "Berriozábal, Chiapas",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Quinta Privada"
+    "etiqueta": "✦ Quinta +2,200 m²"
   },
   {
     "id": "valle-campestre",
     "titulo": "Valle Campestre · Prototipo ARECA",
-    "descripcion": "Residencia de lujo de 2 niveles con 119 m² de construcción, 3 recámaras, 3 baños completos, alberca y parque central en Tuxtla.",
+    "descripcion": "Residencia de lujo prototipo ARECA en Valle Campestre, Tuxtla Gutiérrez. Construcción de 119 m² distribuida en 2 niveles: 3 amplias recámaras, 3 baños completos, acabados de primera calidad, alberca privada y acceso directo al parque central del residencial.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "casa",
     "slug": "valle-campestre",
-    "imagen": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800",
+    "imagen": "/landings/fachada_premium_chiapas_final_1772843125817.png",
     "galeria": [
-      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=800"
+      "/landings/fachada_premium_chiapas_final_1772843125817.png",
+      "/landings/sala_luxury_chiapas_final_1772843140295.png",
+      "/landings/bano_luxury_chiapas_final_1772843153510.png",
+      "/landings/cocina_isla_premium_chiapas_1772842869623.png"
     ],
     "precio": 0,
     "precioTexto": "Consultar Precio",
@@ -270,18 +267,19 @@ export const DESARROLLOS = [
     "amenidades": [
       "Alberca Privada",
       "Parque Central",
-      "3 Recámaras / 3 Baños"
+      "3 Recámaras / 3 Baños",
+      "2 Niveles de Lujo"
     ],
     "ubicacionNota": "Tuxtla Gutiérrez, Chiapas",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Residencia Premium"
+    "etiqueta": "✦ Residencia Premium"
   },
   {
     "id": "cuauhtli-terrenos-en-venta-en-el-jobo",
     "titulo": "Cuauhtli El Jobo",
-    "descripcion": "Terrenos exclusivos en El Jobo a solo 8.5 km del Libramiento Sur. Lotes de 200m² listos para escritura con planes de pago directo.",
+    "descripcion": "Terrenos exclusivos en El Jobo a tan solo 8.5 km del Libramiento Sur de Tuxtla Gutiérrez. Lotes de 200 m² listos para escritura pública con planes de pago directo sin intermediarios bancarios ni intereses. Ubicación de alta plusvalía y desarrollo continuo.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "terreno",
@@ -290,7 +288,9 @@ export const DESARROLLOS = [
     "galeria": [
       "/cuauhtli-terrenos-en-venta-en-el-jobo/images/Terrenos-en-Venta-El-Jobo-Cuauhtli.png",
       "/cuauhtli-terrenos-en-venta-en-el-jobo/images/Terrenos-en-Venta-El-Jobo-Cuauhtli-01.png",
-      "/cuauhtli-terrenos-en-venta-en-el-jobo/images/Terrenos-en-Venta-El-Jobo-Cuauhtli-1-scaled.png"
+      "/cuauhtli-terrenos-en-venta-en-el-jobo/images/Terrenos-en-Venta-El-Jobo-Cuauhtli-1-scaled.png",
+      "/cuauhtli-terrenos-en-venta-en-el-jobo/images/Terrenos-en-Venta-El-Jobo-Cuauhtli-2-scaled.png",
+      "/cuauhtli-terrenos-en-venta-en-el-jobo/images/Terrenos-en-Venta-el-Jobo-Cuauhtli-5.png"
     ],
     "precio": 0,
     "precioTexto": "Planes Directos",
@@ -298,27 +298,28 @@ export const DESARROLLOS = [
     "superficie": "200 m²",
     "amenidades": [
       "Listos para Escritura",
-      "8.5 km Libramiento Sur",
-      "Sin Bancos"
+      "8.5 km del Libramiento",
+      "Pago Directo Sin Bancos"
     ],
     "ubicacionNota": "El Jobo, Tuxtla Gutiérrez",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "El Jobo Tuxtla"
+    "etiqueta": "✦ El Jobo Tuxtla"
   },
   {
     "id": "el-higo-copoya-terrenos-10x20-en-copoya",
     "titulo": "El Higo Copoya",
-    "descripcion": "Terrenos residenciales de 10×20m (200 m²) en Copoya con calles de 10m y factibilidad eléctrica desde $3,500/mes.",
+    "descripcion": "Preventa activa de terrenos residenciales de 10×20 m (200 m²) en Copoya, Tuxtla Gutiérrez. Cuenta con calles proyectadas de 10 m de ancho, factibilidad de energía eléctrica y pagos accesibles desde $3,500 MXN mensuales.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "terreno",
     "slug": "el-higo-copoya-terrenos-10x20-en-copoya",
-    "imagen": "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-02-scaled.png",
+    "imagen": "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-01.png",
     "galeria": [
+      "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-01.png",
       "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-02-scaled.png",
-      "/el-higo-copoya-terrenos-10x20-en-copoya/images/Terrenos-en-Copoya-el-Higo-01.png"
+      "/landings/hero_terrenos_chiapas_slate_1772843210730.png"
     ],
     "precio": 3500,
     "precioTexto": "Desde $3,500 MXN/mes",
@@ -327,27 +328,29 @@ export const DESARROLLOS = [
     "amenidades": [
       "Calles de 10m",
       "Factibilidad Eléctrica",
-      "Zona Copoya"
+      "Zona Copoya Tuxtla"
     ],
     "ubicacionNota": "Copoya, Tuxtla Gutiérrez",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Copoya Tuxtla"
+    "etiqueta": "✦ Copoya Tuxtla"
   },
   {
     "id": "colinas-del-campestre",
     "titulo": "Colinas del Campestre",
-    "descripcion": "Lotes residenciales exclusivos en la Zona Dorada de Tuxtla a 5 minutos del Club Campestre con plusvalía y certeza legal.",
+    "descripcion": "Desarrollo residencial exclusivo en la Zona Dorada de Tuxtla Gutiérrez, a solo 5 minutos del Club Campestre. Terrenos de alta gama con servicios subterráneos, certeza legal y una de las tasas de plusvalía más elevadas de la capital.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "terreno",
     "slug": "colinas-del-campestre",
-    "imagen": "/colinas-del-campestre/images/Publicidad_20250925_204145_0000.png",
+    "imagen": "/colinas-del-campestre/images/Colinas-del-Campestre-Venta-de-Terrenos.png",
     "galeria": [
+      "/colinas-del-campestre/images/Colinas-del-Campestre-Venta-de-Terrenos.png",
       "/colinas-del-campestre/images/Publicidad_20250925_204145_0000.png",
-      "/colinas-del-campestre/images/1758780995690.png",
-      "/colinas-del-campestre/images/IMG-20250327-WA00111.jpg"
+      "/colinas-del-campestre/images/IMG-20250327-WA00111.jpg",
+      "/colinas-del-campestre/images/IMG-20250417-WA00161.jpg",
+      "/colinas-del-campestre/images/IMG-20250925-WA0001.jpg"
     ],
     "precio": 0,
     "precioTexto": "Preventa Exclusiva",
@@ -356,18 +359,19 @@ export const DESARROLLOS = [
     "amenidades": [
       "Zona Dorada Tuxtla",
       "5 min Club Campestre",
-      "Certeza Legal"
+      "Certeza Legal",
+      "Plusvalía Garantizada"
     ],
     "ubicacionNota": "Zona Dorada, Tuxtla Gutiérrez",
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": true,
     "status": "Disponible",
-    "etiqueta": "Zona Dorada"
+    "etiqueta": "✦ Zona Dorada"
   },
   {
     "id": "carmen-jimenez-asesor-inmobiliario-de-ibr",
     "titulo": "Carmen Jiménez",
-    "descripcion": "Asesoría inmobiliaria integral en compra, venta e inversión con estrategia, transparencia y respaldo profesional en Chiapas.",
+    "descripcion": "Asesora Inmobiliaria Certificada en IBR. Especialista en compra, venta e inversión estratégica de terrenos y desarrollos residenciales en Chiapas con atención personalizada y acompañamiento legal.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "asesor",
@@ -389,12 +393,12 @@ export const DESARROLLOS = [
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": false,
     "status": "Disponible",
-    "etiqueta": "Asesora IBR"
+    "etiqueta": "👤 Asesora IBR"
   },
   {
     "id": "luis-garcia-asesor-inmobiliario-de-ibr",
     "titulo": "Luis García",
-    "descripcion": "Asesoría profesional en compra, venta e inversión de propiedades con estrategia y respaldo profesional IBR.",
+    "descripcion": "Asesor Inmobiliario Senior en IBR. Experto en análisis de plusvalía y asesoría integral para inversión de terrenos y propiedades residenciales en Tuxtla Gutiérrez y Berriozábal.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "asesor",
@@ -416,12 +420,12 @@ export const DESARROLLOS = [
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": false,
     "status": "Disponible",
-    "etiqueta": "Asesor IBR"
+    "etiqueta": "👤 Asesor IBR"
   },
   {
     "id": "lupyta-mendoza-asesor-inmobiliario-ibr",
     "titulo": "Lupyta Mendoza",
-    "descripcion": "Asesora inmobiliaria de IBR con experiencia en inversión estratégica y acompañamiento en compra y venta de inmuebles.",
+    "descripcion": "Asesora Inmobiliaria IBR con experiencia en inversión de terrenos campestres y patrimoniales en Ocozocoautla, Berriozábal y Tuxtla Gutiérrez.",
     "ciudad": "Tuxtla Gutiérrez",
     "municipio": "Tuxtla Gutiérrez",
     "tipo": "asesor",
@@ -443,6 +447,6 @@ export const DESARROLLOS = [
     "whatsapp": "https://wa.me/529612466204",
     "esDesarrollo": false,
     "status": "Disponible",
-    "etiqueta": "Asesora IBR"
+    "etiqueta": "👤 Asesora IBR"
   }
 ];
