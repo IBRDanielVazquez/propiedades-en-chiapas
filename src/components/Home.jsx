@@ -4,12 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, Heart, MapPin, Bed, Bath, Maximize, ArrowRight,
   Home as HomeIcon, Building2, Trees, Store, Warehouse, Beef,
-  TreePine, Briefcase, Sparkles,
+  TreePine, Briefcase, Sparkles, Car, ChevronLeft, ChevronRight,
+  TrendingUp, AlertTriangle,
 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
+import logo from '../assets/logo-pec.png';
 
 // ─── Constantes ────────────────────────────────────────────────────────────────
 const SHOW_STATS = false; // mantenido por compatibilidad futura
+const INITIAL_LIMIT = 9;   // tamaño de página de la vista inicial (sin filtros)
+const SEARCH_LIMIT  = 24;  // tamaño de página de resultados con filtro/búsqueda activa
+const LOAD_MORE_STEP = 9;  // cuánto crece cada "Ver más"
+const FAVS_KEY = 'pec_favs'; // localStorage: favoritos persistentes
 
 // Categorías: id = valor exacto del campo "type" en la BD
 const CATEGORIES = [
@@ -38,7 +44,8 @@ const peso = (n) =>
 
 // ─── Estilos (HomePEC exacto: azul índigo + esmeralda, sin barra inferior) ────
 const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+  /* La fuente Plus Jakarta Sans ya se precarga desde index.html (<link> en <head>) —
+     aquí ya no se importa para no bloquear el primer render. */
 
   @keyframes rise { to { opacity:1; transform:none; } }
   @keyframes spin  { to { transform:rotate(360deg); } }
@@ -49,12 +56,14 @@ const STYLES = `
   }
 
   .pec {
-    --ink:#0B1B3A;
-    --indigo:#13287A;
-    --indigo-2:#1E3A9B;
-    --emerald:#0E9F6E;
-    --emerald-2:#10B981;
-    --amber:#E8A33D;
+    /* Paleta derivada del logo oficial: azul marino + acero, verde, violeta y rojo del techo/ventanas */
+    --ink:#0A0838;
+    --indigo:#0E0A78;
+    --indigo-2:#4682B4;
+    --emerald:#0B6B0E;
+    --emerald-2:#1FAE3B;
+    --violet:#8B54F3;
+    --red:#B23A3D;
     --bg:#F6F8FC;
     --card:#FFFFFF;
     --muted:#5C6B8A;
@@ -78,28 +87,14 @@ const STYLES = `
     display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
   .pec-logo { display:flex; align-items:center; gap:10px; min-width:0; }
-  .pec-mark {
-    width:40px; height:40px; border-radius:12px; flex:none;
-    background:linear-gradient(145deg,var(--indigo),var(--indigo-2));
-    display:grid; place-items:center;
-    box-shadow:0 8px 20px rgba(19,40,122,.28);
-    position:relative; overflow:hidden;
-  }
-  .pec-mark::after {
-    content:''; position:absolute; inset:0;
-    background:radial-gradient(circle at 70% 20%,rgba(16,185,129,.6),transparent 60%);
-  }
-  .pec-mark svg { position:relative; z-index:1; }
-  .pec-logo b   { font-size:15px; font-weight:800; letter-spacing:-.3px; line-height:1; white-space:nowrap; }
-  .pec-logo small {
-    display:block; font-size:10.5px; color:var(--emerald);
-    font-weight:700; letter-spacing:.6px; text-transform:uppercase; margin-top:2px;
-  }
+  .pec-logo-img { height:40px; width:auto; display:block; }
+  @media(min-width:560px) { .pec-logo-img { height:48px; } }
   .pec-login {
     flex:none; border:1.5px solid var(--indigo); color:var(--indigo);
     background:transparent; font-weight:700; font-size:13.5px;
     padding:9px 18px; border-radius:999px; cursor:pointer; transition:.18s;
     font-family:'Plus Jakarta Sans',sans-serif;
+    text-decoration:none; display:inline-block;
   }
   .pec-login:hover { background:var(--indigo); color:#fff; }
 
@@ -112,7 +107,7 @@ const STYLES = `
   .pec-hero::before {
     content:''; position:absolute; top:-30%; right:-10%;
     width:520px; height:520px; border-radius:50%;
-    background:radial-gradient(circle,rgba(16,185,129,.35),transparent 65%);
+    background:radial-gradient(circle,rgba(139,84,243,.32),transparent 65%);
     filter:blur(10px);
   }
   .pec-hero::after {
@@ -129,12 +124,12 @@ const STYLES = `
   }
   .pec-pill i {
     width:7px; height:7px; border-radius:50%;
-    background:var(--emerald-2); box-shadow:0 0 0 4px rgba(16,185,129,.25);
+    background:var(--violet); box-shadow:0 0 0 4px rgba(139,84,243,.25);
   }
   .pec-hero h1 { font-size:clamp(30px,6vw,52px); line-height:1.05; font-weight:700; letter-spacing:-1px; }
   .pec-hero h1 span {
     color:transparent;
-    background:linear-gradient(100deg,var(--emerald-2),#6EE7B7);
+    background:linear-gradient(100deg,var(--emerald-2),#84D293);
     -webkit-background-clip:text; background-clip:text;
   }
   .pec-hero p { margin:16px auto 0; max-width:520px; font-size:15.5px; line-height:1.5; color:rgba(255,255,255,.78); }
@@ -152,13 +147,16 @@ const STYLES = `
   }
   .pec-search input::placeholder { color:#9AA7BF; font-weight:500; }
   .pec-search .btn {
-    flex:none; background:linear-gradient(145deg,var(--emerald),var(--emerald-2));
+    flex:none; background:linear-gradient(145deg,var(--emerald),#17822C);
     color:#fff; border:none; font-family:inherit; font-weight:800; font-size:14.5px;
     padding:14px 26px; border-radius:14px; cursor:pointer;
     display:flex; align-items:center; gap:8px;
-    box-shadow:0 8px 20px rgba(14,159,110,.4); transition:.18s;
+    box-shadow:0 8px 20px rgba(31,174,59,.4); transition:.18s;
   }
-  .pec-search .btn:hover { transform:translateY(-1px); box-shadow:0 12px 26px rgba(14,159,110,.5); }
+  /* Nota: el fondo sólido del botón usa un verde más oscuro que --emerald-2 (no la variable)
+     para que el texto blanco cumpla contraste AA (4.5:1) — el verde vivo se queda para
+     degradados/decoración donde no hay texto encima. */
+  .pec-search .btn:hover { transform:translateY(-1px); box-shadow:0 12px 26px rgba(31,174,59,.5); }
   .pec-search .btn span { display:none; }
   @media(min-width:560px) { .pec-search .btn span { display:inline; } }
 
@@ -203,7 +201,7 @@ const STYLES = `
   .card-ph {
     position:absolute; inset:0; display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:8px;
-    background:linear-gradient(145deg,#1E3A9B,#13287A); color:rgba(255,255,255,.7);
+    background:linear-gradient(145deg,var(--indigo-2),var(--indigo)); color:rgba(255,255,255,.7);
   }
   .card-ph span { font-size:12px; font-weight:700; letter-spacing:.4px; }
   .card-fav {
@@ -215,15 +213,60 @@ const STYLES = `
   .card-fav:active { transform:scale(.86); }
   .card-tags {
     position:absolute; top:11px; left:11px;
-    display:flex; gap:6px; flex-wrap:wrap; max-width:75%;
+    display:flex; gap:6px; flex-wrap:wrap; max-width:82%;
   }
   .tag {
     padding:6px 11px; border-radius:999px; font-size:10.5px;
     font-weight:800; letter-spacing:.3px; text-transform:uppercase;
     backdrop-filter:blur(6px);
   }
-  .tag-feat { background:rgba(232,163,61,.95); color:#3A2400; }
-  .tag-land { background:rgba(14,159,110,.95); color:#fff; }
+  .tag-feat { background:rgba(178,58,61,.95); color:#fff; }
+  .tag-land { background:rgba(31,174,59,.95); color:#fff; }
+  .tag-venta { background:rgba(14,10,120,.92); color:#fff; }
+  .tag-renta { background:rgba(139,84,243,.92); color:#fff; }
+  .tag-pop   { background:rgba(178,58,61,.92); color:#fff; display:flex; align-items:center; gap:4px; }
+
+  /* ── Carrusel de fotos en la tarjeta (usa properties.images[] real) ── */
+  .card-nav {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.85); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; opacity:0; transition:.15s; z-index:2; padding:0;
+  }
+  .card:hover .card-nav { opacity:1; }
+  .card-nav.prev { left:9px; }
+  .card-nav.next { right:9px; }
+  .card-nav:hover { background:#fff; }
+  .card-dots {
+    position:absolute; bottom:9px; left:0; right:0;
+    display:flex; justify-content:center; gap:4px; z-index:2;
+  }
+  .card-dots i {
+    width:5px; height:5px; border-radius:50%;
+    background:rgba(255,255,255,.55); transition:.15s; display:block;
+  }
+  .card-dots i.on { background:#fff; width:14px; border-radius:3px; }
+
+  /* ── Chips de amenidades (properties.amenities[] real) ── */
+  .card-amens { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+  .card-amens span {
+    font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:999px;
+    background:var(--bg); color:var(--muted); border:1px solid var(--line);
+  }
+
+  /* ── Botón "Ver más" ── */
+  .pec-more {
+    display:flex; justify-content:center; margin-top:30px;
+  }
+  .pec-more button {
+    background:#fff; border:1.5px solid var(--line); color:var(--ink);
+    font-weight:700; font-size:14px; padding:12px 30px; border-radius:999px;
+    cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; transition:.16s;
+  }
+  .pec-more button:hover:not(:disabled) { border-color:var(--indigo); color:var(--indigo); }
+  .pec-more button:disabled { opacity:.6; cursor:default; }
+
   .card-body  { padding:13px 4px 0; }
   .card-zone  { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; }
   .card-title { font-size:16px; font-weight:700; letter-spacing:-.3px; margin-top:3px; }
@@ -266,7 +309,7 @@ const STYLES = `
   .promo-glow {
     position:absolute; top:-60%; right:-5%; width:420px; height:420px;
     border-radius:50%; pointer-events:none;
-    background:radial-gradient(circle,rgba(16,185,129,.5),transparent 65%);
+    background:radial-gradient(circle,rgba(31,174,59,.5),transparent 65%);
   }
   .promo::after {
     content:''; position:absolute; inset:0; opacity:.06; pointer-events:none;
@@ -276,15 +319,15 @@ const STYLES = `
   .promo-content { position:relative; z-index:2; min-width:0; }
   .promo-badge {
     display:inline-flex; align-items:center; gap:7px;
-    background:rgba(16,185,129,.22); border:1px solid rgba(16,185,129,.4);
-    color:#A7F3D0; padding:6px 13px; border-radius:999px;
+    background:rgba(31,174,59,.22); border:1px solid rgba(31,174,59,.4);
+    color:#A5DFB1; padding:6px 13px; border-radius:999px;
     font-size:11.5px; font-weight:800; letter-spacing:.4px;
     text-transform:uppercase; margin-bottom:14px;
   }
   .promo-content h3 { font-size:clamp(21px,3.6vw,30px); line-height:1.12; font-weight:700; letter-spacing:-.5px; }
   .promo-content h3 span {
     color:transparent;
-    background:linear-gradient(100deg,var(--emerald-2),#6EE7B7);
+    background:linear-gradient(100deg,var(--emerald-2),#84D293);
     -webkit-background-clip:text; background-clip:text;
   }
   .promo-content p { margin-top:11px; font-size:14.5px; color:rgba(255,255,255,.8); }
@@ -334,20 +377,34 @@ const STYLES = `
 `;
 
 // ─── Componente Card (separado igual que HomePEC) ─────────────────────────────
-function Card({ propiedad, i, fav, onFav, loaded }) {
-  const tieneImagen = !!propiedad.featured_image_url;
-  const esDev      = !!propiedad.landing_slug;
+function Card({ propiedad, i, fav, onFav, loaded, popular }) {
+  const navigate = useNavigate();
+  const esDev = !!propiedad.landing_slug;
+
+  // Fotos reales: usa el arreglo images[] si existe; si no, cae a featured_image_url.
+  const fotos = (Array.isArray(propiedad.images) && propiedad.images.length > 0)
+    ? propiedad.images
+    : (propiedad.featured_image_url ? [propiedad.featured_image_url] : []);
+  const [imgIdx, setImgIdx] = useState(0);
+  const tieneVarias = fotos.length > 1;
+
+  const irA = (idx, e) => {
+    e.stopPropagation();
+    setImgIdx((idx + fotos.length) % fotos.length);
+  };
+
+  const amenidades = Array.isArray(propiedad.amenities) ? propiedad.amenities.filter(Boolean) : [];
 
   return (
     <article
       className="card"
       style={{ cursor: 'pointer', animationDelay: loaded ? `${i * 60}ms` : '0ms' }}
-      onClick={() => window.location.href = '/propiedad/' + propiedad.id}
+      onClick={() => navigate('/propiedad/' + propiedad.id)}
     >
       <div className="card-media">
-        {tieneImagen ? (
+        {fotos.length > 0 ? (
           <img
-            src={propiedad.featured_image_url}
+            src={fotos[imgIdx]}
             alt={propiedad.title}
             loading="lazy"
             onError={(e) => {
@@ -361,32 +418,59 @@ function Card({ propiedad, i, fav, onFav, loaded }) {
           </div>
         )}
 
+        {tieneVarias && (
+          <>
+            <button className="card-nav prev" onClick={(e) => irA(imgIdx - 1, e)} aria-label="Foto anterior">
+              <ChevronLeft size={16} color="#0A0838" strokeWidth={2.6} />
+            </button>
+            <button className="card-nav next" onClick={(e) => irA(imgIdx + 1, e)} aria-label="Foto siguiente">
+              <ChevronRight size={16} color="#0A0838" strokeWidth={2.6} />
+            </button>
+            <div className="card-dots">
+              {fotos.map((_, idx) => <i key={idx} className={idx === imgIdx ? 'on' : ''} />)}
+            </div>
+          </>
+        )}
+
         <div className="card-tags">
           {esDev && <span className="tag tag-land">Ver desarrollo</span>}
+          {propiedad.operation_type === 'Renta' && <span className="tag tag-renta">Renta</span>}
+          {propiedad.operation_type === 'Venta' && <span className="tag tag-venta">Venta</span>}
+          {popular && (
+            <span className="tag tag-pop"><TrendingUp size={10} strokeWidth={3} /> Popular</span>
+          )}
         </div>
 
         <button
           className="card-fav"
           onClick={(e) => { e.stopPropagation(); onFav(propiedad.id); }}
-          aria-label="Guardar en favoritos"
+          aria-label={fav ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+          aria-pressed={!!fav}
         >
           <Heart
             size={17}
-            fill={fav ? '#E8A33D' : 'none'}
-            color={fav ? '#E8A33D' : '#0B1B3A'}
+            fill={fav ? '#B23A3D' : 'none'}
+            color={fav ? '#B23A3D' : '#0A0838'}
             strokeWidth={2.3}
           />
         </button>
       </div>
 
       <div className="card-body">
-        <div className="card-zone"><MapPin size={13} /> {propiedad.city || 'Chiapas'}</div>
+        <div className="card-zone"><MapPin size={13} /> {propiedad.city || propiedad.municipality || 'Chiapas'}</div>
         <h3 className="card-title">{propiedad.title}</h3>
         <div className="card-specs">
           {propiedad.bedrooms  > 0 && <span><Bed size={14} /> {propiedad.bedrooms} rec</span>}
           {propiedad.bathrooms > 0 && <span><Bath size={14} /> {propiedad.bathrooms} baños</span>}
           {propiedad.size_m2        && <span><Maximize size={14} /> {propiedad.size_m2} m²</span>}
+          {propiedad.garages   > 0 && <span><Car size={14} /> {propiedad.garages} autos</span>}
         </div>
+        {amenidades.length > 0 && (
+          <div className="card-amens">
+            {amenidades.slice(0, 3).map((a) => <span key={a}>{a}</span>)}
+            {amenidades.length > 3 && <span>+{amenidades.length - 3} más</span>}
+          </div>
+        )}
         <div className="card-foot">
           <div className="card-price">
             <b>{peso(propiedad.price || 0)}</b>
@@ -403,7 +487,9 @@ function Card({ propiedad, i, fav, onFav, loaded }) {
 export default function Home({ session }) {
   const [active,      setActive]      = useState('todas');
   const [q,           setQ]           = useState('');
-  const [favs,        setFavs]        = useState({});
+  const [favs,        setFavs]        = useState(() => {
+    try { return JSON.parse(localStorage.getItem(FAVS_KEY) || '{}'); } catch { return {}; }
+  });
   const [loaded,      setLoaded]      = useState(false);
 
   // Datos Supabase
@@ -411,13 +497,28 @@ export default function Home({ session }) {
   const [resultados,  setResultados]  = useState(null); // null = vista inicial sin búsqueda activa
   const [loading,     setLoading]     = useState(true);
   const [buscando,    setBuscando]    = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [fetchError,  setFetchError]  = useState(false); // error real de Supabase (vista inicial)
+  const [searchError, setSearchError] = useState(false); // error real de Supabase (búsqueda/filtro)
+
+  // Paginación: "Ver más" crece el límite y vuelve a pedir esa página completa
+  // (más simple y confiable que ir acumulando páginas con .range(), y con el volumen
+  // de propiedades de este portal el costo extra de red es insignificante).
+  const [limit,       setLimit]       = useState(INITIAL_LIMIT);
+  const [searchLimit,  setSearchLimit]  = useState(SEARCH_LIMIT);
+  const [hasMore,      setHasMore]      = useState(true);
+  const [resHasMore,   setResHasMore]   = useState(true);
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 50);
     return () => clearTimeout(t);
   }, []);
 
-  const toggleFav = (id) => setFavs(f => ({ ...f, [id]: !f[id] }));
+  const toggleFav = (id) => setFavs(f => {
+    const next = { ...f, [id]: !f[id] };
+    try { localStorage.setItem(FAVS_KEY, JSON.stringify(next)); } catch { /* localStorage no disponible, no es crítico */ }
+    return next;
+  });
 
   // ── Excluir propiedades de prueba ──────────────────────────────────────────
   const applyExclusions = (query) => {
@@ -425,33 +526,39 @@ export default function Home({ session }) {
     return query;
   };
 
-  // ── Carga inicial: 9 propiedades (active=true) ────────────────────────────
+  // ── Carga inicial: crece con "limit" cuando se pide "Ver más" (active=true) ─
   useEffect(() => {
     const fetchPropiedades = async () => {
-      setLoading(true);
+      if (limit === INITIAL_LIMIT) setLoading(true); else setLoadingMore(true);
       try {
         let query = supabase
           .from('properties')
           .select('*')
           .eq('active', true)
           .order('created_at', { ascending: false })
-          .limit(9);
+          .limit(limit);
         query = applyExclusions(query);
         const { data, error } = await query;
         if (error) throw error;
         setPropiedades(data || []);
+        setHasMore((data || []).length === limit);
+        setFetchError(false);
       } catch {
         setPropiedades([]);
+        setFetchError(true);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
     };
     fetchPropiedades();
-  }, []);
+  }, [limit]);
 
-  // ── Buscar con filtros ────────────────────────────────────────────────────
-  const buscar = useCallback(async (overrideType) => {
-    setBuscando(true);
+  // ── Buscar con filtros (useLimit: pasa un número mayor para "Ver más") ────
+  const buscar = useCallback(async (overrideType, useLimit) => {
+    const esMas = typeof useLimit === 'number';
+    const lim = esMas ? useLimit : SEARCH_LIMIT;
+    if (esMas) setLoadingMore(true); else setBuscando(true);
     try {
       let query = supabase.from('properties').select('*').eq('active', true);
       query = applyExclusions(query);
@@ -465,14 +572,19 @@ export default function Home({ session }) {
         : (active !== 'todas' ? active : null);
       if (tipo) query = query.ilike('type', `%${tipo}%`);
 
-      query = query.order('created_at', { ascending: false }).limit(24);
+      query = query.order('created_at', { ascending: false }).limit(lim);
       const { data, error } = await query;
       if (error) throw error;
       setResultados(data || []);
+      setSearchLimit(lim);
+      setResHasMore((data || []).length === lim);
+      setSearchError(false);
     } catch {
-      setResultados([]);
+      if (!esMas) setResultados([]);
+      setSearchError(true);
     } finally {
       setBuscando(false);
+      setLoadingMore(false);
     }
   }, [q, active]);
 
@@ -487,6 +599,7 @@ export default function Home({ session }) {
   // ── Limpiar filtros ───────────────────────────────────────────────────────
   const limpiar = () => {
     setQ(''); setActive('todas'); setResultados(null);
+    setSearchLimit(SEARCH_LIMIT); setResHasMore(true);
   };
 
   const propsMostradas = resultados ?? propiedades;
@@ -500,6 +613,34 @@ export default function Home({ session }) {
   const restantes  = (!hayFiltros && resultados === null)
     ? propsMostradas.slice(3)
     : propsMostradas;
+
+  // "Popular" honesto: top 3 por vistas reales del lote actual, y solo si de
+  // verdad tiene vistas — nunca se inventa un badge cuando todo está en 0.
+  const popularIds = React.useMemo(() => {
+    const conVistas = propsMostradas.filter(p => (p.views || 0) > 0);
+    const top = [...conVistas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 3);
+    return new Set(top.map(p => p.id));
+  }, [propsMostradas]);
+
+  const showError = resultados !== null ? searchError : fetchError;
+  const puedeVerMas = resultados !== null ? resHasMore : hasMore;
+  const verMas = () => {
+    if (resultados !== null) buscar(undefined, searchLimit + LOAD_MORE_STEP);
+    else setLimit(l => l + LOAD_MORE_STEP);
+  };
+
+  // JSON-LD (schema.org) — construido solo con datos reales ya cargados en pantalla,
+  // nada inventado.
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: propsMostradas.slice(0, 20).map((p, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `https://propiedadesenchiapas.com/propiedad/${p.id}`,
+      name: p.title,
+    })),
+  };
 
   return (
     <>
@@ -518,7 +659,8 @@ export default function Home({ session }) {
         <meta name="twitter:title" content="Propiedades en Chiapas" />
         <meta name="twitter:description" content="Portal inmobiliario #1. Casas, terrenos, departamentos en todo Chiapas." />
         <meta name="twitter:image" content="https://propiedadesenchiapas.com/og-portal.jpg" />
-        <meta name="theme-color" content="#13287A" />
+        <meta name="theme-color" content="#0E0A78" />
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Helmet>
 
       <div className="pec">
@@ -527,14 +669,9 @@ export default function Home({ session }) {
         <header className="pec-hd">
           <div className="pec-hd-in">
             <div className="pec-logo">
-              <div className="pec-mark">
-                <HomeIcon size={20} color="#fff" strokeWidth={2.4} />
-              </div>
-              <div>
-                <b>Propiedades en Chiapas</b>
-                <small>Portal Inmobiliario</small>
-              </div>
+              <img src={logo} alt="Propiedades en Chiapas" className="pec-logo-img" />
             </div>
+            <a className="pec-login" href="/crm">Iniciar sesión</a>
           </div>
         </header>
 
@@ -551,8 +688,12 @@ export default function Home({ session }) {
 
           <div className="pec-search">
             <div className="field">
-              <Search size={20} color="#13287A" strokeWidth={2.4} />
+              <Search size={20} color="#0E0A78" strokeWidth={2.4} />
+              <label htmlFor="pec-search-input" style={{ position:'absolute', width:1, height:1, overflow:'hidden', clip:'rect(0 0 0 0)', whiteSpace:'nowrap' }}>
+                Buscar propiedades por colonia, municipio o tipo
+              </label>
               <input
+                id="pec-search-input"
                 placeholder="Colonia, municipio o tipo de propiedad…"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
@@ -577,6 +718,7 @@ export default function Home({ session }) {
                 className={'pec-cat' + (active === id ? ' on' : '')}
                 onClick={() => seleccionarCat(id)}
                 role="listitem"
+                aria-pressed={active === id}
               >
                 <Icon size={16} strokeWidth={2.3} /> {label}
               </button>
@@ -584,7 +726,15 @@ export default function Home({ session }) {
           </div>
 
           {/* Estados de carga */}
-          {(loading && resultados === null) ? (
+          {showError ? (
+            <div style={{ textAlign:'center', padding:'4rem', color:'var(--muted)' }}>
+              <div style={{ display:'flex', justifyContent:'center', marginBottom:'.75rem' }}>
+                <AlertTriangle size={40} color="var(--red)" strokeWidth={1.6} />
+              </div>
+              <h3 style={{ fontWeight:700, marginBottom:'.5rem', color:'var(--ink)' }}>No pudimos cargar las propiedades</h3>
+              <p style={{ fontSize:14 }}>Hubo un problema de conexión con el servidor. Intenta recargar la página en un momento.</p>
+            </div>
+          ) : (loading && resultados === null) ? (
             <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'5rem', gap:'1rem', color:'var(--muted)' }}>
               <div className="pec-spinner" />
               <p style={{ fontWeight:600, fontSize:14 }}>Cargando propiedades...</p>
@@ -631,7 +781,7 @@ export default function Home({ session }) {
                   </div>
                   <div className="pec-grid">
                     {destacadas.map((p, i) => (
-                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
+                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
                     ))}
                   </div>
                 </>
@@ -664,9 +814,17 @@ export default function Home({ session }) {
               </div>
               <div className="pec-grid">
                 {(resultados !== null ? resultados : restantes).map((p, i) => (
-                  <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} />
+                  <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
                 ))}
               </div>
+
+              {puedeVerMas && (
+                <div className="pec-more">
+                  <button onClick={verMas} disabled={loadingMore}>
+                    {loadingMore ? 'Cargando...' : 'Ver más propiedades'}
+                  </button>
+                </div>
+              )}
             </>
           )}
 
