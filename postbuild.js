@@ -107,3 +107,16 @@ const buildRioja360HTML = () => {
 // Ejecutar generadores
 buildRiojaLandingHTML();
 buildRioja360HTML();
+
+// Metadata específica para la landing de Cascadas del Sur, servida por Vercel.
+const cascadasContent = content
+    .replace(/<title>[^<]+<\/title>/, '<title>Terrenos en Berriozábal | Cascadas del Sur Residencial</title>')
+    .replace(/<meta property="og:title" content="[^"]+" \/>/, '<meta property="og:title" content="Cascadas del Sur Residencial | Terrenos en Berriozábal" />')
+    .replace(/<meta property="og:description" content="[^"]+" \/>/, '<meta property="og:description" content="Conoce los terrenos, opciones comerciales y forma de visitar Cascadas del Sur Residencial." />')
+    .replace(/<meta property="og:image" content="[^"]+" \/>/, '')
+    .replace(/<meta property="og:url" content="[^"]+" \/>/, '<meta property="og:url" content="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />')
+    .replace('</head>', '<meta name="description" content="Conoce Cascadas del Sur Residencial: terrenos en Berriozábal, superficie, escritura pública, ubicación general, financiamiento y visitas." /><link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" /></head>');
+const cascadasDir = path.resolve('dist/cascadas-del-sur');
+fs.mkdirSync(cascadasDir, { recursive: true });
+fs.writeFileSync(path.join(cascadasDir, 'index.html'), cascadasContent);
+console.log('Successfully generated dist/cascadas-del-sur/index.html with specific metadata.');
