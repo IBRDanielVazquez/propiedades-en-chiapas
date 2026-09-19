@@ -87,11 +87,8 @@ export default function GaleriaCascadas() {
   };
 
   return (
-    <section id="galeria" className="cds-section cds-galeria">
-      <div className="cds-wrap">
-        <span className="cds-eyebrow">CONOCE EL DESARROLLO</span>
-        <h2>Míralo antes de visitarlo.</h2>
-
+    <div id="galeria" className="cds-galeria">
+      <div>
         <div className="cds-tabs" role="tablist">
           {PESTANAS.map(({ id, etiqueta, Icono }) => (
             <button
@@ -187,24 +184,18 @@ export default function GaleriaCascadas() {
           </div>
         )}
 
-        {/* ---------- MASTER PLAN ---------- */}
-        <h3 className="cds-mp-titulo">Master plan</h3>
-        <p className="cds-nota cds-nota-sup">Traza de lotes, vialidades y áreas de amenidades.</p>
-        <button type="button" className="cds-mp" onClick={() => setLightbox({ tipo: 'plano' })}>
-          <img src="/cascadas/masterplan.webp" alt="Master plan de Cascadas del Sur Residencial" width="3253" height="4719" loading="lazy" />
-          <span className="cds-mp-label"><Expand size={15} /> Ver completo</span>
-        </button>
+
       </div>
 
       {/* ---------- LIGHTBOX ---------- */}
       {lightbox && (
         <div className="cds-lb" role="dialog" aria-modal="true" onClick={(e) => { if (e.target.classList.contains('cds-lb')) setLightbox(null); }}>
           <img
-            src={lightbox.tipo === 'plano' ? '/cascadas/masterplan.webp' : FOTOS[lightbox.indice].full}
-            alt={lightbox.tipo === 'plano' ? 'Master plan' : `Cascadas del Sur, vista ${lightbox.indice + 1}`}
+            src={FOTOS[lightbox.indice].full}
+            alt={`Cascadas del Sur, vista ${lightbox.indice + 1}`}
           />
           <button type="button" className="cds-lb-cerrar" onClick={() => setLightbox(null)} aria-label="Cerrar"><X size={18} /></button>
-          {lightbox.tipo === 'foto' && (
+          {(
             <div className="cds-lb-nav">
               <button type="button" onClick={() => setLightbox({ tipo: 'foto', indice: (lightbox.indice - 1 + FOTOS.length) % FOTOS.length })} aria-label="Anterior"><ChevronLeft size={17} /></button>
               <span>{lightbox.indice + 1} / {FOTOS.length}</span>
@@ -213,6 +204,6 @@ export default function GaleriaCascadas() {
           )}
         </div>
       )}
-    </section>
+    </div>
   );
 }
