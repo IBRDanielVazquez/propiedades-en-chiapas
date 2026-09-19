@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ArrowRight, Compass, FileCheck2, House, Info, MapPin, Map, MessageCircle, Ruler, X } from 'lucide-react';
+import { ArrowRight, CalendarCheck, Compass, FileCheck2, House, Info, MapPin, Map, MessageCircle, Ruler, X } from 'lucide-react';
+import FormularioAgenda from './FormularioAgenda';
+import GaleriaCascadas from './GaleriaCascadas';
+import { dispararEvento } from '../../../lib/tracking';
 import './cascadas.css';
 
 const PHONE = '529612466204';
@@ -22,9 +25,7 @@ const nav = [
 ];
 
 function track(name, detail = {}) {
-  if (typeof window === 'undefined') return;
-  window.dataLayer?.push({ event: name, ...detail });
-  window.gtag?.('event', name, detail);
+  dispararEvento(name, detail);
 }
 
 function WhatsApp({ intent, children, className = '' }) {
@@ -34,7 +35,7 @@ function WhatsApp({ intent, children, className = '' }) {
       href={`https://wa.me/${PHONE}?text=${encodeURIComponent(messages[intent])}`}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => track('whatsapp_click', { intent })}
+      onClick={() => { track('whatsapp_click', { intent }); dispararEvento('Contact', { canal: 'whatsapp', intent }); }}
     >
       {children}
     </a>
@@ -49,6 +50,7 @@ export default function CascadasLanding() {
   const [active, setActive] = useState('inicio');
   const [faq, setFaq] = useState(-1);
   const [showPlan, setShowPlan] = useState(false);
+  const [agendaVisible, setAgendaVisible] = useState(false);
 
   useEffect(() => {
     const ids = nav.map(([id]) => id);
@@ -57,6 +59,21 @@ export default function CascadasLanding() {
       if (visible[0]) setActive(visible[0].target.id);
     }, { rootMargin: '-18% 0px -60% 0px', threshold: [0, .25, .5] });
     ids.forEach((id) => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    dispararEvento('ViewContent', { content_name: 'Cascadas del Sur', content_type: 'desarrollo' });
+  }, []);
+
+  useEffect(() => {
+    const el = document.getElementById('agenda');
+    if (!el) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => setAgendaVisible(entry.isIntersecting),
+      { rootMargin: '0px 0px -25% 0px', threshold: 0.12 },
+    );
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
@@ -89,12 +106,35 @@ export default function CascadasLanding() {
         <meta property="og:title" content="Cascadas del Sur Residencial | Terrenos en Berriozábal" />
         <meta property="og:description" content="Conoce los terrenos, opciones comerciales y forma de visitar Cascadas del Sur Residencial." />
         <meta property="og:url" content="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Propiedades en Chiapas" />
+        <meta property="og:locale" content="es_MX" />
+        <meta property="og:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" />
+        <meta property="og:image:secure_url" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Vista aérea de Cascadas del Sur Residencial, Berriozábal, Chiapas" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Cascadas del Sur Residencial | Terrenos de 200 m² en Berriozábal" />
+        <meta name="twitter:description" content="Recorrido 360°, galería y master plan. Terrenos de 200 m² con escritura pública en el corredor Tuxtla – Berriozábal." />
+        <meta name="twitter:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" />
+        <link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'RealEstateListing',
+          name: 'Cascadas del Sur Residencial',
+          description: 'Terrenos residenciales de 200 m² con escritura pública, acceso controlado, factibilidad de luz y dren pluvial, en el corredor Tuxtla Gutiérrez – Berriozábal, Chiapas.',
+          url: 'https://www.propiedadesenchiapas.com/cascadas-del-sur/',
+          image: 'https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg',
+          telephone: '+529612466204',
+          address: { '@type': 'PostalAddress', addressLocality: 'Berriozábal', addressRegion: 'Chiapas', addressCountry: 'MX' }
+        })}</script>
       </Helmet>
 
       <header className="cds-header">
         <a className="cds-brand" href="#inicio" aria-label="Cascadas del Sur Residencial, ir al inicio"><strong>CASCADAS DEL SUR</strong><small>RESIDENCIAL</small></a>
         <nav className="cds-desktop-nav" aria-label="Secciones principales">{nav.map(([id, label]) => <button key={id} type="button" onClick={() => go(id)}>{label}</button>)}</nav>
-        <WhatsApp intent="visit" className="cds-header-cta">Agendar visita <ArrowRight size={16} /></WhatsApp>
+        <button type="button" className="cds-header-cta" onClick={() => go('agenda')}>Agendar visita <ArrowRight size={16} /></button>
       </header>
 
       <main>
@@ -104,7 +144,7 @@ export default function CascadasLanding() {
               <span className="cds-eyebrow">BERRIOZÁBAL, CHIAPAS</span>
               <h1>Terrenos residenciales para dar el siguiente paso.</h1>
               <p>Cascadas del Sur se ubica en el corredor Tuxtla–Berriozábal. Conoce el desarrollo, revisa las opciones documentadas y agenda una visita antes de elegir tu terreno.</p>
-              <div className="cds-actions"><button type="button" className="cds-button cds-button-primary" onClick={() => go('informacion')}>Ver precio y financiamiento <ArrowRight size={18} /></button><button type="button" className="cds-button cds-button-quiet" onClick={() => go('explorar')}>Explorar el proyecto</button></div>
+              <div className="cds-actions"><button type="button" className="cds-button cds-button-primary" onClick={() => go('agenda')}>Agenda tu visita <ArrowRight size={18} /></button><button type="button" className="cds-button cds-button-quiet" onClick={() => go('informacion')}>Ver precio y financiamiento</button></div>
               <div className="cds-hero-note">Superficie estándar de 200 m² · Escritura pública</div>
             </div>
             <div className="cds-hero-panel" aria-label="Resumen del desarrollo"><span>01 / CASCADAS DEL SUR</span><div className="cds-hero-panel-content"><span className="cds-overline">TU TERRENO, TU PRÓXIMO PROYECTO</span><strong>200 <small>m²</small></strong><p>Superficie estándar comunicada<br />10 × 20 m</p></div><span className="cds-panel-bottom">Berriozábal · Chiapas</span></div>
@@ -138,12 +178,23 @@ export default function CascadasLanding() {
 
         <section className="cds-section cds-wrap cds-faq"><SectionHeading eyebrow="PREGUNTAS FRECUENTES" title="Respuestas antes de visitar" /><div className="cds-faq-list">{faqs.map(([question, answer], index) => <div className="cds-faq-item" key={question}><button type="button" aria-expanded={faq === index} onClick={() => { setFaq(faq === index ? -1 : index); track('faq_expand', { question: index }); }}><span>{question}</span><span aria-hidden="true">{faq === index ? '−' : '+'}</span></button>{faq === index && <p>{answer}</p>}</div>)}</div></section>
 
-        <section className="cds-final"><div className="cds-wrap"><span className="cds-eyebrow">SIGUIENTE PASO</span><h2>Conócelo en persona.</h2><p>Cuéntanos qué tipo de terreno buscas. Te ayudamos a revisar las opciones vigentes y a programar una visita.</p><WhatsApp intent="visit" className="cds-button cds-button-light" >Agendar una visita <MessageCircle size={18} /></WhatsApp></div></section>
+        <GaleriaCascadas />
+
+        <FormularioAgenda />
+
+        <section className="cds-final"><div className="cds-wrap"><span className="cds-eyebrow">SIGUIENTE PASO</span><h2>Conócelo en persona.</h2><p>Cuéntanos qué tipo de terreno buscas. Te ayudamos a revisar las opciones vigentes y a programar una visita.</p><div className="cds-actions cds-actions-center"><button type="button" className="cds-button cds-button-light" onClick={() => go('agenda')}>Agendar una visita <CalendarCheck size={18} /></button><WhatsApp intent="visit" className="cds-button cds-button-ghost">Prefiero WhatsApp <MessageCircle size={18} /></WhatsApp></div></div></section>
       </main>
 
       <footer className="cds-footer"><div className="cds-wrap"><div><strong>CASCADAS DEL SUR</strong><span>RESIDENCIAL · BERRIOZÁBAL, CHIAPAS</span></div><div><a href="/privacidad/">Aviso de privacidad</a><WhatsApp intent="general">WhatsApp: 961 246 6204</WhatsApp></div></div></footer>
 
       <nav className="cds-bottom-nav" aria-label="Navegación de Cascadas del Sur">{nav.map(([id, label, Icon]) => <button type="button" key={id} className={`${active === id ? 'active' : ''} ${id === 'explorar' ? 'featured' : ''}`} aria-label={label} aria-current={active === id ? 'page' : undefined} onClick={() => go(id)}><Icon size={21} strokeWidth={1.8} /><span>{label}</span></button>)}</nav>
+
+      <div className={`cds-float-cta ${agendaVisible ? 'oculto' : ''}`} aria-hidden={agendaVisible}>
+        <button type="button" className="cds-float-main" onClick={() => go('agenda')} tabIndex={agendaVisible ? -1 : 0}>
+          <CalendarCheck size={18} /> Agendar visita
+        </button>
+        <WhatsApp intent="visit" className="cds-float-wa" aria-label="Escribir por WhatsApp"><MessageCircle size={20} /></WhatsApp>
+      </div>
 
       {showPlan && <div className="cds-modal" role="dialog" aria-modal="true" aria-labelledby="cds-modal-title" onClick={() => setShowPlan(false)}><div className="cds-modal-content" onClick={(event) => event.stopPropagation()}><button type="button" className="cds-modal-close" onClick={() => setShowPlan(false)} aria-label="Cerrar"><X size={20} /></button><Map size={44} /><h2 id="cds-modal-title">Master Plan pendiente</h2><p>Publicaremos el plano cuando esté aprobado. Mientras tanto, solicita a un asesor la información vigente de las ubicaciones disponibles.</p><WhatsApp intent="plan" className="cds-button cds-button-primary">Solicitar el plano <ArrowRight size={18} /></WhatsApp></div></div>}
     </div>
