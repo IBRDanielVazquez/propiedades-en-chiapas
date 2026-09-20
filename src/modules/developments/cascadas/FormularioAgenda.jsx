@@ -79,7 +79,7 @@ export default function FormularioAgenda({ onLeadSubmit }) {
     <section id="agenda" className="cds-section cds-agenda">
       <div className="cds-wrap cds-agenda-inner">
         <div className="cds-agenda-copy">
-          <span className="cds-eyebrow">QUINTO PASO · CONÓCELO EN PERSONA</span>
+          <span className="cds-eyebrow">AGENDA TU VISITA</span>
           <h2>La mejor forma de decidir es caminar el desarrollo.</h2>
           <p>
             Dinos cuándo te gustaría ir. Un asesor continuará por WhatsApp para acordar la visita y compartirte las indicaciones para llegar.
