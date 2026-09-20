@@ -79,10 +79,10 @@ export default function FormularioAgenda({ onLeadSubmit }) {
     <section id="agenda" className="cds-section cds-agenda">
       <div className="cds-wrap cds-agenda-inner">
         <div className="cds-agenda-copy">
-          <span className="cds-eyebrow">AGENDA TU VISITA</span>
-          <h2>Conoce el terreno antes de decidir.</h2>
+          <span className="cds-eyebrow">QUINTO PASO · CONÓCELO EN PERSONA</span>
+          <h2>La mejor forma de decidir es caminar el desarrollo.</h2>
           <p>
-            Déjanos tus datos y un asesor te contactará por WhatsApp para acordar la fecha y el horario.
+            Dinos cuándo te gustaría ir. Un asesor continuará por WhatsApp para acordar la visita y compartirte las indicaciones para llegar.
           </p>
           <ul className="cds-agenda-list">
             <li><CalendarCheck size={18} /> Coordina fecha y horario con un asesor</li>
