@@ -80,13 +80,13 @@ export default function FormularioAgenda({ onLeadSubmit }) {
       <div className="cds-wrap cds-agenda-inner">
         <div className="cds-agenda-copy">
           <span className="cds-eyebrow">AGENDA TU VISITA</span>
-          <h2>La mejor forma de decidir es caminar el desarrollo.</h2>
+          <h2>Hay decisiones que se sienten mejor en persona.</h2>
           <p>
-            Dinos cuándo te gustaría ir. Un asesor continuará por WhatsApp para acordar la visita y compartirte las indicaciones para llegar.
+            Camina el desarrollo, conoce el entorno e imagina lo que podrías construir aquí. Dinos cuándo te gustaría visitarlo y un asesor te ayudará a preparar el recorrido.
           </p>
           <ul className="cds-agenda-list">
-            <li><CalendarCheck size={18} /> Coordina fecha y horario con un asesor</li>
-            <li><MessageCircle size={18} /> Recibe las indicaciones para llegar</li>
+            <li><CalendarCheck size={18} /> Recorre el desarrollo y conoce su entorno</li>
+            <li><MessageCircle size={18} /> Elige el momento que mejor te funcione</li>
           </ul>
         </div>
 
@@ -159,7 +159,7 @@ export default function FormularioAgenda({ onLeadSubmit }) {
               {errores.consiente && <small className="cds-error">{errores.consiente}</small>}
 
               <button type="button" className="cds-button cds-button-primary cds-agenda-submit" onClick={enviar}>
-                Agendar mi visita <ArrowRight size={18} />
+                Quiero conocerlo en persona <ArrowRight size={18} />
               </button>
               <small className="cds-agenda-nota">
                 Un asesor de Propiedades en Chiapas continuará la conversación por WhatsApp.
