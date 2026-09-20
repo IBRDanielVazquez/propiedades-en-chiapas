@@ -30,6 +30,21 @@
     return part.replace(/-/g, ' ');
   }
 
+  function destinationPhone(value) {
+    try {
+      var url = new URL(value);
+      if (/wa\.me$/i.test(url.hostname)) return url.pathname.split('/').filter(Boolean)[0] || '';
+      return url.searchParams.get('phone') || '';
+    } catch (_) { return ''; }
+  }
+
+  function resourceType() {
+    var path = window.location.pathname.toLowerCase();
+    if (/tarjeta|asesor|agente/.test(path)) return 'Tarjeta digital';
+    if (path !== '/') return 'Landing';
+    return 'Sitio principal';
+  }
+
   function record(detail) {
     detail = detail || {};
     var url = String(detail.url || '');
@@ -42,9 +57,13 @@
     var payload = Object.assign({
       event: 'whatsapp_open',
       occurred_at: new Date().toISOString(),
+      origin: detail.origen || resourceType(),
       development: detail.desarrollo || development(),
+      page_title: document.title || '',
+      resource_type: detail.tipoRecurso || resourceType(),
       intent: detail.intencion || detail.cta || 'Abrir WhatsApp',
       cta: detail.cta || '',
+      destination_phone: destinationPhone(url),
       whatsapp_url: url,
       page_url: window.location.href,
       page_path: window.location.pathname,
