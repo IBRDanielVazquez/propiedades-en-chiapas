@@ -110,13 +110,31 @@ buildRioja360HTML();
 
 // Metadata específica para la landing de Cascadas del Sur, servida por Vercel.
 const cascadasContent = content
-    .replace(/<title>[^<]+<\/title>/, '<title>Terrenos en Berriozábal | Cascadas del Sur Residencial</title>')
-    .replace(/<meta property="og:title" content="[^"]+" \/>/, '<meta property="og:title" content="Cascadas del Sur Residencial | Terrenos en Berriozábal" />')
-    .replace(/<meta property="og:description" content="[^"]+" \/>/, '<meta property="og:description" content="Conoce los terrenos, opciones comerciales y forma de visitar Cascadas del Sur Residencial." />')
-    .replace(/<meta property="og:image" content="[^"]+" \/>/, '<meta property="og:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" /><meta property="og:image:secure_url" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="Vista aerea de Cascadas del Sur Residencial, Berriozabal, Chiapas" /><meta name="twitter:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" /><meta name="twitter:title" content="Cascadas del Sur Residencial | Terrenos de 200 m2 en Berriozabal" /><meta name="twitter:description" content="Recorrido 360, galeria y master plan del desarrollo en Berriozabal, Chiapas." />')
+    .replace(/<title>[^<]+<\/title>/, '<title>Terrenos de 200 m² en Berriozábal | Cascadas del Sur</title>')
+    .replace(/<meta property="og:title" content="[^"]+" \/>/, '<meta property="og:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" />')
+    .replace(/<meta property="og:description" content="[^"]+" \/>/, '<meta property="og:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />')
+    .replace(/<meta property="og:image" content="[^"]+" \/>/, '<meta property="og:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" /><meta property="og:image:secure_url" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="Terrenos en Cascadas del Sur Residencial, Berriozábal, Chiapas" /><meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" /><meta name="twitter:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" /><meta name="twitter:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />')
     .replace(/<meta property="og:url" content="[^"]+" \/>/, '<meta property="og:url" content="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />')
-    .replace('</head>', '<meta name="description" content="Conoce Cascadas del Sur Residencial: terrenos en Berriozábal, superficie, escritura pública, ubicación general, financiamiento y visitas." /><link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" /></head>');
+    .replace('</head>', '<meta name="description" content="Terrenos residenciales desde 200 m² en Berriozábal, Chiapas, con escritura pública y financiamiento. Explora fotos, recorrido 360° y agenda una visita." /><link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" /><script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Cascadas del Sur Residencial","description":"Terrenos residenciales desde 200 m² con escritura pública y opciones de financiamiento en Berriozábal, Chiapas.","url":"https://www.propiedadesenchiapas.com/cascadas-del-sur/","inLanguage":"es-MX"}</script></head>')
+    .replace('<div id="root"></div>', '<div id="root"><main style="max-width:760px;margin:64px auto;padding:24px;font-family:system-ui;color:#18333a"><p>Berriozábal, Chiapas</p><h1>Terrenos de 200 m² en Cascadas del Sur</h1><p>Terrenos residenciales con escritura pública y opciones de financiamiento en el corredor Tuxtla–Berriozábal. Explora fotografías, recorrido 360°, master plan y ubicación, o agenda una visita.</p><h2>Información del desarrollo</h2><p>La superficie estándar comunicada es de 200 m², equivalente a 10 × 20 m. La disponibilidad, precio y condiciones vigentes se confirman con un asesor.</p></main></div>');
 const cascadasDir = path.resolve('dist/cascadas-del-sur');
 fs.mkdirSync(cascadasDir, { recursive: true });
 fs.writeFileSync(path.join(cascadasDir, 'index.html'), cascadasContent);
 console.log('Successfully generated dist/cascadas-del-sur/index.html with specific metadata.');
+
+// Todas las landings registran aperturas de WhatsApp mediante un único punto.
+const injectWhatsappCapture = (directory) => {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+        const fullPath = path.join(directory, entry.name);
+        if (entry.isDirectory()) injectWhatsappCapture(fullPath);
+        if (entry.isFile() && entry.name === 'index.html') {
+            let html = fs.readFileSync(fullPath, 'utf-8');
+            if (!html.includes('/whatsapp-capture.js')) {
+                html = html.replace('</body>', '<script src="/whatsapp-capture.js" defer></script></body>');
+                fs.writeFileSync(fullPath, html);
+            }
+        }
+    }
+};
+injectWhatsappCapture(path.resolve('dist'));
+console.log('WhatsApp capture enabled for every generated landing.');

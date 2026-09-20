@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ArrowRight, Armchair, Bike, CalendarCheck, Compass, Dog, FileCheck2, Flame, Footprints, House, Info, MapPin, Map, MessageCircle, Mountain, Ruler, Tent, ToyBrick, Waves, X } from 'lucide-react';
+import { ArrowRight, CalendarCheck, Compass, FileCheck2, House, Info, MapPin, Map, MessageCircle, Ruler, X } from 'lucide-react';
 import FormularioAgenda from './FormularioAgenda';
 import GaleriaCascadas from './GaleriaCascadas';
 import PlanoZoom from './PlanoZoom';
@@ -8,15 +8,9 @@ import { dispararEvento } from '../../../lib/tracking';
 import './cascadas.css';
 
 const AMENIDADES = [
-  ['Camping', Tent],
-  ['Senderismo', Footprints],
-  ['Ciclismo de montaña', Bike],
-  ['Juegos infantiles', ToyBrick],
-  ['Resbaladilla gigante', Waves],
-  ['Parque de mascotas', Dog],
-  ['Mesas y asadores', Flame],
-  ['Terraza mirador', Mountain],
-  ['Áreas de descanso', Armchair],
+  'Camping', 'Senderismo', 'Ciclismo de montaña', 'Juegos infantiles',
+  'Resbaladilla gigante', 'Parque de mascotas', 'Mesas y asadores',
+  'Terraza mirador', 'Áreas de descanso',
 ];
 
 const PHONE = '529612466204';
@@ -113,11 +107,11 @@ export default function CascadasLanding() {
   return (
     <div className="cds-page">
       <Helmet>
-        <title>Terrenos en Berriozábal | Cascadas del Sur Residencial</title>
-        <meta name="description" content="Conoce Cascadas del Sur Residencial: terrenos en Berriozábal, superficie, escritura pública, ubicación general, financiamiento y visitas." />
+        <title>Terrenos de 200 m² en Berriozábal | Cascadas del Sur</title>
+        <meta name="description" content="Terrenos residenciales desde 200 m² en Berriozábal, Chiapas, con escritura pública y financiamiento. Explora fotos, recorrido 360° y agenda una visita." />
         <link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
-        <meta property="og:title" content="Cascadas del Sur Residencial | Terrenos en Berriozábal" />
-        <meta property="og:description" content="Conoce los terrenos, opciones comerciales y forma de visitar Cascadas del Sur Residencial." />
+        <meta property="og:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" />
+        <meta property="og:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />
         <meta property="og:url" content="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Propiedades en Chiapas" />
@@ -126,17 +120,16 @@ export default function CascadasLanding() {
         <meta property="og:image:secure_url" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Vista aérea de Cascadas del Sur Residencial, Berriozábal, Chiapas" />
+        <meta property="og:image:alt" content="Terrenos en Cascadas del Sur Residencial, Berriozábal, Chiapas" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Cascadas del Sur Residencial | Terrenos de 200 m² en Berriozábal" />
-        <meta name="twitter:description" content="Recorrido 360°, galería y master plan. Terrenos de 200 m² con escritura pública en el corredor Tuxtla – Berriozábal." />
+        <meta name="twitter:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" />
+        <meta name="twitter:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />
         <meta name="twitter:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" />
-        <link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
         <script type="application/ld+json">{JSON.stringify({
           '@context': 'https://schema.org',
-          '@type': 'RealEstateListing',
+          '@type': 'WebPage',
           name: 'Cascadas del Sur Residencial',
-          description: 'Terrenos residenciales de 200 m² con escritura pública, acceso controlado, factibilidad de luz y dren pluvial, en el corredor Tuxtla Gutiérrez – Berriozábal, Chiapas.',
+          description: 'Terrenos residenciales desde 200 m² con escritura pública y opciones de financiamiento en Berriozábal, Chiapas.',
           url: 'https://www.propiedadesenchiapas.com/cascadas-del-sur/',
           image: 'https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg',
           telephone: '+529612466204',
@@ -155,8 +148,8 @@ export default function CascadasLanding() {
           <div className="cds-hero-inner">
             <div className="cds-hero-copy">
               <span className="cds-eyebrow">BERRIOZÁBAL, CHIAPAS</span>
-              <h1>Terrenos residenciales para dar el siguiente paso.</h1>
-              <p>Cascadas del Sur se ubica en el corredor Tuxtla–Berriozábal. Conoce el desarrollo, revisa las opciones documentadas y agenda una visita antes de elegir tu terreno.</p>
+              <h1>Terrenos de 200 m² en Berriozábal.</h1>
+              <p>Conoce Cascadas del Sur: terrenos residenciales desde 200 m², con escritura pública y opciones de financiamiento en el corredor Tuxtla–Berriozábal.</p>
               <div className="cds-actions"><button type="button" className="cds-button cds-button-primary" onClick={() => go('agenda')}>Agenda tu visita <ArrowRight size={18} /></button><button type="button" className="cds-button cds-button-quiet" onClick={() => go('informacion')}>Ver precio y financiamiento</button></div>
               <div className="cds-hero-note">Superficie estándar de 200 m² · Escritura pública</div>
             </div>
@@ -177,13 +170,13 @@ export default function CascadasLanding() {
 
         <section id="plano" className="cds-section cds-plan"><div className="cds-wrap cds-split"><div><SectionHeading eyebrow="MASTER PLAN" title="Explora cómo se organiza el desarrollo">Traza completa del residencial: vialidades, distribución de lotes y las áreas destinadas a amenidades. Toca el plano para verlo en grande y acercarte a cualquier zona.</SectionHeading><WhatsApp intent="plan" className="cds-button cds-button-primary">Consultar lotes disponibles <ArrowRight size={18} /></WhatsApp><p className="cds-plan-nota">La disponibilidad y las condiciones de cada lote se confirman con un asesor.</p></div><PlanoZoom src="/cascadas/masterplan.webp" srcMovil="/cascadas/masterplan-movil.webp" ancho={3253} alto={4719} alt="Master plan de Cascadas del Sur Residencial con vialidades, lotes y amenidades" etiqueta="Ver master plan" /></div></section>
 
-        <section id="ubicacion" className="cds-section cds-wrap cds-location"><div className="cds-split"><div><SectionHeading eyebrow="UBICACIÓN" title="En el corredor Tuxtla–Berriozábal">Sobre la carretera federal 190, entre Berriozábal y Tuxtla Gutiérrez, con salida también hacia Ocozocoautla. El plano muestra la ubicación del desarrollo y sus accesos.</SectionHeading><WhatsApp intent="location" className="cds-button cds-button-primary">Pedir cómo llegar <ArrowRight size={18} /></WhatsApp></div><PlanoZoom src="/cascadas/plano-ubicacion.webp" srcMovil="/cascadas/plano-ubicacion-movil.webp" ancho={1800} alto={1200} alt="Plano de ubicación de Cascadas del Sur entre Berriozábal y Tuxtla Gutiérrez" etiqueta="Ver plano de ubicación" /></div></section>
+        <section id="ubicacion" className="cds-section cds-wrap cds-location"><div className="cds-split"><div><SectionHeading eyebrow="UBICACIÓN" title="En el corredor Tuxtla–Berriozábal">El desarrollo cuenta con acceso desde la carretera principal. Revisa el plano de referencia y solicita a un asesor la ubicación para llegar.</SectionHeading><WhatsApp intent="location" className="cds-button cds-button-primary">Pedir cómo llegar <ArrowRight size={18} /></WhatsApp></div><PlanoZoom src="/cascadas/plano-ubicacion.webp" srcMovil="/cascadas/plano-ubicacion-movil.webp" ancho={1800} alto={1200} alt="Plano de ubicación de Cascadas del Sur entre Berriozábal y Tuxtla Gutiérrez" etiqueta="Ver plano de ubicación" /></div></section>
 
         <section id="informacion" className="cds-section cds-info"><div className="cds-wrap"><SectionHeading eyebrow="OPCIONES COMERCIALES" title="Entiende el punto de partida">Referencia documentada en lista de precios del 07/08/2026. Confirma precio, lote y condiciones vigentes antes de decidir.</SectionHeading><div className="cds-pricing"><div className="cds-price-main"><span>OPCIÓN DOCUMENTADA · 200 m²</span><strong>$370,000 <small>MXN</small></strong><p>Precio de referencia de la lista comercial del 07/08/2026. Disponibilidad por confirmar.</p><WhatsApp intent="price" className="cds-button cds-button-primary">Confirmar precio y disponibilidad <ArrowRight size={18} /></WhatsApp></div><div className="cds-price-details"><div><span>Enganche documentado</span><strong>$25,000</strong></div><div><span>Saldo documentado</span><strong>$345,000</strong></div><div><span>Plan documentado</span><strong>80 mensualidades de $4,312.50</strong></div><p>Esta es una opción específica; otras ubicaciones, superficies y condiciones dependen del lote. No se ofrece aquí una simulación ni selección libre de plazos.</p></div></div></div></section>
 
         <section className="cds-section cds-wrap cds-trust"><SectionHeading eyebrow="INFORMACIÓN PARA DECIDIR" title="Lo que sabemos del proyecto">Estos datos proceden de la documentación del desarrollo. Un asesor puede aclarar su aplicación al lote que te interese.</SectionHeading><div className="cds-trust-grid"><article><FileCheck2 /><h3>Escritura pública</h3><p>Es la condición jurídica comunicada para los terrenos.</p></article><article><Ruler /><h3>Superficie</h3><p>La medida estándar es 200 m², equivalentes a 10 × 20 m. Existen superficies mayores.</p></article><article><MapPin /><h3>Infraestructura documentada</h3><p>Factibilidad de luz, calles de material mejorado y sistema de dren pluvial.</p></article></div></section>
 
-        <section className="cds-section cds-amenities"><div className="cds-wrap"><SectionHeading eyebrow="ESPACIOS DEL DESARROLLO" title="Espacios contemplados para disfrutar">Áreas comunes proyectadas dentro del residencial, pensadas para convivir al aire libre sin salir del desarrollo.</SectionHeading><div className="cds-amenity-list">{AMENIDADES.map(([nombre, Icono]) => <span key={nombre}><Icono size={20} strokeWidth={1.7} aria-hidden="true" />{nombre}</span>)}</div><WhatsApp intent="amenities" className="cds-text-link">Consultar avance de cada área <ArrowRight size={17} /></WhatsApp></div></section>
+        <section className="cds-section cds-amenities"><div className="cds-wrap"><SectionHeading eyebrow="ESPACIOS DEL DESARROLLO" title="Espacios contemplados para disfrutar">Áreas comunes proyectadas dentro del residencial, pensadas para convivir al aire libre sin salir del desarrollo.</SectionHeading><div className="cds-amenity-list">{AMENIDADES.map((nombre, index) => <article key={nombre}><span>{String(index + 1).padStart(2, '0')}</span><strong>{nombre}</strong></article>)}</div><WhatsApp intent="amenities" className="cds-text-link">Consultar avance de cada área <ArrowRight size={17} /></WhatsApp></div></section>
 
         <section className="cds-section cds-wrap cds-faq"><SectionHeading eyebrow="PREGUNTAS FRECUENTES" title="Respuestas antes de visitar" /><div className="cds-faq-list">{faqs.map(([question, answer], index) => <div className="cds-faq-item" key={question}><button type="button" aria-expanded={faq === index} onClick={() => { setFaq(faq === index ? -1 : index); track('faq_expand', { question: index }); }}><span>{question}</span><span aria-hidden="true">{faq === index ? '−' : '+'}</span></button>{faq === index && <p>{answer}</p>}</div>)}</div></section>
 

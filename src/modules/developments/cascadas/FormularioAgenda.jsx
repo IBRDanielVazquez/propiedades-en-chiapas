@@ -62,9 +62,14 @@ export default function FormularioAgenda({ onLeadSubmit }) {
       `Preferencia de día: ${dia}.\n` +
       `Mi WhatsApp: ${telefono}.`;
 
+    const whatsappUrl = `https://wa.me/${PHONE}?text=${encodeURIComponent(mensaje)}`;
+    window.dispatchEvent(new CustomEvent('pec:whatsapp', { detail: {
+      url: whatsappUrl, nombre: lead.nombre, telefono: lead.telefono,
+      desarrollo: lead.desarrollo, intencion: 'Agendar visita', preferencia: dia,
+    } }));
     setEnviado(true);
     window.open(
-      `https://wa.me/${PHONE}?text=${encodeURIComponent(mensaje)}`,
+      whatsappUrl,
       '_blank',
       'noopener,noreferrer',
     );
@@ -77,12 +82,11 @@ export default function FormularioAgenda({ onLeadSubmit }) {
           <span className="cds-eyebrow">AGENDA TU VISITA</span>
           <h2>Conoce el terreno antes de decidir.</h2>
           <p>
-            Déjanos tres datos y te confirmamos horario por WhatsApp. La visita es sin costo
-            y sin compromiso de compra.
+            Déjanos tus datos y un asesor te contactará por WhatsApp para acordar la fecha y el horario.
           </p>
           <ul className="cds-agenda-list">
-            <li><CalendarCheck size={18} /> Te confirmamos el horario el mismo día</li>
-            <li><MessageCircle size={18} /> Te compartimos la ubicación exacta para llegar</li>
+            <li><CalendarCheck size={18} /> Coordina fecha y horario con un asesor</li>
+            <li><MessageCircle size={18} /> Recibe las indicaciones para llegar</li>
           </ul>
         </div>
 
@@ -158,7 +162,7 @@ export default function FormularioAgenda({ onLeadSubmit }) {
                 Agendar mi visita <ArrowRight size={18} />
               </button>
               <small className="cds-agenda-nota">
-                Te responde un asesor de Propiedades en Chiapas. Sin costo y sin compromiso.
+                Un asesor de Propiedades en Chiapas continuará la conversación por WhatsApp.
               </small>
             </>
           )}
