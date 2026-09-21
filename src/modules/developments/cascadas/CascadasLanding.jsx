@@ -16,8 +16,8 @@ const AMENIDADES = [
 
 const PHONE = '529612466204';
 const messages = {
-  general: 'Hola, vi Cascadas del Sur. Quiero información sobre los terrenos y las condiciones vigentes.',
-  price: 'Hola, vi la opción de 200 m² de Cascadas del Sur. ¿Me confirman el precio y las condiciones vigentes?',
+  general: 'Hola, me interesa Cascadas del Sur. Quiero conocer los terrenos disponibles.',
+  price: 'Hola, quiero hacer mío un terreno de 200 m² en Cascadas del Sur. ¿Me ayudan a comenzar?',
   plan: 'Hola, quiero conocer el Master Plan y las ubicaciones disponibles en Cascadas del Sur.',
   location: 'Hola, ¿me comparten la ubicación para conocer Cascadas del Sur?',
   amenities: 'Hola, quisiera saber qué amenidades de Cascadas del Sur están disponibles actualmente.',
@@ -98,11 +98,11 @@ export default function CascadasLanding() {
   };
 
   const faqs = [
-    ['¿Qué superficie tienen los terrenos?', 'La superficie estándar comunicada es de 200 m² (10 × 20 m). También existen lotes de mayor superficie; consulta cuáles están disponibles.'],
-    ['¿Cuentan con escritura?', 'Sí. El proyecto comunica escritura pública. Un asesor puede explicarte el proceso y la documentación correspondiente al lote de tu interés.'],
-    ['¿Hay financiamiento?', 'Sí. La lista comercial del 07/08/2026 documenta una opción de 200 m² con enganche de $25,000 y 80 mensualidades. Las condiciones dependen del lote y deben confirmarse antes de tomar una decisión.'],
-    ['¿Puedo visitar antes de comprar?', 'Sí. Las visitas se programan previamente por WhatsApp.'],
-    ['¿Qué infraestructura se comunica?', 'Factibilidad de luz, calles de material mejorado y sistema de dren pluvial. No se comunica que cuente con todos los servicios.'],
+    ['¿Desde qué tamaño puedo elegir mi terreno?', 'Tenemos lotes desde 200 m², con medidas de 10 × 20 m. También hay superficies mayores para quienes buscan más espacio.'],
+    ['¿Mi terreno cuenta con escritura pública?', 'Sí. Los terrenos cuentan con escritura pública, para que construyas tu patrimonio con certeza jurídica.'],
+    ['¿Cómo puedo pagarlo?', 'Puedes comenzar con $25,000 de enganche. Para un terreno de 200 m², el plan contempla 80 mensualidades de $4,312.50. El precio es de $370,000.'],
+    ['¿Puedo conocer Cascadas del Sur antes de decidir?', 'Claro. Agenda una visita para recorrer el desarrollo, conocer el entorno y resolver tus dudas directamente con un asesor.'],
+    ['¿Qué incluye el desarrollo?', 'Cascadas del Sur contempla factibilidad de luz, calles de material mejorado y sistema de dren pluvial.'],
   ];
 
   return (
@@ -112,7 +112,7 @@ export default function CascadasLanding() {
         <meta name="description" content="Terrenos residenciales desde 200 m² en Berriozábal, Chiapas, con escritura pública y financiamiento. Explora fotos, recorrido 360° y agenda una visita." />
         <link rel="canonical" href="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
         <meta property="og:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" />
-        <meta property="og:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />
+        <meta property="og:description" content="Un terreno propio en Berriozábal desde 200 m². Escritura pública, financiamiento y recorrido 360° de Cascadas del Sur." />
         <meta property="og:url" content="https://www.propiedadesenchiapas.com/cascadas-del-sur/" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="Propiedades en Chiapas" />
@@ -124,7 +124,7 @@ export default function CascadasLanding() {
         <meta property="og:image:alt" content="Terrenos en Cascadas del Sur Residencial, Berriozábal, Chiapas" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" />
-        <meta name="twitter:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />
+        <meta name="twitter:description" content="Un terreno propio en Berriozábal desde 200 m². Escritura pública, financiamiento y recorrido 360° de Cascadas del Sur." />
         <meta name="twitter:image" content="https://www.propiedadesenchiapas.com/cascadas/og-cascadas.jpg" />
         <script type="application/ld+json">{JSON.stringify({
           '@context': 'https://schema.org',
@@ -159,9 +159,9 @@ export default function CascadasLanding() {
         </section>
 
         <section className="cds-facts cds-wrap" aria-label="Guía para conocer Cascadas del Sur">
-          <div><FileCheck2 size={22} /><strong>Patrimonio con certeza</strong><span>Terrenos comunicados con escritura pública.</span></div>
+          <div><FileCheck2 size={22} /><strong>Patrimonio con certeza</strong><span>Tu terreno cuenta con escritura pública.</span></div>
           <div><Compass size={22} /><strong>Naturaleza para disfrutar</strong><span>Un desarrollo con espacios contemplados para convivir al aire libre.</span></div>
-          <div><Ruler size={22} /><strong>Una forma posible de comenzar</strong><span>200 m² desde $370,000 en la opción de entrada.</span></div>
+          <div><Ruler size={22} /><strong>Una forma posible de comenzar</strong><span>Lotes desde 200 m² por $370,000.</span></div>
         </section>
 
         <section id="explorar" className="cds-section cds-wrap cds-explore">
@@ -169,17 +169,17 @@ export default function CascadasLanding() {
           <GaleriaCascadas />
         </section>
 
-        <section id="plano" className="cds-section cds-plan"><div className="cds-wrap cds-split"><div><SectionHeading eyebrow="MASTER PLAN" title="Imagina tu lugar dentro de Cascadas del Sur">Cada terreno forma parte de una visión más amplia: vialidades, espacios comunes y naturaleza alrededor. Recorre el plano y descubre en qué parte del desarrollo te gustaría comenzar tu historia.</SectionHeading><WhatsApp intent="plan" className="cds-button cds-button-primary">Encontrar mi lugar <ArrowRight size={18} /></WhatsApp><p className="cds-plan-nota">Disponibilidad comunicada: últimos 50 lotes. La ubicación y condiciones se confirman con un asesor.</p></div><PlanoZoom src="/cascadas/masterplan.webp" srcMovil="/cascadas/masterplan-movil.webp" ancho={3253} alto={4719} alt="Master plan de Cascadas del Sur Residencial con vialidades, lotes y amenidades" etiqueta="Ver master plan" /></div></section>
+        <section id="plano" className="cds-section cds-plan"><div className="cds-wrap cds-split"><div><SectionHeading eyebrow="MASTER PLAN" title="Imagina tu lugar dentro de Cascadas del Sur">Cada terreno forma parte de una visión más amplia: vialidades, espacios comunes y naturaleza alrededor. Recorre el plano y descubre en qué parte del desarrollo te gustaría comenzar tu historia.</SectionHeading><WhatsApp intent="plan" className="cds-button cds-button-primary">Encontrar mi lugar <ArrowRight size={18} /></WhatsApp><p className="cds-plan-nota">Quedan 50 lotes. Elige la ubicación que mejor acompañe el proyecto que tienes en mente.</p></div><PlanoZoom src="/cascadas/masterplan.webp" srcMovil="/cascadas/masterplan-movil.webp" ancho={3253} alto={4719} alt="Master plan de Cascadas del Sur Residencial con vialidades, lotes y amenidades" etiqueta="Ver master plan" /></div></section>
 
         <section id="ubicacion" className="cds-section cds-wrap cds-location"><div className="cds-split"><div><SectionHeading eyebrow="UBICACIÓN" title="Naturaleza en el corredor Tuxtla–Berriozábal">Cascadas del Sur se encuentra en Berriozábal, con acceso desde la carretera Tuxtla–Berriozábal. Un entorno para respirar distinto sin perder conexión con la zona que mueve tu vida.</SectionHeading><WhatsApp intent="location" className="cds-button cds-button-primary">Quiero conocer el camino <ArrowRight size={18} /></WhatsApp></div><PlanoZoom src="/cascadas/plano-ubicacion.webp" srcMovil="/cascadas/plano-ubicacion-movil.webp" ancho={1800} alto={1200} alt="Plano de ubicación de Cascadas del Sur entre Berriozábal y Tuxtla Gutiérrez" etiqueta="Ver plano de ubicación" /></div></section>
 
-        <section id="informacion" className="cds-section cds-info"><div className="cds-wrap"><SectionHeading eyebrow="TU TERRENO PUEDE EMPEZAR HOY" title="Hazlo tuyo desde $25,000 de enganche">Dar el primer paso puede ser más cercano de lo que imaginas. Esta opción combina una superficie de 200 m² con un plan definido para avanzar hacia un patrimonio propio.</SectionHeading><div className="cds-pricing"><div className="cds-price-main"><span>EL PRIMER PASO</span><strong>$25,000 <small>MXN</small></strong><p>Enganche documentado para la opción de entrada de 200 m².</p><WhatsApp intent="price" className="cds-button cds-button-primary">Quiero dar el primer paso <ArrowRight size={18} /></WhatsApp></div><div className="cds-price-details"><div><span>Tu terreno</span><strong>200 m² · 10 × 20 m</strong></div><div><span>Precio documentado</span><strong>$370,000</strong></div><div><span>Para avanzar a tu ritmo</span><strong>80 pagos de $4,312.50</strong></div><p>Referencia de la lista comercial del 07/08/2026. Existen otras ubicaciones, superficies y condiciones según el lote.</p></div></div></div></section>
+        <section id="informacion" className="cds-section cds-info"><div className="cds-wrap"><SectionHeading eyebrow="TU TERRENO PUEDE EMPEZAR HOY" title="Hazlo tuyo desde $25,000 de enganche">Un plan claro para dejar de imaginarlo y comenzar a construirlo: 200 m² para tu patrimonio, con mensualidades que te permiten avanzar paso a paso.</SectionHeading><div className="cds-pricing"><div className="cds-price-main"><span>EMPIEZA A HACERLO TUYO</span><strong>$25,000 <small>MXN</small></strong><p>Da el enganche y comienza el camino hacia un terreno propio de 200 m².</p><WhatsApp intent="price" className="cds-button cds-button-primary">Quiero dar el primer paso <ArrowRight size={18} /></WhatsApp></div><div className="cds-price-details"><div><span>El espacio para tu proyecto</span><strong>200 m² · 10 × 20 m</strong></div><div><span>Valor del terreno</span><strong>$370,000</strong></div><div><span>Un plan para avanzar a tu ritmo</span><strong>80 pagos de $4,312.50</strong></div><p>También contamos con otras superficies y ubicaciones dentro del desarrollo. Encuentra la que mejor se adapte a lo que quieres construir.</p></div></div></div></section>
 
-        <section className="cds-section cds-wrap cds-trust"><SectionHeading eyebrow="PATRIMONIO SOBRE BASES FIRMES" title="La tranquilidad también forma parte de la decisión">Elegir un terreno significa pensar en el futuro. Por eso Cascadas del Sur reúne elementos concretos que aportan certeza desde el inicio.</SectionHeading><div className="cds-trust-grid"><article><span>01</span><FileCheck2 /><h3>Escritura pública</h3><p>La certeza de construir patrimonio sobre una base jurídica documentada.</p></article><article><span>02</span><Ruler /><h3>Espacio para tu proyecto</h3><p>Desde 200 m², con una medida estándar de 10 × 20 m.</p></article><article><span>03</span><MapPin /><h3>Un desarrollo planeado</h3><p>Factibilidad de luz, calles de material mejorado y sistema de dren pluvial.</p></article><article><span>04</span><Compass /><h3>Una oportunidad que sigue abierta</h3><p>Disponibilidad comunicada de los últimos 50 lotes.</p></article></div></section>
+        <section className="cds-section cds-wrap cds-trust"><SectionHeading eyebrow="PATRIMONIO SOBRE BASES FIRMES" title="La tranquilidad también forma parte de la decisión">Elegir un terreno significa pensar en el futuro. Por eso Cascadas del Sur reúne elementos concretos que aportan certeza desde el inicio.</SectionHeading><div className="cds-trust-grid"><article><span>01</span><FileCheck2 /><h3>Escritura pública</h3><p>Tu terreno cuenta con certeza jurídica para construir patrimonio sobre bases firmes.</p></article><article><span>02</span><Ruler /><h3>Espacio para tu proyecto</h3><p>Lotes desde 200 m², con medidas de 10 × 20 m.</p></article><article><span>03</span><MapPin /><h3>Un desarrollo planeado</h3><p>Factibilidad de luz, calles de material mejorado y sistema de dren pluvial.</p></article><article><span>04</span><Compass /><h3>Tu momento para elegir</h3><p>Quedan 50 lotes para encontrar el lugar que mejor encaje con tu proyecto.</p></article></div></section>
 
         <section className="cds-section cds-amenities"><div className="cds-wrap"><SectionHeading eyebrow="LA VIDA TAMBIÉN SUCEDE AFUERA" title="Un entorno para crear recuerdos">Caminar entre la naturaleza, compartir una tarde en familia, salir en bicicleta o simplemente detenerse a mirar el paisaje. Las amenidades contempladas hacen del desarrollo un lugar para disfrutar, además de invertir.</SectionHeading><div className="cds-amenity-list">{AMENIDADES.map(([nombre, Icono]) => <article key={nombre}><span><Icono size={24} strokeWidth={1.7} aria-hidden="true" /></span><strong>{nombre}</strong></article>)}</div><WhatsApp intent="amenities" className="cds-text-link">Quiero conocer esta experiencia <ArrowRight size={17} /></WhatsApp></div></section>
 
-        <section className="cds-section cds-wrap cds-faq"><SectionHeading eyebrow="CLARIDAD PARA DECIDIR" title="Cuando el futuro importa, cada respuesta cuenta">Encuentra aquí la información esencial sobre superficie, escritura, financiamiento, infraestructura y visitas.</SectionHeading><div className="cds-faq-list">{faqs.map(([question, answer], index) => <div className="cds-faq-item" key={question}><button type="button" aria-expanded={faq === index} onClick={() => { setFaq(faq === index ? -1 : index); track('faq_expand', { question: index }); }}><span>{question}</span><span aria-hidden="true">{faq === index ? '−' : '+'}</span></button>{faq === index && <p>{answer}</p>}</div>)}</div></section>
+        <section className="cds-section cds-wrap cds-faq"><SectionHeading eyebrow="CLARIDAD PARA DECIDIR" title="Cuando el futuro importa, cada respuesta cuenta">Aquí tienes respuestas directas sobre tu terreno, la escritura pública, el plan de pagos y la experiencia de conocer el desarrollo.</SectionHeading><div className="cds-faq-list">{faqs.map(([question, answer], index) => <div className="cds-faq-item" key={question}><button type="button" aria-expanded={faq === index} onClick={() => { setFaq(faq === index ? -1 : index); track('faq_expand', { question: index }); }}><span>{question}</span><span aria-hidden="true">{faq === index ? '−' : '+'}</span></button>{faq === index && <p>{answer}</p>}</div>)}</div></section>
 
         <FormularioAgenda />
 
