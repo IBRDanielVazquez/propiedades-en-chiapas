@@ -26,6 +26,7 @@ export default function GaleriaCascadas() {
   const [slide, setSlide] = useState(0);
   const [lightbox, setLightbox] = useState(null); // {tipo:'foto'|'plano', indice}
   const [panoIdx, setPanoIdx] = useState(0);
+  const [tourCompleto, setTourCompleto] = useState(false);
   const [cargadas, setCargadas] = useState(() => new Set([0, 1, 16]));
 
   const stageRef = useRef(null);
@@ -63,6 +64,24 @@ export default function GaleriaCascadas() {
     if (visorRef.current) visorRef.current.setPanorama(PANORAMAS[panoIdx].src, { showLoader: true });
   }, [panoIdx]);
 
+  useEffect(() => {
+    if (!tourCompleto) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') setTourCompleto(false);
+      if (event.key === 'ArrowRight') setPanoIdx((current) => (current + 1) % PANORAMAS.length);
+      if (event.key === 'ArrowLeft') setPanoIdx((current) => (current - 1 + PANORAMAS.length) % PANORAMAS.length);
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    const timer = window.setTimeout(() => visorRef.current?.autoSize(), 80);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+      window.setTimeout(() => visorRef.current?.autoSize(), 80);
+    };
+  }, [tourCompleto]);
+
   // Teclado del lightbox
   useEffect(() => {
     if (!lightbox) return undefined;
@@ -79,11 +98,8 @@ export default function GaleriaCascadas() {
   }, [lightbox]);
 
   const pantallaCompleta = () => {
-    const el = stageRef.current?.parentElement;
-    if (!el) return;
-    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
-    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    setTimeout(() => visorRef.current?.autoSize(), 150);
+    setTourCompleto(true);
+    dispararEvento('ViewContent', { content_name: 'Cascadas del Sur', seccion: 'tour_360_pantalla_completa' });
   };
 
   return (
@@ -150,10 +166,20 @@ export default function GaleriaCascadas() {
         {/* ---------- RECORRIDO 360 ---------- */}
         {pestana === 'tour' && (
           <div>
-            <div className="cds-stage-wrap">
+            <div className={`cds-stage-wrap ${tourCompleto ? 'cds-stage-full' : ''}`} role={tourCompleto ? 'dialog' : undefined} aria-modal={tourCompleto ? 'true' : undefined} aria-label={tourCompleto ? 'Recorrido virtual de Cascadas del Sur en pantalla completa' : undefined}>
               <div className="cds-stage" ref={stageRef} />
               <span className="cds-badge"><i />{PANORAMAS[panoIdx].titulo}</span>
-              <button type="button" className="cds-sfull" onClick={pantallaCompleta}><Expand size={15} /> Ver completo</button>
+              {!tourCompleto && <button type="button" className="cds-sfull" onClick={pantallaCompleta}><Expand size={15} /> Ver completo</button>}
+              {tourCompleto && (
+                <>
+                  <button type="button" className="cds-tour-close" onClick={() => setTourCompleto(false)} aria-label="Cerrar recorrido completo"><X size={20} /></button>
+                  <div className="cds-tour-nav">
+                    <button type="button" onClick={() => setPanoIdx((panoIdx - 1 + PANORAMAS.length) % PANORAMAS.length)} aria-label="Panorámica anterior"><ChevronLeft size={20} /></button>
+                    <span>{panoIdx + 1} / {PANORAMAS.length}</span>
+                    <button type="button" onClick={() => setPanoIdx((panoIdx + 1) % PANORAMAS.length)} aria-label="Panorámica siguiente"><ChevronRight size={20} /></button>
+                  </div>
+                </>
+              )}
             </div>
             <div className="cds-tiras cds-tiras-360">
               {PANORAMAS.map((p, i) => (
