@@ -110,6 +110,7 @@ buildRioja360HTML();
 
 // Metadata específica para la landing de Cascadas del Sur, servida por Vercel.
 const cascadasContent = content
+    .replace('<link rel="icon" type="image/svg+xml" href="/favicon.svg" />', '<link rel="icon" type="image/png" href="/cascadas/favicon.png" /><link rel="apple-touch-icon" href="/cascadas/apple-touch-icon.png" />')
     .replace(/<title>[^<]+<\/title>/, '<title>Terrenos de 200 m² en Berriozábal | Cascadas del Sur</title>')
     .replace(/<meta property="og:title" content="[^"]+" \/>/, '<meta property="og:title" content="Terrenos de 200 m² en Berriozábal | Cascadas del Sur" />')
     .replace(/<meta property="og:description" content="[^"]+" \/>/, '<meta property="og:description" content="Escritura pública, financiamiento y recorrido 360°. Conoce el desarrollo y consulta las condiciones vigentes." />')

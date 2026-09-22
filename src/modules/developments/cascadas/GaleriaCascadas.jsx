@@ -16,13 +16,13 @@ const PANORAMAS = [
 ];
 
 const PESTANAS = [
+  { id: 'video', etiqueta: 'Video', Icono: Play },
   { id: 'fotos', etiqueta: 'Imágenes', Icono: Images },
   { id: 'tour', etiqueta: 'Recorrido virtual', Icono: Compass },
-  { id: 'video', etiqueta: 'Video', Icono: Play },
 ];
 
 export default function GaleriaCascadas() {
-  const [pestana, setPestana] = useState('fotos');
+  const [pestana, setPestana] = useState('video');
   const [slide, setSlide] = useState(0);
   const [lightbox, setLightbox] = useState(null); // {tipo:'foto'|'plano', indice}
   const [panoIdx, setPanoIdx] = useState(0);
