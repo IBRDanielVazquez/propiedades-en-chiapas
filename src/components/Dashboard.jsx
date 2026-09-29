@@ -263,6 +263,7 @@ export default function Dashboard({ session, onLogout }) {
 
 
   const [newAmenity, setNewAmenity] = useState('');
+  const [newImageUrl, setNewImageUrl] = useState('');
 
 
 
@@ -296,6 +297,43 @@ export default function Dashboard({ session, onLogout }) {
         amenities: alreadySelected 
           ? prev.amenities.filter(a => a !== amenity)
           : [...prev.amenities, amenity]
+      };
+    });
+  };
+
+  const addCustomAmenity = () => {
+    const amenity = newAmenity.trim();
+    if (!amenity) return;
+    if (!amenities.includes(amenity)) setAmenities(prev => [...prev, amenity]);
+    setProperty(prev => ({
+      ...prev,
+      amenities: prev.amenities.includes(amenity) ? prev.amenities : [...prev.amenities, amenity]
+    }));
+    setNewAmenity('');
+  };
+
+  const addImageUrl = () => {
+    const imageUrl = newImageUrl.trim();
+    if (!imageUrl) return;
+    if ((property.images || []).length >= 15) {
+      alert('Has alcanzado el límite máximo de 15 fotos por propiedad.');
+      return;
+    }
+    setProperty(prev => ({
+      ...prev,
+      images: [...(prev.images || []), imageUrl],
+      featured_image_url: prev.featured_image_url || imageUrl
+    }));
+    setNewImageUrl('');
+  };
+
+  const removeImage = (imageUrl) => {
+    setProperty(prev => {
+      const images = (prev.images || []).filter(image => image !== imageUrl);
+      return {
+        ...prev,
+        images,
+        featured_image_url: prev.featured_image_url === imageUrl ? (images[0] || '') : prev.featured_image_url
       };
     });
   };
@@ -452,7 +490,7 @@ export default function Dashboard({ session, onLogout }) {
         year_built: '', floors: '', furnished: false, maid_room: false,
         bedrooms: 0, bathrooms: 0, garages: 0,
         municipality: '', colony: '', postal_code: '',
-        featured_image_url: '', images: [], amenities: []
+        featured_image_url: '', map_url: '', images: [], amenities: []
       });
       setImagePreview(null);
       setCurrentView('properties');
@@ -486,18 +524,36 @@ export default function Dashboard({ session, onLogout }) {
   };
 
   const handleEditProperty = (prop) => {
-    setProperty({ ...prop });
+    setProperty({
+      ...property,
+      ...prop,
+      images: Array.isArray(prop.images) ? prop.images : [],
+      amenities: Array.isArray(prop.amenities) ? prop.amenities : []
+    });
+    setImagePreview(prop.featured_image_url || null);
+    setActiveTab('description');
     setCurrentView('add-property');
   };
 
   const tabs = [
     { id: 'description', label: '1. Descripción' },
     { id: 'price', label: '2. Precio' },
-    { id: 'media', label: '3. Fotos y Video' },
+    { id: 'media', label: '3. Fotografías' },
     { id: 'details', label: '4. Detalles' },
     { id: 'location', label: '5. Ubicación' },
     { id: 'amenities', label: '6. Amenidades' }
   ];
+
+  const municipalityOptions = Object.keys(chiapasData);
+  const postalCodeOptions = property.municipality && chiapasData[property.municipality]
+    ? Object.keys(chiapasData[property.municipality])
+    : [];
+  const colonyOptions = property.municipality && property.postal_code
+    ? (chiapasData[property.municipality]?.[property.postal_code] || [])
+    : [];
+  const formGridStyle = { display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, minmax(0, 1fr))', gap: '1.25rem' };
+  const fieldStyle = { display: 'flex', flexDirection: 'column', gap: '0.45rem' };
+  const labelStyle = { fontSize: '0.82rem', fontWeight: '700', color: '#334155' };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
@@ -595,16 +651,164 @@ export default function Dashboard({ session, onLogout }) {
                     </button>
                   ))}
                 </div>
-                {/* Simplified content blocks for Add Property */}
                 {activeTab === 'description' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <input type="text" name="title" value={property.title} onChange={handleInputChange} placeholder="Título" className="form-input" />
-                    <textarea name="description" value={property.description} onChange={handleInputChange} placeholder="Descripción" className="form-textarea" style={{ height: '150px' }} />
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Título de la propiedad *</label>
+                      <input type="text" name="title" value={property.title} onChange={handleInputChange} placeholder="Ej. Casa en Residencial Campestre" className="form-input" />
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Descripción completa</label>
+                      <textarea name="description" value={property.description} onChange={handleInputChange} placeholder="Describe los espacios, acabados, entorno y ventajas de la propiedad" className="form-textarea" style={{ minHeight: '180px' }} />
+                    </div>
+                    <div style={formGridStyle}>
+                      <div style={fieldStyle}>
+                        <label style={labelStyle}>Tipo de propiedad</label>
+                        <select name="type" value={property.type} onChange={handleInputChange} className="form-input">
+                          {propertyTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                        </select>
+                      </div>
+                      <div style={fieldStyle}>
+                        <label style={labelStyle}>Estado comercial</label>
+                        <select name="status" value={property.status} onChange={handleInputChange} className="form-input">
+                          {['Disponible', 'Apartada', 'Vendida', 'Rentada', 'En preventa'].map(status => <option key={status} value={status}>{status}</option>)}
+                        </select>
+                      </div>
+                    </div>
                   </div>
                 )}
-                {/* ... other tabs would go here ... */}
+
+                {activeTab === 'price' && (
+                  <div style={formGridStyle}>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Operación</label>
+                      <select name="operation_type" value={property.operation_type} onChange={handleInputChange} className="form-input">
+                        <option value="Venta">Venta</option>
+                        <option value="Renta">Renta</option>
+                      </select>
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Precio en MXN *</label>
+                      <input type="number" min="0" step="1" name="price" value={property.price} onChange={handleInputChange} placeholder="2500000" className="form-input" />
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Texto después del precio</label>
+                      <input type="text" name="price_suffix" value={property.price_suffix} onChange={handleInputChange} placeholder="Ej. / mes, negociable" className="form-input" />
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'media' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Agregar fotografía desde una dirección web</label>
+                      <div style={{ display: 'flex', gap: '0.75rem', flexDirection: isMobile ? 'column' : 'row' }}>
+                        <input type="url" value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} placeholder="https://..." className="form-input" style={{ flex: 1 }} />
+                        <button type="button" onClick={addImageUrl} className="btn-primary" style={{ padding: '0.75rem 1.25rem' }}>Agregar foto</button>
+                      </div>
+                    </div>
+                    <label onDragOver={e => e.preventDefault()} onDrop={handleFileDrop} style={{ border: '2px dashed #cbd5e1', borderRadius: '14px', padding: '2rem', textAlign: 'center', cursor: 'pointer', background: '#f8fafc', color: '#475569' }}>
+                      <input type="file" accept="image/*" multiple onChange={handleFileDrop} style={{ display: 'none' }} />
+                      <strong>Arrastra fotografías aquí o pulsa para seleccionarlas</strong>
+                      <div style={{ fontSize: '0.78rem', marginTop: '0.4rem', color: '#94a3b8' }}>Hasta 15 imágenes. Marca una como portada.</div>
+                    </label>
+                    {(property.images || []).length > 0 && (
+                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1rem' }}>
+                        {property.images.map((image, index) => (
+                          <div key={`${image}-${index}`} style={{ border: property.featured_image_url === image ? '3px solid #0284c7' : '1px solid #e2e8f0', borderRadius: '12px', overflow: 'hidden', background: '#fff' }}>
+                            <img src={image} alt={`Fotografía ${index + 1}`} style={{ width: '100%', height: '120px', objectFit: 'cover', display: 'block' }} />
+                            <div style={{ display: 'flex', gap: '0.35rem', padding: '0.5rem' }}>
+                              <button type="button" onClick={() => setProperty(prev => ({ ...prev, featured_image_url: image }))} style={{ flex: 1, border: 'none', borderRadius: '6px', padding: '0.4rem', cursor: 'pointer', background: property.featured_image_url === image ? '#e0f2fe' : '#f1f5f9', color: '#0369a1', fontSize: '0.7rem', fontWeight: '700' }}>
+                                {property.featured_image_url === image ? '✓ Portada' : 'Usar portada'}
+                              </button>
+                              <button type="button" onClick={() => removeImage(image)} aria-label="Eliminar fotografía" style={{ border: 'none', borderRadius: '6px', padding: '0.4rem 0.6rem', cursor: 'pointer', background: '#fef2f2', color: '#dc2626' }}>×</button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'details' && (
+                  <div style={formGridStyle}>
+                    {[
+                      ['size_m2', 'Superficie mostrada en la tarjeta (m²)', 'number'],
+                      ['size_land_m2', 'Superficie de terreno (m²)', 'number'],
+                      ['size_construction_m2', 'Superficie de construcción (m²)', 'number'],
+                      ['bedrooms', 'Recámaras', 'number'],
+                      ['bathrooms', 'Baños', 'number'],
+                      ['garages', 'Estacionamientos', 'number'],
+                      ['year_built', 'Año de construcción', 'number'],
+                      ['floors', 'Niveles', 'number']
+                    ].map(([name, label, type]) => (
+                      <div key={name} style={fieldStyle}>
+                        <label style={labelStyle}>{label}</label>
+                        <input type={type} min="0" step={name === 'bathrooms' ? '0.5' : '1'} name={name} value={property[name]} onChange={handleInputChange} className="form-input" />
+                      </div>
+                    ))}
+                    <label style={{ ...fieldStyle, flexDirection: 'row', alignItems: 'center', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
+                      <input type="checkbox" name="furnished" checked={property.furnished} onChange={handleInputChange} /> Amueblada
+                    </label>
+                    <label style={{ ...fieldStyle, flexDirection: 'row', alignItems: 'center', padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
+                      <input type="checkbox" name="maid_room" checked={property.maid_room} onChange={handleInputChange} /> Cuarto de servicio
+                    </label>
+                  </div>
+                )}
+
+                {activeTab === 'location' && (
+                  <div style={formGridStyle}>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Municipio</label>
+                      <select name="municipality" value={property.municipality} onChange={handleInputChange} className="form-input">
+                        <option value="">Selecciona un municipio</option>
+                        {municipalityOptions.map(municipality => <option key={municipality} value={municipality}>{municipality}</option>)}
+                      </select>
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Código postal</label>
+                      <select name="postal_code" value={property.postal_code} onChange={handleInputChange} className="form-input" disabled={!property.municipality}>
+                        <option value="">Selecciona un código postal</option>
+                        {postalCodeOptions.map(postalCode => <option key={postalCode} value={postalCode}>{postalCode}</option>)}
+                      </select>
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Colonia</label>
+                      <select name="colony" value={property.colony} onChange={handleInputChange} className="form-input" disabled={!property.postal_code}>
+                        <option value="">Selecciona una colonia</option>
+                        {colonyOptions.map((colony, index) => <option key={`${colony}-${index}`} value={colony}>{colony}</option>)}
+                      </select>
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Enlace de Google Maps</label>
+                      <input type="url" name="map_url" value={property.map_url} onChange={handleInputChange} placeholder="https://maps.google.com/..." className="form-input" />
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'amenities' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, minmax(0, 1fr))', gap: '0.75rem' }}>
+                      {amenities.map(amenity => (
+                        <label key={amenity} style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.85rem', border: property.amenities.includes(amenity) ? '1px solid #38bdf8' : '1px solid #e2e8f0', borderRadius: '10px', background: property.amenities.includes(amenity) ? '#f0f9ff' : '#fff', cursor: 'pointer', fontSize: '0.82rem', fontWeight: '600' }}>
+                          <input type="checkbox" checked={property.amenities.includes(amenity)} onChange={() => handleAmenityToggle(amenity)} />
+                          {amenity}
+                        </label>
+                      ))}
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Agregar una amenidad personalizada</label>
+                      <div style={{ display: 'flex', gap: '0.75rem', flexDirection: isMobile ? 'column' : 'row' }}>
+                        <input type="text" value={newAmenity} onChange={e => setNewAmenity(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCustomAmenity(); } }} placeholder="Ej. Paneles solares" className="form-input" style={{ flex: 1 }} />
+                        <button type="button" onClick={addCustomAmenity} className="btn-primary" style={{ padding: '0.75rem 1.25rem' }}>Agregar amenidad</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                  <button onClick={saveProperty} className="btn-primary" style={{ padding: '1rem 2rem' }}>Guardar Propiedad</button>
+                  <button onClick={saveProperty} disabled={isSaving} className="btn-primary" style={{ padding: '1rem 2rem', opacity: isSaving ? 0.65 : 1 }}>
+                    {isSaving ? 'Guardando...' : 'Guardar Propiedad'}
+                  </button>
                 </div>
               </div>
             </div>

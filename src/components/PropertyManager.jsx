@@ -55,7 +55,9 @@ export default function PropertyManager({ properties, onToggleActive, onEdit, on
                   </span>
                 )}
               </div>
-              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0' }}>{prop.type} · {prop.city} · {prop.size_m2}m²</p>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: '0.25rem 0' }}>
+                {[prop.type, prop.city || prop.municipality, prop.size_m2 ? `${prop.size_m2}m²` : null].filter(Boolean).join(' · ')}
+              </p>
               <p style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0284c7', margin: 0 }}>
                 {formatPrice(prop.price)} {prop.price_suffix}
               </p>
