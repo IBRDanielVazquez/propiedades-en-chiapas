@@ -168,8 +168,16 @@ export default function Dashboard({ session, onLogout }) {
     featured_image_url: '',
     map_url: '',
     images: [],
-
-    amenities: []
+    video_urls: [],
+    amenities: [],
+    features: [],
+    template_key: 'desarrollo',
+    landing_slug: '',
+    canonical_key: '',
+    headline: '',
+    subheadline: '',
+    tagline: '',
+    content_sections: []
   });
 
   const [currentView, setCurrentView] = useState(() => (
@@ -264,6 +272,29 @@ export default function Dashboard({ session, onLogout }) {
 
   const [newAmenity, setNewAmenity] = useState('');
   const [newImageUrl, setNewImageUrl] = useState('');
+
+  const updateContentSection = (index, field, value) => {
+    setProperty(prev => ({
+      ...prev,
+      content_sections: (prev.content_sections || []).map((section, sectionIndex) => (
+        sectionIndex === index ? { ...section, [field]: value } : section
+      ))
+    }));
+  };
+
+  const addContentSection = () => {
+    setProperty(prev => ({
+      ...prev,
+      content_sections: [...(prev.content_sections || []), { title: 'Nueva sección', body: '' }]
+    }));
+  };
+
+  const removeContentSection = index => {
+    setProperty(prev => ({
+      ...prev,
+      content_sections: (prev.content_sections || []).filter((_, sectionIndex) => sectionIndex !== index)
+    }));
+  };
 
 
 
@@ -421,6 +452,13 @@ export default function Dashboard({ session, onLogout }) {
     
     setIsSaving(true);
     try {
+      const generatedSlug = (property.landing_slug || property.title)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-');
       const payload = {
         user_id: (currentUser.plan === 'admin' && adminUserFilter !== 'all') ? adminUserFilter : currentUser.id,
         title: property.title,
@@ -445,7 +483,16 @@ export default function Dashboard({ session, onLogout }) {
         postal_code: property.postal_code,
         featured_image_url: property.featured_image_url || (property.images && property.images[0]) || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600',
         images: property.images || [],
+        video_urls: property.video_urls || [],
         amenities: property.amenities || [],
+        features: property.features || [],
+        template_key: property.template_key || 'desarrollo',
+        landing_slug: generatedSlug,
+        canonical_key: property.canonical_key || generatedSlug,
+        headline: property.headline || '',
+        subheadline: property.subheadline || '',
+        tagline: property.tagline || '',
+        content_sections: property.content_sections || [],
         map_url: property.map_url || '',
         active: true,
 
@@ -490,7 +537,8 @@ export default function Dashboard({ session, onLogout }) {
         year_built: '', floors: '', furnished: false, maid_room: false,
         bedrooms: 0, bathrooms: 0, garages: 0,
         municipality: '', colony: '', postal_code: '',
-        featured_image_url: '', map_url: '', images: [], amenities: []
+        featured_image_url: '', map_url: '', images: [], video_urls: [], amenities: [], features: [],
+        template_key: 'desarrollo', landing_slug: '', canonical_key: '', headline: '', subheadline: '', tagline: '', content_sections: []
       });
       setImagePreview(null);
       setCurrentView('properties');
@@ -528,7 +576,10 @@ export default function Dashboard({ session, onLogout }) {
       ...property,
       ...prop,
       images: Array.isArray(prop.images) ? prop.images : [],
-      amenities: Array.isArray(prop.amenities) ? prop.amenities : []
+      video_urls: Array.isArray(prop.video_urls) ? prop.video_urls : [],
+      amenities: Array.isArray(prop.amenities) ? prop.amenities : [],
+      features: Array.isArray(prop.features) ? prop.features : [],
+      content_sections: Array.isArray(prop.content_sections) ? prop.content_sections : []
     });
     setImagePreview(prop.featured_image_url || null);
     setActiveTab('description');
@@ -541,7 +592,8 @@ export default function Dashboard({ session, onLogout }) {
     { id: 'media', label: '3. Fotografías' },
     { id: 'details', label: '4. Detalles' },
     { id: 'location', label: '5. Ubicación' },
-    { id: 'amenities', label: '6. Amenidades' }
+    { id: 'amenities', label: '6. Amenidades' },
+    { id: 'content', label: '7. Contenido y plantilla' }
   ];
 
   const municipalityOptions = Object.keys(chiapasData);
@@ -663,6 +715,20 @@ export default function Dashboard({ session, onLogout }) {
                     </div>
                     <div style={formGridStyle}>
                       <div style={fieldStyle}>
+                        <label style={labelStyle}>Frase principal de la tarjeta</label>
+                        <input type="text" name="headline" value={property.headline || ''} onChange={handleInputChange} placeholder="Mensaje principal" className="form-input" />
+                      </div>
+                      <div style={fieldStyle}>
+                        <label style={labelStyle}>Frase secundaria</label>
+                        <input type="text" name="subheadline" value={property.subheadline || ''} onChange={handleInputChange} placeholder="Complemento del mensaje" className="form-input" />
+                      </div>
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Llamado o frase comercial</label>
+                      <input type="text" name="tagline" value={property.tagline || ''} onChange={handleInputChange} placeholder="Ej. Invierte hoy y asegura tu patrimonio" className="form-input" />
+                    </div>
+                    <div style={formGridStyle}>
+                      <div style={fieldStyle}>
                         <label style={labelStyle}>Tipo de propiedad</label>
                         <select name="type" value={property.type} onChange={handleInputChange} className="form-input">
                           {propertyTypes.map(type => <option key={type} value={type}>{type}</option>)}
@@ -700,6 +766,9 @@ export default function Dashboard({ session, onLogout }) {
 
                 {activeTab === 'media' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: '#eff6ff', color: '#1e40af', fontSize: '0.82rem', fontWeight: '600' }}>
+                      Contenido cargado: {(property.images || []).length} imágenes y {(property.video_urls || []).length} videos.
+                    </div>
                     <div style={fieldStyle}>
                       <label style={labelStyle}>Agregar fotografía desde una dirección web</label>
                       <div style={{ display: 'flex', gap: '0.75rem', flexDirection: isMobile ? 'column' : 'row' }}>
@@ -727,6 +796,21 @@ export default function Dashboard({ session, onLogout }) {
                         ))}
                       </div>
                     )}
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Videos (una dirección por línea)</label>
+                      <textarea
+                        value={(property.video_urls || []).join('\n')}
+                        onChange={e => setProperty(prev => ({ ...prev, video_urls: e.target.value.split('\n').map(value => value.trim()).filter(Boolean) }))}
+                        placeholder="https://.../video.mp4 o enlace de YouTube"
+                        className="form-textarea"
+                        style={{ minHeight: '120px' }}
+                      />
+                    </div>
+                    {(property.video_urls || []).map((videoUrl, index) => (
+                      <div key={`${videoUrl}-${index}`} style={{ padding: '0.8rem 1rem', border: '1px solid #e2e8f0', borderRadius: '10px', overflowWrap: 'anywhere', fontSize: '0.78rem', color: '#475569' }}>
+                        🎬 {videoUrl}
+                      </div>
+                    ))}
                   </div>
                 )}
 
@@ -803,6 +887,64 @@ export default function Dashboard({ session, onLogout }) {
                         <button type="button" onClick={addCustomAmenity} className="btn-primary" style={{ padding: '0.75rem 1.25rem' }}>Agregar amenidad</button>
                       </div>
                     </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Características y beneficios de la tarjeta (uno por línea)</label>
+                      <textarea
+                        value={(property.features || []).join('\n')}
+                        onChange={e => setProperty(prev => ({ ...prev, features: e.target.value.split('\n').map(value => value.trim()).filter(Boolean) }))}
+                        placeholder="Escritura pública\nEntrega inmediata\nSin buró de crédito"
+                        className="form-textarea"
+                        style={{ minHeight: '180px' }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'content' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <div style={formGridStyle}>
+                      <div style={fieldStyle}>
+                        <label style={labelStyle}>Plantilla visual</label>
+                        <select name="template_key" value={property.template_key || 'desarrollo'} onChange={handleInputChange} className="form-input">
+                          <option value="desarrollo">Plantilla general de desarrollo</option>
+                          {[...new Set(userProperties.map(item => item.template_key).filter(Boolean))].map(template => (
+                            <option key={template} value={template}>{template.replaceAll('-', ' ')}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div style={{ ...fieldStyle, justifyContent: 'flex-end' }}>
+                        <div style={{ padding: '0.85rem 1rem', borderRadius: '10px', background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', fontSize: '0.8rem' }}>
+                          {(property.content_sections || []).length} secciones cargadas desde la landing.
+                        </div>
+                      </div>
+                    </div>
+                    <div style={fieldStyle}>
+                      <label style={labelStyle}>Ruta pública de la landing</label>
+                      <input
+                        type="text"
+                        name="landing_slug"
+                        value={property.landing_slug || ''}
+                        onChange={handleInputChange}
+                        placeholder="nombre-del-desarrollo"
+                        className="form-input"
+                      />
+                      <small style={{ color: '#64748b' }}>Se conserva al editar. Para una propiedad nueva se genera desde el título.</small>
+                    </div>
+
+                    {(property.content_sections || []).map((section, index) => (
+                      <div key={`${section.title}-${index}`} style={{ padding: '1rem', border: '1px solid #e2e8f0', borderRadius: '12px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <strong style={{ color: '#64748b', fontSize: '0.76rem', minWidth: '72px' }}>Sección {index + 1}</strong>
+                          <input value={section.title || ''} onChange={e => updateContentSection(index, 'title', e.target.value)} className="form-input" placeholder="Título de la sección" style={{ flex: 1 }} />
+                          <button type="button" onClick={() => removeContentSection(index)} aria-label={`Eliminar sección ${index + 1}`} style={{ border: 'none', borderRadius: '8px', padding: '0.65rem 0.8rem', background: '#fef2f2', color: '#dc2626', cursor: 'pointer', fontWeight: '700' }}>×</button>
+                        </div>
+                        <textarea value={section.body || ''} onChange={e => updateContentSection(index, 'body', e.target.value)} className="form-textarea" placeholder="Texto, frases y puntos de esta sección" style={{ minHeight: '130px' }} />
+                      </div>
+                    ))}
+
+                    <button type="button" onClick={addContentSection} style={{ padding: '0.9rem', borderRadius: '10px', border: '1px dashed #0284c7', background: '#f0f9ff', color: '#0369a1', fontWeight: '700', cursor: 'pointer' }}>
+                      + Agregar sección de contenido
+                    </button>
                   </div>
                 )}
                 <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
