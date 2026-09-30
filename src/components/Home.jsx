@@ -53,9 +53,14 @@ const toDevelopmentView = (property) => {
     item.id === property.canonical_key
   ) || {};
 
-  const images = Array.isArray(property.images) && property.images.filter(Boolean).length
+  const importedImages = Array.isArray(property.images) && property.images.filter(Boolean).length
     ? property.images.filter(Boolean)
     : (source.galeria || []);
+  const images = [...new Set([
+    source.imagen,
+    ...importedImages,
+    ...(source.galeria || []),
+  ].filter(Boolean))];
   const propertyAmenities = [
     ...(Array.isArray(property.amenities) ? property.amenities : []),
     ...(Array.isArray(property.features) ? property.features : []),
@@ -76,7 +81,9 @@ const toDevelopmentView = (property) => {
     ciudad: property.municipality || property.city || source.ciudad || 'Chiapas',
     municipio: property.municipality || source.municipio,
     tipo: property.home_category || property.type || source.tipo || 'propiedad',
-    imagen: property.featured_image_url || images[0] || source.imagen,
+    // Las landings conocidas ya tienen una portada curada y verificada. Se usa
+    // como primera imagen para evitar logos, mapas o rutas rotas extraídas del HTML.
+    imagen: source.imagen || property.featured_image_url || images[0],
     galeria: images,
     precio: property.price ?? source.precio,
     precioTexto: priceText,

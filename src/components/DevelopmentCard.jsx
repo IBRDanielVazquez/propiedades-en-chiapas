@@ -5,21 +5,18 @@ import React, { useState } from 'react';
 
 export default function DevelopmentCard({ dev, onClick }) {
   const [imgIdx, setImgIdx] = useState(0);
-  const [imgErr, setImgErr] = useState(false);
 
   const imgList = Array.isArray(dev.galeria) && dev.galeria.length > 0 ? dev.galeria : (dev.imagen ? [dev.imagen] : []);
-  const currentImg = !imgErr && imgList[imgIdx] ? imgList[imgIdx] : (dev.imagen || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800');
+  const currentImg = imgList[imgIdx] || dev.imagen || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800';
   const totalPhotos = imgList.length;
 
   const nextImg = (e) => {
     e.stopPropagation();
-    setImgErr(false);
     setImgIdx((prev) => (prev + 1) % totalPhotos);
   };
 
   const prevImg = (e) => {
     e.stopPropagation();
-    setImgErr(false);
     setImgIdx((prev) => (prev - 1 + totalPhotos) % totalPhotos);
   };
 
@@ -55,7 +52,9 @@ export default function DevelopmentCard({ dev, onClick }) {
           alt={dev.titulo}
           className="property-card-img"
           loading="lazy"
-          onError={() => setImgErr(true)}
+          onError={() => {
+            if (totalPhotos > 1) setImgIdx((prev) => (prev + 1) % totalPhotos);
+          }}
           style={{
             width: '100%',
             height: '100%',
