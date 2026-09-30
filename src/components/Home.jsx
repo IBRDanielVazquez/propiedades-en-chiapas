@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import logo from '../assets/logo-pec.png';
+import DevelopmentCard from './DevelopmentCard';
+import DevelopmentDetailModal from './DevelopmentDetailModal';
+import { DESARROLLOS } from '../data/desarrollos';
 
 // ─── Constantes ────────────────────────────────────────────────────────────────
 const SHOW_STATS = false;  // mantenido por compatibilidad futura
@@ -38,6 +41,55 @@ const CATEGORIES = [
   { id: 'quinta',       label: 'Quintas',        Icon: TreePine   },
   { id: 'oficina',      label: 'Oficinas',       Icon: Briefcase  },
 ];
+
+// Mantiene una sola fila por propiedad (Supabase controla orden/visibilidad), pero
+// recupera la ficha visual completa de cada landing cuando algún campo todavía no
+// está cargado en el dashboard. Los datos editados en el dashboard siempre ganan.
+const toDevelopmentView = (property) => {
+  const source = DESARROLLOS.find((item) =>
+    item.slug === property.landing_slug ||
+    item.id === property.landing_slug ||
+    item.slug === property.canonical_key ||
+    item.id === property.canonical_key
+  ) || {};
+
+  const images = Array.isArray(property.images) && property.images.filter(Boolean).length
+    ? property.images.filter(Boolean)
+    : (source.galeria || []);
+  const propertyAmenities = [
+    ...(Array.isArray(property.amenities) ? property.amenities : []),
+    ...(Array.isArray(property.features) ? property.features : []),
+  ].filter(Boolean);
+  const amenities = propertyAmenities.length ? [...new Set(propertyAmenities)] : (source.amenidades || []);
+  const size = property.size_land_m2 || property.size_m2;
+  const priceText = Number(property.price) > 0
+    ? `${peso(property.price)}${property.price_suffix ? ` ${property.price_suffix}` : ''}`
+    : (source.precioTexto || 'Consultar precio');
+
+  return {
+    ...source,
+    propertyId: property.id,
+    id: property.id,
+    slug: property.landing_slug || source.slug,
+    titulo: property.title || source.titulo,
+    descripcion: property.description || source.descripcion,
+    ciudad: property.municipality || property.city || source.ciudad || 'Chiapas',
+    municipio: property.municipality || source.municipio,
+    tipo: property.home_category || property.type || source.tipo || 'propiedad',
+    imagen: property.featured_image_url || images[0] || source.imagen,
+    galeria: images,
+    precio: property.price ?? source.precio,
+    precioTexto: priceText,
+    pagoSemanal: property.tagline || property.subheadline || source.pagoSemanal,
+    pagoQuincenal: property.tagline || property.subheadline || source.pagoQuincenal,
+    superficie: size ? `${Number(size).toLocaleString('es-MX')} m²` : source.superficie,
+    amenidades: amenities,
+    ubicacionNota: property.address || property.colony || source.ubicacionNota,
+    status: property.status || source.status || 'Disponible',
+    etiqueta: property.headline || source.etiqueta,
+    whatsapp: source.whatsapp || 'https://wa.me/529612466204',
+  };
+};
 
 const STYLES = `
   /* La fuente Plus Jakarta Sans ya se precarga desde index.html (<link> en <head>) —
@@ -454,6 +506,7 @@ export default function Home({ session }) {
     try { return JSON.parse(localStorage.getItem(FAVS_KEY) || '{}'); } catch { return {}; }
   });
   const [loaded,      setLoaded]      = useState(false);
+  const [selectedDev, setSelectedDev] = useState(null);
 
   // Datos Supabase
   const [propiedades, setPropiedades] = useState([]);
@@ -581,6 +634,10 @@ export default function Home({ session }) {
   const propsMostradas = resultados !== null ? resultados : propiedades;
   const destacadas = propsMostradas.filter(property => property.is_featured);
   const regulares = propsMostradas.filter(property => !property.is_featured);
+  const developmentViews = useMemo(
+    () => new Map(propsMostradas.map(property => [property.id, toDevelopmentView(property)])),
+    [propsMostradas]
+  );
 
   // "Popular" honesto: top 3 por vistas reales del lote actual, y solo si de
   // verdad tiene vistas — nunca se inventa un badge cuando todo está en 0.
@@ -632,6 +689,10 @@ export default function Home({ session }) {
       </Helmet>
 
       <div className="pec">
+
+        {selectedDev && (
+          <DevelopmentDetailModal dev={selectedDev} onClose={() => setSelectedDev(null)} />
+        )}
 
 
         {/* ── Header ── */}
@@ -752,14 +813,22 @@ export default function Home({ session }) {
                   </div>
                   <div className="pec-grid">
                     {destacadas.map((p, i) => (
-                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
+                      p.landing_slug ? (
+                        <DevelopmentCard key={p.id} dev={developmentViews.get(p.id)} onClick={() => setSelectedDev(developmentViews.get(p.id))} />
+                      ) : (
+                        <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
+                      )
                     ))}
                   </div>
                 </section>
               )}
               <div className="pec-grid">
                 {regulares.map((p, i) => (
-                  <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
+                  p.landing_slug ? (
+                    <DevelopmentCard key={p.id} dev={developmentViews.get(p.id)} onClick={() => setSelectedDev(developmentViews.get(p.id))} />
+                  ) : (
+                    <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
+                  )
                 ))}
               </div>
 
