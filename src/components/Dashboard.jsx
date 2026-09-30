@@ -9,6 +9,7 @@ import UserManager from './UserManager';
 import AgencyManager from './AgencyManager';
 import DigitalCard from './DigitalCard';
 import LeadsDashboard from './LeadsDashboard';
+import HomeOrganizer from './HomeOrganizer';
 
 export default function Dashboard({ session, onLogout }) {
   const [activeTab, setActiveTab] = useState('description');
@@ -595,6 +596,30 @@ export default function Dashboard({ session, onLogout }) {
     }
   };
 
+  const updateHomePresentation = async (propId, changes) => {
+    setAllProperties(prev => prev.map(item => item.id === propId ? { ...item, ...changes } : item));
+    const { error } = await supabase.from('properties').update(changes).eq('id', propId);
+    if (error) {
+      await loadProperties();
+      alert(`No se pudo actualizar el Home: ${error.message}`);
+    }
+  };
+
+  const reorderHomeProperties = async orderedProperties => {
+    setAllProperties(prev => prev.map(item => {
+      const ordered = orderedProperties.find(candidate => candidate.id === item.id);
+      return ordered ? { ...item, home_order: ordered.home_order } : item;
+    }));
+    const results = await Promise.all(orderedProperties.map(item => (
+      supabase.from('properties').update({ home_order: item.home_order }).eq('id', item.id)
+    )));
+    const failed = results.find(result => result.error);
+    if (failed) {
+      await loadProperties();
+      alert(`No se pudo guardar el orden: ${failed.error.message}`);
+    }
+  };
+
   const handleEditProperty = (prop) => {
     setProperty({
       ...property,
@@ -650,6 +675,7 @@ export default function Dashboard({ session, onLogout }) {
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', padding: '0 0.75rem', flex: 1 }}>
           {[
             { view: 'landings',     icon: '🚀', label: 'Landing Pages',      admin: true },
+            { view: 'home-layout',   icon: '↕️', label: 'Organizar Home',     admin: true },
             { view: 'leads',        icon: '📩', label: 'Leads',              admin: false },
             { view: 'properties',   icon: '🏠', label: `Propiedades (${userProperties.length})`, admin: false },
             { view: 'add-property', icon: '➕', label: 'Agregar Propiedad',   admin: false },
@@ -1028,6 +1054,13 @@ export default function Dashboard({ session, onLogout }) {
           {currentView === 'users' && currentUser.plan === 'admin' && <UserManager />}
           {currentView === 'agencies' && currentUser.plan === 'admin' && <AgencyManager />}
           {currentView === 'landings' && currentUser.plan === 'admin' && <LandingManager />}
+          {currentView === 'home-layout' && currentUser.plan === 'admin' && (
+            <div style={{ animation: 'fadeIn 0.3s ease' }}>
+              <h1 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.4rem' }}>Organizar Home</h1>
+              <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>Ordena, categoriza, destaca u oculta tarjetas sin editar su información.</p>
+              <HomeOrganizer properties={allProperties} onReorder={reorderHomeProperties} onUpdate={updateHomePresentation} />
+            </div>
+          )}
           {currentView === 'leads' && <LeadsDashboard currentUser={currentUser} isMobile={isMobile} />}
           {currentView === 'categories' && currentUser.plan === 'admin' && (
             <div style={{ padding: '2rem', background: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>

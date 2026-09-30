@@ -9,9 +9,6 @@ import {
 } from 'lucide-react';
 import { supabase } from '../supabaseClient';
 import logo from '../assets/logo-pec.png';
-import DevelopmentCard from './DevelopmentCard';
-import DevelopmentDetailModal from './DevelopmentDetailModal';
-import { DESARROLLOS } from '../data/desarrollos';
 
 // ─── Constantes ────────────────────────────────────────────────────────────────
 const SHOW_STATS = false;  // mantenido por compatibilidad futura
@@ -457,7 +454,6 @@ export default function Home({ session }) {
     try { return JSON.parse(localStorage.getItem(FAVS_KEY) || '{}'); } catch { return {}; }
   });
   const [loaded,      setLoaded]      = useState(false);
-  const [selectedDev, setSelectedDev] = useState(null);
 
   // Datos Supabase
   const [propiedades, setPropiedades] = useState([]);
@@ -502,7 +498,9 @@ export default function Home({ session }) {
           .from('properties')
           .select('*')
           .eq('active', true)
-          .order('created_at', { ascending: false })
+          .eq('show_on_home', true)
+          .order('is_featured', { ascending: false })
+          .order('home_order', { ascending: true, nullsFirst: false })
           .limit(limit);
         query = applyExclusions(query);
         const { data, error } = await query;
@@ -530,7 +528,8 @@ export default function Home({ session }) {
       let query = supabase
         .from('properties')
         .select('*')
-        .eq('active', true);
+        .eq('active', true)
+        .eq('show_on_home', true);
 
       // Nota: se busca por título/municipio/dirección (columnas confirmadas en el
       // esquema real); "city" no se usa como filtro porque no existe garantizado en
@@ -542,10 +541,13 @@ export default function Home({ session }) {
       const tipo = overrideType !== undefined
         ? overrideType
         : (active !== 'todas' ? active : null);
-      if (tipo) query = query.ilike('type', `%${tipo}%`);
+      if (tipo) query = query.eq('home_category', tipo);
 
       query = applyExclusions(query);
-      query = query.order('created_at', { ascending: false }).limit(lim);
+      query = query
+        .order('is_featured', { ascending: false })
+        .order('home_order', { ascending: true, nullsFirst: false })
+        .limit(lim);
       const { data, error } = await query;
       if (error) throw error;
       setResultados(data || []);
@@ -575,29 +577,10 @@ export default function Home({ session }) {
 
   const hayFiltros = !!q || active !== 'todas';
 
-  // ── Desarrollos y fichas estáticas (landings reales de Hostinger migradas) ──
-  const desarrollosFiltrados = useMemo(() => {
-    const list = Array.isArray(DESARROLLOS) ? DESARROLLOS : [];
-    let statusMap = {};
-    try {
-      const saved = localStorage.getItem('pec_static_landings_status');
-      if (saved) statusMap = JSON.parse(saved);
-    } catch { /* no-op */ }
-
-    const term = q.trim().toLowerCase();
-    return list.filter(dev => {
-      if (statusMap[`sys-${dev.slug}`] === false || statusMap[dev.id] === false) return false;
-      const matchesCat = active === 'todas' || dev.tipo === active;
-      const matchesSearch = !term
-        || (dev.titulo && dev.titulo.toLowerCase().includes(term))
-        || (dev.ciudad && dev.ciudad.toLowerCase().includes(term))
-        || (dev.descripcion && dev.descripcion.toLowerCase().includes(term));
-      return matchesCat && matchesSearch;
-    });
-  }, [active, q]);
-
   // Lista de propiedades que se muestra en pantalla en este momento.
   const propsMostradas = resultados !== null ? resultados : propiedades;
+  const destacadas = propsMostradas.filter(property => property.is_featured);
+  const regulares = propsMostradas.filter(property => !property.is_featured);
 
   // "Popular" honesto: top 3 por vistas reales del lote actual, y solo si de
   // verdad tiene vistas — nunca se inventa un badge cuando todo está en 0.
@@ -614,7 +597,7 @@ export default function Home({ session }) {
     else setLimit(l => l + LOAD_MORE_STEP);
   };
 
-  const totalItemsCount = desarrollosFiltrados.length + propsMostradas.length;
+  const totalItemsCount = propsMostradas.length;
 
   // JSON-LD (schema.org) — construido solo con datos reales ya cargados en pantalla.
   const jsonLd = {
@@ -650,9 +633,6 @@ export default function Home({ session }) {
 
       <div className="pec">
 
-        {selectedDev && (
-          <DevelopmentDetailModal dev={selectedDev} onClose={() => setSelectedDev(null)} />
-        )}
 
         {/* ── Header ── */}
         <header className="pec-hd">
@@ -728,25 +708,6 @@ export default function Home({ session }) {
             )}
           </div>
 
-          {/* Desarrollos y fichas destacadas (landings reales) */}
-          {desarrollosFiltrados.length > 0 && (
-            <section aria-label="Desarrollos y fichas destacadas" style={{ marginBottom: '2.5rem' }}>
-              <div style={{ marginBottom: '1rem' }}>
-                <h2 style={{ fontSize:'1.15rem', fontWeight:800, color:'var(--ink)', letterSpacing:'-.3px' }}>
-                  Desarrollos &amp; Fichas Destacadas
-                </h2>
-                <p style={{ fontSize:'.85rem', color:'var(--muted)', marginTop:2 }}>
-                  Haz clic en cualquier tarjeta para abrir su ficha inmobiliaria completa
-                </p>
-              </div>
-              <div className="pec-grid">
-                {desarrollosFiltrados.map(dev => (
-                  <DevelopmentCard key={dev.id} dev={dev} onClick={() => setSelectedDev(dev)} />
-                ))}
-              </div>
-            </section>
-          )}
-
           {/* Estados de carga / propiedades */}
           {showError ? (
             <div style={{ textAlign:'center', padding:'4rem', color:'var(--muted)' }}>
@@ -766,7 +727,7 @@ export default function Home({ session }) {
               <div className="pec-spinner" />
               <p style={{ fontWeight:600, fontSize:14 }}>Buscando...</p>
             </div>
-          ) : (propsMostradas.length === 0 && desarrollosFiltrados.length === 0) ? (
+          ) : propsMostradas.length === 0 ? (
             <div style={{ textAlign:'center', padding:'4rem', color:'var(--muted)' }}>
               <div style={{ fontSize:'2.5rem', marginBottom:'.75rem' }}>🔍</div>
               <h3 style={{ fontWeight:700, marginBottom:'.5rem', color:'var(--ink)' }}>No encontramos propiedades</h3>
@@ -784,8 +745,20 @@ export default function Home({ session }) {
             </div>
           ) : propsMostradas.length > 0 ? (
             <>
+              {destacadas.length > 0 && (
+                <section aria-label="Propiedades destacadas" style={{ marginBottom: '2.5rem' }}>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <h2 style={{ fontSize:'1.15rem', fontWeight:800, color:'var(--ink)', letterSpacing:'-.3px' }}>Propiedades destacadas</h2>
+                  </div>
+                  <div className="pec-grid">
+                    {destacadas.map((p, i) => (
+                      <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
+                    ))}
+                  </div>
+                </section>
+              )}
               <div className="pec-grid">
-                {propsMostradas.map((p, i) => (
+                {regulares.map((p, i) => (
                   <Card key={p.id} propiedad={p} i={i} fav={favs[p.id]} onFav={toggleFav} loaded={loaded} popular={popularIds.has(p.id)} />
                 ))}
               </div>
