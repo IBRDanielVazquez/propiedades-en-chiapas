@@ -57,6 +57,7 @@ const toDevelopmentView = (property) => {
     ? property.images.filter(Boolean)
     : (source.galeria || []);
   const images = [...new Set([
+    property.featured_image_url,
     source.imagen,
     ...importedImages,
     ...(source.galeria || []),
@@ -81,9 +82,9 @@ const toDevelopmentView = (property) => {
     ciudad: property.municipality || property.city || source.ciudad || 'Chiapas',
     municipio: property.municipality || source.municipio,
     tipo: property.home_category || property.type || source.tipo || 'propiedad',
-    // Las landings conocidas ya tienen una portada curada y verificada. Se usa
-    // como primera imagen para evitar logos, mapas o rutas rotas extraídas del HTML.
-    imagen: source.imagen || property.featured_image_url || images[0],
+    // La portada elegida en el dashboard manda. Si esa ruta falla, el carrusel
+    // avanza automáticamente a la portada verificada de la landing.
+    imagen: property.featured_image_url || source.imagen || images[0],
     galeria: images,
     precio: property.price ?? source.precio,
     precioTexto: priceText,

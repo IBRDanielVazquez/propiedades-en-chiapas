@@ -484,8 +484,15 @@ export default function Dashboard({ session, onLogout }) {
         .replace(/[^a-z0-9\s-]/g, '')
         .trim()
         .replace(/\s+/g, '-');
+      const selectedCover = property.featured_image_url || (property.images && property.images[0]) || '';
+      const orderedImages = [
+        selectedCover,
+        ...(property.images || []).filter(image => image && image !== selectedCover)
+      ].filter(Boolean);
       const payload = {
-        user_id: (currentUser.plan === 'admin' && adminUserFilter !== 'all') ? adminUserFilter : currentUser.id,
+        user_id: isEditing
+          ? (property.user_id || currentUser.id)
+          : ((currentUser.plan === 'admin' && adminUserFilter !== 'all') ? adminUserFilter : currentUser.id),
         title: property.title,
         description: property.description,
         operation_type: property.operation_type,
@@ -506,8 +513,8 @@ export default function Dashboard({ session, onLogout }) {
         municipality: property.municipality,
         colony: property.colony,
         postal_code: property.postal_code,
-        featured_image_url: property.featured_image_url || (property.images && property.images[0]) || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600',
-        images: property.images || [],
+        featured_image_url: selectedCover || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=600',
+        images: orderedImages,
         video_urls: property.video_urls || [],
         amenities: property.amenities || [],
         features: property.features || [],
@@ -528,13 +535,28 @@ export default function Dashboard({ session, onLogout }) {
       // ── Guardar en Supabase ──────────────────────────────────────────────
       let savedProp = null;
       if (isEditing) {
-        const { data, error } = await supabase
+        const { error: updateError } = await supabase
           .from('properties')
           .update(payload)
+          .eq('id', property.id);
+        if (updateError) throw updateError;
+
+        // Leer nuevamente evita el falso error PGRST116 de `.single()` sobre la
+        // respuesta vacía del UPDATE y confirma que el cambio sí quedó persistido.
+        const { data, error: reloadError } = await supabase
+          .from('properties')
+          .select('*')
           .eq('id', property.id)
-          .select()
-          .single();
-        if (error) throw error;
+          .maybeSingle();
+        if (reloadError) throw reloadError;
+        if (!data) throw new Error('Supabase no devolvió la propiedad actualizada. Revisa los permisos de edición.');
+        const savedImages = Array.isArray(data.images) ? data.images : [];
+        if (
+          data.featured_image_url !== payload.featured_image_url ||
+          JSON.stringify(savedImages) !== JSON.stringify(payload.images)
+        ) {
+          throw new Error('Supabase no confirmó los cambios de imágenes. La edición no fue aplicada.');
+        }
         savedProp = data;
       } else {
         const { data, error } = await supabase
