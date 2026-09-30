@@ -296,6 +296,30 @@ export default function Dashboard({ session, onLogout }) {
     }));
   };
 
+  const applySelectedTemplate = () => {
+    const source = userProperties.find(item => item.template_key === property.template_key && item.id !== property.id);
+    if (!source) {
+      alert('Selecciona una plantilla de una propiedad existente.');
+      return;
+    }
+    const shouldApply = window.confirm(
+      `Se copiarán la estructura, textos, imágenes, videos, amenidades y características de “${source.title}”. Podrás editarlos antes de guardar. ¿Continuar?`
+    );
+    if (!shouldApply) return;
+    setProperty(prev => ({
+      ...prev,
+      headline: source.headline || '',
+      subheadline: source.subheadline || '',
+      tagline: source.tagline || '',
+      images: [...(source.images || [])],
+      video_urls: [...(source.video_urls || [])],
+      amenities: [...(source.amenities || [])],
+      features: [...(source.features || [])],
+      content_sections: (source.content_sections || []).map(section => ({ ...section })),
+      featured_image_url: source.featured_image_url || source.images?.[0] || ''
+    }));
+  };
+
 
 
   const handleInputChange = (e) => {
@@ -918,6 +942,11 @@ export default function Dashboard({ session, onLogout }) {
                         </div>
                       </div>
                     </div>
+                    {!property.id && (
+                      <button type="button" onClick={applySelectedTemplate} style={{ padding: '0.9rem 1rem', borderRadius: '10px', border: '1px solid #0284c7', background: '#eff6ff', color: '#0369a1', fontWeight: '800', cursor: 'pointer' }}>
+                        Copiar contenido completo de esta plantilla
+                      </button>
+                    )}
                     <div style={fieldStyle}>
                       <label style={labelStyle}>Ruta pública de la landing</label>
                       <input
