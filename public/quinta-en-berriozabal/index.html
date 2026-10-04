@@ -17,15 +17,7 @@
   <!-- Tailwind CSS -->  
   <link href="css/tailwind.min.css" rel="stylesheet">  
   <link href="css/css2.css" rel="stylesheet">  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css">
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
-        "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.module.js"
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="vendor/photo-sphere-viewer.css">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -533,67 +525,45 @@
 
 
 
-<!-- RECORRIDO VIRTUAL 360 -->
-<section id="recorre-la-quinta-360" class="quinta-tour-section" aria-labelledby="quinta-tour-title">
+<!-- EXPERIENCIA VISUAL COMPACTA -->
+<section id="recorre-la-quinta-360" class="quinta-media-section" aria-labelledby="quinta-media-title">
   <style>
-    .quinta-tour-section{background:linear-gradient(145deg,#071d18 0%,#0b3026 58%,#124b38 100%);color:#fff;padding:clamp(64px,8vw,104px) 20px;overflow:hidden}
-    .quinta-tour-wrap{width:min(1180px,100%);margin:0 auto}
-    .quinta-tour-heading{text-align:center;max-width:780px;margin:0 auto 34px}
-    .quinta-tour-kicker{display:inline-flex;align-items:center;gap:8px;color:#fcd34d;font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-    .quinta-tour-heading h2{color:#fff!important;font-size:clamp(2.2rem,5vw,4.25rem);line-height:1.02;margin:12px 0 16px;letter-spacing:-.04em}
-    .quinta-tour-heading p{color:rgba(255,255,255,.78)!important;font-size:clamp(.98rem,1.7vw,1.14rem);line-height:1.65}
-    .quinta-tour-groups{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
-    .quinta-tour-group{appearance:none;border:1px solid rgba(255,255,255,.18);border-radius:18px;background:rgba(255,255,255,.07);color:#fff;padding:16px 18px;text-align:left;cursor:pointer;transition:.2s ease}
-    .quinta-tour-group:hover,.quinta-tour-group.is-active{background:#fff;color:#123c2f;border-color:#fff;transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.18)}
-    .quinta-tour-group strong{display:block;font-size:1rem}.quinta-tour-group span{display:block;font-size:.78rem;opacity:.72;margin-top:3px}
-    .quinta-tour-shell{position:relative;border:1px solid rgba(255,255,255,.2);border-radius:26px;background:#061812;box-shadow:0 30px 80px rgba(0,0,0,.35);overflow:hidden}
-    #quinta-tour-viewer{height:min(68vh,680px);min-height:480px;background-position:center;background-size:cover}
-    .quinta-tour-overlay{position:absolute;inset:0 0 auto 0;z-index:5;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.68),transparent)}
-    .quinta-tour-scene-title{color:#fff}.quinta-tour-scene-title small{display:block;color:#fcd34d;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.quinta-tour-scene-title strong{display:block;font-size:clamp(1.05rem,2vw,1.45rem);margin-top:2px}
-    .quinta-tour-fullscreen{pointer-events:auto;border:1px solid rgba(255,255,255,.55);background:rgba(7,29,24,.72);backdrop-filter:blur(10px);color:#fff;border-radius:999px;padding:10px 15px;font-weight:800;cursor:pointer}
-    .quinta-tour-point{position:absolute;z-index:6;left:50%;bottom:24px;transform:translateX(-50%);border:1px solid rgba(255,255,255,.7);background:rgba(10,92,66,.9);backdrop-filter:blur(10px);color:#fff;border-radius:999px;padding:11px 18px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-    .quinta-tour-hint{text-align:center;color:rgba(255,255,255,.72);font-size:.85rem;margin:14px 0 18px}
-    .quinta-tour-thumbs{display:flex;gap:10px;overflow-x:auto;padding:0 18px 18px;scrollbar-color:#eab308 transparent;scroll-snap-type:x proximity}
-    .quinta-tour-thumb{flex:0 0 176px;position:relative;border:2px solid transparent;border-radius:14px;overflow:hidden;background:#102a22;color:#fff;padding:0;cursor:pointer;text-align:left;scroll-snap-align:start;opacity:.72;transition:.2s ease}
-    .quinta-tour-thumb:hover,.quinta-tour-thumb.is-active{opacity:1;border-color:#fbbf24;transform:translateY(-2px)}
-    .quinta-tour-thumb img{display:block;width:100%;height:88px;object-fit:cover}.quinta-tour-thumb span{display:block;padding:9px 10px;font-size:.76rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .quinta-tour-cta{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:28px}
-    .quinta-tour-cta a{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:14px 22px;text-decoration:none;font-weight:800}.quinta-tour-wa{background:#22c55e;color:#071d18}.quinta-tour-price{border:1px solid rgba(255,255,255,.35);color:#fff}
-    .quinta-tour-shell:fullscreen,#quinta-tour-viewer:fullscreen{width:100vw;height:100vh;border-radius:0}.quinta-tour-shell:fullscreen #quinta-tour-viewer{height:100vh;min-height:100vh}
-    @media(max-width:700px){.quinta-tour-section{padding:58px 12px}.quinta-tour-groups{grid-template-columns:1fr}.quinta-tour-shell{border-radius:18px}#quinta-tour-viewer{height:62vh;min-height:420px}.quinta-tour-overlay{padding:14px}.quinta-tour-fullscreen{font-size:0;width:44px;height:44px;padding:0}.quinta-tour-fullscreen::after{content:'⛶';font-size:1.25rem}.quinta-tour-point{bottom:18px;font-size:.78rem}.quinta-tour-thumb{flex-basis:148px}.quinta-tour-thumb img{height:74px}}
+    .quinta-media-section{background:linear-gradient(145deg,#071d18,#0b3026 60%,#124b38);color:#fff;padding:clamp(52px,7vw,82px) 18px}
+    .quinta-media-wrap{width:min(1180px,100%);margin:auto}.quinta-media-heading{text-align:center;max-width:760px;margin:0 auto 26px}
+    .quinta-media-heading span{color:#fcd34d;font-size:.78rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.quinta-media-heading h2{color:#fff!important;font-size:clamp(2rem,4.5vw,3.7rem);line-height:1.05;margin:10px 0}.quinta-media-heading p{color:#d5e7df!important;margin:0}
+    .quinta-media-tabs{display:flex;justify-content:center;gap:8px;margin:24px 0 18px;overflow-x:auto;padding:5px}
+    .quinta-media-tabs button{border:1px solid #6d9185;background:#123d31;color:#fff;border-radius:999px;padding:12px 18px;white-space:nowrap;font-weight:800;cursor:pointer}
+    .quinta-media-tabs button[aria-selected="true"]{background:#fbbf24;border-color:#fbbf24;color:#10231d;box-shadow:0 8px 24px rgba(0,0,0,.24)}
+    .quinta-media-panel{display:none}.quinta-media-panel.is-active{display:block;animation:quintaPanel .25s ease}@keyframes quintaPanel{from{opacity:0;transform:translateY(6px)}}
+    .quinta-gallery-strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px}.quinta-gallery-strip button{flex:0 0 min(31%,330px);padding:0;border:0;border-radius:16px;overflow:hidden;background:#102a22;cursor:pointer;scroll-snap-align:start}.quinta-gallery-strip img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+    .quinta-tour-launch{position:relative;width:100%;padding:0;border:0;border-radius:20px;overflow:hidden;background:#061812;color:#fff;cursor:pointer;box-shadow:0 24px 60px rgba(0,0,0,.3)}.quinta-tour-launch>img{display:block;width:100%;aspect-ratio:2/1;object-fit:cover;filter:brightness(.78);transition:.35s}.quinta-tour-launch:hover>img{transform:scale(1.015);filter:brightness(.64)}
+    .quinta-tour-launch-overlay{position:absolute;inset:0;display:grid;place-items:center}.quinta-tour-launch-action{display:grid;gap:5px;padding:16px 24px;border:1px solid rgba(255,255,255,.55);border-radius:14px;background:rgba(7,29,24,.86);backdrop-filter:blur(10px);font-weight:900;font-size:1.12rem}.quinta-tour-launch-action small{font-size:.75rem;font-weight:600;color:#d5e7df}
+    .quinta-media-foot{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px}.quinta-media-foot a{border-radius:999px;padding:13px 20px;text-decoration:none;font-weight:800}.quinta-media-wa{background:#22c55e;color:#071d18}.quinta-media-price{border:1px solid #89aaa2;color:#fff}
+    .quinta-tour-dialog{width:100vw;max-width:none;height:100dvh;max-height:none;margin:0;padding:0;border:0;background:#06111f;overflow:hidden}.quinta-tour-dialog::backdrop,.quinta-image-dialog::backdrop{background:rgba(6,17,31,.94)}#quinta-viewer360{width:100%;height:100%}
+    .quinta-dialog-control{position:absolute;z-index:20;border:1px solid rgba(255,255,255,.45);background:rgba(7,29,24,.82);color:#fff;width:48px;height:48px;border-radius:50%;font-size:1.4rem;cursor:pointer}.quinta-dialog-close{top:16px;right:16px}.quinta-dialog-prev{left:16px;top:50%}.quinta-dialog-next{right:16px;top:50%}
+    .quinta-tour-status{position:absolute;z-index:20;left:50%;top:16px;transform:translateX(-50%);max-width:calc(100% - 150px);padding:9px 16px;border-radius:999px;background:rgba(7,29,24,.82);color:#fff;text-align:center;font-weight:800}.quinta-tour-status small{display:block;color:#fcd34d}
+    .quinta-tour-scene-thumbs{position:absolute;z-index:20;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:7px;width:min(900px,calc(100% - 32px));overflow-x:auto;padding:7px;border-radius:14px;background:rgba(7,29,24,.76);backdrop-filter:blur(9px)}.quinta-tour-scene-thumbs button{flex:0 0 120px;padding:0;border:2px solid transparent;border-radius:9px;overflow:hidden;background:#102a22;color:#fff;text-align:left;cursor:pointer}.quinta-tour-scene-thumbs button.is-active{border-color:#fbbf24}.quinta-tour-scene-thumbs img{display:block;width:100%;height:55px;object-fit:cover}.quinta-tour-scene-thumbs span{display:block;padding:6px;font-size:.66rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .quinta-image-dialog{width:min(1100px,calc(100% - 24px));max-width:none;max-height:calc(100dvh - 24px);padding:0;border:0;border-radius:16px;background:#071426;overflow:hidden}.quinta-image-dialog img{display:block;width:100%;max-height:calc(100dvh - 24px);object-fit:contain}
+    @media(max-width:700px){.quinta-media-section{padding-inline:12px}.quinta-media-tabs{justify-content:flex-start}.quinta-gallery-strip button{flex-basis:78%}.quinta-tour-launch>img{aspect-ratio:4/3}.quinta-dialog-prev,.quinta-dialog-next{top:auto;bottom:120px}.quinta-tour-status{font-size:.76rem}.quinta-tour-scene-thumbs button{flex-basis:96px}}
   </style>
-
-  <div class="quinta-tour-wrap">
-    <header class="quinta-tour-heading">
-      <span class="quinta-tour-kicker">◉ Experiencia inmersiva</span>
-      <h2 id="quinta-tour-title">Recorre la Quinta en 360°</h2>
-      <p>Conoce cada ambiente como si estuvieras aquí. Arrastra para mirar alrededor, usa la rueda o los controles para ampliar y selecciona cualquier área.</p>
-    </header>
-
-    <div class="quinta-tour-groups" role="tablist" aria-label="Secciones del recorrido 360 grados">
-      <button class="quinta-tour-group is-active" type="button" data-tour-group="interior" role="tab" aria-selected="true">
-        <strong>Interior · 9 espacios</strong><span>Sala, estudio, recámaras, baños y cocina</span>
-      </button>
-      <button class="quinta-tour-group" type="button" data-tour-group="exterior" role="tab" aria-selected="false">
-        <strong>Exterior · 9 vistas</strong><span>Accesos, corredor y jardines de la propiedad</span>
-      </button>
+  <div class="quinta-media-wrap">
+    <header class="quinta-media-heading"><span>Experiencia de la propiedad</span><h2 id="quinta-media-title">Imágenes y recorrido 360°</h2><p>Todo en una sola sección: fotografías, interiores y exteriores sin recorrer una página interminable.</p></header>
+    <div class="quinta-media-tabs" role="tablist" aria-label="Experiencia visual">
+      <button type="button" data-quinta-panel="quinta-panel-gallery" aria-selected="true">Fotografías</button>
+      <button type="button" data-quinta-panel="quinta-panel-interior" aria-selected="false">360° Interior</button>
+      <button type="button" data-quinta-panel="quinta-panel-exterior" aria-selected="false">360° Exterior</button>
     </div>
-
-    <div class="quinta-tour-shell" id="quinta-tour-shell">
-      <div id="quinta-tour-viewer" aria-label="Visor interactivo de la Quinta en Berriozábal"></div>
-      <div class="quinta-tour-overlay">
-        <div class="quinta-tour-scene-title"><small id="quinta-tour-section-name">Interior</small><strong id="quinta-tour-scene-name">Sala principal</strong></div>
-        <button class="quinta-tour-fullscreen" id="quinta-tour-fullscreen" type="button" aria-label="Abrir recorrido en pantalla completa">⛶ Pantalla completa</button>
-      </div>
-      <button class="quinta-tour-point" id="quinta-tour-next-point" type="button" aria-label="Ir al siguiente espacio">Siguiente área →</button>
-      <p class="quinta-tour-hint">Arrastra para explorar · Pellizca o usa la rueda para ampliar · Pulsa una miniatura para cambiar de área</p>
-      <div class="quinta-tour-thumbs" id="quinta-tour-thumbs" aria-label="Selector de áreas"></div>
-    </div>
-
-    <div class="quinta-tour-cta">
-      <a class="quinta-tour-wa" href="https://wa.me/529612466204?text=Hola%2C%20quiero%20agendar%20una%20visita%20para%20la%20Quinta%20Privada%20en%20Berrioz%C3%A1bal%20de%20%244%2C500%2C000%20MXN." target="_blank" rel="noopener">Agendar visita por WhatsApp</a>
-      <a class="quinta-tour-price" href="#precio">Precio: $4,500,000 MXN</a>
-    </div>
+    <div id="quinta-panel-gallery" class="quinta-media-panel is-active" role="tabpanel"><div class="quinta-gallery-strip">
+      <button type="button" data-quinta-gallery-index="0"><img src="images/Quinta-Berriozabal.png" alt="Quinta Privada en Berriozábal" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="1"><img src="images/Quinta-Berriozabal-1.png" alt="Vista de la propiedad" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="2"><img src="images/Quinta-Berriozabal-2.png" alt="Jardines de la Quinta" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="3"><img src="images/Quinta-Berriozabal-3.png" alt="Interior de la Quinta" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="4"><img src="images/Quinta-Berriozabal-4.png" alt="Área de la propiedad" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="5"><img src="images/Quinta-Berriozabal-5.png" alt="Vista adicional de la Quinta" loading="lazy"></button>
+    </div></div>
+    <div id="quinta-panel-interior" class="quinta-media-panel" role="tabpanel"><button class="quinta-tour-launch" type="button" data-open-quinta-tour="interior"><img src="360/posters/interior/01-sala.webp" alt="Vista previa del recorrido interior 360"><span class="quinta-tour-launch-overlay"><span class="quinta-tour-launch-action">Abrir recorrido interior 360°<small>9 espacios · arrastra, amplía y explora</small></span></span></button></div>
+    <div id="quinta-panel-exterior" class="quinta-media-panel" role="tabpanel"><button class="quinta-tour-launch" type="button" data-open-quinta-tour="exterior"><img src="360/posters/exterior/01-acceso-principal.webp" alt="Vista previa del recorrido exterior 360"><span class="quinta-tour-launch-overlay"><span class="quinta-tour-launch-action">Abrir recorrido exterior 360°<small>9 vistas · accesos, corredor y jardines</small></span></span></button></div>
+    <div class="quinta-media-foot"><a class="quinta-media-wa" href="https://wa.me/529612466204?text=Hola%2C%20quiero%20agendar%20una%20visita%20para%20la%20Quinta%20Privada%20en%20Berrioz%C3%A1bal%20de%20%244%2C500%2C000%20MXN." target="_blank" rel="noopener">Agendar visita por WhatsApp</a><a class="quinta-media-price" href="#precio">$4,500,000 MXN</a></div>
   </div>
 </section>
 
@@ -1013,148 +983,22 @@ justify-center text-center px-6">
 
 
 
-<script type="module">
-  import { Viewer } from '@photo-sphere-viewer/core';
-
-  const quintaTours = {
-    interior: [
-      ['Sala principal','01-sala'],
-      ['Estudio','02-estudio'],
-      ['Baño de recámara 1','03-bano-recamara-1'],
-      ['Recámara 2','04-recamara-2'],
-      ['Baño de recámara 2','05-bano-recamara-2'],
-      ['Recámara 3','06-recamara-3'],
-      ['Baño de recámara 3','07-bano-recamara-3'],
-      ['Cocina','08-cocina'],
-      ['Sala y salida al patio trasero','09-sala-patio-trasero']
-    ],
-    exterior: [
-      ['Acceso principal','01-acceso-principal'],
-      ['Acceso interior','02-acceso-interior'],
-      ['Jardín frontal','03-jardin-frontal'],
-      ['Jardín frontal · segunda vista','04-jardin-frontal-2'],
-      ['Acceso al corredor','05-acceso-corredor'],
-      ['Jardín trasero','06-jardin-trasero'],
-      ['Jardín trasero · vista 2A','07-jardin-trasero-2a'],
-      ['Jardín trasero · vista 2B','08-jardin-trasero-2b'],
-      ['Jardín trasero · vista 3','09-jardin-trasero-3']
-    ]
-  };
-
-  const sceneData = (group, scene) => ({
-    name: scene[0],
-    panorama: `360/${group}/${scene[1]}.webp`,
-    poster: `360/posters/${group}/${scene[1]}.webp`,
-    thumb: `360/miniaturas/${group}/${scene[1]}.webp`
-  });
-
-  let activeGroup = 'interior';
-  let activeIndex = 0;
-  let quintaViewer;
-  let viewerLoading;
-
-  const viewerElement = document.querySelector('#quinta-tour-viewer');
-  const thumbsElement = document.querySelector('#quinta-tour-thumbs');
-  const sceneNameElement = document.querySelector('#quinta-tour-scene-name');
-  const sectionNameElement = document.querySelector('#quinta-tour-section-name');
-
-  function activeScene() {
-    return sceneData(activeGroup, quintaTours[activeGroup][activeIndex]);
-  }
-
-  function renderSceneSelector() {
-    thumbsElement.replaceChildren();
-    quintaTours[activeGroup].forEach((scene, index) => {
-      const data = sceneData(activeGroup, scene);
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `quinta-tour-thumb${index === activeIndex ? ' is-active' : ''}`;
-      button.setAttribute('aria-label', `Ver ${data.name} en 360 grados`);
-      button.innerHTML = `<img src="${data.thumb}" alt="" loading="lazy" width="640" height="320"><span>${index + 1}. ${data.name}</span>`;
-      button.addEventListener('click', () => changeQuintaScene(index));
-      thumbsElement.appendChild(button);
-    });
-  }
-
-  async function ensureViewer() {
-    if (quintaViewer) return quintaViewer;
-    if (viewerLoading) return viewerLoading;
-    const scene = activeScene();
-    viewerElement.style.backgroundImage = `url('${scene.poster}')`;
-    viewerLoading = Promise.resolve(new Viewer({
-      container: viewerElement,
-      panorama: scene.panorama,
-      caption: `${scene.name} · Quinta Privada en Berriozábal`,
-      navbar: ['zoom', 'fullscreen'],
-      defaultPitch: '-5deg',
-      defaultYaw: 0,
-      defaultZoomLvl: 0,
-      minFov: 30,
-      maxFov: 110,
-      mousewheelCtrlKey: false,
-      moveInertia: 0.86
-    })).then((instance) => {
-      quintaViewer = instance;
-      return instance;
-    });
-    return viewerLoading;
-  }
-
-  async function changeQuintaScene(index) {
-    activeIndex = index;
-    const scene = activeScene();
-    sceneNameElement.textContent = scene.name;
-    sectionNameElement.textContent = activeGroup === 'interior' ? 'Interior' : 'Exterior';
-    viewerElement.style.backgroundImage = `url('${scene.poster}')`;
-    renderSceneSelector();
-    const viewer = await ensureViewer();
-    await viewer.setPanorama(scene.panorama);
-    viewer.setOption('caption', `${scene.name} · Quinta Privada en Berriozábal`);
-    viewer.zoom(0);
-  }
-
-  document.querySelectorAll('[data-tour-group]').forEach((button) => {
-    button.addEventListener('click', () => {
-      activeGroup = button.dataset.tourGroup;
-      activeIndex = 0;
-      document.querySelectorAll('[data-tour-group]').forEach((item) => {
-        const selected = item === button;
-        item.classList.toggle('is-active', selected);
-        item.setAttribute('aria-selected', String(selected));
-      });
-      changeQuintaScene(0);
-    });
-  });
-
-  document.querySelector('#quinta-tour-next-point').addEventListener('click', () => {
-    changeQuintaScene((activeIndex + 1) % quintaTours[activeGroup].length);
-  });
-
-  document.querySelector('#quinta-tour-fullscreen').addEventListener('click', async () => {
-    const shell = document.querySelector('#quinta-tour-shell');
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else if (shell.requestFullscreen) {
-      await shell.requestFullscreen();
-    } else if (shell.webkitRequestFullscreen) {
-      shell.webkitRequestFullscreen();
-    }
-  });
-
-  document.addEventListener('fullscreenchange', () => {
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 80);
-  });
-
-  renderSceneSelector();
-  viewerElement.style.backgroundImage = `url('${activeScene().poster}')`;
-  const tourObserver = new IntersectionObserver((entries) => {
-    if (entries.some((entry) => entry.isIntersecting)) {
-      ensureViewer();
-      tourObserver.disconnect();
-    }
-  }, { rootMargin: '300px 0px', threshold: 0.01 });
-  tourObserver.observe(document.querySelector('#recorre-la-quinta-360'));
-</script>
+<dialog class="quinta-tour-dialog" id="quinta-tour-dialog" aria-label="Recorrido virtual 360 de la Quinta en Berriozábal">
+  <div id="quinta-viewer360"></div>
+  <button class="quinta-dialog-control quinta-dialog-close" type="button" data-close-quinta-tour aria-label="Cerrar recorrido">×</button>
+  <button class="quinta-dialog-control quinta-dialog-prev" type="button" data-quinta-tour-prev aria-label="Área anterior">‹</button>
+  <button class="quinta-dialog-control quinta-dialog-next" type="button" data-quinta-tour-next aria-label="Área siguiente">›</button>
+  <div class="quinta-tour-status" aria-live="polite"><span id="quinta-tour-current">Interior · Sala principal</span><small id="quinta-tour-count">01 / 09</small></div>
+  <div class="quinta-tour-scene-thumbs" id="quinta-tour-scene-thumbs" aria-label="Selector de áreas"></div>
+</dialog>
+<dialog class="quinta-image-dialog" id="quinta-image-dialog" aria-label="Fotografía ampliada de la Quinta">
+  <img id="quinta-lightbox-image" src="images/Quinta-Berriozabal.png" alt="Vista ampliada de la Quinta en Berriozábal">
+  <button class="quinta-dialog-control quinta-dialog-close" type="button" data-close-quinta-image aria-label="Cerrar imagen">×</button>
+  <button class="quinta-dialog-control quinta-dialog-prev" type="button" data-quinta-image-prev aria-label="Imagen anterior">‹</button>
+  <button class="quinta-dialog-control quinta-dialog-next" type="button" data-quinta-image-next aria-label="Imagen siguiente">›</button>
+</dialog>
+<script src="vendor/media-app.js" defer></script>
+<script src="vendor/tour-app.bundle.js" defer></script>
 
 <!-- Meta Pixel Code -->
 <script>
