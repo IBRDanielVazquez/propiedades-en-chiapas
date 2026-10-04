@@ -229,8 +229,8 @@ export const DESARROLLOS = [
       "/quinta-en-berriozabal/images/Quinta-Berriozabal-12.png",
       "/quinta-en-berriozabal/images/Quinta-Berriozabal-15.png"
     ],
-    "precio": 0,
-    "precioTexto": "Consultar Precio",
+    "precio": 4500000,
+    "precioTexto": "$4,500,000 MXN",
     "pagoSemanal": "Terreno +2,200 m² + Casa Habitable",
     "superficie": "+2,200 m² terreno",
     "amenidades": [
@@ -241,6 +241,8 @@ export const DESARROLLOS = [
     ],
     "ubicacionNota": "Berriozábal, Chiapas",
     "whatsapp": "https://wa.me/529612466204",
+    "tour360": true,
+    "tourUrl": "/quinta-en-berriozabal/#recorre-la-quinta-360",
     "esDesarrollo": true,
     "status": "Disponible",
     "etiqueta": "✦ Quinta +2,200 m²"

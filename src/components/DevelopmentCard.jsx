@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // Tarjeta Inmobiliaria de Desarrollo / Landing Page
 // Renderiza la ficha completa con imágenes reales, amenidades, precios y facilidades de pago
@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 export default function DevelopmentCard({ dev, onClick }) {
   const [imgIdx, setImgIdx] = useState(0);
   const [imgErr, setImgErr] = useState(false);
+  const hasTour360 = Boolean(dev.tour360);
 
   const imgList = Array.isArray(dev.galeria) && dev.galeria.length > 0 ? dev.galeria : (dev.imagen ? [dev.imagen] : []);
   const currentImg = !imgErr && imgList[imgIdx] ? imgList[imgIdx] : (dev.imagen || 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800');
@@ -85,7 +86,7 @@ export default function DevelopmentCard({ dev, onClick }) {
         </div>
 
         {/* Etiqueta Personalizada */}
-        {dev.etiqueta && (
+        {dev.etiqueta && !hasTour360 && (
           <div style={{
             position: 'absolute', top: 12, right: 12, zIndex: 2,
             background: 'rgba(15,23,42,0.75)', backdropFilter: 'blur(6px)',
@@ -93,6 +94,18 @@ export default function DevelopmentCard({ dev, onClick }) {
             padding: '4px 10px', borderRadius: '20px', letterSpacing: '0.3px',
           }}>
             {dev.etiqueta}
+          </div>
+        )}
+
+        {hasTour360 && (
+          <div style={{
+            position: 'absolute', top: 14, right: 14, zIndex: 4,
+            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+            color: '#111827', fontSize: '0.7rem', fontWeight: 900,
+            padding: '7px 11px', borderRadius: '999px', letterSpacing: '0.03em',
+            boxShadow: '0 5px 18px rgba(0,0,0,0.22)',
+          }}>
+            ◉ Recorrido 360°
           </div>
         )}
 
@@ -210,6 +223,31 @@ export default function DevelopmentCard({ dev, onClick }) {
             Ver Landing →
           </span>
         </div>
+
+        {hasTour360 && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 10 }}>
+            <a
+              href={`/${dev.slug}/`}
+              onClick={(event) => event.stopPropagation()}
+              style={{
+                textAlign: 'center', textDecoration: 'none', border: '1px solid #cbd5e1',
+                color: '#1e293b', borderRadius: 9, padding: '8px 6px', fontSize: '0.72rem', fontWeight: 800,
+              }}
+            >
+              Ver landing
+            </a>
+            <a
+              href={dev.tourUrl}
+              onClick={(event) => event.stopPropagation()}
+              style={{
+                textAlign: 'center', textDecoration: 'none', background: '#0f766e',
+                color: '#fff', borderRadius: 9, padding: '8px 6px', fontSize: '0.72rem', fontWeight: 800,
+              }}
+            >
+              Abrir recorrido 360°
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
