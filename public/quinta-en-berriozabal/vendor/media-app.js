@@ -8,7 +8,12 @@ const galleryImages = [
   'images/Quinta-Berriozabal.png', 'images/Quinta-Berriozabal-1.png',
   'images/Quinta-Berriozabal-2.png', 'images/Quinta-Berriozabal-3.png',
   'images/Quinta-Berriozabal-4.png', 'images/Quinta-Berriozabal-5.png',
-  'images/Quinta-Berriozabal-8.png', 'images/Quinta-Berriozabal-10.png',
+  'images/Quinta-Berriozabal-6.png', 'images/Quinta-Berriozabal-8.png',
+  'images/Quinta-Berriozabal-10.png', 'images/Quinta-Berriozabal-11.png',
+  'images/Quinta-Berriozabal-12.png', 'images/Quinta-Berriozabal-13.png',
+  'images/Quinta-Berriozabal-14.png', 'images/Quinta-Berriozabal-15.png',
+  'images/Quinta-Berriozabal-16.png', 'images/Quinta-Berriozabal-17.png',
+  'images/Quinta-Berriozabal-18.png', 'images/Quinta-Berriozabal-19.png',
 ];
 const imageDialog = document.querySelector('#quinta-image-dialog');
 const lightboxImage = document.querySelector('#quinta-lightbox-image');
