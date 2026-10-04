@@ -169,101 +169,8 @@
       </div>
     </div>
 
-    <!-- Carrusel Slide con Swiper -->
-    <div class="mt-16">
-      <div class="swiper valor-swiper w-full">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-4.png" alt="Vista aérea esquina 1">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-5.png" alt="Vista aérea esquina 2">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-8.png" alt="Vista panorámica terreno">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-1.png" alt="Fachada principal">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-2.png" alt="Vista lateral">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-3.png" alt="Área verde amplia">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-6.png" alt="Vista trasera y barda">
-          </div>
-        </div>
-
-        <!-- Paginación y Navegación -->
-        <div class="swiper-pagination mt-6"></div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-      </div>
-    </div>
   </div>
 </section>
-
-<!-- Estilos personalizados -->
-<style>
-  /* Flechas semitransparentes */
-  .valor-swiper .swiper-button-next,
-  .valor-swiper .swiper-button-prev {
-    color: #fff !important; /* flecha blanca */
-    border: 2px solid #fff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    background: rgba(0,0,0,0.3); /* círculo semitransparente */
-    transition: all 0.3s ease;
-  }
-  .valor-swiper .swiper-button-next:hover,
-  .valor-swiper .swiper-button-prev:hover {
-    background: rgba(0,0,0,0.5);
-    transform: scale(1.1);
-  }
-  .valor-swiper .swiper-button-next:after,
-  .valor-swiper .swiper-button-prev:after {
-    font-size: 16px !important;
-    font-weight: bold;
-  }
-
-  /* Bullets */
-  .valor-swiper .swiper-pagination-bullet {
-    background: transparent !important;
-    border: 1.8px solid #000;
-    opacity: 0.7 !important;
-    transition: all 0.3s ease;
-  }
-  .valor-swiper .swiper-pagination-bullet-active {
-    background: #000 !important;
-    opacity: 1 !important;
-  }
-</style>
-
-<!-- Scripts necesarios de Swiper -->
-<script>
-  const swiperValor = new Swiper('.valor-swiper', {
-    loop: true,
-    slidesPerView: 1,
-    spaceBetween: 20,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false,
-    },
-    pagination: {
-      el: '.valor-swiper .swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.valor-swiper .swiper-button-next',
-      prevEl: '.valor-swiper .swiper-button-prev',
-    },
-  });
-</script>
-
-
 
 <!-- 🏘️ SECCIÓN 3: DETALLE DE LA CASA -->
 <section id="casa" class="w-full py-20 bg-gray-50 text-gray-900">
@@ -294,100 +201,8 @@
       </ul>
     </div>
 
-    <!-- Slider de imágenes interiores -->
-    <div class="mt-16">
-      <div class="swiper casa-swiper w-full">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-10.png" alt="Interior recámara con closet de cedro">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-11.png" alt="Vista interior amplia">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-12.png" alt="Cocina integral con acabados de cedro">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-13.png" alt="Puertas de cedro elegantes">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-14.png" alt="Sala iluminada">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-15.png" alt="Vista interior moderna">
-          </div>
-          <div class="swiper-slide">
-            <img decoding="async" class="rounded-xl shadow-lg w-full h-[400px] object-cover" src="images/Quinta-Berriozabal-16.png" alt="Detalles arquitectónicos en madera">
-          </div>
-        </div>
-
-        <!-- Controles -->
-        <div class="swiper-pagination mt-6"></div>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-      </div>
-    </div>
   </div>
 </section>
-
-<!-- Estilos slider Casa -->
-<style>
-  .casa-swiper .swiper-button-next,
-  .casa-swiper .swiper-button-prev {
-    color: #fff !important; /* flecha blanca */
-    border: 2px solid #fff;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    background: rgba(0,0,0,0.3); /* círculo semitransparente */
-    transition: all 0.3s ease;
-  }
-  .casa-swiper .swiper-button-next:hover,
-  .casa-swiper .swiper-button-prev:hover {
-    background: rgba(0,0,0,0.5);
-    transform: scale(1.1);
-  }
-  .casa-swiper .swiper-button-next:after,
-  .casa-swiper .swiper-button-prev:after {
-    font-size: 16px !important;
-    font-weight: bold;
-  }
-
-  /* Bullets */
-  .casa-swiper .swiper-pagination-bullet {
-    background: transparent !important;
-    border: 1.8px solid #000;
-    opacity: 0.7 !important;
-    transition: all 0.3s ease;
-  }
-  .casa-swiper .swiper-pagination-bullet-active {
-    background: #000 !important;
-    opacity: 1 !important;
-  }
-</style>
-
-<!-- Script slider Casa -->
-<script>
-  const swiperCasa = new Swiper('.casa-swiper', {
-    loop: true,
-    slidesPerView: 1,
-    spaceBetween: 20,
-    autoplay: {
-      delay: 5000,
-      disableOnInteraction: false,
-    },
-    pagination: {
-      el: '.casa-swiper .swiper-pagination',
-      clickable: true,
-    },
-    navigation: {
-      nextEl: '.casa-swiper .swiper-button-next',
-      prevEl: '.casa-swiper .swiper-button-prev',
-    },
-  });
-</script>
-
-
 
 <!-- 📍 SECCIÓN UBICACIÓN + SEGURIDAD (SIN ÍCONO) -->
 <section id="ubicacion" class="w-full py-20 bg-gray-50 text-gray-900">
@@ -421,79 +236,6 @@
 
 
 
-<!-- 🖼️ Galería (ratio aprox. 1080×1350) -->
-<div>
-  <h4 class="text-2xl font-bold text-green-700 text-center mb-8">
-    🖼️ Conexión Real en Imágenes
-  </h4>
-  <div class="swiper galeria-swiper w-full relative">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <img decoding="async" class="w-full h-[540px] object-cover object-center rounded-xl shadow-md" src="images/Quinta-Berriozabal-17.png" alt="Imagen 1">
-      </div>
-      <div class="swiper-slide">
-        <img decoding="async" class="w-full h-[540px] object-cover object-center rounded-xl shadow-md" src="images/Quinta-Berriozabal-18.png" alt="Imagen 2">
-      </div>
-      <div class="swiper-slide">
-        <img decoding="async" class="w-full h-[540px] object-cover object-center rounded-xl shadow-md" src="images/Quinta-Berriozabal-19.png" alt="Imagen 3">
-      </div>
-    </div>
-
-    <!-- Flechas -->
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
-
-    <!-- Paginación -->
-    <div class="swiper-pagination mt-4"></div>
-  </div>
-</div>
-
-<!-- Estilos personalizados para flechas -->
-<style>
-  .galeria-swiper .swiper-button-next,
-  .galeria-swiper .swiper-button-prev {
-    background: #fff;
-    border: 2px solid #16a34a; /* verde */
-    color: #16a34a !important;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-  }
-
-  .galeria-swiper .swiper-button-next:hover,
-  .galeria-swiper .swiper-button-prev:hover {
-    background: #16a34a;
-    color: #fff !important;
-    transform: scale(1.1);
-  }
-
-  .galeria-swiper .swiper-button-next:after,
-  .galeria-swiper .swiper-button-prev:after {
-    font-size: 16px !important;
-    font-weight: bold;
-  }
-</style>
-
-<!-- Init Swiper -->
-<script>
-  var swiperGaleria = new Swiper(".galeria-swiper", {
-    loop: true,
-    slidesPerView: 1,
-    spaceBetween: 20,
-    pagination: {
-      el: ".galeria-swiper .swiper-pagination",
-      clickable: true,
-    },
-    navigation: {
-      nextEl: ".galeria-swiper .swiper-button-next",
-      prevEl: ".galeria-swiper .swiper-button-prev",
-    },
-  });
-</script>
-
-
 <!-- 🌟 Ventajas de la Zona -->
 <div>
 <h4 class="text-2xl font-bold text-green-700 mb-6 text-center">🌟 Ventajas de la Zona</h4>
@@ -511,20 +253,6 @@
 <a class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-8 rounded-full text-base transition duration-300 shadow-md" href="https://wa.me/529612466204?text=Hola%2C%20me%20interesa%20saber%20m%C3%A1s%20acerca%20de%20la%20ubicaci%C3%B3n%20de%20la%20Quinta%20en%20Berrioz%C3%A1bal" target="_blank" rel="noopener"> 📍 Quiero saber más acerca de la ubicación </a></div>
 </div>
 </section>
-<!-- SwiperJS init (solo galería) -->
-<p><script>
-  var swiperGaleria = new Swiper(".galeria-swiper", {
-    loop: true,
-    pagination: { el: ".galeria-swiper .swiper-pagination", clickable: true },
-    navigation: { nextEl: ".galeria-swiper .swiper-button-next", prevEl: ".galeria-swiper .swiper-button-prev" },
-    slidesPerView: 1,
-    spaceBetween: 20,
-    breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }
-  });
-</script></p>
-
-
-
 <!-- EXPERIENCIA VISUAL COMPACTA -->
 <section id="recorre-la-quinta-360" class="quinta-media-section" aria-labelledby="quinta-media-title">
   <style>
@@ -560,6 +288,18 @@
       <button type="button" data-quinta-gallery-index="3"><img src="images/Quinta-Berriozabal-3.png" alt="Interior de la Quinta" loading="lazy"></button>
       <button type="button" data-quinta-gallery-index="4"><img src="images/Quinta-Berriozabal-4.png" alt="Área de la propiedad" loading="lazy"></button>
       <button type="button" data-quinta-gallery-index="5"><img src="images/Quinta-Berriozabal-5.png" alt="Vista adicional de la Quinta" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="6"><img src="images/Quinta-Berriozabal-6.png" alt="Vista trasera y barda de la Quinta" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="7"><img src="images/Quinta-Berriozabal-8.png" alt="Vista panorámica del terreno" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="8"><img src="images/Quinta-Berriozabal-10.png" alt="Recámara con clóset de cedro" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="9"><img src="images/Quinta-Berriozabal-11.png" alt="Vista interior amplia" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="10"><img src="images/Quinta-Berriozabal-12.png" alt="Cocina integral" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="11"><img src="images/Quinta-Berriozabal-13.png" alt="Puertas de cedro" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="12"><img src="images/Quinta-Berriozabal-14.png" alt="Sala iluminada" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="13"><img src="images/Quinta-Berriozabal-15.png" alt="Vista interior de la propiedad" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="14"><img src="images/Quinta-Berriozabal-16.png" alt="Detalles arquitectónicos en madera" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="15"><img src="images/Quinta-Berriozabal-17.png" alt="Conexión y entorno de la propiedad" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="16"><img src="images/Quinta-Berriozabal-18.png" alt="Acceso y ubicación de la Quinta" loading="lazy"></button>
+      <button type="button" data-quinta-gallery-index="17"><img src="images/Quinta-Berriozabal-19.png" alt="Vista de conexión vial" loading="lazy"></button>
     </div></div>
     <div id="quinta-panel-interior" class="quinta-media-panel" role="tabpanel"><button class="quinta-tour-launch" type="button" data-open-quinta-tour="interior"><img src="360/posters/interior/01-sala.webp" alt="Vista previa del recorrido interior 360"><span class="quinta-tour-launch-overlay"><span class="quinta-tour-launch-action">Abrir recorrido interior 360°<small>9 espacios · arrastra, amplía y explora</small></span></span></button></div>
     <div id="quinta-panel-exterior" class="quinta-media-panel" role="tabpanel"><button class="quinta-tour-launch" type="button" data-open-quinta-tour="exterior"><img src="360/posters/exterior/01-acceso-principal.webp" alt="Vista previa del recorrido exterior 360"><span class="quinta-tour-launch-overlay"><span class="quinta-tour-launch-action">Abrir recorrido exterior 360°<small>9 vistas · accesos, corredor y jardines</small></span></span></button></div>
