@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, MapPin, CheckCircle, Share2, MessageCircle, ExternalLink, Calendar, ShieldCheck, PhoneCall, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { X, MapPin, CheckCircle, Share2, MessageCircle, ExternalLink, ShieldCheck, Sparkles, Rotate3D } from 'lucide-react';
 
 export default function DevelopmentDetailModal({ dev, onClose }) {
   const [activeImgIdx, setActiveImgIdx] = useState(0);
@@ -234,6 +234,16 @@ export default function DevelopmentDetailModal({ dev, onClose }) {
             >
               <ExternalLink size={18} /> Ver Landing Page Completa
             </a>
+
+            {dev.tour360 && (
+              <a
+                href={dev.tourUrl || `/${dev.slug}/#recorre-la-quinta-360`}
+                className="modal-btn-secondary"
+                style={{ flex: 1, minWidth: 200, background: '#0f766e', color: '#fff', borderColor: '#0f766e' }}
+              >
+                <Rotate3D size={18} /> Recorrer en 360°
+              </a>
+            )}
           </div>
 
         </div>
