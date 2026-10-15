@@ -184,7 +184,7 @@ function trackTouchEnd(event){
  if(touchPointers.size<2)pinchState=null;
 }
 
-function init(){if(isMobile())setPanelOpen(false);if(PUBLISHED){document.body.classList.add('public');document.querySelectorAll('.editorOnly').forEach(e=>e.remove());$('filter').disabled=false;$('legal').textContent='Visualización ilustrativa. Polígonos trazados desde una imagen de diagnóstico; verificar límites, numeración y disponibilidad antes de compartir.'}bind();render();requestAnimationFrame(stageFit);addEventListener('resize',()=>{if(zoom<=1.01)stageFit()});if(window.visualViewport)window.visualViewport.addEventListener('resize',()=>{if(zoom<=1.01)stageFit()});if(lots.length&&!PUBLISHED)toast(`${lots.length} contornos precargados; verifica sus límites.`)}
+function init(){if(isMobile()){setPanelOpen(false);document.body.classList.add('polygons-hidden');$('toggleOverlay').textContent='◌ Ver contornos';$('toggleOverlay').setAttribute('aria-pressed','false')}if(PUBLISHED){document.body.classList.add('public');document.querySelectorAll('.editorOnly').forEach(e=>e.remove());$('filter').disabled=false;$('legal').textContent='Visualización ilustrativa. Polígonos trazados desde una imagen de diagnóstico; verificar límites, numeración y disponibilidad antes de compartir.'}bind();render();requestAnimationFrame(stageFit);addEventListener('resize',()=>{if(zoom<=1.01)stageFit()});if(window.visualViewport)window.visualViewport.addEventListener('resize',()=>{if(zoom<=1.01)stageFit()});if(lots.length&&!PUBLISHED)toast(`${lots.length} contornos precargados; verifica sus límites.`)}
 init();
 })();
 </script>
