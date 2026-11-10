@@ -109,18 +109,29 @@ p{margin:0}
 @media (max-width:899px){.tarjetas{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(-1 * var(--lado));padding-inline:var(--lado);scrollbar-width:none}.tarjetas::-webkit-scrollbar{display:none}.tarjeta{flex:0 0 78%;scroll-snap-align:start}}
 
 /* Apertura de capítulo, cinematográfica */
-.apertura{position:relative;height:min(92svh,860px);overflow:hidden;color:#fff;display:flex;align-items:flex-end;background:var(--noche);margin-top:clamp(48px,7vw,96px)}
+.apertura{position:relative;height:min(64svh,620px);overflow:hidden;color:#fff;display:flex;align-items:flex-end;background:var(--noche);margin-top:clamp(48px,7vw,96px)}
 .apertura .fondo{position:absolute;inset:-6% 0;will-change:transform}
 .apertura .fondo img{width:100%;height:100%;object-fit:cover}
 .apertura::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,24,19,.1) 30%,rgba(16,24,19,.88) 100%)}
 .apertura .envoltura{position:relative;z-index:2;width:100%;padding-block:0 clamp(32px,6vw,72px)}
 .apertura .num{font:600 .95rem/1 var(--texto);color:var(--oro-sol);margin-bottom:14px;display:block}
-.apertura h2{font-size:clamp(3rem,11vw,8.8rem);font-weight:800;font-stretch:120%;letter-spacing:-.035em;line-height:.88;margin-bottom:18px;will-change:transform}
+.apertura h2{font-size:clamp(2.8rem,9.5vw,7.4rem);font-weight:800;font-stretch:120%;letter-spacing:-.035em;line-height:.88;margin-bottom:18px;will-change:transform}
 .apertura p{max-width:44ch;font-size:clamp(1.05rem,2vw,1.25rem);color:#E2E8E3}
 .apertura .rasgos{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
 .apertura .rasgos span{padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);font-weight:600;font-size:.92rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 
 /* Ficha de casa, tipo app */
+.fotos .rejilla .es-plano{background:#fff;position:relative}
+.fotos .rejilla .es-plano img{object-fit:contain;padding:10px}
+.marca-plano{position:absolute;left:12px;bottom:12px;background:var(--tinta);color:#fff;font:700 .82rem/1 var(--texto);padding:7px 11px;border-radius:999px}
+.btn-3d{position:absolute;left:16px;top:16px;z-index:2;min-height:44px;padding:0 16px;border-radius:12px;border:0;background:var(--tinta);color:#fff;font:600 .95rem/1 var(--texto);cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.btn-3d .ico{width:18px;height:18px}
+@media (max-width:767px){.btn-3d{left:calc(var(--lado) + 4px);top:12px;min-height:40px;font-size:.9rem}}
+dialog.visor-3d{border:0;padding:0;margin:0;width:100%;max-width:none;height:100%;max-height:none;background:#000;color:#fff}
+.visor-3d .barra-3d{position:absolute;inset:0 0 auto;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 10px) var(--lado-d) 10px var(--lado);background:linear-gradient(rgba(0,0,0,.7),transparent);font-weight:700}
+.visor-3d button{width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);background:rgba(0,0,0,.4);color:#fff;cursor:pointer;display:grid;place-items:center}
+.visor-3d iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
 .tramo.t1{background:#E6EEE9}
 .condo-cabeza.envoltura{max-width:var(--ancho)}.areas-cabeza{max-width:none}.condo-cabeza p,.areas-cabeza p{max-width:60ch}
 .rotulo{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:3px solid var(--jade);padding-top:12px;margin-bottom:22px;font-weight:700;font-size:.92rem;color:var(--jade)}
@@ -188,12 +199,12 @@ p{margin:0}
 
 /* Condominio: carril guiado */
 .oscuro{background:var(--noche);color:var(--hueso)}
-.condo-cabeza{padding-block:clamp(48px,7vw,88px) 26px;display:grid;gap:10px;max-width:60ch}
+.condo-cabeza{padding-block:clamp(36px,5vw,64px) 20px;display:grid;gap:10px;max-width:60ch}
 .condo-cabeza h3{font-size:clamp(2.1rem,5.5vw,3.8rem);font-weight:800;font-stretch:115%}
 .condo-cabeza p{color:#AEB8B0}
 .carril{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-left:var(--lado);padding-right:var(--lado-d);padding-bottom:10px;scrollbar-width:thin;overscroll-behavior-x:contain}
 .carril figure{flex:0 0 auto;margin:0;scroll-snap-align:start;display:grid;gap:10px}
-.carril img{height:clamp(300px,58svh,620px);width:auto;max-width:86vw;object-fit:cover;border-radius:var(--radio);cursor:zoom-in}
+.carril img{height:clamp(260px,46svh,480px);width:auto;max-width:86vw;object-fit:cover;border-radius:var(--radio);cursor:zoom-in}
 .carril figcaption{font-size:.92rem;color:#AEB8B0}
 .flechas{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
 .flechas button{width:52px;height:52px;border-radius:50%;border:1.5px solid currentColor;background:transparent;color:inherit;cursor:pointer;display:grid;place-items:center}
@@ -383,7 +394,7 @@ footer.pie a{color:var(--hueso)}
   </div>
 </article></div></div>
 
-<section class="oscuro guiado" id="condominio" data-nombre="Izamal" data-precio="$1,025,000" data-mensaje="Hola, me interesa la casa Izamal de Bosques de Sayab ($1,025,000). ¿Me compartes disponibilidad y formas de pago?" aria-labelledby="t-condo">
+<section class="oscuro" id="condominio" data-nombre="Izamal" data-precio="$1,025,000" data-mensaje="Hola, me interesa la casa Izamal de Bosques de Sayab ($1,025,000). ¿Me compartes disponibilidad y formas de pago?" aria-labelledby="t-condo">
   <div class="pegado">
     <div class="envoltura condo-cabeza">
       <div class="rotulo en-oscuro"><span class="cap">Capítulo 1 · Privada Izamal</span><span class="paso">2 de 2</span></div>
@@ -392,7 +403,7 @@ footer.pie a{color:var(--hueso)}
     </div>
     <div class="carril" data-grupo id="carrilCondo" tabindex="0" aria-label="Fotos de la privada Izamal"><figure><span data-abre="42" style="display:block"><img src="img/sayab-42-1440.webp" srcset="img/sayab-42-720.webp 720w, img/sayab-42-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="1368" height="912" alt="Privada Izamal: alberca con palapa" loading="lazy" decoding="async"></span><figcaption>Alberca con palapa</figcaption></figure><figure><span data-abre="17" style="display:block"><img src="img/sayab-17-1440.webp" srcset="img/sayab-17-720.webp 720w, img/sayab-17-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="1368" height="912" alt="Privada Izamal: alberca vista desde la pérgola" loading="lazy" decoding="async"></span><figcaption>Alberca vista desde la pérgola</figcaption></figure><figure><span data-abre="3" style="display:block"><img src="img/sayab-3-1440.webp" srcset="img/sayab-3-720.webp 720w, img/sayab-3-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="1368" height="912" alt="Privada Izamal: palapa del área de alberca" loading="lazy" decoding="async"></span><figcaption>Palapa del área de alberca</figcaption></figure><figure><span data-abre="27" style="display:block"><img src="img/sayab-27-1440.webp" srcset="img/sayab-27-720.webp 720w, img/sayab-27-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="1368" height="912" alt="Privada Izamal: alberca y jardín" loading="lazy" decoding="async"></span><figcaption>Alberca y jardín</figcaption></figure><figure><span data-abre="22" style="display:block"><img src="img/sayab-22-1440.webp" srcset="img/sayab-22-720.webp 720w, img/sayab-22-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="867" height="1300" alt="Privada Izamal: pérgola con enredadera" loading="lazy" decoding="async"></span><figcaption>Pérgola con enredadera</figcaption></figure><figure><span data-abre="71" style="display:block"><img src="img/sayab-71-1440.webp" srcset="img/sayab-71-720.webp 720w, img/sayab-71-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="1368" height="912" alt="Privada Izamal: alberca con pérgola" loading="lazy" decoding="async"></span><figcaption>Alberca con pérgola</figcaption></figure><figure><span data-abre="9" style="display:block"><img src="img/sayab-9-1440.webp" srcset="img/sayab-9-720.webp 720w, img/sayab-9-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="867" height="1300" alt="Privada Izamal: pérgola con mesa de picnic" loading="lazy" decoding="async"></span><figcaption>Pérgola con mesa de picnic</figcaption></figure><figure><span data-abre="78" style="display:block"><img src="img/sayab-78-1440.webp" srcset="img/sayab-78-720.webp 720w, img/sayab-78-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="867" height="1300" alt="Privada Izamal: pérgola con enredadera" loading="lazy" decoding="async"></span><figcaption>Pérgola con enredadera</figcaption></figure><figure><span data-abre="41" style="display:block"><img src="img/sayab-41-1440.webp" srcset="img/sayab-41-720.webp 720w, img/sayab-41-1440.webp 1440w" sizes="(min-width:900px) 50vw, 86vw" width="867" height="1300" alt="Privada Izamal: pérgola con mesa de picnic" loading="lazy" decoding="async"></span><figcaption>Pérgola con mesa de picnic</figcaption></figure></div>
     <div class="envoltura"><div class="flechas" data-carril="carrilCondo"><button type="button" aria-label="Foto anterior" data-dir="-1"><svg class="ico"><use href="#i-izq"/></svg></button><button type="button" aria-label="Foto siguiente" data-dir="1"><svg class="ico"><use href="#i-der"/></svg></button></div></div>
-    <div style="height:clamp(40px,6vw,80px)"></div>
+    <div style="height:clamp(28px,4vw,48px)"></div>
   </div>
 </section>
 
@@ -401,34 +412,29 @@ footer.pie a{color:var(--hueso)}
   <div class="envoltura">
     <span class="num">Capítulo 2</span>
     <h2 id="t-cap2" data-deriva>Sayil y Kabah</h2>
-    <p>Casas más amplias, frente a las áreas comunes del desarrollo: parque, cancha, juegos y casa club.</p>
+    <p>Casas más amplias, en la zona del desarrollo que tiene parque, cancha, juegos y casa club.</p>
     <div class="rasgos"><span>Parque central</span><span>Cancha</span><span>Casa club</span><span>69 y 82 m²</span></div>
   </div>
 </section>
 <div class="envoltura"><article class="casa" id="sayil" data-nombre="Sayil" data-precio="$1,126,000" data-mensaje="Hola, me interesa la casa Sayil de Bosques de Sayab ($1,126,000). ¿Me compartes disponibilidad y formas de pago?" aria-labelledby="t-sayil">
   <div class="rotulo"><span class="cap">Capítulo 2 · Sayil y Kabah</span><span class="paso">1 de 3</span></div><div class="casa-cabeza sube"><h3 id="t-sayil">Casa Sayil</h3><p class="linea-datos">2 recámaras · 1½ baños · 69 m² · Recorrido 3D</p></div>
   <div class="fotos" data-grupo>
-    <div class="rejilla"><button type="button" data-abre="16" aria-label="Ampliar: Sayil: fachada"><img src="img/sayab-16-1440.webp" srcset="img/sayab-16-720.webp 720w, img/sayab-16-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="1051" alt="Sayil: fachada" loading="lazy" decoding="async"></button><button type="button" data-abre="7" aria-label="Ampliar: Sayil: sala"><img src="img/sayab-7-1440.webp" srcset="img/sayab-7-720.webp 720w, img/sayab-7-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: sala" loading="lazy" decoding="async"></button><button type="button" data-abre="34" aria-label="Ampliar: Sayil: comedor y sala"><img src="img/sayab-34-1440.webp" srcset="img/sayab-34-720.webp 720w, img/sayab-34-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Sayil: comedor y sala" loading="lazy" decoding="async"></button><button type="button" data-abre="19" aria-label="Ampliar: Sayil: recámara principal"><img src="img/sayab-19-1440.webp" srcset="img/sayab-19-720.webp 720w, img/sayab-19-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: recámara principal" loading="lazy" decoding="async"></button><button type="button" data-abre="1" aria-label="Ampliar: Sayil: cocina y medio baño"><img src="img/sayab-1-1440.webp" srcset="img/sayab-1-720.webp 720w, img/sayab-1-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: cocina y medio baño" loading="lazy" decoding="async"></button><button type="button" data-abre="29" aria-label="Ampliar: Sayil: recámara principal con clóset"><img src="img/sayab-29-1440.webp" srcset="img/sayab-29-720.webp 720w, img/sayab-29-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Sayil: recámara principal con clóset" loading="lazy" decoding="async"></button><button type="button" data-abre="77" aria-label="Ampliar: Sayil: segunda recámara"><img src="img/sayab-77-1440.webp" srcset="img/sayab-77-720.webp 720w, img/sayab-77-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1700" height="1133" alt="Sayil: segunda recámara" loading="lazy" decoding="async"></button><button type="button" data-abre="74" aria-label="Ampliar: Sayil: segunda recámara"><img src="img/sayab-74-1440.webp" srcset="img/sayab-74-720.webp 720w, img/sayab-74-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Sayil: segunda recámara" loading="lazy" decoding="async"></button><button type="button" data-abre="69" aria-label="Ampliar: Sayil: baño completo"><img src="img/sayab-69-1440.webp" srcset="img/sayab-69-720.webp 720w, img/sayab-69-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: baño completo" loading="lazy" decoding="async"></button></div>
-    <button type="button" class="ver-todas" data-todas><svg class="ico"><use href="#i-fotos"/></svg>Ver las 9 fotos</button>
-    <span class="contador">1 / 9</span>
+    <div class="rejilla"><button type="button" class="es-plano" data-abre="58" aria-label="Ampliar plano de Sayil"><img src="img/sayab-58-1440.webp" width="672" height="756" alt="Plano de distribución del modelo Sayil" loading="lazy" decoding="async"><span class="marca-plano">Distribución</span></button><button type="button" data-abre="16" aria-label="Ampliar: Sayil: fachada"><img src="img/sayab-16-1440.webp" srcset="img/sayab-16-720.webp 720w, img/sayab-16-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="1051" alt="Sayil: fachada" loading="lazy" decoding="async"></button><button type="button" data-abre="7" aria-label="Ampliar: Sayil: sala"><img src="img/sayab-7-1440.webp" srcset="img/sayab-7-720.webp 720w, img/sayab-7-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: sala" loading="lazy" decoding="async"></button><button type="button" data-abre="34" aria-label="Ampliar: Sayil: comedor y sala"><img src="img/sayab-34-1440.webp" srcset="img/sayab-34-720.webp 720w, img/sayab-34-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Sayil: comedor y sala" loading="lazy" decoding="async"></button><button type="button" data-abre="19" aria-label="Ampliar: Sayil: recámara principal"><img src="img/sayab-19-1440.webp" srcset="img/sayab-19-720.webp 720w, img/sayab-19-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: recámara principal" loading="lazy" decoding="async"></button><button type="button" data-abre="1" aria-label="Ampliar: Sayil: cocina y medio baño"><img src="img/sayab-1-1440.webp" srcset="img/sayab-1-720.webp 720w, img/sayab-1-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: cocina y medio baño" loading="lazy" decoding="async"></button><button type="button" data-abre="29" aria-label="Ampliar: Sayil: recámara principal con clóset"><img src="img/sayab-29-1440.webp" srcset="img/sayab-29-720.webp 720w, img/sayab-29-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Sayil: recámara principal con clóset" loading="lazy" decoding="async"></button><button type="button" data-abre="77" aria-label="Ampliar: Sayil: segunda recámara"><img src="img/sayab-77-1440.webp" srcset="img/sayab-77-720.webp 720w, img/sayab-77-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1700" height="1133" alt="Sayil: segunda recámara" loading="lazy" decoding="async"></button><button type="button" data-abre="74" aria-label="Ampliar: Sayil: segunda recámara"><img src="img/sayab-74-1440.webp" srcset="img/sayab-74-720.webp 720w, img/sayab-74-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Sayil: segunda recámara" loading="lazy" decoding="async"></button><button type="button" data-abre="69" aria-label="Ampliar: Sayil: baño completo"><img src="img/sayab-69-1440.webp" srcset="img/sayab-69-720.webp 720w, img/sayab-69-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Sayil: baño completo" loading="lazy" decoding="async"></button></div>
+    <button type="button" class="btn-3d" data-tour-abrir="JvDAbGQPi93" data-tour-nombre="Sayil"><svg class="ico"><use href="#i-3d"/></svg>Recorrido 3D</button><button type="button" class="ver-todas" data-todas><svg class="ico"><use href="#i-fotos"/></svg>Ver plano y fotos</button>
+    <span class="contador">1 / 10</span>
   </div>
   <div class="casa-cuerpo">
     <div class="detalle">
       <div class="rasgos-casa"><div class="rasgo"><svg class="ico"><use href="#i-cama"/></svg><b>2</b><small>recámaras</small></div><div class="rasgo"><svg class="ico"><use href="#i-bano"/></svg><b>1½</b><small>baños</small></div><div class="rasgo"><svg class="ico"><use href="#i-m2"/></svg><b>69 m²</b><small>construcción</small></div><div class="rasgo"><svg class="ico"><use href="#i-niveles"/></svg><b>5 × 16 m</b><small>terreno</small></div></div>
-      <div class="destacado"><svg class="ico"><use href="#i-arbol"/></svg><p>Frente a las áreas comunes del desarrollo: parque, cancha, juegos y casa club.</p></div>
+      <div class="destacado"><svg class="ico"><use href="#i-arbol"/></svg><p>Está en la zona del desarrollo que tiene parque, cancha, juegos y casa club.</p></div>
       <div class="niveles"><div><h4>Planta baja</h4><p>Sala, comedor, cocina, medio baño, área de lavado y estacionamiento.</p></div><div><h4>Planta alta</h4><p>2 recámaras y baño completo.</p></div></div>
-      <h4 class="subtitulo" id="tour-sayil">Recorrido 3D</h4>
-      <div class="tour" data-tour="JvDAbGQPi93"><img src="img/sayab-7-1440.webp" alt="" loading="lazy" decoding="async"><div class="dentro"><strong>Camina la casa Sayil por dentro</strong><button class="boton claro" type="button"><svg class="ico"><use href="#i-3d"/></svg> Iniciar recorrido</button></div></div>
-      <a class="tour-enlace" href="https://my.matterport.com/show/?m=JvDAbGQPi93" target="_blank" rel="noopener">Abrir el recorrido en pantalla completa</a>
-      <h4 class="subtitulo">Plano</h4>
-      <figure class="plano" data-grupo><img src="img/sayab-58-1440.webp" width="672" height="756" loading="lazy" decoding="async" alt="Plano del modelo Sayil, planta baja y planta alta" data-abre="58"><figcaption>Plano ilustrativo. Planta baja a la izquierda y planta alta a la derecha.</figcaption></figure>
     </div>
     <aside class="tarjeta-precio" aria-label="Precio de Sayil">
       <small>Precio de la casa Sayil</small>
       <span class="monto">$1,126,000 MXN</span>
       <small>2 recámaras · 1½ baños · 69 m² · Recorrido 3D</small>
       <a class="boton lleno" data-wa="Hola, me interesa la casa Sayil de Bosques de Sayab ($1,126,000). ¿Me compartes disponibilidad y formas de pago?" href="#contacto"><svg class="ico"><use href="#i-wa"/></svg> Agendar visita</a>
-      <a class="boton" href="#tour-sayil"><svg class="ico"><use href="#i-3d"/></svg> Ver recorrido 3D</a>
+      <button class="boton" type="button" data-tour-abrir="JvDAbGQPi93" data-tour-nombre="Sayil"><svg class="ico"><use href="#i-3d"/></svg> Recorrido 3D</button>
       <p class="nota">Precio sujeto a cambio sin previo aviso.</p>
     </aside>
   </div>
@@ -436,27 +442,22 @@ footer.pie a{color:var(--hueso)}
 <article class="casa" id="kabah" data-nombre="Kabah" data-precio="$1,264,000" data-mensaje="Hola, me interesa la casa Kabah de Bosques de Sayab ($1,264,000). ¿Me compartes disponibilidad y formas de pago?" aria-labelledby="t-kabah">
   <div class="rotulo"><span class="cap">Capítulo 2 · Sayil y Kabah</span><span class="paso">2 de 3</span></div><div class="casa-cabeza sube"><h3 id="t-kabah">Casa Kabah</h3><p class="linea-datos">3 recámaras · 82 m² · Recorrido 3D</p></div>
   <div class="fotos" data-grupo>
-    <div class="rejilla"><button type="button" data-abre="36" aria-label="Ampliar: Kabah: fachada"><img src="img/sayab-36-1440.webp" srcset="img/sayab-36-720.webp 720w, img/sayab-36-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="949" alt="Kabah: fachada" loading="lazy" decoding="async"></button><button type="button" data-abre="23" aria-label="Ampliar: Kabah: sala"><img src="img/sayab-23-1440.webp" srcset="img/sayab-23-720.webp 720w, img/sayab-23-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Kabah: sala" loading="lazy" decoding="async"></button><button type="button" data-abre="56" aria-label="Ampliar: Kabah: recámara principal"><img src="img/sayab-56-1440.webp" srcset="img/sayab-56-720.webp 720w, img/sayab-56-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara principal" loading="lazy" decoding="async"></button><button type="button" data-abre="15" aria-label="Ampliar: Kabah: sala y comedor"><img src="img/sayab-15-1440.webp" srcset="img/sayab-15-720.webp 720w, img/sayab-15-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: sala y comedor" loading="lazy" decoding="async"></button><button type="button" data-abre="4" aria-label="Ampliar: Kabah: sala y cocina"><img src="img/sayab-4-1440.webp" srcset="img/sayab-4-720.webp 720w, img/sayab-4-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: sala y cocina" loading="lazy" decoding="async"></button><button type="button" data-abre="45" aria-label="Ampliar: Kabah: recámara principal"><img src="img/sayab-45-1440.webp" srcset="img/sayab-45-720.webp 720w, img/sayab-45-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara principal" loading="lazy" decoding="async"></button><button type="button" data-abre="38" aria-label="Ampliar: Kabah: recámara con escritorio"><img src="img/sayab-38-1440.webp" srcset="img/sayab-38-720.webp 720w, img/sayab-38-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1700" height="1133" alt="Kabah: recámara con escritorio" loading="lazy" decoding="async"></button><button type="button" data-abre="0" aria-label="Ampliar: Kabah: recámara infantil"><img src="img/sayab-0-1440.webp" srcset="img/sayab-0-720.webp 720w, img/sayab-0-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara infantil" loading="lazy" decoding="async"></button><button type="button" data-abre="76" aria-label="Ampliar: Kabah: recámara infantil"><img src="img/sayab-76-1440.webp" srcset="img/sayab-76-720.webp 720w, img/sayab-76-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara infantil" loading="lazy" decoding="async"></button><button type="button" data-abre="13" aria-label="Ampliar: Kabah: baño completo"><img src="img/sayab-13-1440.webp" srcset="img/sayab-13-720.webp 720w, img/sayab-13-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: baño completo" loading="lazy" decoding="async"></button><button type="button" data-abre="47" aria-label="Ampliar: Kabah: baño"><img src="img/sayab-47-1440.webp" srcset="img/sayab-47-720.webp 720w, img/sayab-47-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Kabah: baño" loading="lazy" decoding="async"></button></div>
-    <button type="button" class="ver-todas" data-todas><svg class="ico"><use href="#i-fotos"/></svg>Ver las 11 fotos</button>
-    <span class="contador">1 / 11</span>
+    <div class="rejilla"><button type="button" class="es-plano" data-abre="64" aria-label="Ampliar plano de Kabah"><img src="img/sayab-64-1440.webp" width="672" height="756" alt="Plano de distribución del modelo Kabah" loading="lazy" decoding="async"><span class="marca-plano">Distribución</span></button><button type="button" data-abre="36" aria-label="Ampliar: Kabah: fachada"><img src="img/sayab-36-1440.webp" srcset="img/sayab-36-720.webp 720w, img/sayab-36-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="949" alt="Kabah: fachada" loading="lazy" decoding="async"></button><button type="button" data-abre="23" aria-label="Ampliar: Kabah: sala"><img src="img/sayab-23-1440.webp" srcset="img/sayab-23-720.webp 720w, img/sayab-23-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Kabah: sala" loading="lazy" decoding="async"></button><button type="button" data-abre="56" aria-label="Ampliar: Kabah: recámara principal"><img src="img/sayab-56-1440.webp" srcset="img/sayab-56-720.webp 720w, img/sayab-56-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara principal" loading="lazy" decoding="async"></button><button type="button" data-abre="15" aria-label="Ampliar: Kabah: sala y comedor"><img src="img/sayab-15-1440.webp" srcset="img/sayab-15-720.webp 720w, img/sayab-15-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: sala y comedor" loading="lazy" decoding="async"></button><button type="button" data-abre="4" aria-label="Ampliar: Kabah: sala y cocina"><img src="img/sayab-4-1440.webp" srcset="img/sayab-4-720.webp 720w, img/sayab-4-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: sala y cocina" loading="lazy" decoding="async"></button><button type="button" data-abre="45" aria-label="Ampliar: Kabah: recámara principal"><img src="img/sayab-45-1440.webp" srcset="img/sayab-45-720.webp 720w, img/sayab-45-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara principal" loading="lazy" decoding="async"></button><button type="button" data-abre="38" aria-label="Ampliar: Kabah: recámara con escritorio"><img src="img/sayab-38-1440.webp" srcset="img/sayab-38-720.webp 720w, img/sayab-38-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1700" height="1133" alt="Kabah: recámara con escritorio" loading="lazy" decoding="async"></button><button type="button" data-abre="0" aria-label="Ampliar: Kabah: recámara infantil"><img src="img/sayab-0-1440.webp" srcset="img/sayab-0-720.webp 720w, img/sayab-0-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara infantil" loading="lazy" decoding="async"></button><button type="button" data-abre="76" aria-label="Ampliar: Kabah: recámara infantil"><img src="img/sayab-76-1440.webp" srcset="img/sayab-76-720.webp 720w, img/sayab-76-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: recámara infantil" loading="lazy" decoding="async"></button><button type="button" data-abre="13" aria-label="Ampliar: Kabah: baño completo"><img src="img/sayab-13-1440.webp" srcset="img/sayab-13-720.webp 720w, img/sayab-13-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1200" height="800" alt="Kabah: baño completo" loading="lazy" decoding="async"></button><button type="button" data-abre="47" aria-label="Ampliar: Kabah: baño"><img src="img/sayab-47-1440.webp" srcset="img/sayab-47-720.webp 720w, img/sayab-47-1440.webp 1440w" sizes="(min-width:768px) 50vw, 100vw" width="1600" height="1066" alt="Kabah: baño" loading="lazy" decoding="async"></button></div>
+    <button type="button" class="btn-3d" data-tour-abrir="LSXfK9jR7ad" data-tour-nombre="Kabah"><svg class="ico"><use href="#i-3d"/></svg>Recorrido 3D</button><button type="button" class="ver-todas" data-todas><svg class="ico"><use href="#i-fotos"/></svg>Ver plano y fotos</button>
+    <span class="contador">1 / 12</span>
   </div>
   <div class="casa-cuerpo">
     <div class="detalle">
       <div class="rasgos-casa"><div class="rasgo"><svg class="ico"><use href="#i-cama"/></svg><b>3</b><small>recámaras</small></div><div class="rasgo"><svg class="ico"><use href="#i-bano"/></svg><b>1½ + 1</b><small>baños</small></div><div class="rasgo"><svg class="ico"><use href="#i-m2"/></svg><b>82 m²</b><small>construcción</small></div><div class="rasgo"><svg class="ico"><use href="#i-niveles"/></svg><b>2</b><small>niveles</small></div></div>
       <div class="destacado"><svg class="ico"><use href="#i-casa"/></svg><p>La recámara de planta baja sirve para quien no quiere subir escaleras, o como estudio.</p></div>
       <div class="niveles"><div><h4>Planta baja</h4><p>Sala, comedor, cocina, 1½ baños, 1 recámara, área de lavado y estacionamiento.</p></div><div><h4>Planta alta</h4><p>2 recámaras y baño completo.</p></div></div>
-      <h4 class="subtitulo" id="tour-kabah">Recorrido 3D</h4>
-      <div class="tour" data-tour="LSXfK9jR7ad"><img src="img/sayab-23-1440.webp" alt="" loading="lazy" decoding="async"><div class="dentro"><strong>Camina la casa Kabah por dentro</strong><button class="boton claro" type="button"><svg class="ico"><use href="#i-3d"/></svg> Iniciar recorrido</button></div></div>
-      <a class="tour-enlace" href="https://my.matterport.com/show/?m=LSXfK9jR7ad" target="_blank" rel="noopener">Abrir el recorrido en pantalla completa</a>
-      <h4 class="subtitulo">Plano</h4>
-      <figure class="plano" data-grupo><img src="img/sayab-64-1440.webp" width="672" height="756" loading="lazy" decoding="async" alt="Plano del modelo Kabah, planta baja y planta alta" data-abre="64"><figcaption>Plano ilustrativo. Planta baja a la izquierda y planta alta a la derecha.</figcaption></figure>
     </div>
     <aside class="tarjeta-precio" aria-label="Precio de Kabah">
       <small>Precio de la casa Kabah</small>
       <span class="monto">$1,264,000 MXN</span>
       <small>3 recámaras · 82 m² · Recorrido 3D</small>
       <a class="boton lleno" data-wa="Hola, me interesa la casa Kabah de Bosques de Sayab ($1,264,000). ¿Me compartes disponibilidad y formas de pago?" href="#contacto"><svg class="ico"><use href="#i-wa"/></svg> Agendar visita</a>
-      <a class="boton" href="#tour-kabah"><svg class="ico"><use href="#i-3d"/></svg> Ver recorrido 3D</a>
+      <button class="boton" type="button" data-tour-abrir="LSXfK9jR7ad" data-tour-nombre="Kabah"><svg class="ico"><use href="#i-3d"/></svg> Recorrido 3D</button>
       <p class="nota">Precio sujeto a cambio sin previo aviso.</p>
     </aside>
   </div>
@@ -503,6 +504,8 @@ footer.pie a{color:var(--hueso)}
   <a class="boton lleno" id="accionBoton" data-wa="Hola, me interesa Bosques de Sayab. ¿Me compartes información?" href="#contacto"><svg class="ico"><use href="#i-wa"/></svg> Agendar</a>
 </div>
 
+<dialog class="visor-3d" id="visor3d" aria-label="Recorrido 3D"><div class="barra-3d"><span id="titulo3d">Recorrido 3D</span><button type="button" id="cerrar3d" aria-label="Cerrar recorrido"><svg class="ico"><use href="#i-x"/></svg></button></div></dialog>
+
 <dialog class="visor" id="visor" aria-label="Visor de fotos">
   <div class="marco-visor">
     <header><span id="contador"></span><button type="button" id="cerrarVisor" aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button></header>
@@ -542,7 +545,7 @@ footer.pie a{color:var(--hueso)}
   var aperturas = [].slice.call(d.querySelectorAll('.apertura')), pendiente = false;
   var guiado = d.getElementById('condominio'), carrilG = d.getElementById('carrilCondo'), recorridoG = 0, escritorio = matchMedia('(min-width: 900px)');
   function medirGuiado(){
-    if (quieto || !escritorio.matches){ guiado.classList.remove('activo'); carrilG.style.transform = ''; return; }
+    { guiado.classList.remove('activo'); carrilG.style.transform = ''; return; }
     guiado.classList.add('activo');
     recorridoG = Math.max(0, carrilG.scrollWidth - innerWidth);
     guiado.style.setProperty('--alto-guiado', (innerHeight + recorridoG) + 'px');
@@ -617,6 +620,22 @@ footer.pie a{color:var(--hueso)}
       t.innerHTML = ''; t.appendChild(f); f.focus();
     });
   });
+
+  // Recorrido 3D en pantalla completa
+  var v3 = d.getElementById('visor3d'), t3 = d.getElementById('titulo3d'), origen3 = null;
+  d.addEventListener('click', function(e){
+    var b = e.target.closest('[data-tour-abrir]'); if (!b) return;
+    e.stopPropagation(); origen3 = b;
+    var f = d.createElement('iframe');
+    f.src = 'https://my.matterport.com/show/?m=' + b.dataset.tourAbrir + '&play=1&qs=1';
+    f.title = 'Recorrido 3D de la casa ' + b.dataset.tourNombre; f.allow = 'fullscreen; xr-spatial-tracking'; f.allowFullscreen = true;
+    t3.textContent = 'Casa ' + b.dataset.tourNombre + ' en 3D';
+    v3.appendChild(f);
+    if (v3.showModal) v3.showModal(); else v3.setAttribute('open','');
+    raiz.style.overflow = 'hidden';
+  }, true);
+  d.getElementById('cerrar3d').addEventListener('click', function(){ v3.close ? v3.close() : v3.removeAttribute('open'); });
+  v3.addEventListener('close', function(){ var f = v3.querySelector('iframe'); if (f) f.remove(); raiz.style.overflow = ''; if (origen3) origen3.focus(); });
 
   // Visor
   var visor = d.getElementById('visor'), vImg = d.getElementById('visorImg'), vPie = d.getElementById('visorPie'), cont = d.getElementById('contador');
